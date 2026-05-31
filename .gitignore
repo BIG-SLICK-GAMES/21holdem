@@ -40,3 +40,7 @@ temp
 # Local VS Code inside source
 **/src/.vscode/
 
+
+# Stray local notes
+frontend/import Phaser from _phaser_.txt
+
