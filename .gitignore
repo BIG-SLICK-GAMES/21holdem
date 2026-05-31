@@ -1,0 +1,42 @@
+.env
+.env.*
+!.env.example
+!.env.local.example
+!.env.production.example
+!.env.docker.example
+node_modules
+build
+dist
+logs
+*.log
+coverage
+backups
+cache
+.cache
+tmp
+temp
+.DS_Store
+*.pem
+*.key
+*.crt
+*.swp
+.env.swp
+
+# Codex / local mailbox
+.codex-mailbox/
+**/.codex-mailbox/
+
+# Backups / old copies
+**/_backup*/
+**/*_copy.js
+**/*_copy.scss
+**/*_copy.css
+
+# Local output / dumps
+*.zip
+*build-output*.txt
+*.code-workspace
+
+# Local VS Code inside source
+**/src/.vscode/
+

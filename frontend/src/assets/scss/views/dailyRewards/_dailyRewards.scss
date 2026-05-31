@@ -1,0 +1,1119 @@
+.daily-rewards-page {
+    position: relative;
+    min-height: 100dvh;
+    padding: 94px 14px 32px;
+    isolation: isolate;
+    overflow: clip;
+    background:
+        radial-gradient(circle at 50% -8%, rgba(120, 176, 235, 0.24) 0%, rgba(120, 176, 235, 0) 28%),
+        radial-gradient(circle at 10% 24%, rgba(70, 130, 196, 0.14) 0%, rgba(70, 130, 196, 0) 24%),
+        linear-gradient(180deg, rgba(2, 17, 33, 0.96) 0%, rgba(4, 20, 39, 0.98) 100%),
+        url("../../../images/ui/table_selection_bg.png") repeat top center / 420px auto;
+
+    &__backdrop,
+    &__ambient-grid {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+    }
+
+    &__backdrop {
+        z-index: 0;
+        background:
+            linear-gradient(180deg, rgba(162, 202, 240, 0.12) 0%, rgba(162, 202, 240, 0) 14%),
+            radial-gradient(circle at 50% 110%, rgba(30, 97, 169, 0.32) 0%, rgba(30, 97, 169, 0) 42%);
+        overflow: hidden;
+
+        &::before,
+        &::after {
+            content: '';
+            position: absolute;
+        }
+
+        &::before {
+            inset: auto -12% 8% -12%;
+            height: 34%;
+            background: radial-gradient(circle at 50% 50%, rgba(72, 141, 255, 0.28) 0%, rgba(72, 141, 255, 0) 70%);
+            filter: blur(22px);
+            animation: dailyRewardsGlowSweep 15s ease-in-out infinite;
+        }
+
+        &::after {
+            inset: 0;
+            background: linear-gradient(110deg, transparent 0%, rgba(255, 255, 255, 0.07) 38%, transparent 58%);
+            transform: translateX(-120%);
+            opacity: 0.7;
+            animation: dailyRewardsLightSweep 12s ease-in-out infinite;
+        }
+    }
+
+    &__ambient-grid {
+        z-index: 0;
+        background:
+            repeating-linear-gradient(
+                135deg,
+                rgba(170, 224, 255, 0.02) 0px,
+                rgba(170, 224, 255, 0.02) 10px,
+                rgba(170, 224, 255, 0) 10px,
+                rgba(170, 224, 255, 0) 22px
+            );
+        animation: guest-grid-drift 18s linear infinite;
+    }
+
+    &__shell {
+        position: relative;
+        z-index: 1;
+        width: min(100%, 1280px);
+        margin-inline: auto;
+        display: grid;
+        gap: 18px;
+    }
+
+    &__hero,
+    &__track {
+        position: relative;
+        overflow: hidden;
+        border-radius: 30px;
+        border: 1px solid rgba(111, 166, 218, 0.26);
+        background: linear-gradient(180deg, rgba(10, 31, 51, 0.94) 0%, rgba(5, 20, 35, 0.98) 100%);
+        box-shadow: inset 0 1px 0 rgba(217, 238, 255, 0.08), 0 24px 48px rgba(0, 0, 0, 0.28);
+    }
+
+    &__hero {
+        display: grid;
+        gap: 18px;
+        padding: 20px 16px;
+
+        &::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                linear-gradient(130deg, rgba(118, 182, 255, 0.16) 0%, rgba(118, 182, 255, 0) 38%),
+                radial-gradient(circle at 100% 0%, rgba(255, 208, 120, 0.1) 0%, rgba(255, 208, 120, 0) 36%);
+            pointer-events: none;
+        }
+    }
+
+    &__hero > *,
+    &__track > * {
+        position: relative;
+        z-index: 1;
+    }
+
+    &__eyebrow,
+    &__section-heading span,
+    &__progress-meta span:first-child,
+    &__stat-card span {
+        color: rgba(197, 228, 255, 0.76);
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+    }
+
+    &__hero-copy {
+        display: grid;
+        gap: 10px;
+
+        h1 {
+            margin: 0;
+            color: #f6fbff;
+            font-family: 'TT Commons';
+            font-size: clamp(34px, 10vw, 58px);
+            font-weight: 700;
+            line-height: 0.94;
+            letter-spacing: 0.02em;
+        }
+
+        p {
+            margin: 0;
+            color: rgba(223, 241, 255, 0.82);
+            font-size: 14px;
+            line-height: 1.55;
+            max-width: 40rem;
+        }
+    }
+
+    &__hero-stats {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+    }
+
+    &__stat-card {
+        display: grid;
+        gap: 8px;
+        padding: 14px;
+        min-height: 88px;
+        border-radius: 22px;
+        border: 1px solid rgba(120, 174, 228, 0.22);
+        background: linear-gradient(180deg, rgba(11, 35, 57, 0.88) 0%, rgba(6, 23, 39, 0.94) 100%);
+        box-shadow: inset 0 1px 0 rgba(221, 240, 255, 0.08), 0 18px 34px rgba(0, 0, 0, 0.18);
+
+        strong {
+            color: #ffffff;
+            font-family: 'Neue Plak Condensed';
+            font-size: 28px;
+            line-height: 0.94;
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
+        }
+    }
+
+    &__hero-footer {
+        display: grid;
+        gap: 14px;
+    }
+
+    &__progress-wrap {
+        display: grid;
+        gap: 8px;
+        padding: 14px;
+        border-radius: 22px;
+        border: 1px solid rgba(120, 174, 228, 0.22);
+        background: linear-gradient(180deg, rgba(11, 35, 57, 0.88) 0%, rgba(6, 23, 39, 0.94) 100%);
+        box-shadow: inset 0 1px 0 rgba(221, 240, 255, 0.08), 0 18px 34px rgba(0, 0, 0, 0.18);
+    }
+
+    &__progress-meta {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+
+        span:last-child {
+            color: #f4fbff;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+    }
+
+    &__progress {
+        position: relative;
+        overflow: hidden;
+        height: 14px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.08);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    }
+
+    &__progress-bar {
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, #7ff7bc 0%, #4fbf8e 100%);
+        box-shadow: 0 0 18px rgba(127, 247, 188, 0.24);
+    }
+
+    &__claim {
+        min-height: 54px;
+        border-radius: 999px;
+        border: 0;
+        padding: 0 22px;
+        color: #edfaff;
+        font-family: 'Neue Plak Condensed';
+        font-size: 22px;
+        font-weight: 700;
+        line-height: 1;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+        background: linear-gradient(180deg, rgba(128, 236, 255, 0.96) 0%, rgba(70, 166, 255, 0.94) 50%, rgba(38, 102, 210, 0.98) 100%);
+        box-shadow:
+            inset 0 1px 0 rgba(248, 253, 255, 0.28),
+            0 16px 28px rgba(22, 84, 163, 0.32),
+            0 0 24px rgba(84, 182, 255, 0.16);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+        &:hover,
+        &:focus {
+            transform: translateY(-1px);
+            box-shadow:
+                inset 0 1px 0 rgba(248, 253, 255, 0.32),
+                0 20px 32px rgba(22, 84, 163, 0.36),
+                0 0 28px rgba(84, 182, 255, 0.22);
+        }
+
+        &.is-disabled,
+        &:disabled {
+            cursor: default;
+            opacity: 0.62;
+            transform: none;
+            box-shadow:
+                inset 0 1px 0 rgba(248, 253, 255, 0.18),
+                0 12px 22px rgba(22, 84, 163, 0.18);
+        }
+    }
+
+    &__track {
+        padding: 18px 16px 20px;
+        display: grid;
+        gap: 18px;
+    }
+
+    &__section-heading {
+        display: grid;
+        gap: 6px;
+
+        strong {
+            color: #f6fbff;
+            font-family: 'TT Commons';
+            font-size: clamp(24px, 7vw, 38px);
+            font-weight: 700;
+            line-height: 0.98;
+            letter-spacing: 0.02em;
+        }
+    }
+
+    &__cards {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+    }
+}
+
+.daily-rewards-page__calendar-shell {
+    position: relative;
+    display: grid;
+    gap: 8px;
+    padding: 0;
+}
+
+.daily-rewards-page__calendar-shell > * {
+    position: relative;
+    z-index: 1;
+}
+
+.daily-rewards-page__calendar-header {
+    display: grid;
+    gap: 8px;
+}
+
+.daily-rewards-page__calendar-actions {
+    display: grid;
+    gap: 8px;
+}
+
+.daily-rewards-page__calendar-status {
+    display: grid;
+    gap: 4px;
+    padding: 0 10px;
+}
+
+.daily-rewards-page__calendar-status-amount {
+    color: #ffd672;
+    font-family: 'Neue Plak Condensed';
+    font-size: clamp(34px, 9vw, 56px);
+    font-weight: 700;
+    line-height: 0.88;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    text-shadow: 0 0 20px rgba(255, 214, 108, 0.18);
+}
+
+.daily-rewards-page__calendar-status-message {
+    margin: 0;
+    color: rgba(233, 244, 252, 0.88);
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.daily-rewards-page__countdown {
+    display: inline-grid;
+    grid-template-columns: minmax(0, auto) auto;
+    align-items: center;
+    justify-content: start;
+    gap: 8px;
+    width: fit-content;
+    margin-top: 6px;
+    padding: 7px 10px 6px;
+    border: 1px solid rgba(255, 214, 114, 0.28);
+    border-radius: 999px;
+    background: rgba(12, 28, 44, 0.72);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+
+    span {
+        color: rgba(225, 240, 250, 0.78);
+        font-size: 9px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        line-height: 1;
+        text-transform: uppercase;
+    }
+
+    strong {
+        color: #ffd672;
+        font-family: 'Neue Plak Condensed';
+        font-size: 18px;
+        line-height: 1;
+        letter-spacing: 0.06em;
+    }
+
+    &.is-claimed {
+        border-color: rgba(124, 236, 184, 0.26);
+
+        strong {
+            color: #b9f3d4;
+        }
+    }
+}
+
+.daily-rewards-calendar-board {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 0;
+    border-radius: 24px;
+    border: 1px solid rgba(156, 212, 255, 0.24);
+    background: linear-gradient(180deg, rgba(10, 30, 50, 0.94) 0%, rgba(6, 20, 35, 0.98) 100%);
+    box-shadow:
+        inset 0 1px 0 rgba(241, 249, 255, 0.08),
+        0 18px 30px rgba(4, 16, 32, 0.22);
+}
+
+.daily-rewards-calendar__day {
+    --daily-reward-tilt-glow-x: 50%;
+    --daily-reward-tilt-glow-y: 42%;
+    --daily-reward-tilt-shift-x: 0px;
+    --daily-reward-tilt-shift-y: 0px;
+    --daily-reward-tilt-rotate: 0deg;
+    position: relative;
+    overflow: hidden;
+    display: grid;
+    gap: 2px;
+    align-content: start;
+    min-height: 0;
+    padding: 6px 4px 5px;
+    border-right: 1px solid rgba(156, 212, 255, 0.16);
+    border-bottom: 1px solid rgba(156, 212, 255, 0.16);
+    background:
+        radial-gradient(circle at var(--daily-reward-tilt-glow-x) var(--daily-reward-tilt-glow-y), rgba(186, 245, 255, 0.16) 0%, rgba(82, 166, 255, 0.08) 20%, rgba(82, 166, 255, 0) 48%),
+        linear-gradient(180deg, rgba(22, 56, 86, 0.24) 0%, rgba(9, 31, 56, 0.74) 100%);
+    background-repeat: no-repeat, no-repeat, no-repeat;
+    background-size: 160% 180%, 100% 100%;
+    background-position:
+        calc(50% + var(--daily-reward-tilt-shift-x)) calc(44% + var(--daily-reward-tilt-shift-y)),
+        center;
+    box-shadow:
+        inset 0 1px 0 rgba(240, 250, 255, 0.08);
+    transition:
+        transform 0.24s ease,
+        opacity 0.24s ease,
+        box-shadow 0.24s ease,
+        border-color 0.24s ease,
+        filter 0.24s ease,
+        background-position 0.24s ease-out,
+        background 0.24s ease;
+    animation: none;
+    justify-items: center;
+    text-align: center;
+
+    &[role='button'] {
+        cursor: pointer;
+    }
+
+    &::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(145deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0) 42%);
+        pointer-events: none;
+    }
+
+    &.is-completed {
+        opacity: 1;
+        filter: saturate(0.42) brightness(0.66);
+        background: linear-gradient(180deg, rgba(13, 23, 35, 0.86) 0%, rgba(4, 10, 18, 0.94) 100%);
+        box-shadow: inset 0 1px 0 rgba(225, 239, 249, 0.03);
+        animation: none;
+
+        &::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.32);
+            pointer-events: none;
+        }
+    }
+
+    &.is-today {
+        background:
+            radial-gradient(circle at var(--daily-reward-tilt-glow-x) var(--daily-reward-tilt-glow-y), rgba(194, 246, 255, 0.26) 0%, rgba(92, 182, 255, 0.14) 18%, rgba(92, 182, 255, 0) 46%),
+            linear-gradient(180deg, rgba(88, 170, 255, 0.28) 0%, rgba(9, 31, 56, 0.84) 100%);
+        background-repeat: no-repeat, no-repeat;
+        background-size: 162% 182%, 100% 100%;
+        background-position:
+            calc(50% + var(--daily-reward-tilt-shift-x)) calc(44% + var(--daily-reward-tilt-shift-y)),
+            center;
+        box-shadow:
+            inset 0 1px 0 rgba(248, 253, 255, 0.16),
+            0 0 0 1px rgba(202, 239, 255, 0.22),
+            0 0 24px rgba(110, 200, 255, 0.34);
+        animation: dailyRewardsCalendarGlow 1.45s ease-in-out infinite alternate;
+    }
+
+    &.is-celebrating {
+        animation: dailyRewardsCalendarPulse 0.75s ease-in-out infinite alternate;
+    }
+}
+
+.daily-rewards-calendar__day:nth-child(7n) {
+    border-right: 0;
+}
+
+.daily-rewards-calendar__day:nth-last-child(-n + 7) {
+    border-bottom: 0;
+}
+
+.daily-rewards-calendar__label,
+.daily-rewards-calendar__bonus,
+.daily-rewards-calendar__state {
+    position: relative;
+    z-index: 1;
+    text-transform: uppercase;
+}
+
+.daily-rewards-calendar__label {
+    color: rgba(205, 234, 255, 0.74);
+    font-size: 7px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    line-height: 1.1;
+}
+
+.daily-rewards-calendar__amount {
+    position: relative;
+    z-index: 1;
+    color: #f8fcff;
+    font-family: 'Neue Plak Condensed';
+    font-size: clamp(11px, 3.2vw, 24px);
+    line-height: 0.9;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+}
+
+.daily-rewards-calendar__state {
+    color: #b9f3d4;
+    font-size: 6px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    min-height: 1em;
+    line-height: 1;
+}
+
+.daily-rewards-calendar__bonus {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 13px;
+    padding: 2px 5px 1px;
+    border: 1px solid rgba(255, 226, 122, 0.38);
+    border-radius: 999px;
+    background: rgba(255, 196, 76, 0.14);
+    color: #ffe27a;
+    font-size: 6px;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    line-height: 1;
+}
+
+.daily-rewards-calendar__claim {
+    position: relative;
+    z-index: 2;
+    min-height: 20px;
+    padding: 3px 8px 2px;
+    border: 1px solid rgba(202, 239, 255, 0.48);
+    border-radius: 999px;
+    background: linear-gradient(180deg, rgba(134, 230, 255, 0.98) 0%, rgba(58, 150, 255, 0.96) 100%);
+    color: #06121f;
+    font-size: 8px;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    line-height: 1;
+    text-transform: uppercase;
+    box-shadow: 0 0 16px rgba(110, 200, 255, 0.24);
+}
+
+.daily-rewards-calendar__claim:disabled {
+    opacity: 0.68;
+}
+
+.daily-rewards-calendar__state:empty {
+    visibility: hidden;
+}
+
+.daily-rewards-calendar__day.is-today .daily-rewards-calendar__state {
+    color: #edf9ff;
+}
+
+.daily-rewards-calendar__day.is-today .daily-rewards-calendar__amount {
+    color: #ffffff;
+    text-shadow: 0 0 16px rgba(160, 225, 255, 0.42);
+}
+
+.daily-rewards-calendar__day.is-completed .daily-rewards-calendar__state {
+    color: rgba(214, 231, 245, 0.68);
+}
+
+.daily-rewards-calendar__day.is-bonus {
+    background:
+        radial-gradient(circle at var(--daily-reward-tilt-glow-x) var(--daily-reward-tilt-glow-y), rgba(255, 234, 170, 0.34) 0%, rgba(255, 192, 76, 0.18) 18%, rgba(255, 192, 76, 0) 48%),
+        linear-gradient(180deg, rgba(76, 61, 23, 0.52) 0%, rgba(18, 28, 40, 0.9) 100%);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 247, 224, 0.18),
+        0 0 18px rgba(255, 196, 76, 0.16);
+}
+
+.daily-rewards-calendar__day.is-bonus-jackpot-20k {
+    background:
+        radial-gradient(circle at var(--daily-reward-tilt-glow-x) var(--daily-reward-tilt-glow-y), rgba(255, 214, 206, 0.42) 0%, rgba(232, 117, 102, 0.2) 20%, rgba(232, 117, 102, 0) 50%),
+        linear-gradient(180deg, rgba(104, 44, 38, 0.58) 0%, rgba(29, 23, 30, 0.92) 100%);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 236, 230, 0.2),
+        0 0 22px rgba(232, 117, 102, 0.2);
+
+    .daily-rewards-calendar__bonus {
+        border-color: rgba(255, 194, 182, 0.46);
+        background: rgba(232, 117, 102, 0.16);
+        color: #ffc9bf;
+    }
+}
+
+.daily-rewards-calendar__day.is-bonus-multiplier {
+    background:
+        radial-gradient(circle at var(--daily-reward-tilt-glow-x) var(--daily-reward-tilt-glow-y), rgba(255, 255, 250, 0.44) 0%, rgba(211, 226, 232, 0.22) 20%, rgba(211, 226, 232, 0) 50%),
+        linear-gradient(180deg, rgba(80, 89, 94, 0.56) 0%, rgba(20, 28, 34, 0.92) 100%);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.24),
+        0 0 20px rgba(216, 232, 238, 0.16);
+
+    .daily-rewards-calendar__bonus {
+        border-color: rgba(240, 248, 250, 0.5);
+        background: rgba(220, 235, 240, 0.14);
+        color: #f6fbff;
+    }
+}
+
+.daily-rewards-calendar__day.is-bonus-bogo-shop {
+    background:
+        radial-gradient(circle at var(--daily-reward-tilt-glow-x) var(--daily-reward-tilt-glow-y), rgba(255, 237, 188, 0.38) 0%, rgba(222, 176, 76, 0.2) 20%, rgba(222, 176, 76, 0) 50%),
+        linear-gradient(180deg, rgba(88, 66, 24, 0.58) 0%, rgba(28, 25, 18, 0.92) 100%);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 246, 222, 0.2),
+        0 0 20px rgba(222, 176, 76, 0.18);
+
+    .daily-rewards-calendar__bonus {
+        border-color: rgba(255, 228, 154, 0.46);
+        background: rgba(222, 176, 76, 0.14);
+        color: #ffe5a6;
+    }
+}
+
+.daily-rewards-calendar__day.is-bonus-bonus-10k {
+    background:
+        radial-gradient(circle at var(--daily-reward-tilt-glow-x) var(--daily-reward-tilt-glow-y), rgba(255, 241, 206, 0.42) 0%, rgba(205, 145, 54, 0.2) 20%, rgba(205, 145, 54, 0) 50%),
+        linear-gradient(180deg, rgba(96, 56, 20, 0.58) 0%, rgba(29, 22, 16, 0.92) 100%);
+
+    .daily-rewards-calendar__bonus {
+        border-color: rgba(255, 209, 128, 0.44);
+        background: rgba(205, 145, 54, 0.14);
+        color: #ffd394;
+    }
+}
+
+.daily-rewards-calendar__day.is-bonus-bonus-5k {
+    background:
+        radial-gradient(circle at var(--daily-reward-tilt-glow-x) var(--daily-reward-tilt-glow-y), rgba(255, 244, 211, 0.34) 0%, rgba(180, 128, 52, 0.16) 20%, rgba(180, 128, 52, 0) 50%),
+        linear-gradient(180deg, rgba(72, 49, 22, 0.54) 0%, rgba(22, 21, 18, 0.92) 100%);
+
+    .daily-rewards-calendar__bonus {
+        border-color: rgba(232, 187, 104, 0.42);
+        background: rgba(180, 128, 52, 0.14);
+        color: #e9bf77;
+    }
+}
+
+.daily-rewards-calendar__day.is-bonus-streak_shield {
+    background:
+        radial-gradient(circle at var(--daily-reward-tilt-glow-x) var(--daily-reward-tilt-glow-y), rgba(216, 226, 255, 0.34) 0%, rgba(142, 162, 214, 0.18) 20%, rgba(142, 162, 214, 0) 50%),
+        linear-gradient(180deg, rgba(52, 60, 86, 0.56) 0%, rgba(18, 24, 34, 0.92) 100%);
+
+    .daily-rewards-calendar__bonus {
+        border-color: rgba(216, 226, 255, 0.42);
+        background: rgba(142, 162, 214, 0.14);
+        color: #dbe6ff;
+    }
+}
+
+.daily-rewards-calendar__day.is-bonus.is-today {
+    box-shadow:
+        inset 0 1px 0 rgba(255, 247, 224, 0.22),
+        0 0 0 1px rgba(255, 226, 122, 0.32),
+        0 0 34px rgba(255, 196, 76, 0.42);
+}
+
+.daily-rewards-calendar__day:not(.is-completed) {
+    --daily-reward-tilt-shift-x: 5px;
+    --daily-reward-tilt-shift-y: -3px;
+    --daily-reward-tilt-rotate: 18deg;
+}
+
+.daily-rewards-calendar__day:nth-child(2n):not(.is-completed) {
+    --daily-reward-tilt-shift-x: -4px;
+    --daily-reward-tilt-shift-y: 2px;
+    --daily-reward-tilt-rotate: -22deg;
+}
+
+.daily-rewards-calendar__day:nth-child(3n):not(.is-completed) {
+    --daily-reward-tilt-shift-x: 7px;
+    --daily-reward-tilt-shift-y: 4px;
+    --daily-reward-tilt-rotate: 28deg;
+}
+
+.daily-rewards-page--embedded {
+    min-height: 0;
+    padding: 0;
+    max-width: 100%;
+    overflow: visible;
+    overflow-x: clip;
+    background: none;
+}
+
+.daily-rewards-page--embedded .daily-rewards-page__shell {
+    width: 100%;
+    max-width: 100%;
+    gap: 14px;
+}
+
+.daily-rewards-page--embedded .daily-rewards-page__calendar-shell {
+    max-width: 100%;
+}
+
+.daily-bonus-lockup {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0;
+}
+
+.daily-bonus-lockup__glyph {
+    position: relative;
+    flex: 0 0 96px;
+    width: 96px;
+    height: 96px;
+    margin-right: -6px;
+}
+
+.daily-bonus-lockup__frame {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 8px 18px rgba(255, 208, 102, 0.22));
+    image-rendering: auto;
+}
+
+.daily-bonus-lockup__frame--one {
+    animation: daily-bonus-flicker-one 0.9s steps(1) infinite;
+}
+
+.daily-bonus-lockup__frame--two {
+    animation: daily-bonus-flicker-two 0.9s steps(1) infinite;
+}
+
+.daily-bonus-lockup__copy {
+    display: grid;
+    gap: 4px;
+}
+
+.daily-bonus-lockup__eyebrow {
+    color: rgba(170, 221, 255, 0.78);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+}
+
+.daily-bonus-lockup__copy strong {
+    color: #aaddff;
+    font-size: 34px;
+    line-height: 0.9;
+    font-family: 'TT Commons';
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    text-shadow: 0 0 16px rgba(115, 194, 255, 0.22);
+}
+
+.daily-rewards-card {
+    position: relative;
+    display: grid;
+    align-content: start;
+    gap: 12px;
+    min-height: 220px;
+    padding: 14px;
+    border-radius: 24px;
+    overflow: hidden;
+    border: 1px solid rgba(120, 174, 228, 0.2);
+    background: linear-gradient(180deg, rgba(12, 35, 57, 0.92) 0%, rgba(7, 23, 39, 0.96) 100%);
+    box-shadow: inset 0 1px 0 rgba(221, 240, 255, 0.08), 0 18px 34px rgba(0, 0, 0, 0.18);
+    transition: transform 0.24s ease, border-color 0.24s ease, box-shadow 0.24s ease, opacity 0.24s ease;
+
+    &::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background:
+            linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0) 28%),
+            radial-gradient(circle at 100% 0%, rgba(92, 151, 255, 0.12) 0%, rgba(92, 151, 255, 0) 36%);
+        pointer-events: none;
+    }
+
+    &.is-locked {
+        opacity: 0.78;
+    }
+
+    &.is-claimable {
+        border-color: rgba(171, 223, 255, 0.54);
+        box-shadow:
+            inset 0 1px 0 rgba(243, 251, 255, 0.14),
+            0 20px 38px rgba(0, 0, 0, 0.2),
+            0 0 28px rgba(85, 184, 255, 0.18);
+    }
+
+    &.is-claimed {
+        border-color: rgba(124, 236, 184, 0.28);
+        background: linear-gradient(180deg, rgba(12, 47, 54, 0.94) 0%, rgba(7, 28, 31, 0.98) 100%);
+    }
+
+    &.is-celebrating {
+        animation: dailyRewardsCardPulse 0.75s ease-in-out infinite alternate;
+    }
+}
+
+.daily-rewards-card > * {
+    position: relative;
+    z-index: 1;
+}
+
+.daily-rewards-card__status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    justify-self: start;
+    min-height: 32px;
+    padding: 7px 11px 5px;
+    border-radius: 999px;
+    border: 1px solid rgba(133, 191, 239, 0.18);
+    background: rgba(255, 255, 255, 0.05);
+    color: #d8eeff;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.daily-rewards-card.is-claimed .daily-rewards-card__status {
+    border-color: rgba(124, 236, 184, 0.26);
+    background: rgba(95, 211, 156, 0.16);
+    color: #eafff2;
+}
+
+.daily-rewards-card.is-claimable .daily-rewards-card__status {
+    border-color: rgba(171, 223, 255, 0.32);
+    background: rgba(82, 171, 255, 0.16);
+    color: #eefbff;
+}
+
+.daily-rewards-card__day {
+    color: #f6fbff;
+    font-family: 'TT Commons';
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.daily-rewards-card__media {
+    display: grid;
+    place-items: center;
+    min-height: 96px;
+    border-radius: 20px;
+    background: linear-gradient(180deg, rgba(10, 28, 45, 0.9) 0%, rgba(5, 18, 31, 0.96) 100%);
+    border: 1px solid rgba(135, 191, 239, 0.14);
+
+    img {
+        width: auto;
+        height: 82px;
+        display: block;
+        filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.3));
+    }
+}
+
+.daily-rewards-card__amount {
+    color: #ffffff;
+    font-family: 'Neue Plak Condensed';
+    font-size: 34px;
+    line-height: 0.94;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+}
+
+@include media-min(md) {
+    .daily-rewards-page {
+        padding: 98px 18px 32px;
+
+        &__hero {
+            padding: 24px;
+        }
+
+        &__hero-stats {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        &__hero-footer {
+            grid-template-columns: minmax(0, 1fr) auto;
+            align-items: center;
+        }
+
+        &__track {
+            padding: 22px 24px 24px;
+        }
+
+        &__cards {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 14px;
+        }
+    }
+
+    .daily-bonus-lockup__glyph {
+        flex-basis: 122px;
+        width: 122px;
+        height: 122px;
+        margin-right: -8px;
+    }
+
+    .daily-bonus-lockup__eyebrow {
+        font-size: 13px;
+    }
+
+    .daily-bonus-lockup__copy strong {
+        font-size: 48px;
+    }
+
+    .daily-rewards-page__calendar-header {
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: end;
+        column-gap: 18px;
+    }
+
+    .daily-rewards-page__calendar-actions {
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: end;
+    }
+
+    .daily-rewards-page__calendar-status {
+        padding: 0 18px;
+    }
+
+    .daily-rewards-calendar__day {
+        padding: 8px 5px 7px;
+    }
+
+    .daily-rewards-calendar__amount {
+        font-size: clamp(12px, 2.5vw, 24px);
+    }
+
+    .daily-rewards-calendar__label {
+        font-size: 8px;
+    }
+
+    .daily-rewards-calendar__state {
+        font-size: 7px;
+    }
+
+    .daily-rewards-calendar__bonus {
+        font-size: 7px;
+        min-height: 15px;
+    }
+
+}
+
+@include media-min(lg) {
+    .daily-rewards-page {
+        padding: 98px 20px 34px;
+
+        &__hero {
+            grid-template-columns: minmax(220px, auto) minmax(0, 1.1fr);
+            align-items: start;
+            column-gap: 22px;
+        }
+
+        &__hero-stats,
+        &__hero-footer {
+            grid-column: 1 / -1;
+        }
+
+        &__cards {
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+    }
+
+    .daily-rewards-card {
+        min-height: 240px;
+    }
+
+    .daily-rewards-card__media img {
+        height: 92px;
+    }
+
+    .daily-rewards-calendar-board__header,
+    .daily-rewards-calendar-board__row {
+        grid-template-columns: 92px repeat(7, minmax(0, 1fr));
+    }
+
+    .daily-rewards-calendar__day {
+        padding: 10px 8px 8px;
+    }
+
+}
+
+@keyframes dailyRewardsBannerSheen {
+    0%,
+    62%,
+    100% {
+        transform: translateX(-120%);
+        opacity: 0;
+    }
+
+    68%,
+    86% {
+        transform: translateX(120%);
+        opacity: 0.75;
+    }
+}
+
+@keyframes daily-bonus-flicker-one {
+    0%,
+    18%,
+    42%,
+    66%,
+    100% {
+        opacity: 1;
+    }
+
+    19%,
+    41%,
+    67%,
+    99% {
+        opacity: 0;
+    }
+}
+
+@keyframes daily-bonus-flicker-two {
+    0%,
+    18%,
+    42%,
+    66%,
+    100% {
+        opacity: 0;
+    }
+
+    19%,
+    41%,
+    67%,
+    99% {
+        opacity: 1;
+    }
+}
+
+@keyframes dailyRewardsCardPulse {
+    from {
+        transform: translateY(0) scale(1);
+        box-shadow:
+            inset 0 1px 0 rgba(243, 251, 255, 0.16),
+            0 20px 38px rgba(0, 0, 0, 0.2),
+            0 0 28px rgba(85, 184, 255, 0.18);
+    }
+
+    to {
+        transform: translateY(-3px) scale(1.02);
+        box-shadow:
+            inset 0 1px 0 rgba(243, 251, 255, 0.18),
+            0 24px 42px rgba(0, 0, 0, 0.22),
+            0 0 34px rgba(85, 184, 255, 0.28);
+    }
+}
+
+@keyframes dailyRewardsCalendarPulse {
+    from {
+        transform: translateY(0) scale(1);
+        box-shadow:
+            inset 0 1px 0 rgba(248, 253, 255, 0.22),
+            0 18px 30px rgba(4, 16, 32, 0.34),
+            0 0 34px rgba(110, 200, 255, 0.22);
+    }
+
+    to {
+        transform: translateY(-3px) scale(1.02);
+        box-shadow:
+            inset 0 1px 0 rgba(248, 253, 255, 0.24),
+            0 22px 34px rgba(4, 16, 32, 0.38),
+            0 0 40px rgba(110, 200, 255, 0.28);
+    }
+}
+
+@keyframes dailyRewardsCalendarGlow {
+    from {
+        box-shadow:
+            inset 0 1px 0 rgba(248, 253, 255, 0.16),
+            0 0 0 1px rgba(202, 239, 255, 0.22),
+            0 0 20px rgba(110, 200, 255, 0.28);
+        filter: brightness(1);
+    }
+
+    to {
+        box-shadow:
+            inset 0 1px 0 rgba(248, 253, 255, 0.22),
+            0 0 0 1px rgba(202, 239, 255, 0.34),
+            0 0 34px rgba(110, 200, 255, 0.46);
+        filter: brightness(1.08);
+    }
+}
+
+@keyframes dailyRewardsLiquidGlow {
+    0%,
+    100% {
+        filter: saturate(1) brightness(1);
+    }
+
+    50% {
+        filter: saturate(1.14) brightness(1.07);
+    }
+}
+
+@keyframes dailyRewardsGlowSweep {
+    0%,
+    100% {
+        transform: translate3d(0, 0, 0) scale(1);
+    }
+
+    50% {
+        transform: translate3d(0, -14px, 0) scale(1.04);
+    }
+}
+
+@keyframes dailyRewardsLightSweep {
+    0%,
+    24% {
+        transform: translateX(-120%);
+    }
+
+    48%,
+    100% {
+        transform: translateX(120%);
+    }
+}
