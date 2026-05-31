@@ -19,3 +19,15 @@ Clean repo-ready workspace for the 21 Hold'em frontend and backend.
 - Make source changes in this repo first, then deploy through the approved deployment flow.
 
 See `docs/ENVIRONMENT_RULES.md` before changing endpoint or environment variables.
+
+## Preflight
+
+Run before opening a PR or preparing a deploy:
+
+```powershell
+.\scripts\safety-check.ps1
+.\scripts\backend-syntax-check.ps1
+.\scripts\preflight.ps1
+```
+
+CI runs the safety check, backend rules tests, and frontend production build on `main`.

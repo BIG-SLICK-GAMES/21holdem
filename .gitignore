@@ -18,6 +18,9 @@ temp
 .DS_Store
 *.pem
 *.key
+*_KEY.txt
+*secret*
+*credential*
 *.crt
 *.swp
 .env.swp
