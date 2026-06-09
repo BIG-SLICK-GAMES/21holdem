@@ -35,7 +35,10 @@ function Get-ScanFiles($targets) {
     foreach ($target in $targets) {
         $absoluteTarget = Join-Path $repoRoot $target
         if (Test-Path -LiteralPath $absoluteTarget -PathType Leaf) {
-            $file = Get-Item -LiteralPath $absoluteTarget
+            $file = Get-Item -LiteralPath $absoluteTarget -ErrorAction SilentlyContinue
+            if (-not $file) {
+                continue
+            }
             if (Test-ScannableTextFile $file) {
                 $file
             }
