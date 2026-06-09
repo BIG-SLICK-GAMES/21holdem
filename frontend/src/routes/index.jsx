@@ -7,7 +7,7 @@ import { getCookie } from 'shared/utils'
 
 function RootRedirect() {
     const token = getCookie('sAuthToken')
-    return <Navigate to={token ? '/lobby' : '/guest'} replace />
+    return <Navigate to={token ? '/lobby' : '/login'} replace />
 }
 
 function AllRoutes() {

@@ -20,9 +20,15 @@ function getReturnUrl(type) {
   return process.env[type === 'success' ? 'STRIPE_SUCCESS_URL' : 'STRIPE_CANCEL_URL'] || `${fallbackFrontendUrl}${fallbackPath}`;
 }
 
-function addQueryParam(url, key, value) {
+function addQueryParam(url, key, value, { raw = false } = {}) {
   const separator = url.includes('?') ? '&' : '?';
-  return `${url}${separator}${key}=${value}`;
+  return `${url}${separator}${key}=${raw ? value : encodeURIComponent(value)}`;
+}
+
+function getSafeReturnPath(returnPath) {
+  const value = String(returnPath || '').trim();
+  if (!value || !value.startsWith('/') || value.startsWith('//')) return '/lobby?tab=lobby-shop';
+  return value;
 }
 
 async function getShopItemByPrice(nPrice) {
@@ -66,7 +72,7 @@ controllers.getShopList = async (req, res) => {
 
 controllers.buyItem = async (req, res) => {
   try {
-    const body = _.pick(req.body, ['nPrice']);
+    const body = _.pick(req.body, ['nPrice', 'returnPath']);
     if (!body.nPrice) return res.reply(messages.required_field('nPrice'));
 
     const item = await getShopItemByPrice(body.nPrice);
@@ -78,22 +84,7 @@ controllers.buyItem = async (req, res) => {
     if (!nChips || nChips <= 0) return res.reply(messages.invalid_req('nChips'));
 
     if (!process.env.STRIPE_SECRET_KEY) {
-      const user = await User.findById(req.user._id, { nChips: 1 }).lean();
-      const nPreviousChips = Number(user?.nChips) || 0;
-      const nNewChips = nPreviousChips + nChips;
-      const transaction = await Transaction.create({
-        iUserId: req.user._id,
-        nAmount: nChips,
-        nPreviousChips,
-        nNewChips,
-        eType: 'credit',
-        eMode: 'manual',
-        eStatus: 'Success',
-        sDescription: `Local shop credit for ${nChips} chips`,
-      });
-
-      await User.updateOne({ _id: req.user._id }, { $inc: { nChips } });
-      return res.reply(messages.success('Purchase successful'), { transaction });
+      return res.reply(messages.customCodeAndMessage(503, STRIPE_NOT_CONFIGURED_MESSAGE));
     }
 
     const stripe = getStripe();
@@ -107,9 +98,15 @@ controllers.buyItem = async (req, res) => {
       sDescription: `Stripe checkout for ${nChips} chips`,
     });
 
+    const successUrl = addQueryParam(
+      addQueryParam(getReturnUrl('success'), 'session_id', '{CHECKOUT_SESSION_ID}', { raw: true }),
+      'return_to',
+      getSafeReturnPath(body.returnPath)
+    );
+
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
-      success_url: addQueryParam(getReturnUrl('success'), 'session_id', '{CHECKOUT_SESSION_ID}'),
+      success_url: successUrl,
       cancel_url: getReturnUrl('cancel'),
       client_reference_id: req.user._id.toString(),
       metadata: {

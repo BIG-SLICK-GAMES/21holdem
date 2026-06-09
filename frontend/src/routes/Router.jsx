@@ -1,14 +1,10 @@
 import { lazy } from 'react'
-import { route } from 'shared/constants/AllRoutes'
 
 const PublicRoute = lazy(() => import('routes/PublicRoutes'))
 const PrivateRoute = lazy(() => import('routes/PrivateRoutes'))
-const GuestRoute = lazy(() => import('routes/GuestRoutes'))
 
 const Register = lazy(() => import('views/auth/register'))
 const Login = lazy(() => import('views/auth/login'))
-const GuestLanding = lazy(() => import('views/guest'))
-const GuestGame = lazy(() => import('views/guest/game'))
 const Dashboard = lazy(() => import('views/dashboard/index'))
 const PrivateTable = lazy(() => import('views/dashboard/privateTable'))
 const Profile = lazy(() => import('views/profile/index'))
@@ -34,16 +30,6 @@ const RoutesDetails = [
             { path: '/register', Component: Register, exact: true },
             { path: '/about-us', Component: About, exact: true },
             { path: '/contact', Component: Contact, exact: true },
-        ]
-    },
-    {
-        defaultRoute: '',
-        Component: GuestRoute,
-        props: {},
-        isPrivateRoute: false,
-        children: [
-            { path: '/guest', Component: GuestLanding, exact: true },
-            { path: '/guest/game', Component: GuestGame, exact: true },
         ]
     },
     {

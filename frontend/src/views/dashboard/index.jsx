@@ -5,6 +5,7 @@ import iconProfile from '../../assets/images/icons/working/profile (2).png';
 import iconRewards from '../../assets/images/icons/working/rewards.png';
 import iconShop from '../../assets/images/icons/working/shop.png';
 import iconSettings from '../../assets/images/icons/working/stats.png';
+import iconBsgGames from '../../assets/images/icons/working/bigslickgames.png';
 import { chips1, chips2, chips3, chips4, chips5 } from 'assets/images/shop/shop';
 import { getDailyRewards, updateDailyRewards } from 'query/dailyRewards.query';
 import { getTables, joinTable } from 'query/gameTable.query';
@@ -64,7 +65,7 @@ function sortTablesByPriority(a, b) {
 
 const PLAYER_OPTIONS = [4, 6, 9];
 const BUY_IN_OPTIONS = [1000, 5000, 15000, 20000];
-const LOBBY_TAB_IDS = ['lobby-live-tables', 'lobby-missions', 'lobby-private-table', 'lobby-player-profile', 'lobby-shop', 'lobby-settings'];
+const LOBBY_TAB_IDS = ['lobby-live-tables', 'lobby-missions', 'lobby-private-table', 'lobby-player-profile', 'lobby-shop', 'lobby-bsg-games', 'lobby-settings'];
 const TABLE_SEAT_COLORS = ['#d4af6a', '#58c7ff', '#ff6b8a', '#7ee081', '#c38cff', '#ffb15c', '#5eead4', '#f7e36b', '#9bb6ff'];
 const stripePromise = process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY
     ? loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY)
@@ -467,6 +468,17 @@ const Dashboard = () => {
             },
         },
         {
+            id: 'lobby-bsg-games',
+            label: 'BSG Games',
+            iconSrc: iconBsgGames,
+            kind: 'tab',
+            theme: {
+                '--dashboard-theme-rgb': '66, 132, 235',
+                '--dashboard-theme-soft-rgb': '18, 42, 92',
+                '--dashboard-theme-accent-rgb': '255, 214, 105',
+            },
+        },
+        {
             id: 'lobby-settings',
             label: 'Settings',
             iconSrc: iconSettings,
@@ -672,21 +684,66 @@ const Dashboard = () => {
     const getCarouselItemStyle = (nItemIndex) => {
         const nVisualOffset = getCarouselOffset(nItemIndex) - nCarouselDragOffset;
         const nViewportWidth = typeof window === 'undefined' ? 420 : window.innerWidth;
-        const nSide = Math.max(-1, Math.min(1, nVisualOffset));
-        const nFocus = Math.max(0, Math.min(1, 1 - Math.abs(nVisualOffset)));
-        const nScale = 0.5 + (nFocus * 0.5);
-        const nOpacity = 0.5 + (nFocus * 0.5);
-        const nRadius = Math.max(61, Math.min(141, nViewportWidth * 0.192));
+        const nDistance = Math.abs(nVisualOffset);
+        const nFocus = Math.max(0, Math.min(1, 1 - (nDistance * 0.72)));
+        const nScale = 0.64 + (nFocus * 0.36);
+        const nOpacity = 0.28 + (nFocus * 0.72);
+        const nSpacing = Math.max(70, Math.min(118, nViewportWidth * 0.2));
 
         return {
-            '--carousel-x': `${Math.round(nSide * nRadius)}px`,
-            '--carousel-y': `${Math.round(Math.abs(nVisualOffset) * 18)}px`,
+            '--carousel-x': `${Math.round(nVisualOffset * nSpacing)}px`,
+            '--carousel-y': '0px',
             '--carousel-scale': nScale.toFixed(3),
             '--carousel-opacity': nOpacity.toFixed(3),
-            '--carousel-brightness': (0.72 + (nFocus * 0.36)).toFixed(3),
-            zIndex: Math.round(80 + (nFocus * 80)),
+            '--carousel-brightness': (0.58 + (nFocus * 0.5)).toFixed(3),
+            opacity: nOpacity.toFixed(3),
+            transform: `translate(-50%, -50%) translate3d(${Math.round(nVisualOffset * nSpacing)}px, 0, 0) scale(${nScale.toFixed(3)})`,
+            zIndex: Math.round(80 + (nFocus * 80) - nDistance),
         };
     };
+
+    const renderLobbyIconCarousel = (sClassName = '') => (
+        <div className={`dashboard-hub__icon-carousel${Math.abs(nCarouselDragOffset) > 0.02 ? ' is-dragging' : ''}${sClassName ? ` ${sClassName}` : ''}`} aria-label='Lobby pages'>
+            <div className='dashboard-hub__carousel-label' aria-live='polite'>
+                {oActiveCarouselItem?.label}
+            </div>
+
+            <div
+                className='dashboard-hub__carousel-track'
+                onPointerDown={handleCarouselPointerDown}
+                onPointerMove={handleCarouselPointerMove}
+                onPointerUp={handleCarouselPointerEnd}
+                onPointerCancel={cancelCarouselDrag}
+                onPointerLeave={handleCarouselPointerEnd}
+                onTouchStart={handleCarouselTouchStart}
+                onTouchMove={handleCarouselTouchMove}
+                onTouchEnd={handleCarouselTouchEnd}
+                onTouchCancel={cancelCarouselDrag}
+            >
+                {aQuickNavItems.map((item, nItemIndex) => {
+                    const bIsActive = sActiveTab === item.id;
+                    const sDepthClass = bIsActive ? ' is-active' : ' is-faded';
+
+                    return (
+                        <button
+                            key={item.id}
+                            type='button'
+                            aria-label={item.label}
+                            aria-pressed={bIsActive}
+                            className={`dashboard-hub__carousel-item${sDepthClass}`}
+                            style={getCarouselItemStyle(nItemIndex)}
+                            onClick={(event) => handleCarouselItemClick(event, item)}
+                            title={item.label}
+                        >
+                            <span className='dashboard-hub__carousel-icon'>
+                                <img src={item.iconSrc} alt='' aria-hidden='true' />
+                            </span>
+                        </button>
+                    );
+                })}
+            </div>
+        </div>
+    );
 
     const handleBuyInChange = (nBuyIn) => {
         setHasAdjustedFilters(true);
@@ -700,7 +757,10 @@ const Dashboard = () => {
 
     const handleBuyShopItem = (item) => {
         if (!item?.nPrice) return;
-        mutateBuyChips({ nPrice: item.nPrice });
+        mutateBuyChips({
+            nPrice: item.nPrice,
+            returnPath: `${location.pathname}${location.search || ''}${location.hash || ''}`,
+        });
     };
 
     const renderLiveTablesPanel = () => (
@@ -1219,6 +1279,23 @@ const Dashboard = () => {
         </>
     );
 
+    const renderBsgGamesPanel = () => (
+        <div className='dashboard-hub__tab-body dashboard-hub__tab-body--bsg-games'>
+            <div className='dashboard-hub__bsg-site-window'>
+                <iframe
+                    title='Big Slick Games'
+                    src='https://bigslickgames.com'
+                    loading='lazy'
+                    referrerPolicy='no-referrer-when-downgrade'
+                />
+                <div className='dashboard-hub__bsg-coming-soon' aria-label='Big Slick Games coming soon'>
+                    <span>Big Slick Games</span>
+                    <strong>Coming Soon</strong>
+                </div>
+            </div>
+        </div>
+    );
+
     return (
         <div className='dashboard-container'>
             <section className={`dashboard-hub dashboard-hub--force-mobile${sDashboardSceneClass}`} ref={dashboardRef} style={oActiveLobbyIconBackgroundStyle}>
@@ -1242,78 +1319,40 @@ const Dashboard = () => {
                     <span className='dashboard-hub__lobby-orb dashboard-hub__lobby-orb--three' />
                     <span className='dashboard-hub__lobby-beam' />
                 </div>
+                <div className='dashboard-hub__scene-watermark' aria-hidden='true' />
 
                 <div className='dashboard-hub__shell'>
                     <header className='dashboard-hub__hero'>
-                        <div className={`dashboard-hub__icon-carousel${Math.abs(nCarouselDragOffset) > 0.02 ? ' is-dragging' : ''}`} aria-label='Lobby pages'>
-                            <div className='dashboard-hub__carousel-label' aria-live='polite'>
-                                {oActiveCarouselItem?.label}
-                            </div>
-
-                            <div
-                                className='dashboard-hub__carousel-track'
-                                onPointerDown={handleCarouselPointerDown}
-                                onPointerMove={handleCarouselPointerMove}
-                                onPointerUp={handleCarouselPointerEnd}
-                                onPointerCancel={cancelCarouselDrag}
-                                onPointerLeave={handleCarouselPointerEnd}
-                                onTouchStart={handleCarouselTouchStart}
-                                onTouchMove={handleCarouselTouchMove}
-                                onTouchEnd={handleCarouselTouchEnd}
-                                onTouchCancel={cancelCarouselDrag}
-                            >
-                                {aQuickNavItems.map((item, nItemIndex) => {
-                                    const nOffset = getCarouselOffset(nItemIndex);
-                                    if (Math.abs(nOffset) > 1) return null;
-
-                                    const bIsActive = sActiveTab === item.id;
-                                    const nAbsOffset = Math.abs(nOffset);
-                                    const sDepthClass = nAbsOffset === 0 ? ' is-active' : ' is-near';
-
-                                    return (
-                                        <button
-                                            key={item.id}
-                                            type='button'
-                                            aria-label={item.label}
-                                            aria-pressed={bIsActive}
-                                            className={`dashboard-hub__carousel-item${sDepthClass}`}
-                                            style={getCarouselItemStyle(nItemIndex)}
-                                            onClick={(event) => handleCarouselItemClick(event, item)}
-                                            title={item.label}
-                                        >
-                                            <span className='dashboard-hub__carousel-icon'>
-                                                <img src={item.iconSrc} alt='' aria-hidden='true' />
-                                            </span>
-                                        </button>
-                                    );
-                                })}
-                            </div>
-                        </div>
+                        {renderLobbyIconCarousel()}
                     </header>
 
                     <div className='dashboard-hub__desktop-stage'>
                         <div className='dashboard-hub__desktop-topbar'>
-                            <nav className='dashboard-hub__desktop-nav' aria-label='Lobby shortcuts'>
-                                {aQuickNavItems.map((item) => {
-                                    const bIsActive = item.kind === 'tab' && sActiveTab === item.id;
+                            {sActiveTab === 'lobby-settings' ? (
+                                renderLobbyIconCarousel('dashboard-hub__icon-carousel--settings-topbar')
+                            ) : (
+                                <nav className='dashboard-hub__desktop-nav' aria-label='Lobby shortcuts'>
+                                    {aQuickNavItems.map((item) => {
+                                        const bIsActive = item.kind === 'tab' && sActiveTab === item.id;
 
-                                    return (
-                                        <button
-                                            key={`${item.id}-desktop-nav`}
-                                            type='button'
-                                            className={`dashboard-hub__desktop-nav-button${bIsActive ? ' is-active' : ''}`}
-                                            onClick={() => handleQuickNavSelect(item, { bScrollDesktop: true })}
-                                            aria-label={item.label}
-                                            aria-pressed={item.kind === 'tab' ? bIsActive : undefined}
-                                            title={item.label}
-                                        >
-                                            <span className='dashboard-hub__desktop-nav-icon'>
-                                                <img src={item.iconSrc} alt='' aria-hidden='true' />
-                                            </span>
-                                        </button>
-                                    );
-                                })}
-                            </nav>
+                                        return (
+                                            <button
+                                                key={`${item.id}-desktop-nav`}
+                                                type='button'
+                                                className={`dashboard-hub__desktop-nav-button${bIsActive ? ' is-active' : ''}`}
+                                                onClick={() => handleQuickNavSelect(item, { bScrollDesktop: true })}
+                                                aria-label={item.label}
+                                                aria-pressed={item.kind === 'tab' ? bIsActive : undefined}
+                                                title={item.label}
+                                            >
+                                                <span className='dashboard-hub__desktop-nav-icon'>
+                                                    <img src={item.iconSrc} alt='' aria-hidden='true' />
+                                                </span>
+                                            </button>
+                                        );
+                                    })}
+                                </nav>
+                            )}
                         </div>
 
                         <div className='dashboard-hub__desktop-grid'>
@@ -1365,6 +1404,14 @@ const Dashboard = () => {
                                 hidden={sActiveTab !== 'lobby-shop'}
                             >
                                 {renderShopPanel()}
+                            </section>
+
+                            <section
+                                id='lobby-bsg-games-panel'
+                                className={`dashboard-hub__tab-panel dashboard-hub__tab-panel--bsg-games${sActiveTab === 'lobby-bsg-games' ? ' is-active' : ''}`}
+                                hidden={sActiveTab !== 'lobby-bsg-games'}
+                            >
+                                {renderBsgGamesPanel()}
                             </section>
 
                             <section

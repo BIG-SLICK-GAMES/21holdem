@@ -5,7 +5,7 @@ const avatarContext = require.context(
 );
 
 function hashSeed(seed = '') {
-  return String(seed || 'guest')
+  return String(seed || 'player')
     .split('')
     .reduce((hash, char) => ((hash * 31) + char.charCodeAt(0)) % 2147483647, 7);
 }

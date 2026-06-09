@@ -19,7 +19,6 @@ router.post('/verify-forgotpassword-maillink/:token', controllers.verifyForgotPa
 router.get('/google/auth', socialAuth.getGoogle);
 router.get('/google/token', socialAuth.getToken);
 router.post('/firebase/notify', controllers.firebaseNotifyTest);
-router.post('/guestLogin', controllers.guestLogin);
 router.post('/autoLogin', controllers.autoLoginUsers);
 
 module.exports = router;

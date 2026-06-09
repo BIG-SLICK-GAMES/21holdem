@@ -101,7 +101,6 @@ export const RULES_SECTIONS = [
         ],
     },
 ];
-
 export const HOW_TO_PLAY_SECTIONS = [
     {
         title: '1. Know the objective',
@@ -180,91 +179,6 @@ export const HOW_TO_PLAY_SECTIONS = [
             'Number cards are face value, face cards are worth 10, and aces count as 1 or 11.',
             'Blackjack, meaning Ace plus a 10-value card, wins immediately if it happens in the first round.',
             'If multiple players tie for the best valid total, the pot is split equally.',
-        ],
-    },
-];
-
-export const GUEST_HELP_HOW_TO_PLAY_SECTIONS = [
-    {
-        title: 'Opening hand',
-        bullets: [
-            'Every player starts with one private card and the first betting round begins immediately.',
-            "You are playing against the other players' totals, not against a dealer hand.",
-        ],
-    },
-    {
-        title: 'Board progression',
-        bullets: [
-            'The table can move through Action, Stage, Show and Caboose rounds.',
-            'Each communal card is only revealed when players request it.',
-        ],
-    },
-    {
-        title: 'Decision flow',
-        bullets: [
-            'Check if no bet is open.',
-            'Call or raise if betting is already open.',
-            'Confirm to keep taking communal cards, or stand to lock your total.',
-        ],
-    },
-    {
-        title: 'Commitment moves',
-        bullets: [
-            'Double Down is only available in the first betting round and gives you a second private card.',
-            'Standing can be used at any time and stops you from taking additional communal cards.',
-        ],
-    },
-    {
-        title: 'Winning',
-        bullets: [
-            'Closest to 21 without exceeding it wins.',
-            'Blackjack in the first round wins immediately.',
-            'Tied winning totals split the pot equally.',
-        ],
-    },
-];
-
-export const GUEST_HELP_RULES_SECTIONS = [
-    {
-        title: 'Table structure',
-        bullets: [
-            "The game runs with 2 to 9 players and a rotating dealer button.",
-            "Small blind and big blind are posted by the two players to the dealer's left.",
-            'The deck is shuffled after each hand.',
-        ],
-    },
-    {
-        title: 'Rounds',
-        bullets: [
-            'The hand moves from the Pre-Action round into Action, Stage, Show and Caboose rounds.',
-            'Each round can reveal a new communal card if players request it.',
-            'After the final betting round, remaining players reveal and compare totals.',
-        ],
-    },
-    {
-        title: 'Actions',
-        bullets: [
-            'Check if no bet is open.',
-            'Bet, call or raise depending on the current action state.',
-            'Confirm keeps you live for another communal card, while stand locks your current total.',
-            'Cancel clears the current bet selection before you commit.',
-        ],
-    },
-    {
-        title: 'Special moves',
-        bullets: [
-            'Double Down is first-round only and costs the current pot total as a one-off bet.',
-            'A doubled-down player receives a second private card and cannot raise later.',
-            'A standing player receives no more communal cards, but can still call or fold if needed.',
-        ],
-    },
-    {
-        title: 'Scoring and payouts',
-        bullets: [
-            'Number cards are face value, face cards are worth 10, and aces count as 1 or 11.',
-            'Blackjack in the first round wins immediately.',
-            'A doubled-down player who hits exactly 21 wins immediately.',
-            'Tied winning totals split the pot equally under standard poker payout rules.',
         ],
     },
 ];

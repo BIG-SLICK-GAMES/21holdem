@@ -3,7 +3,7 @@ import { removeToken } from "../src/helper/helper";
 import { getCookie, ReactToastify } from "shared/utils";
 
 function isLocalHostname(hostname = "") {
-    return ["localhost", "127.0.0.1", "0.0.0.0"].includes(String(hostname).toLowerCase());
+    return ["127.0.0.1", "0.0.0.0", "::1"].includes(String(hostname).toLowerCase());
 }
 
 function getBrowserHostname() {
@@ -33,6 +33,10 @@ export function getApiRoot(url = process.env.REACT_APP_API_ENDPOINT) {
 
     try {
         const parsedUrl = new URL(configuredUrl);
+        if (isLocalHostname(parsedUrl.hostname)) {
+            parsedUrl.hostname = browserHostname;
+            return parsedUrl.toString().replace(/\/$/, "");
+        }
         return parsedUrl.toString().replace(/\/$/, "");
     } catch {
         return "";
@@ -73,22 +77,17 @@ Axios.interceptors.response.use(
         return res;
     },
     (err) => {
-        const isGuestRoute = typeof window !== 'undefined' && window.location?.pathname?.startsWith('/guest');
         if (err?.code?.includes?.("ERR_NETWORK")) {
             ReactToastify("Network Error", "error");
-            if (!isGuestRoute) {
-                removeToken();
-                setTimeout(() => {
-                    window.location.href = "/login";
-                }, 2200);
-            }
+            removeToken();
+            setTimeout(() => {
+                window.location.href = "/login";
+            }, 2200);
             return Promise.reject(err);
         }
         if (err?.response?.status === 401) {
-            if (!isGuestRoute) {
-                removeToken();
-                window.location.href = "/login";
-            }
+            removeToken();
+            window.location.href = "/login";
             return Promise.reject(err);
         }
         return Promise.reject(err);

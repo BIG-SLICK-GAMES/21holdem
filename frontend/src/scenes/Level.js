@@ -1,4 +1,4 @@
-﻿import Phaser from 'phaser';
+import Phaser from 'phaser';
 import config from '../scripts/config';
 import assets from '../scripts/assets';
 import _ from '../scripts/helper';
@@ -407,8 +407,8 @@ getFXOverlayScreenAnchor(gameObject, options = {}) {
 }
 
     emitTutorialOverlay(detail = {}) {
-        if (!this.isGuestTutorial || typeof window === 'undefined') return;
-        window.dispatchEvent(new CustomEvent(GAME_BROWSER_EVENTS.GUEST_TUTORIAL_UPDATE, { detail }));
+        if (!this.isTutorialMode || typeof window === 'undefined') return;
+        window.dispatchEvent(new CustomEvent(GAME_BROWSER_EVENTS.TUTORIAL_UPDATE, { detail }));
     }
 
 createGameActionButtonState(command, label, variant = 'secondary') {
@@ -762,7 +762,7 @@ getTutorialButtonTarget(actionKey) {
 }
 
 syncTutorialState(oTutorial = this.oTutorialState, extraDetail = {}) {
-    if (!this.isGuestTutorial || !oTutorial) return;
+    if (!this.isTutorialMode || !oTutorial) return;
     this.oTutorialState = oTutorial;
     this.emitTutorialOverlay({
         type: 'tutorialState',
@@ -1630,7 +1630,7 @@ createAuthButtonTexture(key, width, height, options = {}) {
 
     // Exact source styling copied from:
     // src/assets/scss/views/auth/_login.scss
-    // - .auth-intro-actions .guest-entry-btn
+    // - .auth-intro-actions .primary-entry-btn
     // - .auth-intro-actions .about-entry-btn
 
     if (primary) {
@@ -1871,7 +1871,7 @@ setConsolePrompt(label = 'Waiting for turn') {
         });
         container_private_table.add(btn_copy);
 
-        // Deck card (hidden â€” not shown at this time)
+        // Deck card (hidden — not shown at this time)
         const { scale: communityCardScale } = this.getCommunityCardLayoutMetrics();
         const deckPosition = this.getDeckCardPosition();
         const close_deck_card = this.add
@@ -1943,10 +1943,14 @@ setConsolePrompt(label = 'Waiting for turn') {
             this.exitGame();
         };
 
-        this.oSocketManager.emit(emitter.reqLeave, {}, () => {
-            this.refreshGlobalProfileState();
+        if (this.oSocketManager?.socket?.connected) {
+            this.oSocketManager.emit(emitter.reqLeave, {}, () => {
+                this.refreshGlobalProfileState();
+                finishExit();
+            });
+        } else {
             finishExit();
-        });
+        }
         this.time.delayedCall(900, finishExit);
     }
     reqDiscardCard(iCardId) {
@@ -2093,11 +2097,11 @@ setButtons() {
             iBoardId: this.iBoardId,
         });
     }
-    init({ sAuthToken, iBoardId, sPrivateCode, isGuestTutorial = false, fallbackPath = '/lobby' }) {
+    init({ sAuthToken, iBoardId, sPrivateCode, isTutorialMode = false, fallbackPath = '/lobby' }) {
         this.sAuthToken = sAuthToken;
         this.iBoardId = iBoardId;
         this.sPrivateCode = sPrivateCode;
-        this.isGuestTutorial = Boolean(isGuestTutorial);
+        this.isTutorialMode = Boolean(isTutorialMode);
         this.fallbackPath = fallbackPath;
     }
 
@@ -2168,7 +2172,7 @@ setButtons() {
         };
         this.popStateHandler = () => this.exitGame();
         this.sideBetsChangeHandler = (event) => this.handleSideBetsChange(event?.detail);
-        // Exit game on tab hide or browser back â€” prevents desync and seat abuse.
+        // Exit game on tab hide or browser back — prevents desync and seat abuse.
         this.cleanupRegistry.addWindowListener(window, 'visibilitychange', this.visibilityChangeHandler);
         this.cleanupRegistry.addWindowListener(window, 'popstate', this.popStateHandler);
         this.cleanupRegistry.addWindowListener(window, GAME_BROWSER_EVENTS.SIDE_BETS_CHANGE, this.sideBetsChangeHandler);
@@ -2510,7 +2514,7 @@ setButtons() {
             this.iSmallBlindId = boardSnapshot.iSmallBlindId;
             const myPlayer = await this.findMyPlayer(boardSnapshot.aParticipant);
             if (!myPlayer) {
-                console.error('[setGameData] Could not match current player in participant list â€” skipping seat setup');
+                console.error('[setGameData] Could not match current player in participant list — skipping seat setup');
                 return;
             }
             this.arrangeSeats(myPlayer.nSeat);
@@ -2589,7 +2593,7 @@ setButtons() {
             });
             this.emitConsoleCards();
         }
-        if (this.isGuestTutorial && oData.iUserId === this.iUserId) {
+        if (this.isTutorialMode && oData.iUserId === this.iUserId) {
             this.emitTutorialOverlay({
                 type: 'userAction',
                 tutorial: this.oTutorialState,
@@ -2642,7 +2646,7 @@ setButtons() {
             this.updatePotAmount(oData.nTableChips);
         }
 
-        if (this.isGuestTutorial && oData.iUserId === this.iUserId) {
+        if (this.isTutorialMode && oData.iUserId === this.iUserId) {
             const sActionMap = {
                 [SOCKET_RESPONSE_EVENTS.CALL]: 'call',
                 [SOCKET_RESPONSE_EVENTS.STAND]: 'stand',
@@ -2742,7 +2746,7 @@ setButtons() {
         }
     }
     handleCommunityCard(oData) {
-        // A new community card has been dealt â€” reset check commitments for the next betting round.
+        // A new community card has been dealt — reset check commitments for the next betting round.
         this.sActiveTurnKey = null;
         this.resetCheckCommitments();
         const { aCommunityCard, aParticipant } = oData;
@@ -2949,7 +2953,7 @@ setButtons() {
             this.checkGameEState(boardSnapshot.eState);
             const myPlayer = await this.findMyPlayer(boardSnapshot.aParticipant);
             if (!myPlayer) {
-                console.error('[setBoardState] Could not match current player in participant list â€” skipping seat setup');
+                console.error('[setBoardState] Could not match current player in participant list — skipping seat setup');
                 return;
             }
             this.arrangeSeats(myPlayer.nSeat);
@@ -3035,7 +3039,7 @@ setCollectBootAmount({ nTableChips, aParticipant }) {
             });
             this.updatePotAmount(nTableChips);
             this.clearFXOverlayFocus();
-            if (this.isGuestTutorial) {
+            if (this.isTutorialMode) {
                 this.emitTutorialOverlay({
                     type: 'waiting',
                     tutorial: this.oTutorialState,
@@ -3081,7 +3085,7 @@ setCollectBootAmount({ nTableChips, aParticipant }) {
         if (player?.iUserId === this.iUserId) {
             this.syncGameActionOverlay();
             this.showAllButtons(aUserAction, nMinBet, toCallAmount, { bAllInStandChoice });
-            if (this.isGuestTutorial) {
+            if (this.isTutorialMode) {
                 const sExpectedAction = this.getTutorialActionFromState();
                 this.emitTutorialOverlay({
                     type: 'playerTurn',
@@ -3173,7 +3177,7 @@ canShowDoubleDownAction() {
     const { myChips } = this.getRaiseContext();
     const nDoubleDownAmount = this.getDoubleDownAmount();
     // DD available when exactly 1 community card is on the table (round 2).
-    // Use actual card count — nTableRound is only updated in setGameData/setBoardState,
+    // Use actual card count � nTableRound is only updated in setGameData/setBoardState,
     // not when resCommunityCard fires, so it lags behind when turn fires.
     const stateCommunityCards = getClientCommunityCards(this.oClientGameState);
     const nCommCards = stateCommunityCards.length || (this.oGameManager?.aCommunityCards || []).length;
@@ -3236,7 +3240,7 @@ setDeclareResult({ nRoundStartsIn, aParticipant, bAllPlayerBust, bAllPlayersBust
 
   // Lock community cards on screen for the result display window
   this.bShowingHandResult = true;
-  // Capture the final board cards now — setBoardState may arrive before the
+  // Capture the final board cards now � setBoardState may arrive before the
   // timeout fires and clear oGameManager.aCommunityCards, so store locally.
   const _finalCommunityCards = [...(this.oGameManager.aCommunityCards || [])];
 

@@ -62,6 +62,7 @@ export default class GameManager {
 
     // Seat x/y positions for desktop and mobile layouts.
     getPlayerProfileSpecs(nPlayer) {
+        const remotePlayerProfileOffsetY = nPlayer === 0 ? 0 : 100;
         const aPlayerProfile = config.isDesktopLayout()
             ? [
                 { x: 960, y: 860 }, // 0
@@ -85,7 +86,11 @@ export default class GameManager {
                 { x: 800, y: 944 },  // 7
                 { x: 748, y: 1142 }, // 8
             ];
-        return aPlayerProfile[nPlayer];
+        const specs = aPlayerProfile[nPlayer];
+        return {
+            ...specs,
+            y: specs.y + remotePlayerProfileOffsetY,
+        };
     }
     getHighCardSpecs(nPlayer) {
         const aHighCards = [

@@ -1,6 +1,6 @@
 .profile {
     --profile-page-icon: url("../../../images/icons/working/stats.png");
-    margin: 100px 50px;
+    margin: 136px 50px 100px;
     border: 2px solid #163C57;
     border-radius: 15px;
     overflow: hidden;
@@ -26,33 +26,38 @@
         z-index: 1;
     }
 
-    .profile-settings-hero {
-        display: grid;
-        place-items: center;
-        min-height: clamp(160px, 28vw, 280px);
-        padding: 16px 16px 0;
-        background:
-            radial-gradient(circle at 50% 55%, rgba(174, 210, 255, 0.22) 0%, rgba(174, 210, 255, 0) 42%),
-            linear-gradient(180deg, rgba(8, 25, 42, 0.92) 0%, rgba(6, 18, 32, 0.98) 100%);
-
-        img {
-            width: min(54vw, 260px);
-            max-height: 250px;
-            object-fit: contain;
-            filter:
-                drop-shadow(0 24px 36px rgba(0, 0, 0, 0.46))
-                drop-shadow(0 0 24px rgba(174, 210, 255, 0.3));
-        }
+    .profile-settings-hero,
+    .profile-header {
+        display: none;
     }
 
-    .profile-header {
-        text-align: center;
-        padding: 10px;
-        font-size: 32px;
-        color: #AADDFF;
+    .profile-simple-topbar {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        min-height: 58px;
+        padding: 10px 14px;
+        border-bottom: 1px solid rgba(137, 213, 255, 0.18);
+        background:
+            linear-gradient(180deg, rgba(3, 13, 24, 0.94) 0%, rgba(6, 20, 35, 0.98) 100%);
+    }
+
+    .profile-back-link {
+        min-height: 38px;
+        padding: 8px 16px 6px;
+        border: 1px solid rgba(137, 213, 255, 0.36);
+        border-radius: 999px;
+        background: linear-gradient(180deg, rgba(20, 55, 88, 0.84), rgba(8, 25, 42, 0.96));
+        color: #dff3ff;
+        font-family: "TT Commons";
+        font-size: 15px;
+        font-weight: 800;
+        letter-spacing: 0.04em;
+        line-height: 1;
         text-transform: uppercase;
-        letter-spacing: 1px;
-        background-color: #0C263B;
+        box-shadow:
+            inset 0 1px 0 rgba(255, 255, 255, 0.1),
+            0 12px 22px rgba(0, 0, 0, 0.22);
     }
 
     .profile-quick-nav {
@@ -379,7 +384,7 @@
 
 @include media-max(xxl) {
     .profile {
-        margin: 100px 10px;
+        margin: 136px 10px 100px;
         border-radius: 10px;
 
         .profile-content {
@@ -491,7 +496,7 @@
 
 @include media-max(md) {
     .profile {
-        margin: 90px 10px;
+        margin: 132px 10px 90px;
         border-radius: 10px;
 
         .profile-header{
@@ -606,7 +611,7 @@
 
 @include media-max(sm) {
     .profile {
-        margin: 80px 10px;
+        margin: 130px 10px 80px;
 
         .profile-header{
             font-size: 24px;

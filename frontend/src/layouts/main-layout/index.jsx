@@ -21,6 +21,7 @@ function MainLayout({ children }) {
 
     const getPath = useLocation().pathname
     const isGamePlay = getPath === '/game'
+    const isProfileSettings = getPath === '/profile'
 
     useEffect(() => {
         if (getPath === '/game') return
@@ -96,7 +97,7 @@ function MainLayout({ children }) {
             className={`main-layout main-layout--scene-${sBackgroundScene} ${isGamePlay ? 'gameplay-layout' : ''}`}
         >
             <div className='main-layout-background'></div>
-            {!isGamePlay && !isLobby && <HeaderPrivate />}
+            {!isGamePlay && !isLobby && !isProfileSettings && <HeaderPrivate />}
             {!isGamePlay && <div className='lobby-topbar'>
                     <Link to='/lobby' className='lobby-topbar__logo' aria-label="21 Hold'em home">
                         <img src={newBannerImg} alt="21 Hold'em" className='lobby-topbar__logo-img' />

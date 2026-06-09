@@ -18,7 +18,7 @@ class Boot extends Phaser.Scene {
         this.sAuthToken = data.sAuthToken;
         this.iBoardId = data.iBoardId;
         this.sPrivateCode = data.sPrivateCode;
-        this.isGuestTutorial = Boolean(data.isGuestTutorial);
+        this.isTutorialMode = Boolean(data.isTutorialMode);
         this.fallbackPath = data.fallbackPath;
     }
     preload() {
@@ -26,7 +26,7 @@ class Boot extends Phaser.Scene {
             sAuthToken: this.sAuthToken,
             iBoardId: this.iBoardId,
             sPrivateCode: this.sPrivateCode,
-            isGuestTutorial: this.isGuestTutorial,
+            isTutorialMode: this.isTutorialMode,
             fallbackPath: this.fallbackPath,
         }
         this.load.image('game_bg', game_bg);
@@ -35,7 +35,7 @@ class Boot extends Phaser.Scene {
     }
 }
 function Game({ isPausedExternally = false }) {
-    const { sAuthToken, iBoardId, sPrivateCode, fallbackPath = '/lobby', isGuestTutorial = false } = useLocation()?.state || {};
+    const { sAuthToken, iBoardId, sPrivateCode, fallbackPath = '/lobby', isTutorialMode = false } = useLocation()?.state || {};
     const navigate = useNavigate();
     const gameRef = useRef(null);
     const phaserGameRef = useRef(null);
@@ -97,7 +97,7 @@ function Game({ isPausedExternally = false }) {
             sAuthToken: sAuthToken,
             iBoardId: iBoardId,
             sPrivateCode: sPrivateCode,
-            isGuestTutorial,
+            isTutorialMode,
             fallbackPath,
         }
         game.scene.add('Level', Level);
@@ -112,7 +112,7 @@ function Game({ isPausedExternally = false }) {
             game.destroy(true);
         };
 
-    }, [fallbackPath, iBoardId, isGuestTutorial, navigate, sAuthToken, sPrivateCode]);
+    }, [fallbackPath, iBoardId, isTutorialMode, navigate, sAuthToken, sPrivateCode]);
 
     useEffect(() => {
         const game = phaserGameRef.current;

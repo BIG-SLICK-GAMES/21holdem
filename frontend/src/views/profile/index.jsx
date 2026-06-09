@@ -185,10 +185,11 @@ const Profile = () => {
     return (
         <>
             <div className="profile" style={{ '--profile-page-icon': `url("${iconSettings}")` }}>
-                <div className="profile-settings-hero" aria-hidden="true">
-                    <img src={iconSettings} alt="" />
+                <div className="profile-simple-topbar">
+                    <button type="button" className="profile-back-link" onClick={() => navigate('/lobby')}>
+                        Back to Lobby
+                    </button>
                 </div>
-                <div className="profile-header">SETTINGS</div>
                 <Form className="profile-content" onSubmit={handleSubmit(onSubmit)}>
                     {
                         isProfileDataLoading ? (

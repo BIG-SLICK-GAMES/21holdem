@@ -5,7 +5,7 @@ import { useMutation } from 'react-query';
 import { register as registerAPI } from 'query/login.query';
 import { Link, useNavigate } from 'react-router-dom';
 import { ReactToastify } from 'shared/utils';
-import { Button, Col, Form, Row, Tooltip } from 'react-bootstrap';
+import { Col, Form, Row, Tooltip } from 'react-bootstrap';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import eye from '../../../assets/images/icons/eye_icon.svg';
 import eye_slash_icon from '../../../assets/images/icons/eye_slash_icon.svg';
@@ -45,16 +45,6 @@ const Register = () => {
 
         mutate(payload);
     };
-
-    const renderGuestPanel = () => (
-        <div className='auth-guest-panel'>
-            <div className='auth-guest-actions'>
-                <Button type='button' className='guest-entry-btn' onClick={() => navigate('/guest')}>
-                    Guest
-                </Button>
-            </div>
-        </div>
-    );
 
     return (
         <div className='sign-in-container'>
@@ -185,7 +175,6 @@ const Register = () => {
                                             </button>
                                         </form>
                                     </div>
-                                    {renderGuestPanel()}
                                 </div>
                             </div>
                         </Col>

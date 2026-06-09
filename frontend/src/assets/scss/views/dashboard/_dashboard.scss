@@ -246,9 +246,27 @@ $nav-button-font:   13px;
 /* Dashboard Hub Studio Override */
 .dashboard-hub {
     &__hero {
+        position: relative;
         gap: 12px;
         padding: 0 0 18px;
-        overflow: hidden;
+        border-radius: 0 0 28px 28px;
+        overflow: visible;
+        filter: drop-shadow(0 18px 20px rgba(0, 0, 0, 0.42));
+
+        &::after {
+            content: '';
+            position: absolute;
+            left: -18px;
+            right: -18px;
+            bottom: -16px;
+            height: 36px;
+            border-radius: 0 0 50% 50%;
+            background:
+                radial-gradient(ellipse at 50% 0%, rgba(0, 0, 0, 0.54) 0%, rgba(0, 0, 0, 0.3) 42%, rgba(0, 0, 0, 0) 72%);
+            filter: blur(7px);
+            pointer-events: none;
+            z-index: -1;
+        }
     }
 
     &__utility-strip {
@@ -798,7 +816,7 @@ $nav-button-font:   13px;
                 rgba(170, 224, 255, 0) 10px,
                 rgba(170, 224, 255, 0) 22px
             );
-        animation: guest-grid-drift 18s linear infinite;
+        animation: lobby-grid-drift 18s linear infinite;
     }
 
     &__lobby-atmosphere {
@@ -824,7 +842,7 @@ $nav-button-font:   13px;
             left: 50%;
             background: linear-gradient(120deg, rgba(99, 190, 255, 0.36) 0%, rgba(117, 255, 208, 0.18) 42%, rgba(99, 190, 255, 0) 100%);
             transform: translateX(-50%) rotate(-6deg);
-            animation: guest-aurora-sway 18s ease-in-out infinite;
+            animation: lobby-aurora-sway 18s ease-in-out infinite;
         }
 
         &::after {
@@ -833,7 +851,7 @@ $nav-button-font:   13px;
             right: -140px;
             top: 18%;
             background: radial-gradient(circle, rgba(255, 205, 102, 0.18) 0%, rgba(255, 205, 102, 0) 70%);
-            animation: guest-orb-drift-two 20s ease-in-out infinite;
+            animation: lobby-orb-drift-two 20s ease-in-out infinite;
         }
     }
 
@@ -855,7 +873,7 @@ $nav-button-font:   13px;
         top: 8%;
         left: -6%;
         background: radial-gradient(circle, rgba(93, 184, 255, 0.34) 0%, rgba(93, 184, 255, 0.08) 44%, rgba(93, 184, 255, 0) 76%);
-        animation: guest-orb-drift-one 12s ease-in-out infinite;
+        animation: lobby-orb-drift-one 12s ease-in-out infinite;
     }
 
     &__lobby-orb--two {
@@ -864,7 +882,7 @@ $nav-button-font:   13px;
         top: 42%;
         right: 8%;
         background: radial-gradient(circle, rgba(125, 255, 205, 0.24) 0%, rgba(125, 255, 205, 0.06) 46%, rgba(125, 255, 205, 0) 76%);
-        animation: guest-orb-drift-two 14s ease-in-out infinite;
+        animation: lobby-orb-drift-two 14s ease-in-out infinite;
     }
 
     &__lobby-orb--three {
@@ -873,7 +891,45 @@ $nav-button-font:   13px;
         bottom: 8%;
         left: 24%;
         background: radial-gradient(circle, rgba(255, 193, 93, 0.2) 0%, rgba(255, 193, 93, 0.04) 44%, rgba(255, 193, 93, 0) 78%);
-        animation: guest-orb-drift-three 11s ease-in-out infinite;
+        animation: lobby-orb-drift-three 11s ease-in-out infinite;
+    }
+
+    &__scene-watermark {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+        overflow: hidden;
+        opacity: 0;
+        transition: opacity 0.35s ease;
+
+        &::before,
+        &::after {
+            content: '';
+            position: absolute;
+            pointer-events: none;
+        }
+
+        &::before {
+            inset: -9% -12%;
+            background: var(--dashboard-page-icon) center 36% / min(94vw, 980px) auto no-repeat;
+            opacity: 0.12;
+            filter:
+                saturate(1.24)
+                contrast(1.06)
+                drop-shadow(0 44px 80px rgba(var(--dashboard-theme-rgb, 58, 198, 255), 0.22));
+            mix-blend-mode: screen;
+            transform: translate3d(0, 0, 0) scale(1.02);
+        }
+
+        &::after {
+            inset: 0;
+            background:
+                radial-gradient(circle at 50% 26%, rgba(var(--dashboard-theme-accent-rgb, 126, 245, 207), 0.18) 0%, rgba(var(--dashboard-theme-accent-rgb, 126, 245, 207), 0) 34%),
+                radial-gradient(circle at 50% 58%, rgba(var(--dashboard-theme-rgb, 58, 198, 255), 0.2) 0%, rgba(var(--dashboard-theme-rgb, 58, 198, 255), 0) 52%),
+                linear-gradient(180deg, rgba(1, 7, 14, 0.14) 0%, rgba(1, 7, 14, 0.58) 100%);
+            opacity: 0.88;
+        }
     }
 
     &__lobby-beam {
@@ -893,7 +949,7 @@ $nav-button-font:   13px;
         transform: translateX(-50%);
         opacity: 0.34;
         filter: blur(24px);
-        animation: guest-beam-rotate 14s linear infinite;
+        animation: lobby-beam-rotate 14s linear infinite;
     }
 
     &__welcome-character {
@@ -2053,7 +2109,7 @@ $nav-button-font:   13px;
                 rgba(170, 224, 255, 0) 22px
             );
         opacity: 1;
-        animation: guest-grid-drift 18s linear infinite;
+        animation: lobby-grid-drift 18s linear infinite;
     }
 
     &__lobby-atmosphere {
@@ -2080,7 +2136,7 @@ $nav-button-font:   13px;
             left: 50%;
             background: linear-gradient(120deg, rgba(99, 190, 255, 0.36) 0%, rgba(117, 255, 208, 0.18) 42%, rgba(99, 190, 255, 0) 100%);
             transform: translateX(-50%) rotate(-6deg);
-            animation: guest-aurora-sway 18s ease-in-out infinite;
+            animation: lobby-aurora-sway 18s ease-in-out infinite;
         }
 
         &::after {
@@ -2089,7 +2145,7 @@ $nav-button-font:   13px;
             right: -140px;
             top: 18%;
             background: radial-gradient(circle, rgba(255, 205, 102, 0.18) 0%, rgba(255, 205, 102, 0) 70%);
-            animation: guest-orb-drift-two 20s ease-in-out infinite;
+            animation: lobby-orb-drift-two 20s ease-in-out infinite;
         }
     }
 
@@ -2111,7 +2167,7 @@ $nav-button-font:   13px;
         top: 8%;
         left: -6%;
         background: radial-gradient(circle, rgba(93, 184, 255, 0.34) 0%, rgba(93, 184, 255, 0.08) 44%, rgba(93, 184, 255, 0) 76%);
-        animation: guest-orb-drift-one 12s ease-in-out infinite;
+        animation: lobby-orb-drift-one 12s ease-in-out infinite;
     }
 
     &__lobby-orb--two {
@@ -2120,7 +2176,7 @@ $nav-button-font:   13px;
         top: 42%;
         right: 8%;
         background: radial-gradient(circle, rgba(125, 255, 205, 0.24) 0%, rgba(125, 255, 205, 0.06) 46%, rgba(125, 255, 205, 0) 76%);
-        animation: guest-orb-drift-two 14s ease-in-out infinite;
+        animation: lobby-orb-drift-two 14s ease-in-out infinite;
     }
 
     &__lobby-orb--three {
@@ -2129,7 +2185,7 @@ $nav-button-font:   13px;
         bottom: 8%;
         left: 24%;
         background: radial-gradient(circle, rgba(255, 193, 93, 0.2) 0%, rgba(255, 193, 93, 0.04) 44%, rgba(255, 193, 93, 0) 78%);
-        animation: guest-orb-drift-three 11s ease-in-out infinite;
+        animation: lobby-orb-drift-three 11s ease-in-out infinite;
     }
 
     &__lobby-beam {
@@ -2149,7 +2205,7 @@ $nav-button-font:   13px;
         transform: translateX(-50%);
         opacity: 0.34;
         filter: blur(24px);
-        animation: guest-beam-rotate 14s linear infinite;
+        animation: lobby-beam-rotate 14s linear infinite;
     }
 
     &__welcome-character {
@@ -3288,7 +3344,7 @@ $nav-button-font:   13px;
     }
 }
 
-@keyframes guest-grid-drift {
+@keyframes lobby-grid-drift {
     0% {
         transform: translate3d(0, 0, 0);
     }
@@ -3297,7 +3353,7 @@ $nav-button-font:   13px;
     }
 }
 
-@keyframes guest-orb-drift-one {
+@keyframes lobby-orb-drift-one {
     0%,
     100% {
         transform: translate3d(0, 0, 0) scale(1);
@@ -3307,7 +3363,7 @@ $nav-button-font:   13px;
     }
 }
 
-@keyframes guest-orb-drift-two {
+@keyframes lobby-orb-drift-two {
     0%,
     100% {
         transform: translate3d(0, 0, 0) scale(1);
@@ -3317,7 +3373,7 @@ $nav-button-font:   13px;
     }
 }
 
-@keyframes guest-orb-drift-three {
+@keyframes lobby-orb-drift-three {
     0%,
     100% {
         transform: translate3d(0, 0, 0) scale(1);
@@ -3327,7 +3383,7 @@ $nav-button-font:   13px;
     }
 }
 
-@keyframes guest-aurora-sway {
+@keyframes lobby-aurora-sway {
     0%,
     100% {
         transform: translateX(-50%) rotate(-6deg) scale(1);
@@ -3337,7 +3393,7 @@ $nav-button-font:   13px;
     }
 }
 
-@keyframes guest-beam-rotate {
+@keyframes lobby-beam-rotate {
     0% {
         transform: translateX(-50%) rotate(0deg);
     }
@@ -6672,11 +6728,11 @@ $nav-button-font:   13px;
         z-index: 1;
         display: grid;
         grid-template-columns: minmax(0, 1fr);
-        grid-template-rows: minmax(123px, auto);
+        grid-template-rows: minmax(104px, auto);
         align-items: center;
-        min-height: 141px;
+        min-height: 118px;
         padding: 0;
-        overflow: visible;
+        overflow: hidden;
 
         &::before {
             content: '';
@@ -6702,17 +6758,37 @@ $nav-button-font:   13px;
         }
     }
 
+    &__icon-carousel--settings-topbar {
+        min-height: 132px;
+        width: 100%;
+        border-radius: 20px;
+        border: 1px solid rgba(var(--dashboard-theme-accent-rgb), 0.22);
+        background:
+            radial-gradient(ellipse at 50% 72%, rgba(var(--dashboard-theme-accent-rgb), 0.16), transparent 54%),
+            linear-gradient(180deg, rgba(5, 13, 25, 0.62), rgba(2, 7, 14, 0.82));
+        box-shadow:
+            inset 0 1px 0 rgba(255, 255, 255, 0.08),
+            0 18px 34px rgba(0, 0, 0, 0.28);
+
+        .dashboard-hub__carousel-label {
+            top: 0;
+        }
+
+        .dashboard-hub__carousel-track {
+            height: 126px;
+        }
+    }
+
     &__carousel-track {
         position: relative;
         z-index: 1;
-        height: clamp(123px, 25vw, 174px);
+        height: clamp(96px, 22vw, 136px);
         display: flex;
         align-items: center;
         justify-content: center;
         isolation: isolate;
-        perspective: 900px;
-        perspective-origin: 50% 50%;
-        transform-style: preserve-3d;
+        perspective: none;
+        transform-style: flat;
         touch-action: none;
         user-select: none;
         cursor: grab;
@@ -6732,8 +6808,8 @@ $nav-button-font:   13px;
         position: absolute;
         left: 50%;
         top: 50%;
-        width: clamp(137px, 34vw, 211px);
-        height: clamp(137px, 34vw, 211px);
+        width: clamp(70px, 19vw, 112px);
+        height: clamp(70px, 19vw, 112px);
         padding: 0;
         border: 0;
         border-radius: 0;
@@ -6773,16 +6849,8 @@ $nav-button-font:   13px;
             filter: brightness(1.08);
         }
 
-        &.is-near {
+        &.is-faded {
             pointer-events: auto;
-        }
-
-        &.is-mid {
-            pointer-events: auto;
-        }
-
-        &.is-back {
-            pointer-events: none;
         }
 
         &.is-active {
@@ -6818,7 +6886,7 @@ $nav-button-font:   13px;
     &__carousel-label {
         position: absolute;
         left: 50%;
-        top: -2px;
+        top: -8px;
         bottom: auto;
         z-index: 220;
         display: inline-grid;
@@ -6829,7 +6897,7 @@ $nav-button-font:   13px;
         pointer-events: none;
         color: #ffffff;
         font-family: 'TT Commons';
-        font-size: clamp(30px, 8.2vw, 58px);
+        font-size: clamp(24px, 6.5vw, 42px);
         font-weight: 900;
         line-height: 0.78;
         text-align: center;
@@ -6901,16 +6969,87 @@ $nav-button-font:   13px;
         }
     }
 
+    &__tab-body--bsg-games {
+        display: grid;
+        min-height: 0;
+    }
+
+    &__bsg-site-window {
+        --bsg-site-scale: 0.78;
+        position: relative;
+        display: grid;
+        min-width: 0;
+        height: clamp(330px, 52vh, 480px);
+        min-height: 0;
+        border-radius: 18px;
+        border: 1px solid rgba(var(--dashboard-theme-accent-rgb), 0.26);
+        background: rgba(2, 8, 16, 0.9);
+        box-shadow:
+            inset 0 1px 0 rgba(255, 255, 255, 0.08),
+            0 24px 52px rgba(0, 0, 0, 0.34);
+        overflow: hidden;
+
+        iframe {
+            display: block;
+            width: calc(100% / var(--bsg-site-scale));
+            height: calc(clamp(330px, 52vh, 480px) / var(--bsg-site-scale));
+            border: 0;
+            background: #ffffff;
+            transform: scale(var(--bsg-site-scale));
+            transform-origin: 0 0;
+        }
+    }
+
+    &__bsg-coming-soon {
+        position: absolute;
+        inset: 0;
+        z-index: 2;
+        display: grid;
+        place-content: center;
+        justify-items: center;
+        gap: 8px;
+        padding: 24px;
+        background:
+            radial-gradient(circle at 50% 42%, rgba(255, 221, 132, 0.2), transparent 34%),
+            linear-gradient(180deg, rgba(2, 8, 16, 0.5), rgba(2, 8, 16, 0.86));
+        color: #ffffff;
+        text-align: center;
+        text-transform: uppercase;
+        pointer-events: auto;
+        backdrop-filter: blur(3px) saturate(118%);
+
+        span {
+            color: rgba(224, 243, 255, 0.84);
+            font-size: 11px;
+            font-weight: 900;
+            letter-spacing: 0.18em;
+            line-height: 1;
+        }
+
+        strong {
+            color: #ffe08a;
+            font-family: "Neue Plak Condensed";
+            font-size: clamp(42px, 12vw, 78px);
+            font-weight: 900;
+            letter-spacing: 0;
+            line-height: 0.9;
+            text-shadow:
+                0 2px 0 rgba(73, 42, 0, 0.9),
+                0 16px 34px rgba(0, 0, 0, 0.5),
+                0 0 24px rgba(255, 193, 77, 0.34);
+        }
+    }
+
     @include media-min(md) {
         &__icon-carousel {
             grid-template-columns: minmax(0, 1fr);
-            grid-template-rows: minmax(162px, auto);
-            min-height: 181px;
+            grid-template-rows: minmax(126px, auto);
+            min-height: 138px;
             padding: 0;
         }
 
         &__carousel-track {
-            height: 163px;
+            height: 122px;
         }
 
         &__viewport-window::before {
@@ -6922,13 +7061,13 @@ $nav-button-font:   13px;
 
     @include media-min(lg) {
         &__icon-carousel {
-            grid-template-rows: minmax(168px, auto);
-            min-height: 186px;
+            grid-template-rows: minmax(132px, auto);
+            min-height: 144px;
             padding: 0;
         }
 
         &__carousel-track {
-            height: 157px;
+            height: 126px;
         }
 
         &__viewport-window::before {
@@ -7039,6 +7178,30 @@ $nav-button-font:   13px;
         display: none;
     }
 
+    .dashboard-hub__scene-watermark {
+        opacity: 1;
+
+        &::before {
+            background-position: center clamp(88px, 18vh, 170px);
+            background-size: min(118vw, 1240px) auto;
+            opacity: 0.18;
+            filter:
+                saturate(1.35)
+                contrast(1.08)
+                brightness(1.06)
+                drop-shadow(0 54px 90px rgba(var(--dashboard-theme-rgb), 0.3));
+        }
+
+        &::after {
+            background:
+                radial-gradient(circle at 50% 22%, rgba(var(--dashboard-theme-accent-rgb), 0.22) 0%, rgba(var(--dashboard-theme-accent-rgb), 0) 34%),
+                radial-gradient(circle at 50% 50%, rgba(var(--dashboard-theme-rgb), 0.22) 0%, rgba(var(--dashboard-theme-rgb), 0.08) 36%, rgba(var(--dashboard-theme-rgb), 0) 62%),
+                radial-gradient(circle at 50% 82%, rgba(var(--dashboard-theme-soft-rgb), 0.34) 0%, rgba(var(--dashboard-theme-soft-rgb), 0) 46%),
+                linear-gradient(180deg, rgba(1, 7, 14, 0.08) 0%, rgba(1, 7, 14, 0.64) 100%);
+            opacity: 0.96;
+        }
+    }
+
     .dashboard-hub__hero {
         background: transparent;
         border: 0;
@@ -7050,11 +7213,11 @@ $nav-button-font:   13px;
     }
 
     .dashboard-hub__icon-carousel {
-        min-height: clamp(141px, 30vw, 192px);
+        min-height: clamp(110px, 24vw, 142px);
 
         &::before {
-            width: min(66vw, 416px);
-            height: min(21vw, 106px);
+            width: min(82vw, 520px);
+            height: min(18vw, 82px);
             background:
                 radial-gradient(ellipse at center, rgba(0, 0, 0, 0.88) 0%, rgba(12, 17, 26, 0.62) 40%, rgba(var(--dashboard-theme-rgb), 0.2) 62%, rgba(0, 0, 0, 0) 80%);
             filter: blur(18px);
@@ -7065,10 +7228,10 @@ $nav-button-font:   13px;
             content: '';
             position: absolute;
             left: 50%;
-            top: 64%;
+            top: 62%;
             z-index: 0;
-            width: min(62vw, 400px);
-            height: min(14vw, 74px);
+            width: min(82vw, 520px);
+            height: min(12vw, 56px);
             border-radius: 50%;
             background:
                 linear-gradient(90deg, rgba(var(--dashboard-theme-rgb), 0) 0%, rgba(var(--dashboard-theme-accent-rgb), 0.24) 48%, rgba(var(--dashboard-theme-rgb), 0) 100%);

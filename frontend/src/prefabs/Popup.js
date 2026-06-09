@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import config from '../scripts/config';
 import Button from './Button';
 import assets from '../scripts/assets';
+import { GAME_BROWSER_EVENTS } from '../scripts/gameEvents';
 
 const POPUP_W = 680;
 const POPUP_H = 440;
@@ -118,6 +119,13 @@ export default class Popup extends Phaser.GameObjects.Container {
         }
         this.title.setText(title);
         this.message.setText(message);
+        this.setDepth(10000);
+        this.scene.children.bringToTop(this);
+        if (typeof window !== 'undefined') {
+            window.dispatchEvent(new CustomEvent(GAME_BROWSER_EVENTS.PHASER_MODAL, {
+                detail: { open: true },
+            }));
+        }
         this.setVisible(true);
         this.scene.tweens.add({
             targets: this,
@@ -132,6 +140,11 @@ export default class Popup extends Phaser.GameObjects.Container {
         this.setVisible(false);
         this.setScale(0);
         this.bg.setVisible(false);
+        if (typeof window !== 'undefined') {
+            window.dispatchEvent(new CustomEvent(GAME_BROWSER_EVENTS.PHASER_MODAL, {
+                detail: { open: false },
+            }));
+        }
         this.scene.oHeader?.btn_exit?.btn_image?.setInteractive?.();
         this.container_confirm.list.forEach(btn => btn.btn_image?.setInteractive?.());
         this.container_prpmpt.list.forEach(btn => btn.btn_image?.setInteractive?.());

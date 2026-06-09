@@ -38,6 +38,7 @@ export default class ProfileRenderer extends Phaser.GameObjects.Container {
     this.shell = scene.add.container(0, this.profileOffsetY);
     this.backdrop = scene.add.graphics();
     this.avatar = scene.add.image(0, 0, assets.profile_picture).setOrigin(0.5);
+    this.applyAvatarTextureFilter(assets.profile_picture);
     this.initialsText = scene.add
       .text(0, 0, "--", {
         fontSize: isLocalSeat ? '41px' : '32px',
@@ -95,7 +96,7 @@ export default class ProfileRenderer extends Phaser.GameObjects.Container {
       this.showingInitials = false;
       this.avatar.setVisible(true);
       this.initialsText.setVisible(false);
-      this.avatar.setTexture(assets.profile_picture);
+      this.setAvatarTexture(assets.profile_picture);
       this.loadRuntimeTexture(source, name);
       this.redraw();
       return;
@@ -112,7 +113,7 @@ export default class ProfileRenderer extends Phaser.GameObjects.Container {
 
     const builtInTextureKey = getAvatarTextureKey(src, seed);
     if (builtInTextureKey && this.scene.textures.exists(builtInTextureKey)) {
-      this.avatar.setTexture(builtInTextureKey);
+      this.setAvatarTexture(builtInTextureKey);
       this.avatar.setVisible(true);
       this.initialsText.setVisible(false);
       this.redraw();
@@ -121,7 +122,7 @@ export default class ProfileRenderer extends Phaser.GameObjects.Container {
 
     const runtimeTextureKey = this.getRuntimeTextureKey(src);
     if (this.scene.textures.exists(runtimeTextureKey)) {
-      this.avatar.setTexture(runtimeTextureKey);
+      this.setAvatarTexture(runtimeTextureKey);
       this.avatar.setVisible(true);
       this.initialsText.setVisible(false);
       this.redraw();
@@ -167,7 +168,7 @@ export default class ProfileRenderer extends Phaser.GameObjects.Container {
       this.pendingTextureKey = "";
       if (!this.avatar || !this.scene.textures.exists(runtimeTextureKey)) return;
 
-      this.avatar.setTexture(runtimeTextureKey);
+      this.setAvatarTexture(runtimeTextureKey);
       this.avatar.setVisible(true);
       this.initialsText.setVisible(false);
       this.redraw();
@@ -176,6 +177,16 @@ export default class ProfileRenderer extends Phaser.GameObjects.Container {
       this.pendingTextureKey = "";
     });
     this.scene.load.start();
+  }
+
+  setAvatarTexture(textureKey) {
+    this.avatar.setTexture(textureKey);
+    this.applyAvatarTextureFilter(textureKey);
+  }
+
+  applyAvatarTextureFilter(textureKey) {
+    const texture = this.scene.textures.get(textureKey);
+    texture?.setFilter?.(Phaser.Textures.FilterMode.LINEAR);
   }
 
   redraw() {

@@ -267,12 +267,12 @@ export default class Preload extends Phaser.Scene {
             ease: 'Sine.easeInOut',
         });
     }
-    init({ sAuthToken, iBoardId, sPrivateCode, fallbackPath, isGuestTutorial = false }) {
+    init({ sAuthToken, iBoardId, sPrivateCode, fallbackPath, isTutorialMode = false }) {
         this.sAuthToken = sAuthToken;
         this.iBoardId = iBoardId;
         this.sPrivateCode = sPrivateCode;
         this.fallbackPath = fallbackPath;
-        this.isGuestTutorial = Boolean(isGuestTutorial);
+        this.isTutorialMode = Boolean(isTutorialMode);
     }
     // preload() runs once. Keep it fast; only load what you need.
     preload() {
@@ -283,7 +283,7 @@ export default class Preload extends Phaser.Scene {
             iBoardId: this.iBoardId,
             sPrivateCode: this.sPrivateCode,
             fallbackPath: this.fallbackPath,
-            isGuestTutorial: this.isGuestTutorial,
+            isTutorialMode: this.isTutorialMode,
         };
         this.load.on(Phaser.Loader.Events.COMPLETE, () => {
             this.cameras.main.fadeOut(400);

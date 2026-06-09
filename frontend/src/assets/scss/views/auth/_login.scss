@@ -455,7 +455,7 @@
     }
 
     &__signup-link,
-    &__guest-link {
+    &__secondary-link {
         margin: 0;
         padding: 0;
         border: 0;
@@ -472,7 +472,7 @@
         text-shadow: 0 0 12px rgba(255, 213, 75, 0.44);
     }
 
-    &__guest-link {
+    &__secondary-link {
         color: #8fe5ff;
         text-shadow: 0 0 12px rgba(89, 210, 255, 0.34);
     }
@@ -896,7 +896,7 @@
         &__forgot,
         &__signup,
         &__signup-link,
-        &__guest-link {
+        &__secondary-link {
             font-size: 12px;
         }
 
@@ -1017,10 +1017,66 @@
 
 .auth-main:has(.login-background-only) {
     background: #020915 !important;
+    width: 100%;
+    height: 100dvh;
+    min-height: 100dvh;
+    overflow: hidden !important;
 
     .auth-layout-background,
     footer {
         display: none !important;
+    }
+}
+
+.login-background-only {
+    height: 100dvh;
+    min-height: 0;
+    max-height: 100dvh;
+}
+
+@media (max-height: 740px) {
+    .login-background-only {
+        background-position: center 52px;
+
+        &__promo {
+            top: 8px;
+            min-height: 42px;
+            padding: 7px 11px 6px;
+        }
+
+        &__promo-kicker {
+            font-size: 10px;
+        }
+
+        &__promo-main {
+            font-size: clamp(22px, 6.6vw, 29px);
+        }
+
+        &__fields {
+            top: 51%;
+            gap: 8px;
+            width: min(calc(100vw - 34px), 352px);
+        }
+
+        &__field {
+            min-height: 44px;
+            padding: 9px 13px 8px;
+            font-size: 15px;
+        }
+
+        &__field-actions {
+            min-height: 20px;
+        }
+
+        &__submit {
+            min-height: 44px;
+            padding: 8px 14px 7px;
+            font-size: 23px;
+        }
+
+        &__signup {
+            margin-top: 0;
+        }
     }
 }
 
@@ -1136,7 +1192,7 @@
                     gap: 14px;
                     margin-top: 24px;
 
-                    .guest-entry-btn,
+                    .primary-entry-btn,
                     .about-entry-btn {
                         min-width: 180px;
                         border-radius: 999px;
@@ -1154,7 +1210,7 @@
                         }
                     }
 
-                    .guest-entry-btn {
+                    .primary-entry-btn {
                         background: linear-gradient(160deg, #2a4a6e 0%, #142235 100%);
                         color: #f6cf74;
                         border: 1px solid rgba(202, 162, 44, 0.55) !important;
@@ -1532,19 +1588,19 @@
                         }
                     }
 
-                    .auth-guest-panel {
+                    .auth-secondary-panel {
                         margin-top: 22px;
                         border-top: 1px solid rgba(137, 213, 255, 0.2);
                         padding-top: 16px;
                         text-align: center;
 
-                        .auth-guest-actions {
+                        .auth-secondary-actions {
                             display: flex;
                             justify-content: center;
                             flex-wrap: wrap;
                             gap: 10px;
 
-                            .guest-entry-btn {
+                            .primary-entry-btn {
                                 min-width: 170px;
                                 border-radius: 999px;
                                 border: 0;
@@ -1561,7 +1617,7 @@
                                 }
                             }
 
-                            .guest-entry-btn {
+                            .primary-entry-btn {
                                 background: linear-gradient(160deg, #2a4a6e 0%, #142235 100%);
                                 color: #f6cf74;
                                 border: 1px solid rgba(202, 162, 44, 0.55) !important;
@@ -1835,7 +1891,7 @@
                                 margin-top: 14px;
 
                                 .register-entry-btn,
-                                .guest-entry-btn {
+                                .primary-entry-btn {
                                     min-width: 0;
                                     width: 100%;
                                     min-height: 60px;
@@ -1882,7 +1938,7 @@
                                     }
                                 }
 
-                                .guest-entry-btn {
+                                .primary-entry-btn {
                                     border: 1px solid rgba(108, 168, 255, 0.9) !important;
                                     background: rgba(5, 10, 18, 0.38);
                                     color: #8dbdff;
@@ -1993,7 +2049,7 @@
                     text-align: center;
                 }
 
-                .auth-guest-panel {
+                .auth-secondary-panel {
                     margin-top: 18px;
                     padding-top: 0;
                     border-top: 0;
@@ -2191,7 +2247,7 @@
                     }
 
                     .auth-intro-actions {
-                        .guest-entry-btn,
+                        .primary-entry-btn,
                         .about-entry-btn {
                             font-size: 20px;
                         }
@@ -2276,7 +2332,7 @@
                     }
 
                     .auth-intro-actions {
-                        .guest-entry-btn,
+                        .primary-entry-btn,
                         .about-entry-btn {
                             font-size: 20px;
                         }
@@ -2354,13 +2410,13 @@
                             }
                         }
 
-                        .auth-guest-panel {
+                        .auth-secondary-panel {
                             p {
                                 font-size: 15px;
                             }
 
-                            .auth-guest-actions {
-                                .guest-entry-btn,
+                            .auth-secondary-actions {
+                                .primary-entry-btn,
                                 .about-entry-btn {
                                     font-size: 18px;
                                 }
@@ -2417,7 +2473,7 @@
                     .auth-intro-actions {
                         gap: 10px;
 
-                        .guest-entry-btn,
+                        .primary-entry-btn,
                         .about-entry-btn {
                             width: 100%;
                             min-width: 0;
@@ -2506,13 +2562,13 @@
                             }
                         }
 
-                        .auth-guest-panel {
+                        .auth-secondary-panel {
                             p {
                                 font-size: 14px;
                             }
 
-                            .auth-guest-actions {
-                                .guest-entry-btn,
+                            .auth-secondary-actions {
+                                .primary-entry-btn,
                                 .about-entry-btn {
                                     width: 100%;
                                     min-width: 0;
@@ -2625,7 +2681,7 @@
                             }
                         }
 
-                        .auth-guest-panel {
+                        .auth-secondary-panel {
                             margin-top: 16px;
                             padding-top: 14px;
 
@@ -2634,8 +2690,8 @@
                                 margin-bottom: 10px;
                             }
 
-                            .auth-guest-actions {
-                                .guest-entry-btn,
+                            .auth-secondary-actions {
+                                .primary-entry-btn,
                                 .about-entry-btn {
                                     width: 100%;
                                     font-size: 16px;
@@ -2851,7 +2907,7 @@
                     }
                 }
 
-                    .auth-guest-panel {
+                    .auth-secondary-panel {
                     width: 100%;
                     max-width: 430px;
                     margin: 18px auto 0;
@@ -2859,12 +2915,12 @@
                     border-top: 1px solid rgba(137, 213, 255, 0.16);
                     text-align: center;
 
-                    .auth-guest-actions {
+                    .auth-secondary-actions {
                         display: flex;
                         justify-content: center;
                     }
 
-                    .guest-entry-btn {
+                    .primary-entry-btn {
                         width: min(100%, 270px);
                         min-height: 50px;
                         border-radius: 999px;
@@ -2878,7 +2934,7 @@
                         text-transform: uppercase;
                     }
 
-                    .auth-guest-error {
+                    .auth-secondary-error {
                         margin-top: 10px;
                         color: #ffd1d1;
                         font-size: 13px;
@@ -2991,7 +3047,7 @@
 
                 .sign-in-btn,
                 .register-entry-btn,
-                .guest-entry-btn {
+                .primary-entry-btn {
                     width: 100% !important;
                     max-width: none !important;
                     min-height: 52px !important;
@@ -3004,7 +3060,7 @@
                     margin-top: 0 !important;
                 }
 
-                .auth-guest-panel {
+                .auth-secondary-panel {
                     max-width: 100% !important;
                     margin-top: 14px !important;
                     padding-top: 0 !important;
@@ -3131,7 +3187,7 @@
 
                     .sign-in-btn,
                     .register-entry-btn,
-                    .guest-entry-btn {
+                    .primary-entry-btn {
                         min-height: 50px !important;
                         font-size: 20px !important;
                     }
@@ -3213,7 +3269,7 @@
 
                 .sign-in-btn,
                 .register-entry-btn,
-                .guest-entry-btn {
+                .primary-entry-btn {
                     margin: 0 !important;
                 }
 
@@ -3286,7 +3342,7 @@
 
                     .sign-in-btn,
                     .register-entry-btn,
-                    .guest-entry-btn {
+                    .primary-entry-btn {
                         width: 100% !important;
                         min-height: 50px !important;
                     }
@@ -3381,7 +3437,7 @@
 
                 .sign-in-btn,
                 .register-entry-btn,
-                .guest-entry-btn {
+                .primary-entry-btn {
                     min-height: 48px !important;
                     border-radius: 12px !important;
                     font-size: 21px !important;
@@ -3391,7 +3447,7 @@
                     gap: 10px !important;
                 }
 
-                .auth-guest-panel {
+                .auth-secondary-panel {
                     margin-top: 10px !important;
                 }
             }
@@ -3493,7 +3549,7 @@
 
                     .sign-in-btn,
                     .register-entry-btn,
-                    .guest-entry-btn {
+                    .primary-entry-btn {
                         min-height: 44px !important;
                         font-size: 18px !important;
                     }
@@ -3693,7 +3749,7 @@
 
                 .sign-in-btn,
                 .register-entry-btn,
-                .guest-entry-btn {
+                .primary-entry-btn {
                     width: 100% !important;
                     max-width: none !important;
                     min-height: 44px !important;
@@ -3711,7 +3767,7 @@
                     margin: 0 !important;
                 }
 
-                .auth-guest-panel {
+                .auth-secondary-panel {
                     margin: 8px 0 0 !important;
                     padding: 0 !important;
                     border: 0 !important;
@@ -3790,7 +3846,7 @@
 
                     .sign-in-btn,
                     .register-entry-btn,
-                    .guest-entry-btn {
+                    .primary-entry-btn {
                         min-height: 40px !important;
                         font-size: 16px !important;
                     }

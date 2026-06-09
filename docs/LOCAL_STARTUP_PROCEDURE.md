@@ -1,113 +1,129 @@
 # Local Startup Procedure
 
-Last verified: 2026-03-29
+Last verified: 2026-06-09
 
-Safe data note:
+This is the current safe startup path for testing 21 Hold'em from a phone on the same network as the development PC.
 
-- Do not point local services at Atlas.
-- If you need fresh data, use the dump workflow in [docs/LOCAL_DUMP_WORKFLOW.md](d:/BIGSLICKGAMES/games/Bigslickgames/docs/LOCAL_DUMP_WORKFLOW.md).
+## Current Shape
 
-This is the safe local bring-up procedure for this workspace after a PC restart.
+- Docker is used for local MongoDB and Redis only.
+- The official Docker compose file is `D:\BSG DEV\DEV-Control\docker\docker-compose.dev.yml`.
+- The backend runs from `D:\BSG DEV\Projects\21Holdem\backend` on port `4000`.
+- The frontend runs from `D:\BSG DEV\Projects\21Holdem\frontend` on port `3003`.
+- The phone opens the frontend through the PC LAN IP.
+- The active local database is `bigslickgames_dev_21holdem`.
 
-Workspace root:
-
-- `D:\BIGSLICKGAMES\games\Bigslickgames`
-
-Use this when the stack was working before a reboot and just needs to be brought back up without editing tracked files.
-
-## Goal
-
-Bring the local stack back up with the same shape used in the last working session:
-
-- MongoDB in Docker on `27017`
-- Redis in Docker on `6379`
-- Game backend on `4000`
-- Admin backend on `3051`
-- Main frontend on `3002`
-- Admin frontend on `3003`
+Do not use the old `D:\BIGSLICKGAMES\games\Bigslickgames` startup path for this project.
 
 ## Guardrails
 
-Do this first before touching code:
+- Do not touch EC2.
+- Do not deploy.
+- Do not point local apps at Atlas.
+- Do not point local apps at `bigslickgames_live`.
+- Do not delete Docker volumes during normal recovery.
+- Do not use `D:\BSG DEV\SharedDevServices` for this stack.
+- Keep real `.env` files ignored by Git.
 
-- Do not rewrite `.env` files just to recover from a reboot.
-- Do not edit frontend API files just to get a dev server open.
-- Do not rebuild or rework Docker Compose unless Docker containers are genuinely missing.
-- Do not start the `web` services from the repo compose files unless someone explicitly asks for the app to run in containers.
-- Prefer terminal-only environment overrides for one-off startup needs.
+## 1. Confirm The LAN IP
 
-This workspace is currently safest when:
-
-- Docker provides MongoDB and Redis
-- Node runs both backends locally
-- CRA runs both frontends locally
-
-## 1. Preflight Checks
-
-From the workspace root in PowerShell:
+Run:
 
 ```powershell
-docker ps -a
+ipconfig
 ```
 
-What you want to see:
+Use the IPv4 address on the active home network adapter. The last verified address was:
 
-- a Mongo container already available locally
-- a Redis container already available locally
-
-Common running names seen in this workspace:
-
-- `holdem_mongo`
-- `holdem_redis`
-- `mongodb-1`
-- `redis`
-
-Quick port checks:
-
-```powershell
-Get-NetTCPConnection -State Listen -ErrorAction SilentlyContinue |
-  Where-Object { $_.LocalPort -in 27017,6379,4000,3051,3002,3003 } |
-  Select-Object LocalAddress, LocalPort, OwningProcess |
-  Sort-Object LocalPort
+```text
+192.168.0.111
 ```
 
-## 2. Start Docker Infra Only If Needed
+If the router assigns a different address, update the frontend and backend local env files to use the new LAN IP.
 
-If Mongo and Redis are already listening on `27017` and `6379`, leave them alone.
+## 2. Start Official Local Docker Services
 
-If they exist but are stopped, start the existing containers instead of recreating them:
+Run:
 
 ```powershell
-docker start holdem_mongo holdem_redis
+docker compose -f "D:\BSG DEV\DEV-Control\docker\docker-compose.dev.yml" up -d
 ```
 
-If those names do not exist, check the older local names:
+Verify:
 
 ```powershell
-docker start mongodb-1 redis
+docker ps --filter "name=bsg-" --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
 ```
 
-If neither name pair exists, then inspect `docker ps -a` and start the existing local Mongo and Redis containers by name.
+Expected containers:
 
-## 3. Start Game Backend
+- `bsg-mongo-dev`
+- `bsg-redis-dev`
 
-Open a dedicated terminal and run:
+Both should be healthy.
+
+## 3. Backend Env
+
+Backend env files:
+
+- `D:\BSG DEV\Projects\21Holdem\backend\.env`
+- `D:\BSG DEV\Projects\21Holdem\backend\.env.local`
+
+Required local values:
+
+```text
+NODE_ENV=development
+APP_ENV=local
+GAME_ID=21holdem
+PORT=4000
+MONGO_URI=mongodb://127.0.0.1:27017/bigslickgames_dev_21holdem
+DB_URL=mongodb://127.0.0.1:27017/bigslickgames_dev_21holdem
+REDIS_HOST=127.0.0.1
+REDIS_PORT=6379
+BASE_API_PATH=http://192.168.0.111:4000/api/v1
+FRONTEND_URL=http://192.168.0.111:3003
+STRIPE_SUCCESS_URL=http://192.168.0.111:3003/shop?checkout=success
+STRIPE_CANCEL_URL=http://192.168.0.111:3003/shop?checkout=cancel
+```
+
+Keep secrets such as JWT, hash, bot, and Stripe keys in ignored env files only.
+
+## 4. Frontend Env
+
+Frontend env files:
+
+- `D:\BSG DEV\Projects\21Holdem\frontend\.env`
+- `D:\BSG DEV\Projects\21Holdem\frontend\.env.local`
+
+Required local values:
+
+```text
+REACT_APP_API_ENDPOINT=http://192.168.0.111:4000
+REACT_APP_ENVIRONMENT=local
+REACT_APP_STRIPE_PUBLISHABLE_KEY=
+```
+
+Put the Stripe publishable key in ignored local env only when testing checkout.
+
+## 5. Start Backend
+
+Open a terminal:
 
 ```powershell
-Set-Location D:\BIGSLICKGAMES\games\Bigslickgames\game-backend
+Set-Location "D:\BSG DEV\Projects\21Holdem\backend"
 npm start
 ```
 
 Expected healthy output includes:
 
-- `Database connected`
-- `Redis Connected Successfully`
-- `Spinning on 4000`
+- MongoDB connected
+- Redis connected
+- backend listening on `4000`
 
-Health check:
+Verify:
 
 ```powershell
-Invoke-WebRequest -UseBasicParsing http://localhost:4000/ping
+Invoke-WebRequest -UseBasicParsing "http://192.168.0.111:4000/ping"
 ```
 
 Expected result:
@@ -115,194 +131,90 @@ Expected result:
 - HTTP `200`
 - body `{}`
 
-## 4. Start Admin Backend
+## 6. Start Frontend For Phone Testing
 
-Open a second terminal and run this exact command:
-
-```powershell
-Set-Location D:\BIGSLICKGAMES\games\Bigslickgames\Admin-Backend
-$env:AWS_REGION='us-east-1'
-$env:AWS_SES_REGION='us-east-1'
-$env:AWS_ACCESSKEYID='local-dev-key'
-$env:AWS_SECRETKEY='local-dev-secret'
-node index.js
-```
-
-Why the temporary AWS variables are needed:
-
-- the current local `Admin-Backend/.env` has blank AWS fields
-- the S3 client is created at startup
-- without a region, the backend exits with `Error: Region is missing`
-
-Expected healthy output includes:
-
-- `Database connected`
-- `Redis Connected Successfully`
-- `Spinning on 3051`
-
-Health check:
+Open another terminal:
 
 ```powershell
-Invoke-WebRequest -UseBasicParsing http://localhost:3051
-```
-
-Expected result:
-
-- route error is acceptable
-- a response like `{"message":"Route not found"}` proves the server is up
-
-## 5. Start Main Frontend On 3002
-
-Open a third terminal and run:
-
-```powershell
-Set-Location D:\BIGSLICKGAMES\games\Bigslickgames
-$env:PORT='3002'
-$env:BROWSER='none'
-$env:REACT_APP_API_ENDPOINT='http://localhost:4000'
-npm start
-```
-
-Notes:
-
-- use `3002` when `3000` and `3001` are already busy
-- `BROWSER='none'` prevents noisy auto-open behavior
-- the API endpoint override avoids depending on whatever root `.env` last contained
-
-Main app URL:
-
-- `http://localhost:3002`
-
-## 6. Start Admin Frontend On 3003
-
-Open a fourth terminal and run:
-
-```powershell
-Set-Location D:\BIGSLICKGAMES\games\Bigslickgames\Admin-Frontend
+Set-Location "D:\BSG DEV\Projects\21Holdem\frontend"
+$env:HOST='0.0.0.0'
 $env:PORT='3003'
 $env:BROWSER='none'
-$env:REACT_APP_API_ENDPOINT='http://localhost:3051'
+$env:REACT_APP_API_ENDPOINT='http://192.168.0.111:4000'
 npm start
 ```
 
-Admin app URL:
+Phone URL:
 
-- `http://localhost:3003`
+```text
+http://192.168.0.111:3003
+```
 
-Important limitation:
+The phone must be on the same network as the development PC.
 
-- `Admin-Frontend/src/axios.js` currently hardcodes its base URL path in a way that does not fully respect this environment variable during development startup
-- this procedure is for safe restart only
-- do not edit that file as part of normal reboot recovery unless a separate task explicitly asks for admin frontend API wiring cleanup
+## 7. Verification Checklist
 
-## 7. First-Load Expectations
-
-After a reboot, CRA can take a while to become responsive.
-
-Normal behavior:
-
-- terminal shows `Starting the development server...`
-- the port may listen before the page responds quickly
-- first compile can take up to a minute or more on a cold start
-
-This by itself is not a reason to change code or config.
-
-## 8. Verification Checklist
-
-Backends:
+Docker:
 
 ```powershell
-Invoke-WebRequest -UseBasicParsing http://localhost:4000/ping
-Invoke-WebRequest -UseBasicParsing http://localhost:3051
+docker ps --filter "name=bsg-" --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
 ```
 
 Ports:
 
 ```powershell
-Get-NetTCPConnection -State Listen -ErrorAction SilentlyContinue |
-  Where-Object { $_.LocalPort -in 4000,3051,3002,3003 } |
-  Select-Object LocalAddress, LocalPort, OwningProcess |
-  Sort-Object LocalPort
+netstat -ano | Select-String -Pattern ':3003 ',':4000 ',':27017 ',':6379 '
 ```
 
-Browser targets:
-
-- main app: `http://localhost:3002`
-- admin app: `http://localhost:3003`
-
-## 9. Fast Failure Guide
-
-### Docker is up but APIs are not
-
-Start the two backends first. The frontends depend on them.
-
-### `Error: Region is missing`
-
-You started the admin backend without the temporary AWS environment variables.
-
-Use the exact launch block from section 4.
-
-### `3000` or `3001` is busy
-
-Use:
-
-- main frontend on `3002`
-- admin frontend on `3003`
-
-### Frontend port is listening but the page is slow
-
-Wait for the first CRA compile to finish before changing anything.
-
-### A compose `web` container is failing
-
-Ignore it for normal reboot recovery.
-
-This workspace was last recovered successfully using:
-
-- Docker only for data services
-- local Node processes for the app services
-
-## 10. Shutdown
-
-Stop the stack by terminating the individual terminals that were used to start:
-
-- `game-backend`
-- `Admin-Backend`
-- root frontend
-- `Admin-Frontend`
-
-Do not remove containers as part of normal shutdown.
-
-## 11. Safe Recovery Summary
-
-If this is just a reboot recovery, the shortest safe sequence is:
+Backend:
 
 ```powershell
-# terminal 1
-Set-Location D:\BIGSLICKGAMES\games\Bigslickgames\game-backend
-npm start
-
-# terminal 2
-Set-Location D:\BIGSLICKGAMES\games\Bigslickgames\Admin-Backend
-$env:AWS_REGION='us-east-1'
-$env:AWS_SES_REGION='us-east-1'
-$env:AWS_ACCESSKEYID='local-dev-key'
-$env:AWS_SECRETKEY='local-dev-secret'
-node index.js
-
-# terminal 3
-Set-Location D:\BIGSLICKGAMES\games\Bigslickgames
-$env:PORT='3002'
-$env:BROWSER='none'
-$env:REACT_APP_API_ENDPOINT='http://localhost:4000'
-npm start
-
-# terminal 4
-Set-Location D:\BIGSLICKGAMES\games\Bigslickgames\Admin-Frontend
-$env:PORT='3003'
-$env:BROWSER='none'
-$env:REACT_APP_API_ENDPOINT='http://localhost:3051'
-npm start
+Invoke-WebRequest -UseBasicParsing "http://192.168.0.111:4000/ping"
 ```
 
-That is the documented restart path unless a future task explicitly changes the local topology.
+Frontend:
+
+```powershell
+curl.exe -I --max-time 10 "http://192.168.0.111:3003/"
+```
+
+Login endpoint CORS:
+
+```powershell
+curl.exe --max-time 15 -s -i -X OPTIONS "http://192.168.0.111:4000/api/v1/auth/login" -H "Origin: http://192.168.0.111:3003" -H "Access-Control-Request-Method: POST" -H "Access-Control-Request-Headers: content-type"
+```
+
+Expected login preflight result:
+
+- HTTP `204`
+- `Access-Control-Allow-Origin: *`
+
+## 8. Fast Failure Guide
+
+### Phone Cannot Open The Frontend
+
+- Confirm the phone is on the same network.
+- Confirm `curl.exe -I --max-time 10 "http://192.168.0.111:3003/"` works from the PC.
+- Confirm the frontend was started with `HOST=0.0.0.0`.
+- Check Windows firewall if the PC can open the page but the phone cannot.
+
+### Login Shows Network Error
+
+- Confirm backend ping returns HTTP `200`.
+- Confirm the frontend env points to `http://192.168.0.111:4000`.
+- Restart the frontend after changing env files, because CRA reads env at startup.
+- Confirm the CORS preflight command in section 7 returns HTTP `204`.
+
+### Docker Is Running But Login Fails
+
+That is no longer a network error. Check the user account, password, verification state, and local restored database contents in `bigslickgames_dev_21holdem`.
+
+## 9. Shutdown
+
+Stop Node/CRA by closing the backend and frontend terminals.
+
+Stop Docker services without deleting volumes:
+
+```powershell
+docker compose -f "D:\BSG DEV\DEV-Control\docker\docker-compose.dev.yml" stop
+```

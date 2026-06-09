@@ -2,7 +2,7 @@ import { loadStripe } from '@stripe/stripe-js';
 import React, { useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Button } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { getProfile } from '../../query/profile.query';
 import { buyChips, getChips } from '../../query/shop.query';
@@ -172,7 +172,7 @@ function SideBetsModule({ bets, disabled = false, isFocus = false, isTable = fal
             onPointerDown={(event) => event.stopPropagation()}
             onClick={(event) => event.stopPropagation()}
         >
-            {isTable && showHeading ? (
+            {showHeading ? (
                 <div className='game-action-overlay__side-bets-arc' aria-hidden='true'>
                     <span>Place Side Bets</span>
                 </div>
@@ -466,13 +466,14 @@ GameUtilityModal.defaultProps = {
 };
 
 const BUTTON_CLASS_BY_VARIANT = {
-    primary: 'guest-entry-btn',
+    primary: 'primary-entry-btn',
     secondary: 'about-entry-btn',
 };
 
 // eslint-disable-next-line react/prop-types
 function GameActionOverlay({ isPaused = false }) {
     const navigate = useNavigate();
+    const location = useLocation();
     const queryClient = useQueryClient();
     const [overlayState, setOverlayState] = useState(() => createHiddenGameActionOverlayState());
     const [sideBets, setSideBets] = useState(createInitialSideBets);
@@ -491,6 +492,7 @@ function GameActionOverlay({ isPaused = false }) {
     const [consoleBust, setConsoleBust] = useState({ active: false, token: 0 });
     const [bankrollOverride, setBankrollOverride] = useState(null);
     const [utilityModal, setUtilityModal] = useState('');
+    const [bPhaserModalOpen, setPhaserModalOpen] = useState(false);
     const { data: profileData } = useQuery('profileData', getProfile, {
         select: (data) => data?.data?.data,
         refetchOnWindowFocus: false,
@@ -591,7 +593,10 @@ function GameActionOverlay({ isPaused = false }) {
 
     const handleBuyShopItem = (item) => {
         if (!item || isBuyingShopItem) return;
-        mutateBuyChips({ nPrice: item.nPrice });
+        mutateBuyChips({
+            nPrice: item.nPrice,
+            returnPath: `${location.pathname}${location.search || ''}${location.hash || ''}`,
+        });
     };
 
     useEffect(() => {
@@ -660,6 +665,15 @@ function GameActionOverlay({ isPaused = false }) {
 
         window.addEventListener(GAME_BROWSER_EVENTS.SIDE_BET_WINDOW, handleSideBetWindow);
         return () => window.removeEventListener(GAME_BROWSER_EVENTS.SIDE_BET_WINDOW, handleSideBetWindow);
+    }, []);
+
+    useEffect(() => {
+        const handlePhaserModal = (event) => {
+            setPhaserModalOpen(Boolean(event?.detail?.open));
+        };
+
+        window.addEventListener(GAME_BROWSER_EVENTS.PHASER_MODAL, handlePhaserModal);
+        return () => window.removeEventListener(GAME_BROWSER_EVENTS.PHASER_MODAL, handlePhaserModal);
     }, []);
 
     useEffect(() => {
@@ -766,6 +780,7 @@ function GameActionOverlay({ isPaused = false }) {
         };
 
         const handleProfileRefresh = () => {
+            setBankrollOverride(null);
             queryClient.invalidateQueries('profileData');
             queryClient.invalidateQueries('layout-profile');
         };
@@ -779,6 +794,22 @@ function GameActionOverlay({ isPaused = false }) {
             window.removeEventListener(GAME_BROWSER_EVENTS.PROFILE_REFRESH, handleProfileRefresh);
         };
     }, [navigate, queryClient]);
+
+    useEffect(() => {
+        const refreshVisibleProfile = () => {
+            if (typeof document !== 'undefined' && document.visibilityState === 'hidden') return;
+            setBankrollOverride(null);
+            queryClient.invalidateQueries('profileData');
+            queryClient.invalidateQueries('layout-profile');
+        };
+
+        window.addEventListener('focus', refreshVisibleProfile);
+        document.addEventListener('visibilitychange', refreshVisibleProfile);
+        return () => {
+            window.removeEventListener('focus', refreshVisibleProfile);
+            document.removeEventListener('visibilitychange', refreshVisibleProfile);
+        };
+    }, [queryClient]);
 
     const rows = useMemo(() => Array.isArray(overlayState.rows) ? overlayState.rows : [], [overlayState.rows]);
     const hasButtons = useMemo(() => rows.some((row) => {
@@ -803,11 +834,11 @@ function GameActionOverlay({ isPaused = false }) {
     const sConsoleAvatar = getAvatarImageSrc(profileData?.sAvatar, sConsoleName);
     const isVisible = Boolean(overlayState.visible);
     const bHasHoleCards = consoleCards.hand.length > 0;
-    const bKeepConsoleVisible = isVisible || bSideBetWindowOpen || sideBetPayout.total > 0 || bHasHoleCards;
+    const bKeepConsoleVisible = !bPhaserModalOpen && (isVisible || bSideBetWindowOpen || sideBetPayout.total > 0 || bHasHoleCards);
 
     return (
         <>
-            <div className='game-stage-utility' aria-label='Game utility controls'>
+            <div className={`game-stage-utility${bPhaserModalOpen ? ' is-modal-open' : ''}`} aria-label='Game utility controls'>
                 {sBlindLabel ? (
                     <div className='game-stage-utility__blind' aria-label={`Table blinds ${sBlindLabel}`}>
                         <span>Blinds</span>
@@ -842,7 +873,7 @@ function GameActionOverlay({ isPaused = false }) {
                 isBuyingShopItem={isBuyingShopItem}
                 onBuyShopItem={handleBuyShopItem}
             />
-            <div className={`game-action-overlay ${bKeepConsoleVisible ? 'is-visible' : ''}`.trim()}>
+            <div className={`game-action-overlay ${bKeepConsoleVisible ? 'is-visible' : ''}${bPhaserModalOpen ? ' is-phaser-modal-open' : ''}`.trim()}>
             <div className='game-action-overlay__shell'>
                 {hasMessage ? (
                     <div className='game-action-overlay__message'>
