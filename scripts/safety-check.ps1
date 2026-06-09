@@ -59,25 +59,10 @@ function Get-ScanFiles($targets) {
     }
 }
 
-function Find-ForbiddenPattern($pattern, $targets) {
-    $rgCommand = Get-Command rg -ErrorAction SilentlyContinue
-    if ($rgCommand) {
-        $matches = & $rgCommand.Source --glob '!docs/backups/**' --glob '!scripts/safety-check.ps1' --glob '!**/node_modules/**' --glob '!**/build/**' --glob '!**/dist/**' --glob '!**/logs/**' --glob '!**/package-lock.json' -n -- $pattern @targets 2>$null
-        return @{
-            ExitCode = $LASTEXITCODE
-            Matches = $matches
-        }
-    }
-
-    $matches = foreach ($file in Get-ScanFiles $targets) {
-        $relativePath = Get-RelativeRepoPath $file.FullName
-        $lineNumber = 0
-        Get-Content -LiteralPath $file.FullName -ErrorAction SilentlyContinue | ForEach-Object {
-            $lineNumber += 1
-            if ($_ -match $pattern) {
-                "${relativePath}:${lineNumber}:$_"
-            }
-        }
+function Find-ForbiddenPattern($pattern, $files) {
+    $matches = foreach ($match in Select-String -LiteralPath $files.FullName -Pattern $pattern -ErrorAction SilentlyContinue) {
+        $relativePath = Get-RelativeRepoPath $match.Path
+        "${relativePath}:$($match.LineNumber):$($match.Line)"
     }
 
     return @{
@@ -158,6 +143,8 @@ $existingScanTargets = $scanTargets | Where-Object {
     Test-Path -LiteralPath (Join-Path $repoRoot $_)
 }
 
+$scanFiles = @(Get-ScanFiles $existingScanTargets)
+
 $forbiddenPatterns = @(
     ("River" + "Shift2026"),
     "http://52\.90\.29\.30",
@@ -173,7 +160,7 @@ $forbiddenPatterns = @(
 )
 
 foreach ($pattern in $forbiddenPatterns) {
-    $scanResult = Find-ForbiddenPattern $pattern $existingScanTargets
+    $scanResult = Find-ForbiddenPattern $pattern $scanFiles
     if ($scanResult.ExitCode -eq 0 -and $scanResult.Matches) {
         $scanResult.Matches | ForEach-Object { Fail "Forbidden pattern match: $_" }
     } elseif ($scanResult.ExitCode -le 1) {
