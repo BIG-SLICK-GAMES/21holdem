@@ -12,6 +12,80 @@ function Pass($message) {
     Write-Host "OK $message"
 }
 
+function Get-RelativeRepoPath($fullPath) {
+    $rootPath = [System.IO.Path]::GetFullPath($repoRoot).TrimEnd('\', '/') + [System.IO.Path]::DirectorySeparatorChar
+    $targetPath = [System.IO.Path]::GetFullPath($fullPath)
+    $rootUri = [System.Uri]::new($rootPath)
+    $targetUri = [System.Uri]::new($targetPath)
+    return [System.Uri]::UnescapeDataString($rootUri.MakeRelativeUri($targetUri).ToString()).Replace('\', '/')
+}
+
+function Test-ScannableTextFile($file) {
+    $name = $file.Name
+    $extension = $file.Extension.ToLowerInvariant()
+    $allowedExtensions = @(
+        ".js", ".jsx", ".ts", ".tsx", ".json", ".md", ".ps1", ".yml", ".yaml",
+        ".scss", ".css", ".html", ".txt", ".example", ".gitignore"
+    )
+
+    return $name -like ".env*" -or $name -eq ".gitignore" -or $allowedExtensions -contains $extension
+}
+
+function Get-ScanFiles($targets) {
+    foreach ($target in $targets) {
+        $absoluteTarget = Join-Path $repoRoot $target
+        if (Test-Path -LiteralPath $absoluteTarget -PathType Leaf) {
+            $file = Get-Item -LiteralPath $absoluteTarget
+            if (Test-ScannableTextFile $file) {
+                $file
+            }
+            continue
+        }
+
+        if (Test-Path -LiteralPath $absoluteTarget -PathType Container) {
+            Get-ChildItem -LiteralPath $absoluteTarget -Recurse -File -Force -ErrorAction SilentlyContinue |
+                Where-Object {
+                    $relativePath = Get-RelativeRepoPath $_.FullName
+                    (Test-ScannableTextFile $_) -and
+                    $relativePath -notmatch '(^|/)node_modules/' -and
+                    $relativePath -notmatch '(^|/)build/' -and
+                    $relativePath -notmatch '(^|/)dist/' -and
+                    $relativePath -notmatch '(^|/)logs/' -and
+                    $relativePath -notmatch '^docs/backups/' -and
+                    $relativePath -ne 'scripts/safety-check.ps1' -and
+                    $relativePath -notmatch 'package-lock\.json$'
+                }
+        }
+    }
+}
+
+function Find-ForbiddenPattern($pattern, $targets) {
+    $rgCommand = Get-Command rg -ErrorAction SilentlyContinue
+    if ($rgCommand) {
+        $matches = & $rgCommand.Source --glob '!docs/backups/**' --glob '!scripts/safety-check.ps1' --glob '!**/node_modules/**' --glob '!**/build/**' --glob '!**/dist/**' --glob '!**/logs/**' --glob '!**/package-lock.json' -n -- $pattern @targets 2>$null
+        return @{
+            ExitCode = $LASTEXITCODE
+            Matches = $matches
+        }
+    }
+
+    $matches = foreach ($file in Get-ScanFiles $targets) {
+        $relativePath = Get-RelativeRepoPath $file.FullName
+        $lineNumber = 0
+        Get-Content -LiteralPath $file.FullName -ErrorAction SilentlyContinue | ForEach-Object {
+            $lineNumber += 1
+            if ($_ -match $pattern) {
+                "${relativePath}:${lineNumber}:$_"
+            }
+        }
+    }
+
+    return @{
+        ExitCode = $(if ($matches) { 0 } else { 1 })
+        Matches = $matches
+    }
+}
+
 $envScanRoots = @(
     $repoRoot,
     (Join-Path $repoRoot "frontend"),
@@ -99,10 +173,10 @@ $forbiddenPatterns = @(
 )
 
 foreach ($pattern in $forbiddenPatterns) {
-    $matches = & rg --glob '!docs/backups/**' --glob '!scripts/safety-check.ps1' --glob '!**/node_modules/**' --glob '!**/build/**' --glob '!**/dist/**' --glob '!**/logs/**' --glob '!**/package-lock.json' -n -- $pattern @existingScanTargets 2>$null
-    if ($LASTEXITCODE -eq 0 -and $matches) {
-        $matches | ForEach-Object { Fail "Forbidden pattern match: $_" }
-    } elseif ($LASTEXITCODE -le 1) {
+    $scanResult = Find-ForbiddenPattern $pattern $existingScanTargets
+    if ($scanResult.ExitCode -eq 0 -and $scanResult.Matches) {
+        $scanResult.Matches | ForEach-Object { Fail "Forbidden pattern match: $_" }
+    } elseif ($scanResult.ExitCode -le 1) {
         Pass "no matches for $pattern"
     } else {
         Fail "scan failed for pattern $pattern"
