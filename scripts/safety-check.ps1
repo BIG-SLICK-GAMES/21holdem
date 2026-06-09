@@ -80,6 +80,10 @@ $scanTargets = @(
     ".gitignore"
 )
 
+$existingScanTargets = $scanTargets | Where-Object {
+    Test-Path -LiteralPath (Join-Path $repoRoot $_)
+}
+
 $forbiddenPatterns = @(
     ("River" + "Shift2026"),
     "http://52\.90\.29\.30",
@@ -95,7 +99,7 @@ $forbiddenPatterns = @(
 )
 
 foreach ($pattern in $forbiddenPatterns) {
-    $matches = & rg --glob '!docs/backups/**' --glob '!scripts/safety-check.ps1' --glob '!**/node_modules/**' --glob '!**/build/**' --glob '!**/dist/**' --glob '!**/logs/**' --glob '!**/package-lock.json' -n -- $pattern @scanTargets 2>$null
+    $matches = & rg --glob '!docs/backups/**' --glob '!scripts/safety-check.ps1' --glob '!**/node_modules/**' --glob '!**/build/**' --glob '!**/dist/**' --glob '!**/logs/**' --glob '!**/package-lock.json' -n -- $pattern @existingScanTargets 2>$null
     if ($LASTEXITCODE -eq 0 -and $matches) {
         $matches | ForEach-Object { Fail "Forbidden pattern match: $_" }
     } elseif ($LASTEXITCODE -le 1) {
