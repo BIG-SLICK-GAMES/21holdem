@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { Navigate, Outlet, useNavigate } from 'react-router-dom'
 import MainLayout from 'layouts/main-layout/index'
@@ -6,12 +6,13 @@ import { setNav } from 'helper/helper'
 import { getCookie, ReactToastify } from 'shared/utils'
 import CommonLayout from 'layouts/common-layout'
 
+const publicRoutes = ['/how-to-play', '/game-rule', '/privacy-policy', '/terms-conditions']
+
 function PrivateRoute() {
     const token = getCookie('sAuthToken');
     const navigate = useNavigate()
     setNav(navigate)
 
-    const publicRoutes = ['/how-to-play', '/game-rule', '/privacy-policy', '/terms-conditions']
     const currentPath = window.location.pathname;
 
     
@@ -19,7 +20,7 @@ function PrivateRoute() {
         if (!token && !publicRoutes.includes(currentPath)) {
             ReactToastify('Session Expired, Please Login again', 'error', 'session-expired')
         }
-    }, [token]);
+    }, [currentPath, token]);
 
     if (!token && publicRoutes.includes(currentPath)) {
         return (

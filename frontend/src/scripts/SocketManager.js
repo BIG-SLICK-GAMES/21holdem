@@ -46,7 +46,7 @@ export default class SocketManager {
         });
 
         this.socket.emit(SOCKET_REQUEST_EVENTS.JOIN_BOARD, { iBoardId: this.iBoardId }, (data) => {
-            if (data.error && data.error.code == 404) {
+            if (data.error && data.error.code === 404) {
                 this.oScene.exitGame();
             } else {
                 this.onReqJoinBoard(data.oData);

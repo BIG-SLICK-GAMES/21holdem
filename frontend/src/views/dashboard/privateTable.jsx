@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from 'react-query';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Button, Col, Form, Modal, Row, Spinner } from 'react-bootstrap';
 import CustomTable from 'shared/components/Table';
 import { createPrivateTable, getTables, joinPrivateTable } from 'query/gameTable.query';
@@ -15,13 +15,13 @@ const PrivateTable = () => {
     // const [microTablesData, setMicroTablesData] = useState([]);
     // const [normalTablesData, setNormalTablesData] = useState([]);
     // const [eliteTablesData, setEliteTablesData] = useState([]);
-    const [activeTab, setActiveTab] = useState('micro');
     const [modalShow, setModalShow] = useState(false);
     const queryClient = useQueryClient();
 
-    const { control, register, reset, watch, formState: { errors, isDirty, dirtyFields }, handleSubmit, setValue } = useForm({ mode: "all" });
+    const { register, watch, formState: { errors, isDirty, dirtyFields }, handleSubmit } = useForm({ mode: "all" });
+    const privateCode = watch("sPrivateCode");
 
-    const { data: dataTabel, isLoading: isDataTabelLoading } = useQuery("getTables", getTables, {
+    const { isLoading: isDataTabelLoading } = useQuery("getTables", getTables, {
         onSuccess: (data) => {
             if (data.status === 200) {
                 setTablesData([]);
@@ -44,7 +44,7 @@ const PrivateTable = () => {
         },
     });
 
-    const { mutate: mutateCreatePrivateTable, isLoading: joinTableLoading } = useMutation(createPrivateTable, {
+    const { mutate: mutateCreatePrivateTable } = useMutation(createPrivateTable, {
         onSuccess: (data) => {
             if (data.status === 200) {
                 console.log(data)
@@ -59,7 +59,7 @@ const PrivateTable = () => {
         },
     });
 
-    const { mutate: mutateJoinPrivateTable, isLoading: joinPrivateTableLoading } = useMutation(joinPrivateTable, {
+    const { mutate: mutateJoinPrivateTable } = useMutation(joinPrivateTable, {
         onSuccess: (data) => {
             if (data.status === 200) {
                 navigate(`/game`, { state: { sAuthToken: getCookie('sAuthToken'), iBoardId: data.data.data.iBoardId, sPrivateCode: data.data.data.sPrivateCode } });
@@ -77,14 +77,14 @@ const PrivateTable = () => {
 
     useEffect(() => {
         const isDirtyField = {
-            sPrivateCode: watch("sPrivateCode") || "-",
+            sPrivateCode: privateCode || "-",
         };
 
         const payloadData = getDirtyFormValues(dirtyFields, isDirtyField);
         setPayload(payloadData);
-    }, [watch("sPrivateCode"), isDirty, dirtyFields]);
+    }, [privateCode, isDirty, dirtyFields]);
 
-    const onSubmit = (data) => {
+    const onSubmit = () => {
         mutateJoinPrivateTable(payload);
     }
 

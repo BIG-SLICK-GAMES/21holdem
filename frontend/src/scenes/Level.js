@@ -2575,7 +2575,7 @@ setButtons() {
         } else {
             this.updatePotAmount(oData.nTableChips);
         }
-        player.iUserId == this.iUserId && this.setAmountIn(oData.nChips);
+        player.iUserId === this.iUserId && this.setAmountIn(oData.nChips);
         this.playDoubleDownMomentFX(player?.playerProfile, {
             isSelf: oData.iUserId === this.iUserId,
             text: 'DOUBLE DOWN!',
@@ -2627,7 +2627,7 @@ setButtons() {
             player.nStandAtRound = Number(oData.nStandAtRound) || this.nTableRound || 1;
         }
         player?.playerProfile?.setAmountIn(oData.nChips);
-        player?.iUserId == this.iUserId && this.setMyPlayerData(oData);
+        player?.iUserId === this.iUserId && this.setMyPlayerData(oData);
         aParticipantAdjustments.forEach((participantData) => this.applyParticipantAdjustment(participantData));
         if (effectName) {
             this.oSoundManager.playSound(this.oSoundManager.chipsIn_sound, false);
@@ -2665,13 +2665,13 @@ setButtons() {
 
         if (sEventName === SOCKET_RESPONSE_EVENTS.CALL) {
             const callAmount = oData.nLastBidChips ?? oData.nCurrentChips ?? 0;
-            if (oData.iUserId != this.iUserId) {
+            if (oData.iUserId !== this.iUserId) {
                 player?.playerProfile?.setBettingLabel(oData.bAllIn ? 'All In' : 'Call', callAmount);
             }
         } else if (sEventName === SOCKET_RESPONSE_EVENTS.RAISE) {
             this.markRaiseOccurred();
             const raiseAmount = oData.nLastBidChips ?? oData.nCurrentChips ?? 0;
-            if (oData.iUserId != this.iUserId) {
+            if (oData.iUserId !== this.iUserId) {
                 player?.playerProfile?.setBettingLabel('Raised', raiseAmount);
             }
         } else if (sEventName === SOCKET_RESPONSE_EVENTS.STAND) {
@@ -2683,21 +2683,21 @@ setButtons() {
                 log.sAction === 'call+stand' && log.iUserId === oData.iUserId
             );
             if (lastRaiseLog) {
-                if (oData.iUserId != this.iUserId) {
+                if (oData.iUserId !== this.iUserId) {
                     player?.playerProfile?.setBettingLabel('Raise+Stand');
                 }
             } else if (lastCallStandLog) {
-                if (oData.iUserId != this.iUserId) {
+                if (oData.iUserId !== this.iUserId) {
                     player?.playerProfile?.setBettingLabel('Call+Stand');
                 }
             } else {
-                if (oData.iUserId != this.iUserId) {
+                if (oData.iUserId !== this.iUserId) {
                     player?.playerProfile?.setBettingLabel('Stand');
                 }
             }
         } else if (sEventName === SOCKET_RESPONSE_EVENTS.CHECK) {
             this.markCheckCommitment(oData.iUserId);
-            if (oData.iUserId != this.iUserId) {
+            if (oData.iUserId !== this.iUserId) {
                 player?.playerProfile?.setBettingLabel('Check');
             }
         }
@@ -2722,8 +2722,8 @@ setButtons() {
             iUserId !== this.iUserId && player?.playerProfile.setBettingLabel('Fold');
         } else if (eState === 'leave') {
             player?.playerProfile.setLeave();
-            if (iUserId == this.iUserId) {
-                if (bShowMessage == true) {
+            if (iUserId === this.iUserId) {
+                if (bShowMessage === true) {
                     this.popup.open({
                         confirm: false, title: 'LEAVE TABLE', message: sReason, callback: () => {
                             this.exitGame();
@@ -2890,7 +2890,7 @@ setButtons() {
         const { sUserName, sAvatar, eUserType, eState, aCardHand, nChips, nCardScore } = player;
         if (eState === "leave") {
             player?.playerProfile?.setVisible(false);
-            iUserId == this.iUserId && this.exitGame();
+            iUserId === this.iUserId && this.exitGame();
             return;
         }
         await player?.playerProfile?.setProfile({ sUserName, sAvatar, eUserType });
@@ -2905,7 +2905,7 @@ setButtons() {
         }
         if (eState === "spectator") {
             player?.playerProfile?.setWaiting();
-            if (iUserId == this.iUserId) this.prompt.show('Please wait for the new game to start!');
+            if (iUserId === this.iUserId) this.prompt.show('Please wait for the new game to start!');
         } else {
             player?.playerProfile?.hideWaiting();
         }
@@ -2986,7 +2986,7 @@ setCollectBootAmount({ nTableChips, aParticipant }) {
             const player = this.players.get(participant.iUserId);
             const nBlindAmount = Math.max(Number(participant.nLastBidChips) || 0, 0);
             player?.playerProfile?.setAmountIn(participant.nChips);
-            player?.iUserId == this.iUserId && this.setMyPlayerData(participant);
+            player?.iUserId === this.iUserId && this.setMyPlayerData(participant);
             if (player?.playerProfile && nBlindAmount > 0) {
                 nRunningPot += nBlindAmount;
                 this.queuePotUpdate({
@@ -3304,7 +3304,7 @@ setDeclareResult({ nRoundStartsIn, aParticipant, bAllPlayerBust, bAllPlayersBust
     const player = this.players.get(participant.iUserId);
     player?.playerProfile?.setAlpha(1);
     player?.playerProfile?.setAmountIn(participant?.nChips);
-    participant.iUserId == this.iUserId && this.setAmountIn(participant?.nChips);
+    participant.iUserId === this.iUserId && this.setAmountIn(participant?.nChips);
     const aParticipantHand = Array.isArray(participant.aCardHand) ? participant.aCardHand : [];
     player.aCardHand = aParticipantHand;
     player.nCardScore = Number(participant.nCardScore) || player.nCardScore;
@@ -3314,16 +3314,16 @@ setDeclareResult({ nRoundStartsIn, aParticipant, bAllPlayerBust, bAllPlayersBust
     player?.playerProfile?.container_cards?.setVisible(false);
     if (participant.iUserId === this.iUserId) this.emitConsoleCards();
     
-    if (participant.eState == "winner") {
+    if (participant.eState === "winner") {
       this.cleanupRegistry?.addTimeout(setTimeout(() => {
         player?.playerProfile?.showWinnerPrompt();
-        participant.iUserId == this.iUserId && this.oSoundManager.playSound(this.oSoundManager.winAnimation_sound, false);
+        participant.iUserId === this.iUserId && this.oSoundManager.playSound(this.oSoundManager.winAnimation_sound, false);
         participant.nCardScore === 21 && this.callFXOverlay('blackjack');
       }, 3000));
       this.oGameManager.aWinnerPlayers.push(participant.iUserId);
       
       this.cleanupRegistry?.addTimeout(setTimeout(() => {
-        participant.iUserId == this.iUserId && this.oSoundManager.playSound(this.oSoundManager.winCoin_sound, false);
+        participant.iUserId === this.iUserId && this.oSoundManager.playSound(this.oSoundManager.winCoin_sound, false);
                 if (participant.iUserId === this.iUserId) this.emitConsoleWin(participant.nWinningAmount || 0);
                 player?.playerProfile?.showWinAmountPopup(participant.nWinningAmount || 0);
                 nRemainingPot = Math.max(0, nRemainingPot - Math.max(0, Number(participant.nWinningAmount) || 0));
@@ -3372,7 +3372,7 @@ setDeclareResult({ nRoundStartsIn, aParticipant, bAllPlayerBust, bAllPlayersBust
         }
     }
     setPlayerLeft({ iUserId, eBehaviour, sReason }) {
-        if (iUserId == this.iUserId) {
+        if (iUserId === this.iUserId) {
             this.exitGame();
         } else {
             this.setFoldPlayer(iUserId, eBehaviour, sReason);

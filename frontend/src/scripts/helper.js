@@ -50,7 +50,7 @@ _.getFirstCapital = (string = '') => {
     const strings = string.split(' ');
     const map = [];
     for (const str of strings) {
-        if (str == '') continue;
+        if (str === '') continue;
         map.push(str[0].toUpperCase() + str.substring(1));
     }
     return map.join(' ');
