@@ -40,13 +40,224 @@ body,
     overflow-x: hidden;
 }
 
+html {
+    --app-mobile-max-width: 430px;
+    --app-mobile-frame-width: min(100vw, var(--app-mobile-max-width));
+    min-height: 100%;
+    background: #000;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
 body {
     background: rgb(0, 0, 0);
     background: linear-gradient(90deg, rgba(0, 0, 0, 1) 0%, var(--theme-color) 50%, rgba(0, 0, 0, 1) 100%);
     font-family: 'TT Commons';
     font-weight: 400;
     width: 100%;
+    min-height: 100%;
+    margin: 0;
     overflow-x: hidden;
+}
+
+#root {
+    position: relative;
+    width: var(--app-mobile-frame-width);
+    min-height: 100dvh;
+    margin-inline: auto;
+    background: #020915;
+    overflow-x: clip;
+    box-shadow: 0 0 0 1px rgba(135, 205, 255, 0.08), 0 0 60px rgba(0, 0, 0, 0.55);
+}
+
+.main-layout,
+.common-layout,
+.auth-main,
+.sign-in-container,
+.login-background-only,
+.dashboard-container,
+.gameplay-layout {
+    width: 100%;
+    max-width: 100%;
+}
+
+#root .container,
+#root .container-fluid,
+#root .row,
+#root [class*='col-'],
+#root img,
+#root video,
+#root canvas,
+#root table {
+    max-width: 100%;
+}
+
+#root .container,
+#root .container-fluid {
+    width: 100%;
+}
+
+#root .row {
+    min-width: 0;
+}
+
+#root [class*='col-'] {
+    min-width: 0;
+}
+
+#root button,
+#root .btn,
+#root .form-control {
+    max-width: 100%;
+}
+
+.main-layout .main-layout-background,
+.common-layout::before,
+.header-private,
+.header-public,
+.footer,
+.lobby-topbar,
+.no-internet-background,
+.login-background-only,
+.modal,
+.modal-backdrop {
+    left: 50%;
+    right: auto;
+    width: var(--app-mobile-frame-width);
+    max-width: var(--app-mobile-max-width);
+    transform: translateX(-50%);
+}
+
+.main-layout .main-layout-background,
+.common-layout::before,
+.no-internet-background,
+.login-background-only,
+.modal,
+.modal-backdrop {
+    inset-inline: auto;
+}
+
+#root .modal-dialog,
+#root .modal-content,
+#root .auth-login-layout,
+#root .auth-form-container,
+#root .guest-landing,
+#root .guest-landing__shell,
+#root .guest-landing__panel,
+#root .dashboard-hub,
+#root .dashboard-hub__shell,
+#root .dashboard-hub__viewport,
+#root .dashboard-hub__viewport-window,
+#root .profile,
+#root .shop-chip-page,
+#root .transactions,
+#root .daily-rewards-page,
+#root .custom-table {
+    width: 100%;
+    max-width: 100%;
+}
+
+#root .modal-dialog {
+    margin-inline: 10px;
+}
+
+#root .profile,
+#root .shop-chip-page,
+#root .transactions {
+    margin-inline: 10px;
+}
+
+#root .dashboard-container__content-table-selection,
+#root .profile-content,
+#root .shop-chip-content {
+    padding-inline: clamp(10px, 4vw, 20px);
+}
+
+#root .dashboard-container__content-table-selection-content-options {
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+#root .dashboard-container__content-table-selection-content-options .title {
+    position: static;
+    flex: 1 1 100%;
+    transform: none;
+    text-align: center;
+}
+
+#root .dashboard-container__content-table-selection-content-options .join-button,
+#root .dashboard-container__content-table-selection-content-options .private-table-access {
+    margin-left: 0;
+}
+
+#root .header-private,
+#root .header-public,
+#root .lobby-topbar,
+#root .footer {
+    box-sizing: border-box;
+}
+
+#root .header-private .navbar-collapse,
+#root .header-public .navbar-collapse {
+    max-width: 100%;
+}
+
+#root .navbar-expand-xl,
+#root .navbar-expand-lg {
+    flex-wrap: wrap;
+}
+
+#root .navbar-expand-xl .navbar-toggler,
+#root .navbar-expand-lg .navbar-toggler {
+    display: block;
+}
+
+#root .navbar-expand-xl .navbar-collapse,
+#root .navbar-expand-lg .navbar-collapse {
+    flex-basis: 100%;
+    flex-grow: 1;
+}
+
+#root .navbar-expand-xl .navbar-collapse.collapse:not(.show),
+#root .navbar-expand-lg .navbar-collapse.collapse:not(.show) {
+    display: none !important;
+}
+
+#root .navbar-expand-xl .navbar-nav,
+#root .navbar-expand-lg .navbar-nav {
+    flex-direction: column;
+}
+
+
+.modal-dialog,
+.modal-content,
+.Toastify__toast-container,
+.position-fixed.w-100,
+#root .auth-login-layout,
+#root .auth-form-container {
+    max-width: calc(var(--app-mobile-frame-width) - 20px) !important;
+}
+
+.modal-dialog,
+.Toastify__toast-container,
+.position-fixed.w-100 {
+    left: 50% !important;
+    right: auto !important;
+    width: calc(var(--app-mobile-frame-width) - 20px) !important;
+    transform: translateX(-50%) !important;
+}
+
+.modal-dialog {
+    margin-inline: 0 !important;
+}
+
+#root .auth-login-layout,
+#root .auth-form-container {
+    width: min(100%, calc(var(--app-mobile-frame-width) - 20px)) !important;
 }
 
 h1,

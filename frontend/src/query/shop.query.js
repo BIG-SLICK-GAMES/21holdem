@@ -12,5 +12,5 @@ export async function buyChips(data) {
 
 // ✅ Confirm payment (called after redirect back from Stripe)
 export async function confirmPayment({ session_id }) {
-  return await axios.get(`/api/v1/shop/confirm?session_id=${session_id}`);
+  return await axios.get(`/api/v1/shop/confirm?session_id=${encodeURIComponent(session_id)}`);
 }

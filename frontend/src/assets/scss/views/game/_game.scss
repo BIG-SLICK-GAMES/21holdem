@@ -79,6 +79,14 @@ body,
     opacity: 1;
 }
 
+.phaser-popup-open {
+    .game-stage-utility,
+    .game-action-overlay {
+        opacity: 0;
+        pointer-events: none;
+    }
+}
+
 .game-action-overlay__shell {
     position: absolute;
     inset: 0;
@@ -475,6 +483,164 @@ body,
     color: #ffffff;
 }
 
+.game-action-overlay__table-bankroll {
+    grid-template-columns: minmax(0, 1fr) 24px;
+    align-items: center;
+    column-gap: 6px;
+
+    > div {
+        display: grid;
+        gap: 2px;
+        min-width: 0;
+    }
+}
+
+.game-action-overlay__table-bankroll-top-up {
+    display: grid;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: 1px solid rgba(81, 255, 137, 0.54);
+    border-radius: 999px;
+    background: linear-gradient(180deg, rgba(22, 82, 52, 0.92) 0%, rgba(6, 35, 28, 0.96) 100%);
+    color: #dffff0;
+    font-size: 18px;
+    font-weight: 900;
+    line-height: 1;
+    cursor: pointer;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.28);
+}
+
+.game-action-overlay__top-up-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: grid;
+    place-items: center;
+    padding: 14px;
+    pointer-events: auto;
+}
+
+.game-action-overlay__top-up-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 6, 14, 0.64);
+}
+
+.game-action-overlay__top-up-panel {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: 12px;
+    width: min(342px, 100%);
+    padding: 14px;
+    border: 1px solid rgba(137, 213, 255, 0.34);
+    border-radius: 10px;
+    background:
+        radial-gradient(circle at 50% 0%, rgba(81, 255, 137, 0.12) 0%, rgba(81, 255, 137, 0) 42%),
+        linear-gradient(180deg, rgba(10, 35, 58, 0.98) 0%, rgba(3, 13, 24, 0.99) 100%);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.46);
+}
+
+.game-action-overlay__top-up-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+
+    strong {
+        color: #f6fbff;
+        font-size: 18px;
+        font-weight: 900;
+        line-height: 1;
+        text-transform: uppercase;
+    }
+
+    button {
+        display: grid;
+        place-items: center;
+        width: 30px;
+        height: 30px;
+        padding: 0;
+        border: 1px solid rgba(137, 213, 255, 0.26);
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.06);
+        color: #ffffff;
+        font-size: 20px;
+        line-height: 1;
+    }
+}
+
+.game-action-overlay__top-up-balances,
+.game-action-overlay__top-up-options {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+}
+
+.game-action-overlay__top-up-balances > div {
+    display: grid;
+    gap: 4px;
+    padding: 9px;
+    border: 1px solid rgba(137, 213, 255, 0.16);
+    border-radius: 8px;
+    background: rgba(4, 17, 30, 0.72);
+
+    span {
+        color: rgba(201, 231, 255, 0.72);
+        font-size: 10px;
+        font-weight: 900;
+        letter-spacing: 0.1em;
+        line-height: 1;
+        text-transform: uppercase;
+    }
+
+    strong {
+        color: #f7d879;
+        font-size: 18px;
+        line-height: 1;
+        overflow-wrap: anywhere;
+    }
+}
+
+.game-action-overlay__top-up-options button {
+    min-height: 38px;
+    border: 1px solid rgba(137, 213, 255, 0.22);
+    border-radius: 8px;
+    background: rgba(11, 38, 63, 0.86);
+    color: #f7fbff;
+    font-size: 13px;
+    font-weight: 900;
+
+    &.is-selected {
+        border-color: rgba(81, 255, 137, 0.58);
+        background: rgba(18, 82, 52, 0.88);
+        color: #dffff0;
+    }
+}
+
+.game-action-overlay__top-up-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 36px;
+    color: #dcefff;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.game-action-overlay__top-up-submit {
+    min-height: 42px;
+    border: 0;
+    border-radius: 8px;
+    background: linear-gradient(180deg, #8dfcb3 0%, #42d985 100%);
+    color: #052132;
+    font-size: 14px;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
 .game-action-overlay__console-main,
 .game-action-overlay__console-side {
     min-height: auto;
@@ -844,6 +1010,15 @@ body,
 .game-action-overlay__side-bet.is-empty:not(.is-unqualified) {
     filter: none;
     opacity: 0.82;
+
+    .game-action-overlay__side-bet-icon,
+    .game-action-overlay__side-bet-icon img {
+        opacity: 1;
+    }
+
+    .game-action-overlay__side-bet-icon--twenty-one {
+        border-color: rgba(255, 222, 136, 0.56);
+    }
 }
 
 .game-action-overlay__side-bet-paid {

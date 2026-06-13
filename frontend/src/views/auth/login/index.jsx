@@ -5,6 +5,12 @@ import { useForm } from 'react-hook-form';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ReactToastify, setCookie } from 'shared/utils';
 import holdemLogoImg from '../../../assets/images/bg/21HLogo.png';
+import liveTablesImg from '../../../assets/images/bg/live_tables.png';
+import rewardsImg from '../../../assets/images/bg/daily_rewards_bg.png';
+import tableImg from '../../../assets/images/gameplay/portrate_table.png';
+import sideBetStraightImg from '../../../assets/images/icons/newstraight.png';
+import sideBetFlushImg from '../../../assets/images/icons/newflush.png';
+import sideBetTwentyOneImg from '../../../assets/images/icons/new21.png';
 
 const LOGIN_REMEMBER_ME_KEY = 'bsg:remember-me';
 const LOGIN_REMEMBERED_IDENTIFIER_KEY = 'bsg:remembered-login';
@@ -136,6 +142,82 @@ const Login = () => {
             </div>
         )}
         <div className='login-background-only'>
+            <section className='login-showcase' aria-label="21 Hold'em preview">
+                <div className='login-showcase__brand'>
+                    <img src={holdemLogoImg} alt="21 Hold'em" />
+                    <span>Big Slick Games</span>
+                </div>
+                <div className='login-showcase__stage'>
+                    <article className='login-showcase__panel login-showcase__panel--live'>
+                        <img src={liveTablesImg} alt='Live tables lobby preview' />
+                        <div className='login-showcase__headline'>Live Tables</div>
+                        <div className='login-showcase__mini-row'>
+                            <span>1,000</span>
+                            <span>5,000</span>
+                            <span>15,000</span>
+                        </div>
+                        <div className='login-showcase__table-summary'>
+                            <strong>Starter Table</strong>
+                            <span>6 people playing</span>
+                        </div>
+                        <div className='login-showcase__copy'>
+                            <span>Live Tables</span>
+                            <strong>Pick a seat and play fast.</strong>
+                        </div>
+                    </article>
+                    <article className='login-showcase__panel login-showcase__panel--play'>
+                        <img src={tableImg} alt='21 Holdem table preview' />
+                        <div className='login-showcase__table-card'>
+                            <span>Pot</span>
+                            <strong>$60</strong>
+                        </div>
+                        <div className='login-showcase__table-watermark'>21 HOLDEM</div>
+                        <div className='login-showcase__copy'>
+                            <span>21 Hold&apos;em</span>
+                            <strong>Blackjack pressure meets poker table action.</strong>
+                        </div>
+                    </article>
+                    <article className='login-showcase__panel login-showcase__panel--bets'>
+                        <div className='login-showcase__side-bets'>
+                            <div>
+                                <img src={sideBetStraightImg} alt='Straight side bet' />
+                                <span>10:1</span>
+                            </div>
+                            <div>
+                                <img src={sideBetFlushImg} alt='Flush side bet' />
+                                <span>6:1</span>
+                            </div>
+                            <div>
+                                <img src={sideBetTwentyOneImg} alt='21 side bet' />
+                                <span>3:1</span>
+                            </div>
+                        </div>
+                        <div className='login-showcase__timer-pill'>7s to place bets</div>
+                        <div className='login-showcase__copy'>
+                            <span>Side Bets</span>
+                            <strong>Straight, Flush, or exactly 21.</strong>
+                        </div>
+                    </article>
+                    <article className='login-showcase__panel login-showcase__panel--rewards'>
+                        <img src={rewardsImg} alt='Missions and rewards preview' />
+                        <div className='login-showcase__reward-card'>
+                            <span>Daily Reward</span>
+                            <strong>100</strong>
+                            <small>Next unlock 05:08:49</small>
+                        </div>
+                        <div className='login-showcase__copy'>
+                            <span>Missions & Rewards</span>
+                            <strong>Daily streaks keep the bankroll moving.</strong>
+                        </div>
+                    </article>
+                </div>
+                <div className='login-showcase__dots' aria-hidden='true'>
+                    <span />
+                    <span />
+                    <span />
+                    <span />
+                </div>
+            </section>
             <div className='login-background-only__promo'>
                 <span className='login-background-only__promo-kicker'>New players</span>
                 <span className='login-background-only__promo-main'>10K Free Chips</span>

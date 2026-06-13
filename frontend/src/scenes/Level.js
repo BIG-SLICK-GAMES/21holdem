@@ -615,6 +615,14 @@ bindGameActionOverlayEvents() {
             });
             return;
         }
+        if (command === 'exitTable') {
+            this.openExitTablePopup();
+            return;
+        }
+        if (command === 'topUpTable') {
+            this.requestTableTopUp(event?.detail);
+            return;
+        }
 
         if (!this.isMyTurn) return;
 
@@ -640,11 +648,6 @@ bindGameActionOverlayEvents() {
                 break;
             case 'raise':
                 this.openRaiseBuilder();
-                break;
-            case 'exitTable':
-                this.popup.open({ confirm: true, title: 'EXIT', message: this.oGameManager.exitMessage, callback: () => {
-                    this.reqLeaveGame();
-                }});
                 break;
             case 'doubleDown':
                 this.hideAllButtons();
@@ -728,6 +731,28 @@ bindGameActionOverlayEvents() {
         window.dispatchEvent(new CustomEvent(GAME_BROWSER_EVENTS.SOUND_STATE, { detail: { muted: !sm.isSoundOn } }));
     };
     this.cleanupRegistry?.addWindowListener(window, GAME_BROWSER_EVENTS.SOUND_TOGGLE, this.handleSoundToggle);
+}
+
+openExitTablePopup() {
+    this.popup?.open({
+        confirm: true,
+        title: 'EXIT',
+        message: this.oGameManager?.exitMessage || 'Are you sure you want to leave this table?',
+        callback: () => {
+            this.reqLeaveGame();
+        },
+    });
+}
+
+requestTableTopUp(detail = {}) {
+    const nAmount = Math.max(0, Number(detail?.amount) || 0);
+    const bAutoTopUp = Boolean(detail?.autoTopUp);
+    if (!nAmount || !this.oSocketManager) return;
+
+    this.oSocketManager.emit(SOCKET_REQUEST_EVENTS.TOP_UP_TABLE, {
+        nAmount,
+        bAutoTopUp,
+    });
 }
 
 getTutorialActionFromState() {
@@ -898,21 +923,46 @@ getCommunityCardBasePosition() {
     };
 }
 
-getCommunityCardPosition(index = 0) {
-    const { gap } = this.getCommunityCardLayoutMetrics();
-    const base = this.getCommunityCardBasePosition();
+    getCommunityCardPosition(index = 0) {
+        const { gap, scale } = this.getCommunityCardLayoutMetrics();
+        const base = this.getCommunityCardBasePosition();
     // Left-anchored: card 0 is fixed at the left of a max 5-card spread;
     // subsequent cards step right by gap. No recentering as cards are added.
-    const leftAnchor = base.x - 1 * gap;
+    const halfCardWidth = 38 * scale;
+    const leftAnchor = base.x - 1 * gap - halfCardWidth;
 
     return {
         x: Math.round(leftAnchor + index * gap),
         y: Math.round(base.y),
-        angle: 0,
-    };
-}
+            angle: 0,
+        };
+    }
 
-getDeckCardPosition() {
+    drawTableWatermark() {
+        if (!this.container_table) return;
+
+        this.tableWatermarkContainer?.destroy?.();
+        const container = this.add.container(0, 0);
+        this.tableWatermarkContainer = container;
+
+        const base = this.getCommunityCardBasePosition();
+        const title = this.add.text(config.centerX, base.y + 94, '21 HOLDEM', {
+            fontFamily: config.CommonFont,
+            fontSize: config.isDesktopLayout() ? '74px' : '58px',
+            fontStyle: 'bold',
+            color: '#f7fbff',
+            align: 'center',
+            letterSpacing: 0,
+            stroke: '#04131f',
+            strokeThickness: 5,
+        }).setOrigin(0.5).setAlpha(0.26);
+        title.setShadow(0, 3, '#000000', 8, true, true);
+        container.add(title);
+
+        this.container_table.add(container);
+    }
+
+    getDeckCardPosition() {
     const base = this.getCommunityCardBasePosition();
 
     return {
@@ -1879,6 +1929,7 @@ setConsolePrompt(label = 'Waiting for turn') {
             .setScale(communityCardScale)
             .setVisible(false);
         this.container_table.add(close_deck_card);
+        this.drawTableWatermark();
 
         // Show overlay if private
         if (this.sPrivateCode) {
@@ -1889,6 +1940,7 @@ setConsolePrompt(label = 'Waiting for turn') {
             banner.setVisible(true);
             bannerText.setVisible(true);
             this.table.setTexture(assets.private_table);
+            this.container_table.bringToTop(container_private_table);
         }
         this.oTable = {
             close_deck_card: close_deck_card,
@@ -2027,7 +2079,7 @@ setButtons() {
         this.prompt?.setDepth(300);
         this.gameInfo?.setDepth(310);
         this.settings?.setDepth(320);
-        this.popup?.setDepth(330);
+        this.popup?.setDepth(config.popupDepth || 100000);
     }
     editorCreate() {
         const tableImageOffsetY = this.getTableImageOffsetY();

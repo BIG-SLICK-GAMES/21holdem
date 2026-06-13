@@ -1,6 +1,6 @@
 import Phaser from "phaser";
 import assets from "../scripts/assets";
-import { getAvatarImageSrc, getAvatarTextureKey } from "../shared/constants/builtInAvatars";
+import { BUILT_IN_AVATARS, getAvatarImageSrc, getAvatarTextureKey } from "../shared/constants/builtInAvatars";
 
 function getPlayerInitials(name = "") {
   const words = String(name || "")
@@ -38,6 +38,7 @@ export default class ProfileRenderer extends Phaser.GameObjects.Container {
     this.shell = scene.add.container(0, this.profileOffsetY);
     this.backdrop = scene.add.graphics();
     this.avatar = scene.add.image(0, 0, assets.profile_picture).setOrigin(0.5);
+    this.avatar.setVisible(false);
     this.initialsText = scene.add
       .text(0, 0, "--", {
         fontSize: isLocalSeat ? '41px' : '32px',
@@ -78,57 +79,74 @@ export default class ProfileRenderer extends Phaser.GameObjects.Container {
     this.redraw();
   }
 
-  setProfileImage(url, name, { showImage = true, seatIndex = -1 } = {}) {
-    const source = showImage ? getAvatarImageSrc(url, name, seatIndex) : "";
+  setProfileImage(url, name, { showImage = true, seatIndex = -1, forceBuiltIn = false, textureKey = "" } = {}) {
+    const source = showImage ? getAvatarImageSrc(forceBuiltIn ? "" : url, name, seatIndex) : "";
     this.profileName = name;
     this.initialsText.setText(getPlayerInitials(name));
 
+    if (showImage && textureKey && this.scene.textures.exists(textureKey)) {
+      this.avatar.setTexture(textureKey);
+      this.showingInitials = false;
+      this.redraw();
+      return;
+    }
+
     if (source && this.useAvailableTexture(source, name)) {
       this.showingInitials = false;
-      this.avatar.setVisible(true);
-      this.initialsText.setVisible(false);
       this.redraw();
       return;
     }
 
     if (source) {
-      this.showingInitials = false;
-      this.avatar.setVisible(true);
-      this.initialsText.setVisible(false);
-      this.avatar.setTexture(assets.profile_picture);
+      this.showingInitials = true;
+      this.useFallbackAvatar(name, seatIndex);
       this.loadRuntimeTexture(source, name);
       this.redraw();
       return;
     }
 
+    this.useFallbackAvatar(name, seatIndex);
+    this.redraw();
+  }
+
+  useFallbackAvatar(seed = "", seatIndex = -1) {
+    const fallbackTextureKey = getAvatarTextureKey("", `${seed || this.profileName || "player"}-${seatIndex}`);
+    if (fallbackTextureKey && this.scene.textures.exists(fallbackTextureKey)) {
+      this.avatar.setTexture(fallbackTextureKey);
+      this.showingInitials = false;
+      this.initialsText.setVisible(false);
+      return true;
+    }
+
     this.showingInitials = true;
     this.avatar.setVisible(false);
     this.initialsText.setVisible(true);
-    this.redraw();
+    return false;
   }
 
   useAvailableTexture(src, seed) {
     if (!src) return false;
 
-    const builtInTextureKey = getAvatarTextureKey(src, seed);
+    const builtInTextureKey = this.getBuiltInTextureKey(src, seed);
     if (builtInTextureKey && this.scene.textures.exists(builtInTextureKey)) {
       this.avatar.setTexture(builtInTextureKey);
-      this.avatar.setVisible(true);
-      this.initialsText.setVisible(false);
-      this.redraw();
       return true;
     }
 
     const runtimeTextureKey = this.getRuntimeTextureKey(src);
     if (this.scene.textures.exists(runtimeTextureKey)) {
       this.avatar.setTexture(runtimeTextureKey);
-      this.avatar.setVisible(true);
-      this.initialsText.setVisible(false);
-      this.redraw();
       return true;
     }
 
     return false;
+  }
+
+  getBuiltInTextureKey(src, seed) {
+    const directMatch = BUILT_IN_AVATARS.find((avatar) => avatar.sPath === src);
+    if (directMatch?.sTextureKey) return directMatch.sTextureKey;
+
+    return getAvatarTextureKey(src, seed);
   }
 
   getRuntimeTextureKey(src = "") {
@@ -143,7 +161,7 @@ export default class ProfileRenderer extends Phaser.GameObjects.Container {
   loadRuntimeTexture(src, seed) {
     if (!src) return;
 
-    const builtInTextureKey = getAvatarTextureKey(src, seed);
+    const builtInTextureKey = this.getBuiltInTextureKey(src, seed);
     if (builtInTextureKey && this.scene.textures.exists(builtInTextureKey)) return;
 
     const runtimeTextureKey = this.getRuntimeTextureKey(src);
@@ -168,12 +186,13 @@ export default class ProfileRenderer extends Phaser.GameObjects.Container {
       if (!this.avatar || !this.scene.textures.exists(runtimeTextureKey)) return;
 
       this.avatar.setTexture(runtimeTextureKey);
-      this.avatar.setVisible(true);
-      this.initialsText.setVisible(false);
+      this.showingInitials = false;
       this.redraw();
     });
     this.scene.load.once(Phaser.Loader.Events.LOAD_ERROR, () => {
       this.pendingTextureKey = "";
+      this.useFallbackAvatar(seed);
+      this.redraw();
     });
     this.scene.load.start();
   }
@@ -195,13 +214,17 @@ export default class ProfileRenderer extends Phaser.GameObjects.Container {
     const clipRadius = this.maskDiameter / 2;
 
     this.avatar.setDisplaySize(sourceWidth * coverScale, sourceHeight * coverScale);
+    const textureKey = this.avatar?.texture?.key || "";
+    const canShowAvatar = !this.showingInitials && textureKey && textureKey !== assets.profile_picture && textureKey !== "__MISSING";
+    this.avatar.setVisible(canShowAvatar);
+    this.initialsText.setVisible(this.showingInitials || !canShowAvatar);
 
-    // Backdrop: compact colored initials fallback, or dark matte behind selected avatar art.
+    // Backdrop is only for initials fallback. Image avatars can have transparency,
+    // so a dark backing circle makes bot character art look like a black disc.
     this.backdrop.clear();
-    this.backdrop.fillStyle(0x06121f, 0.96);
-    this.backdrop.fillCircle(0, 0, outerRadius);
-
     if (this.showingInitials) {
+      this.backdrop.fillStyle(0x06121f, 0.96);
+      this.backdrop.fillCircle(0, 0, outerRadius);
       const accentColor = this._frameColor || 0xf5c842;
       this.backdrop.fillStyle(accentColor, 1);
       this.backdrop.fillCircle(0, 0, clipRadius);
@@ -209,20 +232,18 @@ export default class ProfileRenderer extends Phaser.GameObjects.Container {
       this.backdrop.fillCircle(-clipRadius * 0.28, -clipRadius * 0.34, clipRadius * 0.38);
       this.backdrop.fillStyle(0x06121f, 0.18);
       this.backdrop.fillCircle(clipRadius * 0.26, clipRadius * 0.34, clipRadius * 0.74);
-    } else {
-      this.backdrop.fillStyle(0x111111, 1);
-      this.backdrop.fillCircle(0, 0, clipRadius);
     }
 
-    // Frame overlay: dark clip ring + themed poker-chip border + suit badge
+    // Frame overlay: themed poker-chip border + suit badge
     this.frameOverlay.clear();
     const accentColor = this._frameColor || 0xf5c842;
     const ringCenter = (clipRadius + outerRadius) / 2;
     const ringHalfWidth = (outerRadius - clipRadius) / 2 + 3;
 
-    // Clipping ring (hides avatar outside circle)
-    this.frameOverlay.lineStyle(ringHalfWidth * 2, 0x0e0c09, 1);
-    this.frameOverlay.strokeCircle(0, 0, ringCenter);
+    if (this.showingInitials) {
+      this.frameOverlay.lineStyle(ringHalfWidth * 2, 0x0e0c09, 1);
+      this.frameOverlay.strokeCircle(0, 0, ringCenter);
+    }
 
     // Soft outer glow halo
     this.frameOverlay.lineStyle(this.isLocalSeat ? 10 : 7, accentColor, 0.2);

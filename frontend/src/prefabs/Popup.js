@@ -3,10 +3,10 @@ import config from '../scripts/config';
 import Button from './Button';
 import assets from '../scripts/assets';
 
-const POPUP_W = 680;
-const POPUP_H = 440;
-const TITLE_BG_H = 72;
-const CORNER_R = 22;
+const POPUP_W = 520;
+const POPUP_H = 330;
+const TITLE_BG_H = 54;
+const CORNER_R = 18;
 const BORDER_COLOR = 0x3a9abf;
 const BG_TOP = 0x04192e;
 const BG_BOT = 0x020d1a;
@@ -18,6 +18,7 @@ export default class Popup extends Phaser.GameObjects.Container {
         super(scene, x, y);
         scene.add.existing(this);
         this.scene = scene;
+        this.setDepth(config.popupDepth || 100000);
         this.setScale(0);
         this.setVisible(false);
         this.callback = callback;
@@ -56,7 +57,7 @@ export default class Popup extends Phaser.GameObjects.Container {
         // title
         this.title = scene.add.text(0, -POPUP_H / 2 + TITLE_BG_H / 2, configuration.title || '', {
             fontFamily: config.CommonFont,
-            fontSize: '42px',
+            fontSize: '34px',
             fontStyle: 'bold',
             color: '#8ed4ff',
             align: 'center',
@@ -68,11 +69,11 @@ export default class Popup extends Phaser.GameObjects.Container {
         // message
         this.message = scene.add.text(0, -20, configuration.message || '', {
             fontFamily: config.playerFont,
-            fontSize: '32px',
+            fontSize: '24px',
             color: '#cde8f7',
             align: 'center',
-            lineSpacing: 8,
-            wordWrap: { width: POPUP_W - 80 },
+            lineSpacing: 6,
+            wordWrap: { width: POPUP_W - 56 },
         }).setOrigin(0.5, 0.5);
         this.add(this.message);
 
@@ -85,28 +86,33 @@ export default class Popup extends Phaser.GameObjects.Container {
         const BTN_Y = POPUP_H / 2 - 68;
 
         const btn_yes = new Button(scene, -190, BTN_Y, {
-            texture: assets.btn_yellow, scaleX: 0.75, scaleY: 0.75,
-            text: 'Yes', fontFamily: config.ButtonFont, fontSize: '50px', color: '#ffffcf', stroke: '#ffffcf', shadow: false, strokeThickness: 2,
+            texture: assets.btn_yellow, scaleX: 0.58, scaleY: 0.58,
+            text: 'Yes', fontFamily: config.ButtonFont, fontSize: '40px', color: '#ffffcf', stroke: '#ffffcf', shadow: false, strokeThickness: 2,
         }, () => { this.callback?.(); this.close(); });
         this.btn_yes = btn_yes;
         this.container_confirm.add(btn_yes);
 
         const btn_no = new Button(scene, 190, BTN_Y, {
-            texture: assets.btn_green, scaleX: 0.75, scaleY: 0.75,
-            text: 'No', fontFamily: config.ButtonFont, fontSize: '50px', color: '#ffffcf', stroke: '#ffffcf', shadow: false, strokeThickness: 2,
+            texture: assets.btn_green, scaleX: 0.58, scaleY: 0.58,
+            text: 'No', fontFamily: config.ButtonFont, fontSize: '40px', color: '#ffffcf', stroke: '#ffffcf', shadow: false, strokeThickness: 2,
         }, () => { this.close(); });
         this.btn_no = btn_no;
         this.container_confirm.add(btn_no);
 
         const btn_okay = new Button(scene, 0, BTN_Y, {
-            texture: assets.btn_yellow, scaleX: 0.75, scaleY: 0.75,
-            text: 'Okay', fontFamily: config.ButtonFont, fontSize: '50px', color: '#ffffcf', stroke: '#ffffcf', shadow: false, strokeThickness: 2,
+            texture: assets.btn_yellow, scaleX: 0.58, scaleY: 0.58,
+            text: 'Okay', fontFamily: config.ButtonFont, fontSize: '40px', color: '#ffffcf', stroke: '#ffffcf', shadow: false, strokeThickness: 2,
         }, () => { this.callback?.(); this.close(); });
         this.container_prpmpt.add(btn_okay);
     }
 
     open({ confirm = true, title = '', message = '', callback, confirmText = 'Yes', cancelText = 'No' }) {
         this.callback = callback;
+        this.setPosition(config.centerX, config.centerY);
+        this.setDepth(config.popupDepth || 100000);
+        this.scene.children.bringToTop(this);
+        this.setPageModalState(true);
+        this.scene.input.setTopOnly?.(true);
         this.btn_yes?.btn_text?.setText(confirmText);
         this.btn_no?.btn_text?.setText(cancelText);
         if (confirm) {
@@ -118,13 +124,20 @@ export default class Popup extends Phaser.GameObjects.Container {
         }
         this.title.setText(title);
         this.message.setText(message);
+        this.bg.setVisible(true);
+        this.bg.setInteractive();
+        this.container_confirm.list.forEach(btn => btn.btn_image?.setInteractive?.());
+        this.container_prpmpt.list.forEach(btn => btn.btn_image?.setInteractive?.());
         this.setVisible(true);
         this.scene.tweens.add({
             targets: this,
-            scaleX: 0.85, scaleY: 0.85,
+            scaleX: 0.82, scaleY: 0.82,
             duration: 280,
             ease: 'Back.easeOut',
-            onComplete: () => { this.bg.setVisible(true); }
+            onComplete: () => {
+                this.bg.setVisible(true);
+                this.bg.setInteractive();
+            }
         });
     }
 
@@ -132,8 +145,19 @@ export default class Popup extends Phaser.GameObjects.Container {
         this.setVisible(false);
         this.setScale(0);
         this.bg.setVisible(false);
+        this.setPageModalState(false);
         this.scene.oHeader?.btn_exit?.btn_image?.setInteractive?.();
         this.container_confirm.list.forEach(btn => btn.btn_image?.setInteractive?.());
         this.container_prpmpt.list.forEach(btn => btn.btn_image?.setInteractive?.());
+    }
+
+    setPageModalState(isOpen) {
+        if (typeof document === 'undefined') return;
+        document.body.classList.toggle('phaser-popup-open', Boolean(isOpen));
+    }
+
+    destroy(fromScene) {
+        this.setPageModalState(false);
+        super.destroy(fromScene);
     }
 }

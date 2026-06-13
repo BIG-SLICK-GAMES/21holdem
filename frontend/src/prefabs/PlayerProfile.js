@@ -3,6 +3,7 @@ import assets from "../scripts/assets";
 import config from "../scripts/config";
 import _ from "../scripts/helper";
 import ProfileRenderer from "./ProfileRenderer";
+import { getBuiltInAvatar, INITIALS_AVATAR_VALUE } from "../shared/constants/builtInAvatars";
 
 // Seat accents rotate through a fixed palette so colors are varied but stable.
 const SEAT_THEMES = [
@@ -570,8 +571,22 @@ export default class PlayerProfile extends Phaser.GameObjects.Container {
     return null;
   }
   setProfileImage(url, name, eUserType = "user") {
-    void eUserType;
-    this.profileRenderer.setProfileImage(url, name, { showImage: true, seatIndex: this.nPlayerIndex });
+    const sUserType = String(eUserType || "").toLowerCase();
+    const bBotSeat = Boolean(sUserType && sUserType !== "user");
+    const bInitialsAvatar = String(url || "") === INITIALS_AVATAR_VALUE;
+    const bUseBuiltInAvatar = bBotSeat || !this.isLocalSeat || bInitialsAvatar || !url;
+    const oBuiltInAvatar = bUseBuiltInAvatar
+      ? getBuiltInAvatar(`${sUserType}-${name}-${this.nPlayerIndex}`, -1)
+      : null;
+    const sBuiltInAvatar = oBuiltInAvatar?.sPath || "";
+    const sProfileUrl = sBuiltInAvatar || url;
+
+    this.profileRenderer.setProfileImage(sProfileUrl, name, {
+      showImage: true,
+      seatIndex: this.nPlayerIndex,
+      forceBuiltIn: false,
+      textureKey: oBuiltInAvatar?.sTextureKey || "",
+    });
   }
   resTurnTimer = () => this.profileRenderer.resTurnTimer();
   startTurnTimer(ttl, totalTime) {

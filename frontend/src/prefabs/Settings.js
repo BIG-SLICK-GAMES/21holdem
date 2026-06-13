@@ -8,6 +8,7 @@ export default class Settings extends Phaser.GameObjects.Container {
         super(scene, x, y);
         scene.add.existing(this);
         this.scene = scene;
+        this.setDepth(config.popupDepth || 100000);
         this.setVisible(false);
         // this.setX(x + 489);
 
@@ -26,9 +27,10 @@ export default class Settings extends Phaser.GameObjects.Container {
 
         const style = { fontFamily: config.playerFont, fontSize: '24px', align: 'center' };
 
-        const text_settings = scene.add.text(0, -165, 'SETTINGS', { ...style, fontFamily: config.CommonFont, fontSize: '42px', fontStyle: 'bold' });
+        const text_settings = scene.add.text(0, -165, '', { ...style, fontFamily: config.CommonFont, fontSize: '42px', fontStyle: 'bold' });
         text_settings.setOrigin(0.5, 0.5);
         text_settings.setTint(0x006D80, 0x006D80, 0x000000, 0x000000);
+        text_settings.setVisible(false);
         this.add(text_settings);
 
         const audioSetting_base = scene.add.image(0, 15, assets.setting_base);
@@ -59,17 +61,24 @@ export default class Settings extends Phaser.GameObjects.Container {
         this.add(this.switch_music);
         musicSwitch_base.setInteractive().on('pointerdown', () => this.musicToggler(this.scene.oSoundManager.isMusicOn));
 
-        this.btn_gameInfo = new Button(scene, 0, audioSetting_base.y + 130, { texture: assets.btn_blue, scaleX: 0.55, scaleY: 0.55, text: 'Game Info', textX: 0, textY: 0, fontSize: '36px', color: '#ffffcf', stroke: '#ffffcf', strokeThickness: 2 }, () => {
+        this.btn_gameInfo = new Button(scene, 0, audioSetting_base.y + 120, { texture: assets.btn_green, scaleX: 0.55, scaleY: 0.55, text: 'Game Info', textX: 0, textY: 0, fontSize: '36px', color: '#ffffcf', stroke: '#ffffcf', strokeThickness: 2 }, () => {
             scene.gameInfo.open(scene.oGameManager.oGameInfo, () => {
 
             });
         });
         this.add(this.btn_gameInfo);
 
-        this.btn_reportBug = new Button(scene, 0, this.btn_gameInfo.y + 74, { texture: assets.btn_blue, scaleX: 0.55, scaleY: 0.55, text: 'Report Bug', textX: 0, textY: 0, fontSize: '32px', color: '#ffffcf', stroke: '#ffffcf', strokeThickness: 2 }, () => {
+        this.btn_reportBug = new Button(scene, 0, this.btn_gameInfo.y + 68, { texture: assets.btn_green, scaleX: 0.55, scaleY: 0.55, text: 'Report Bug', textX: 0, textY: 0, fontSize: '32px', color: '#ffffcf', stroke: '#ffffcf', strokeThickness: 2 }, () => {
             window.FXOverlayUI?.toggleBugPanel?.();
         });
         this.add(this.btn_reportBug);
+
+        this.btn_backToLobby = new Button(scene, 0, this.btn_reportBug.y + 68, { texture: assets.btn_yellow, scaleX: 0.55, scaleY: 0.55, text: 'Back to Lobby', textX: 0, textY: 0, fontSize: '30px', color: '#ffffcf', stroke: '#ffffcf', strokeThickness: 2 }, () => {
+            this.close();
+            scene.exitGame?.();
+        });
+        this.add(this.btn_backToLobby);
+        this.bringToTop(this.btn_close);
     }
     switchAnimation = (switcher, x, texture) => {
         this.scene.tweens.add({
@@ -144,6 +153,8 @@ export default class Settings extends Phaser.GameObjects.Container {
     }
     open() {
         this.setVisible(true);
+        this.setDepth(config.popupDepth || 100000);
+        this.scene.children.bringToTop(this);
         this.scene.tweens.add({
             targets: this,
             x: 340,

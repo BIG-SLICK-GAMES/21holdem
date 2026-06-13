@@ -91,19 +91,31 @@ const Profile = () => {
         setPayload(payloadData);
     }, [watchedAvatar, isDirty, dirtyFields]);
 
+    useEffect(() => {
+        document.body.classList.add('profile-page');
+        return () => document.body.classList.remove('profile-page');
+    }, []);
+
 
     const onSubmit = () => {
         isDirty && mutateProfileUpdate(payload);
     }
 
-    const bPreviewInitials = isInitialsAvatar(watchedAvatar || profileData?.sAvatar);
-    const previewAvatar = bPreviewInitials ? '' : getAvatarImageSrc(watchedAvatar || profileData?.sAvatar, profileData?.sUserName);
     const sPreviewInitials = getPlayerInitials(profileData?.sUserName);
+    const selectedAvatar = Array.from(new Map((avatarList || []).map(avatar => [avatar.sPath, avatar])).values())
+        .find((avatar) => avatar?.selected);
     const nHandsPlayed = Number(profileData?.nGamePlayed) || 0;
     const nWins = Number(profileData?.nGameWon) || 0;
     const nWinRate = nHandsPlayed ? Math.round((nWins / nHandsPlayed) * 100) : 0;
     const nTotalBetAmount = Number(profileData?.nTotalBetAmount) || 0;
     const nTotalWinnings = Number(profileData?.nTotalWinningAmount) || 0;
+    const nChipsPurchased = Number(
+        profileData?.nChipsPurchased ??
+        profileData?.nTotalChipsPurchased ??
+        profileData?.nPurchasedChips ??
+        profileData?.nTotalPurchasedChips ??
+        0
+    ) || 0;
 
     const handleOpenBugPanel = () => {
         window.FXOverlayUI?.toggleBugPanel?.();
@@ -185,10 +197,9 @@ const Profile = () => {
     return (
         <>
             <div className="profile" style={{ '--profile-page-icon': `url("${iconSettings}")` }}>
-                <div className="profile-settings-hero" aria-hidden="true">
-                    <img src={iconSettings} alt="" />
-                </div>
-                <div className="profile-header">SETTINGS</div>
+                <button type="button" className="profile-back-pill" onClick={() => navigate('/lobby')}>
+                    Back to Lobby
+                </button>
                 <Form className="profile-content" onSubmit={handleSubmit(onSubmit)}>
                     {
                         isProfileDataLoading ? (
@@ -198,21 +209,6 @@ const Profile = () => {
                                 <>
                                     <Row>
                                         <Col xl={4}>
-                                            <div className="avatar">
-                                                {bPreviewInitials ? (
-                                                    <span className="avatar-initials">{sPreviewInitials}</span>
-                                                ) : (
-                                                    <img
-                                                        src={previewAvatar}
-                                                        alt="avatar"
-                                                        draggable='false'
-                                                        onError={(event) => {
-                                                            event.currentTarget.src = getAvatarImageSrc("", profileData?.sUserName);
-                                                        }}
-                                                    />
-                                                )}
-                                            </div>
-                                            <div className="avatar-name">{profileData?.sUserName}</div>
                                             <Form.Group>
                                                 <Form.Label>Username</Form.Label>
                                                 <div className="form-control disabled">{profileData?.sUserName ?? '-'}</div>
@@ -241,13 +237,17 @@ const Profile = () => {
                                                     <div className="stats-value">{_.formatCurrencyWithComa(nTotalWinnings)}</div>
                                                     <div className="stats-title">Total Winnings</div>
                                                 </div>
+                                                <div>
+                                                    <div className="stats-value">{_.formatCurrencyWithComa(nChipsPurchased)}</div>
+                                                    <div className="stats-title">Chips Purchased</div>
+                                                </div>
                                             </div>
 
                                             <div className="profile-settings">
                                                 <div className="profile-settings-copy">
-                                                    <div className="profile-settings-title">Settings</div>
+                                                    <div className="profile-settings-title">Account</div>
                                                     <div className="profile-settings-text">
-                                                        Rules, help, support, and account shortcuts now live in your player profile.
+                                                        Shortcuts, support, and account actions.
                                                     </div>
                                                 </div>
 
@@ -267,6 +267,20 @@ const Profile = () => {
                                             </div>
 
                                             <div className="avatar-picker-copy">
+                                                <div className="profile-avatar-preview">
+                                                    {selectedAvatar?.isInitials ? (
+                                                        <span className="avatar-initials">{sPreviewInitials}</span>
+                                                    ) : (
+                                                        <img
+                                                            src={selectedAvatar?.sPath || getAvatarImageSrc("", profileData?.sUserName)}
+                                                            alt="Selected profile"
+                                                            draggable="false"
+                                                            onError={(event) => {
+                                                                event.currentTarget.src = getAvatarImageSrc("", profileData?.sUserName);
+                                                            }}
+                                                        />
+                                                    )}
+                                                </div>
                                                 <div className="avatar-picker-title">Choose your profile image</div>
                                                 <div className="avatar-picker-text">
                                                     Your new profile image set is ready. Pick the look you want to take to the table.

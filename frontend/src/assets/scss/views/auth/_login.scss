@@ -3870,3 +3870,982 @@
         animation: splashTagline 0.5s ease 0.9s forwards;
     }
 }
+
+// Interactive 21 Hold'em login showcase. Kept last so it overrides the older login artwork rules.
+.login-background-only {
+    display: grid;
+    grid-template-rows: auto auto auto;
+    align-content: start;
+    justify-items: center;
+    gap: 10px;
+    width: 100%;
+    max-width: 430px;
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    padding: max(12px, env(safe-area-inset-top)) 14px max(14px, env(safe-area-inset-bottom));
+    overflow-y: auto;
+    background:
+        radial-gradient(circle at 50% 18%, rgba(45, 132, 220, 0.26) 0%, rgba(45, 132, 220, 0) 34%),
+        linear-gradient(180deg, #03111e 0%, #06172a 48%, #020914 100%);
+
+    &::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+        background:
+            linear-gradient(90deg, rgba(137, 213, 255, 0.18), rgba(137, 213, 255, 0) 22%, rgba(137, 213, 255, 0) 78%, rgba(137, 213, 255, 0.18)),
+            radial-gradient(circle at 50% 72%, rgba(255, 216, 116, 0.10), rgba(255, 216, 116, 0) 34%);
+        pointer-events: none;
+    }
+
+    &__promo {
+        position: static;
+        z-index: 3;
+        width: 100%;
+        max-width: 360px;
+        margin: 0;
+        padding: 8px 12px 7px;
+        border: 1px solid rgba(255, 216, 116, 0.34);
+        border-radius: 999px;
+        background: rgba(7, 24, 42, 0.82);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 10px 24px rgba(0, 0, 0, 0.24);
+    }
+
+    &__promo-kicker {
+        font-size: 10px;
+        letter-spacing: 0.14em;
+    }
+
+    &__promo-main {
+        font-size: 17px;
+        line-height: 1;
+    }
+
+    &__fields {
+        position: static;
+        z-index: 3;
+        display: grid;
+        gap: 9px;
+        width: 100%;
+        max-width: 360px;
+        margin: 0;
+        padding: 12px;
+        border: 1px solid rgba(137, 213, 255, 0.22);
+        border-radius: 14px;
+        background: rgba(3, 14, 26, 0.82);
+        box-shadow: 0 16px 34px rgba(0, 0, 0, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(12px);
+    }
+
+    &__field {
+        min-height: 44px;
+        border-radius: 10px;
+    }
+
+    &__submit {
+        min-height: 44px;
+        border-radius: 10px;
+    }
+}
+
+.login-showcase {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    gap: 10px;
+    width: 100%;
+    max-width: 390px;
+    perspective: 1100px;
+
+    &__brand {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        min-height: 54px;
+
+        img {
+            width: 132px;
+            max-width: 44%;
+            height: auto;
+            filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.36));
+        }
+
+        span {
+            display: inline-flex;
+            align-items: center;
+            min-height: 30px;
+            padding: 6px 12px;
+            border: 1px solid rgba(137, 213, 255, 0.32);
+            border-radius: 999px;
+            background: rgba(7, 29, 51, 0.76);
+            color: rgba(225, 241, 255, 0.88);
+            font-size: 11px;
+            font-weight: 900;
+            letter-spacing: 0.14em;
+            line-height: 1;
+            text-transform: uppercase;
+        }
+    }
+
+    &__stage {
+        position: relative;
+        height: 292px;
+        transform-style: preserve-3d;
+    }
+
+    &__panel {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        align-content: end;
+        justify-items: center;
+        overflow: hidden;
+        padding: 14px;
+        border: 1px solid rgba(137, 213, 255, 0.28);
+        border-radius: 16px;
+        background:
+            radial-gradient(circle at 50% 18%, rgba(63, 164, 255, 0.20), rgba(63, 164, 255, 0) 44%),
+            linear-gradient(180deg, rgba(8, 30, 54, 0.94) 0%, rgba(2, 10, 20, 0.98) 100%);
+        box-shadow: 0 20px 42px rgba(0, 0, 0, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+        opacity: 0;
+        transform: rotateY(50deg) translateX(28px) scale(0.88);
+        animation: loginShowcaseSpin 16s ease-in-out infinite;
+        backface-visibility: hidden;
+
+        > img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.72;
+        }
+
+        &::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(1, 8, 17, 0.08) 0%, rgba(1, 8, 17, 0.18) 46%, rgba(1, 8, 17, 0.84) 100%);
+        }
+
+        &--play {
+            animation-delay: -12s;
+
+            > img {
+                inset: 20px auto auto 50%;
+                width: 96%;
+                height: 76%;
+                object-fit: contain;
+                transform: translateX(-50%);
+                opacity: 0.92;
+            }
+        }
+
+        &--bets {
+            animation-delay: -8s;
+            align-content: center;
+            background:
+                radial-gradient(circle at 50% 38%, rgba(255, 216, 116, 0.18), rgba(255, 216, 116, 0) 42%),
+                linear-gradient(180deg, rgba(5, 18, 32, 0.96), rgba(1, 8, 17, 0.98));
+        }
+
+        &--rewards {
+            animation-delay: -4s;
+            border-color: rgba(255, 216, 116, 0.32);
+
+            > img {
+                opacity: 0.8;
+            }
+        }
+    }
+
+    &__copy {
+        position: relative;
+        z-index: 2;
+        display: grid;
+        gap: 4px;
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid rgba(137, 213, 255, 0.22);
+        border-radius: 12px;
+        background: rgba(3, 15, 28, 0.74);
+        text-align: left;
+
+        span {
+            color: #89d5ff;
+            font-size: 11px;
+            font-weight: 900;
+            letter-spacing: 0.13em;
+            line-height: 1;
+            text-transform: uppercase;
+        }
+
+        strong {
+            color: #ffffff;
+            font-size: 17px;
+            font-weight: 900;
+            line-height: 1.08;
+        }
+    }
+
+    &__table-card {
+        position: absolute;
+        left: 50%;
+        top: 45%;
+        z-index: 2;
+        display: grid;
+        min-width: 116px;
+        padding: 9px 14px;
+        border: 1px solid rgba(137, 213, 255, 0.52);
+        border-radius: 12px;
+        background: rgba(5, 29, 48, 0.78);
+        color: #ffffff;
+        text-align: center;
+        transform: translate(-50%, -50%);
+
+        span {
+            color: rgba(221, 242, 255, 0.82);
+            font-size: 10px;
+            font-weight: 900;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+
+        strong {
+            color: #ffffff;
+            font-size: 26px;
+            line-height: 1;
+        }
+    }
+
+    &__side-bets {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        width: 100%;
+        margin-bottom: 22px;
+
+        img {
+            width: 86px;
+            max-width: 28%;
+            aspect-ratio: 1;
+            object-fit: cover;
+            border-radius: 999px;
+            filter: drop-shadow(0 12px 18px rgba(0, 0, 0, 0.38));
+            animation: loginSideBetPulse 2.8s ease-in-out infinite;
+
+            &:nth-child(2) {
+                animation-delay: 0.25s;
+            }
+
+            &:nth-child(3) {
+                animation-delay: 0.5s;
+            }
+        }
+    }
+
+    &__dots {
+        display: flex;
+        justify-content: center;
+        gap: 6px;
+
+        span {
+            width: 7px;
+            height: 7px;
+            border-radius: 999px;
+            background: rgba(137, 213, 255, 0.28);
+            animation: loginDotCycle 16s ease-in-out infinite;
+
+            &:nth-child(2) { animation-delay: -12s; }
+            &:nth-child(3) { animation-delay: -8s; }
+            &:nth-child(4) { animation-delay: -4s; }
+        }
+    }
+}
+
+@keyframes loginShowcaseSpin {
+    0%, 18% {
+        opacity: 1;
+        transform: rotateY(0deg) translateX(0) scale(1);
+        z-index: 4;
+    }
+    24%, 100% {
+        opacity: 0;
+        transform: rotateY(-54deg) translateX(-32px) scale(0.9);
+        z-index: 1;
+    }
+}
+
+@keyframes loginDotCycle {
+    0%, 18% {
+        width: 18px;
+        background: #ffd874;
+    }
+    24%, 100% {
+        width: 7px;
+        background: rgba(137, 213, 255, 0.28);
+    }
+}
+
+@keyframes loginSideBetPulse {
+    0%, 100% {
+        transform: translateY(0) scale(1);
+    }
+    50% {
+        transform: translateY(-5px) scale(1.04);
+    }
+}
+
+@media (min-width: 768px) {
+    .login-background-only {
+        max-width: 520px;
+        padding-inline: 32px;
+    }
+
+    .login-showcase {
+        max-width: 456px;
+
+        &__stage {
+            height: 338px;
+        }
+
+        &__brand img {
+            width: 164px;
+        }
+    }
+}
+
+@media (max-height: 720px) {
+    .login-background-only {
+        gap: 8px;
+    }
+
+    .login-showcase {
+        &__stage {
+            height: 236px;
+        }
+
+        &__copy strong {
+            font-size: 15px;
+        }
+    }
+
+    .login-background-only__fields {
+        gap: 7px;
+        padding: 10px;
+    }
+}
+
+// Final compact sizing for the mobile-constrained login flow.
+.login-background-only {
+    gap: 8px;
+    padding: max(8px, env(safe-area-inset-top)) 12px max(10px, env(safe-area-inset-bottom));
+
+    &__promo {
+        max-width: 356px;
+        min-height: 32px;
+        padding: 6px 11px 5px;
+    }
+
+    &__promo-kicker {
+        font-size: 9px;
+    }
+
+    &__promo-main {
+        font-size: 15px;
+    }
+
+    &__fields {
+        max-width: 356px;
+        gap: 7px;
+        padding: 10px;
+        border-radius: 12px;
+    }
+
+    &__field {
+        min-height: 39px;
+        padding: 8px 12px;
+        font-size: 14px;
+    }
+
+    &__field-actions {
+        min-height: 18px;
+    }
+
+    &__remember {
+        gap: 7px;
+        font-size: 11px;
+        line-height: 1;
+
+        input {
+            width: 15px;
+            height: 15px;
+        }
+    }
+
+    &__submit {
+        min-height: 40px;
+        font-size: 15px;
+    }
+
+    &__signup {
+        gap: 6px 10px;
+        font-size: 11px;
+        line-height: 1.1;
+    }
+}
+
+.login-showcase {
+    gap: 7px;
+    max-width: 356px;
+
+    &__brand {
+        min-height: 42px;
+
+        img {
+            width: 118px;
+        }
+
+        span {
+            min-height: 26px;
+            padding: 5px 9px;
+            font-size: 9px;
+            letter-spacing: 0.11em;
+        }
+    }
+
+    &__stage {
+        height: 222px;
+    }
+
+    &__panel {
+        padding: 10px;
+        border-radius: 13px;
+
+        &--play > img {
+            top: 5px;
+            height: 82%;
+        }
+    }
+
+    &__copy {
+        padding: 8px 10px;
+        border-radius: 10px;
+
+        span {
+            font-size: 9px;
+        }
+
+        strong {
+            font-size: 14px;
+            line-height: 1.05;
+        }
+    }
+
+    &__table-card {
+        min-width: 92px;
+        padding: 7px 10px;
+
+        span {
+            font-size: 8px;
+        }
+
+        strong {
+            font-size: 21px;
+        }
+    }
+
+    &__side-bets {
+        gap: 7px;
+        margin-bottom: 17px;
+
+        img {
+            width: 72px;
+        }
+    }
+}
+
+@media (max-height: 700px) {
+    .login-showcase {
+        &__brand {
+            min-height: 38px;
+
+            img {
+                width: 106px;
+            }
+        }
+
+        &__stage {
+            height: 190px;
+        }
+
+        &__copy {
+            padding: 7px 9px;
+
+            strong {
+                font-size: 13px;
+            }
+        }
+    }
+
+    .login-background-only {
+        gap: 6px;
+
+        &__promo {
+            min-height: 28px;
+        }
+
+        &__field {
+            min-height: 36px;
+        }
+
+        &__submit {
+            min-height: 37px;
+        }
+    }
+}
+
+// Stable login layout reset. This deliberately flattens the showcase so the screen fits.
+.login-background-only {
+    position: fixed !important;
+    inset: 0 auto 0 50% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    width: min(100vw, 430px) !important;
+    max-width: 430px !important;
+    height: auto !important;
+    min-height: 100vh !important;
+    min-height: 100svh !important;
+    padding: max(8px, env(safe-area-inset-top)) 10px max(10px, env(safe-area-inset-bottom)) !important;
+    gap: 10px !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    transform: translateX(-50%) !important;
+
+    &__promo,
+    &__fields {
+        position: relative !important;
+        inset: auto !important;
+        left: auto !important;
+        right: auto !important;
+        top: auto !important;
+        bottom: auto !important;
+        transform: none !important;
+        flex: 0 0 auto !important;
+        width: 100% !important;
+        max-width: 356px !important;
+        margin: 0 !important;
+    }
+
+    &__promo {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        min-height: 34px !important;
+        padding: 6px 11px !important;
+    }
+
+    &__fields {
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+        gap: 8px !important;
+        padding: 11px !important;
+    }
+
+    &__field {
+        width: 100% !important;
+        min-height: 40px !important;
+        height: 40px !important;
+        padding: 8px 11px !important;
+        font-size: 13px !important;
+        line-height: 1 !important;
+        border-radius: 9px !important;
+    }
+
+    &__field-actions {
+        min-height: 16px !important;
+        margin: 0 !important;
+    }
+
+    &__remember {
+        min-height: 16px !important;
+        font-size: 11px !important;
+    }
+
+    &__submit {
+        min-height: 40px !important;
+        height: 40px !important;
+        padding: 7px 12px !important;
+        font-size: 14px !important;
+        line-height: 1 !important;
+    }
+
+    &__signup {
+        margin: 0 !important;
+        font-size: 11px !important;
+    }
+
+    &__signup-link,
+    &__guest-link {
+        font-size: 11px !important;
+    }
+}
+
+.login-showcase {
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    max-width: 356px !important;
+    min-height: 0 !important;
+    gap: 8px !important;
+
+    &__brand {
+        min-height: 46px !important;
+
+        img {
+            width: 128px !important;
+            max-width: 40% !important;
+        }
+
+        span {
+            min-height: 28px !important;
+            padding: 5px 10px !important;
+            font-size: 9px !important;
+        }
+    }
+
+    &__stage {
+        height: clamp(250px, 42vh, 330px) !important;
+        min-height: 250px !important;
+        overflow: hidden !important;
+        border-radius: 13px !important;
+    }
+
+    &__panel {
+        inset: 0 !important;
+        padding: 8px !important;
+        border-radius: 13px !important;
+        transform: translateX(16px) scale(0.98) !important;
+        animation: loginShowcaseFade 16s ease-in-out infinite !important;
+
+        &--play {
+            animation-delay: -12s !important;
+        }
+
+        &--bets {
+            animation-delay: -8s !important;
+        }
+
+        &--rewards {
+            animation-delay: -4s !important;
+        }
+
+        > img {
+            opacity: 0.70 !important;
+        }
+
+        &--play > img {
+            top: -4px !important;
+            width: 92% !important;
+            height: 82% !important;
+        }
+    }
+
+    &__copy {
+        padding: 9px 10px !important;
+
+        span {
+            font-size: 9px !important;
+        }
+
+        strong {
+            font-size: 14px !important;
+            line-height: 1.05 !important;
+        }
+    }
+
+    &__table-card {
+        min-width: 78px !important;
+        padding: 5px 8px !important;
+
+        span {
+            font-size: 7px !important;
+        }
+
+        strong {
+            font-size: 17px !important;
+        }
+    }
+
+    &__side-bets {
+        gap: 8px !important;
+        margin-bottom: 18px !important;
+
+        img {
+            width: 76px !important;
+            max-width: 29% !important;
+        }
+    }
+
+    &__dots {
+        min-height: 8px !important;
+    }
+}
+
+@keyframes loginShowcaseFade {
+    0%, 20% {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+        z-index: 4;
+    }
+    25%, 100% {
+        opacity: 0;
+        transform: translateX(-16px) scale(0.98);
+        z-index: 1;
+    }
+}
+
+@media (max-height: 620px) {
+    .login-showcase__stage {
+        height: 190px !important;
+        min-height: 190px !important;
+    }
+
+    .login-showcase__copy strong {
+        font-size: 12px !important;
+    }
+}
+
+// Stronger screenshot information layer.
+.login-showcase {
+    &__panel {
+        > img {
+            opacity: 0.88 !important;
+            filter: saturate(1.08) contrast(1.04) !important;
+        }
+
+        &::after {
+            background:
+                linear-gradient(180deg, rgba(1, 8, 17, 0.02) 0%, rgba(1, 8, 17, 0.10) 42%, rgba(1, 8, 17, 0.78) 100%) !important;
+        }
+    }
+
+    &__headline,
+    &__mini-row,
+    &__table-summary,
+    &__table-watermark,
+    &__timer-pill,
+    &__reward-card {
+        position: relative;
+        z-index: 3;
+        pointer-events: none;
+    }
+
+    &__headline {
+        position: absolute;
+        left: 50%;
+        top: 18px;
+        transform: translateX(-50%);
+        color: #ffffff;
+        font-size: 32px;
+        font-weight: 1000;
+        line-height: 0.9;
+        letter-spacing: 0.02em;
+        text-align: center;
+        text-transform: uppercase;
+        text-shadow: 0 4px 0 rgba(0, 0, 0, 0.42), 0 0 18px rgba(137, 213, 255, 0.32);
+    }
+
+    &__mini-row {
+        position: absolute;
+        left: 14px;
+        right: 14px;
+        bottom: 72px;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 6px;
+
+        span {
+            display: grid;
+            place-items: center;
+            min-height: 28px;
+            border: 1px solid rgba(137, 213, 255, 0.38);
+            border-radius: 9px;
+            background: rgba(5, 24, 42, 0.82);
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: 1000;
+            line-height: 1;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+        }
+    }
+
+    &__table-summary {
+        position: absolute;
+        left: 20px;
+        right: 20px;
+        bottom: 108px;
+        display: grid;
+        gap: 2px;
+        padding: 9px 11px;
+        border: 1px solid rgba(137, 213, 255, 0.36);
+        border-radius: 12px;
+        background: rgba(4, 20, 36, 0.78);
+        text-align: left;
+
+        strong {
+            color: #ffffff;
+            font-size: 18px;
+            font-weight: 1000;
+            line-height: 1;
+            text-transform: uppercase;
+        }
+
+        span {
+            color: rgba(224, 243, 255, 0.92);
+            font-size: 12px;
+            font-weight: 900;
+        }
+    }
+
+    &__table-watermark {
+        position: absolute;
+        left: 50%;
+        top: 57%;
+        transform: translate(-50%, -50%);
+        color: rgba(255, 255, 255, 0.48);
+        font-size: 28px;
+        font-weight: 1000;
+        line-height: 1;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.28);
+        white-space: nowrap;
+    }
+
+    &__timer-pill {
+        display: inline-grid;
+        place-items: center;
+        min-height: 28px;
+        margin: 0 auto 10px;
+        padding: 5px 12px;
+        border: 1px solid rgba(255, 216, 116, 0.48);
+        border-radius: 999px;
+        background: rgba(9, 23, 36, 0.86);
+        color: #ffd874;
+        font-size: 12px;
+        font-weight: 1000;
+        line-height: 1;
+        text-transform: uppercase;
+    }
+
+    &__reward-card {
+        position: absolute;
+        left: 16px;
+        right: 16px;
+        top: 24px;
+        display: grid;
+        gap: 2px;
+        padding: 11px 13px;
+        border: 1px solid rgba(255, 216, 116, 0.42);
+        border-radius: 13px;
+        background: rgba(70, 41, 10, 0.76);
+        box-shadow: 0 14px 30px rgba(0, 0, 0, 0.34);
+
+        span {
+            color: rgba(255, 239, 180, 0.86);
+            font-size: 10px;
+            font-weight: 1000;
+            letter-spacing: 0.12em;
+            line-height: 1;
+            text-transform: uppercase;
+        }
+
+        strong {
+            color: #ffe071;
+            font-size: 40px;
+            font-weight: 1000;
+            line-height: 0.9;
+        }
+
+        small {
+            color: rgba(255, 255, 255, 0.86);
+            font-size: 12px;
+            font-weight: 900;
+            line-height: 1;
+        }
+    }
+
+    &__side-bets {
+        div {
+            display: grid;
+            justify-items: center;
+            gap: 4px;
+            min-width: 0;
+        }
+
+        span {
+            display: inline-grid;
+            place-items: center;
+            min-width: 36px;
+            min-height: 18px;
+            padding: 2px 7px 1px;
+            border: 1px solid rgba(255, 216, 116, 0.58);
+            border-radius: 999px;
+            background: rgba(5, 17, 28, 0.82);
+            color: #ffe071;
+            font-size: 10px;
+            font-weight: 1000;
+            line-height: 1;
+        }
+    }
+
+    &__copy {
+        background: rgba(3, 15, 28, 0.88) !important;
+        border-color: rgba(137, 213, 255, 0.36) !important;
+
+        span {
+            color: #9de4ff !important;
+            font-size: 10px !important;
+        }
+
+        strong {
+            font-size: 15px !important;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.42);
+        }
+    }
+}
+
+@media (max-height: 700px) {
+    .login-showcase {
+        &__headline {
+            top: 12px;
+            font-size: 26px;
+        }
+
+        &__mini-row {
+            display: none;
+        }
+
+        &__table-summary {
+            bottom: 76px;
+
+            strong {
+                font-size: 15px;
+            }
+        }
+
+        &__reward-card {
+            top: 14px;
+
+            strong {
+                font-size: 32px;
+            }
+        }
+    }
+}

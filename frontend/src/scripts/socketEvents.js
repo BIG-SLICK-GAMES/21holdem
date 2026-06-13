@@ -18,6 +18,7 @@ export const SOCKET_REQUEST_EVENTS = Object.freeze({
     FORCE_PAIR: 'reqForcePair',
     REACTION: 'reqReaction',
     SIDE_BETS: 'reqSideBets',
+    TOP_UP_TABLE: 'reqTopUpTable',
     DISCARD_CARD: 'reqDiscardCard',
     FINISH: 'reqFinish',
 });

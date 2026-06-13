@@ -49,6 +49,24 @@ function getAvailableTableCount(table) {
     return Math.max(Number(table?.nLiveTableCount) || 0, 1);
 }
 
+function hasPrivateTableAccess(profile = {}) {
+    return Boolean(
+        profile?.bIsMember ||
+        profile?.isMember ||
+        profile?.bMember ||
+        profile?.bIsSubscribed ||
+        profile?.isSubscribed ||
+        profile?.bPrivateTableAccess ||
+        profile?.bHasPrivateTableAccess ||
+        profile?.eUserType === 'member' ||
+        profile?.eUserType === 'premium' ||
+        profile?.eUserType === 'vip' ||
+        profile?.sUserType === 'member' ||
+        profile?.sUserType === 'premium' ||
+        profile?.sUserType === 'vip'
+    );
+}
+
 function sortTablesByPriority(a, b) {
     const nLiveTableDiff = Number(b?.nLiveTableCount || 0) - Number(a?.nLiveTableCount || 0);
     if (nLiveTableDiff !== 0) return nLiveTableDiff;
@@ -236,6 +254,7 @@ const Dashboard = () => {
                 ReactToastify(payload?.message || 'Purchase successful', 'success');
                 queryClient.invalidateQueries('profileData');
                 queryClient.invalidateQueries('getProfile');
+                queryClient.invalidateQueries('getChips');
                 return;
             }
 
@@ -281,6 +300,7 @@ const Dashboard = () => {
                 ReactToastify(response?.data?.message || 'Payment confirmed', 'success');
                 queryClient.invalidateQueries('profileData');
                 queryClient.invalidateQueries('getProfile');
+                queryClient.invalidateQueries('getChips');
             })
             .catch((error) => {
                 ReactToastify(error?.response?.data?.message || 'Unable to confirm payment', 'error');
@@ -397,7 +417,33 @@ const Dashboard = () => {
     const nGamesPlayed = Number(profileData?.nGamePlayed) || 0;
     const nGamesWon = Number(profileData?.nGameWon) || 0;
     const nWinRate = nGamesPlayed ? Math.round((nGamesWon / nGamesPlayed) * 100) : 0;
+    const nTotalBetAmount = Number(profileData?.nTotalBetAmount) || 0;
     const nTotalWinnings = Number(profileData?.nTotalWinningAmount) || 0;
+    const nBiggestWin = Number(
+        profileData?.nBiggestWin ??
+        profileData?.nBiggestWinningAmount ??
+        profileData?.nLargestWin ??
+        profileData?.nBestWin ??
+        0
+    ) || 0;
+    const nNetResult = nTotalWinnings - nTotalBetAmount;
+    const nChipsPurchased = Number(
+        profileData?.nChipsPurchased ??
+        profileData?.nTotalChipsPurchased ??
+        profileData?.nPurchasedChips ??
+        profileData?.nTotalPurchasedChips ??
+        0
+    ) || 0;
+    const aProfileStats = [
+        { label: 'Hands Played', value: nGamesPlayed },
+        { label: 'Hands Won', value: nGamesWon },
+        { label: 'Win %', value: formatPercent(nWinRate) },
+        { label: 'Biggest Win', value: nBiggestWin ? formatAmount(nBiggestWin) : '--' },
+        { label: 'Total Winnings', value: formatAmount(nTotalWinnings) },
+        { label: 'Net Result', value: formatAmount(nNetResult) },
+        { label: 'Chips Purchased', value: nChipsPurchased ? formatAmount(nChipsPurchased) : '--' },
+    ];
+    const bPrivateTablesUnlocked = hasPrivateTableAccess(profileData);
     const sDisplayName = profileData?.sUserName || 'Player';
     const sAvatarSrc = getAvatarImageSrc(profileData?.sAvatar, profileData?.sUserName);
     const aRewards = dataDailyRewards?.rewards?.length ? dataDailyRewards.rewards : [1000, 2500, 5000, 7500, 10000, 12500, 15000];
@@ -490,6 +536,7 @@ const Dashboard = () => {
     const oActiveLobbyIconBackgroundStyle = oActiveCarouselItem?.iconSrc
         ? {
             '--dashboard-page-icon': `url("${oActiveCarouselItem.iconSrc}")`,
+            '--dashboard-live-tables-image': `url("${liveTablesImage}")`,
             ...(oActiveCarouselItem.theme || {}),
         }
         : undefined;
@@ -698,6 +745,15 @@ const Dashboard = () => {
         if (oShopTab) handleQuickNavSelect(oShopTab, { bScrollDesktop });
     };
 
+    const handlePrivateTablesClick = () => {
+        if (!bPrivateTablesUnlocked) {
+            ReactToastify('Private tables are members-only. Visit the shop to unlock member access.', 'error');
+            handleOpenShopTab();
+            return;
+        }
+        navigate('/private-table');
+    };
+
     const handleBuyShopItem = (item) => {
         if (!item?.nPrice) return;
         mutateBuyChips({ nPrice: item.nPrice });
@@ -868,16 +924,18 @@ const Dashboard = () => {
         <>
             <div className='dashboard-hub__tab-body dashboard-hub__tab-body--private'>
                 <div className='dashboard-hub__tab-stack'>
-                    <div className='dashboard-hub__card-media'>
+                    <div className={`dashboard-hub__card-media dashboard-hub__card-media--private${bPrivateTablesUnlocked ? '' : ' is-locked'}`}>
                         <img src={privateTableImage} alt='21 Holdem private table' />
+                        {!bPrivateTablesUnlocked ? <span className='dashboard-hub__private-lock-badge'>Members Only</span> : null}
                     </div>
 
                     <button
                         type='button'
-                        className='dashboard-hub__cta dashboard-hub__cta--private'
-                        onClick={() => navigate('/private-table')}
+                        className={`dashboard-hub__cta dashboard-hub__cta--private${bPrivateTablesUnlocked ? '' : ' is-locked'}`}
+                        onClick={handlePrivateTablesClick}
+                        aria-disabled={!bPrivateTablesUnlocked}
                     >
-                        Create Private Table
+                        {bPrivateTablesUnlocked ? 'Create Private Table' : 'Unlock Private Tables'}
                     </button>
                 </div>
             </div>
@@ -911,29 +969,15 @@ const Dashboard = () => {
                     </div>
 
                     <div className='dashboard-hub__tab-stack'>
-                        <div className='dashboard-hub__profile-stats-grid dashboard-hub__profile-stats-grid--triple'>
-                            <div className='dashboard-hub__profile-stat'>
-                                <span>Hands Played</span>
-                                <strong>{nGamesPlayed}</strong>
-                            </div>
-                            <div className='dashboard-hub__profile-stat'>
-                                <span>Win %</span>
-                                <strong>{formatPercent(nWinRate)}</strong>
-                            </div>
-                            <div className='dashboard-hub__profile-stat'>
-                                <span>Total Winnings</span>
-                                <strong>{formatAmount(nTotalWinnings)}</strong>
-                            </div>
+                        <div className='dashboard-hub__profile-stats-grid dashboard-hub__profile-stats-grid--expanded'>
+                            {aProfileStats.map((stat) => (
+                                <div className='dashboard-hub__profile-stat' key={stat.label}>
+                                    <span>{stat.label}</span>
+                                    <strong>{stat.value}</strong>
+                                </div>
+                            ))}
                         </div>
 
-                        <div className='dashboard-hub__profile-actions'>
-                            <button type='button' className='dashboard-hub__secondary-cta' onClick={() => handleOpenShopTab()}>
-                                Shop
-                            </button>
-                            <button type='button' className='dashboard-hub__secondary-cta dashboard-hub__secondary-cta--accent' onClick={() => navigate('/profile')}>
-                                Open Profile
-                            </button>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -1111,17 +1155,18 @@ const Dashboard = () => {
             <div className='dashboard-hub__desktop-card-body'>
                 <div className='dashboard-hub__desktop-spotlight'>
                     <strong>Host your own room</strong>
-                    <span>Create a code, invite your players, and keep the table private from the public lobby.</span>
+                    <span>{bPrivateTablesUnlocked ? 'Create a code, invite your players, and keep the table private from the public lobby.' : 'Private tables are reserved for members. Unlock access before creating or joining a room.'}</span>
                 </div>
             </div>
 
             <div className='dashboard-hub__desktop-card-footer'>
                 <button
                     type='button'
-                    className='dashboard-hub__desktop-cta dashboard-hub__desktop-cta--primary'
-                    onClick={() => navigate('/private-table')}
+                    className={`dashboard-hub__desktop-cta dashboard-hub__desktop-cta--primary${bPrivateTablesUnlocked ? '' : ' is-locked'}`}
+                    onClick={handlePrivateTablesClick}
+                    aria-disabled={!bPrivateTablesUnlocked}
                 >
-                    Create Table
+                    {bPrivateTablesUnlocked ? 'Create Table' : 'Members Only'}
                 </button>
             </div>
         </article>
@@ -1177,30 +1222,16 @@ const Dashboard = () => {
                 </div>
 
                 <div className='dashboard-hub__desktop-profile-stats dashboard-hub__desktop-profile-stats--compact'>
-                    <div className='dashboard-hub__desktop-profile-statline'>
-                        <span>Hands Played</span>
-                        <strong>{nGamesPlayed}</strong>
-                    </div>
-                    <div className='dashboard-hub__desktop-profile-statline'>
-                        <span>Win %</span>
-                        <strong>{formatPercent(nWinRate)}</strong>
-                    </div>
-                    <div className='dashboard-hub__desktop-profile-statline'>
-                        <span>Total Winnings</span>
-                        <strong>{formatAmount(nTotalWinnings)}</strong>
-                    </div>
+                    {aProfileStats.map((stat) => (
+                        <div className='dashboard-hub__desktop-profile-statline' key={stat.label}>
+                            <span>{stat.label}</span>
+                            <strong>{stat.value}</strong>
+                        </div>
+                    ))}
                 </div>
 
             </div>
 
-            <div className='dashboard-hub__desktop-card-footer dashboard-hub__desktop-card-footer--split'>
-                <button type='button' className='dashboard-hub__desktop-cta dashboard-hub__desktop-cta--secondary' onClick={() => handleOpenShopTab(true)}>
-                    Shop
-                </button>
-                <button type='button' className='dashboard-hub__desktop-cta dashboard-hub__desktop-cta--primary' onClick={() => navigate('/profile')}>
-                    Open Profile
-                </button>
-            </div>
         </article>
     );
 

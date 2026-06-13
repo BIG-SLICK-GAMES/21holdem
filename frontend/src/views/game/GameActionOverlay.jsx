@@ -153,6 +153,7 @@ const SIDE_BET_OPTIONS = [
         variant: 'twenty-one',
     },
 ];
+const TABLE_TOP_UP_AMOUNTS = [500, 1000, 2500, 5000];
 
 const createInitialSideBets = () => SIDE_BET_OPTIONS.reduce((accumulator, option) => ({
     ...accumulator,
@@ -465,6 +466,67 @@ GameUtilityModal.defaultProps = {
     isBuyingShopItem: false,
 };
 
+function TableTopUpModal({ visible, amount, autoTopUp, tableBankroll, fullBankroll, onAmountChange, onAutoTopUpChange, onSubmit, onClose }) {
+    if (!visible) return null;
+
+    return (
+        <div className='game-action-overlay__top-up-modal' role='dialog' aria-modal='true' aria-label='Top up table bankroll'>
+            <div className='game-action-overlay__top-up-backdrop' onClick={onClose} />
+            <section className='game-action-overlay__top-up-panel'>
+                <header className='game-action-overlay__top-up-header'>
+                    <strong>Top Up Table</strong>
+                    <button type='button' onClick={onClose} aria-label='Close table top up'>x</button>
+                </header>
+                <div className='game-action-overlay__top-up-balances'>
+                    <div>
+                        <span>Full Bankroll</span>
+                        <strong>{fullBankroll}</strong>
+                    </div>
+                    <div>
+                        <span>Table</span>
+                        <strong>{tableBankroll}</strong>
+                    </div>
+                </div>
+                <div className='game-action-overlay__top-up-options'>
+                    {TABLE_TOP_UP_AMOUNTS.map((value) => (
+                        <button
+                            key={value}
+                            type='button'
+                            className={Number(amount) === value ? 'is-selected' : ''}
+                            onClick={() => onAmountChange(value)}
+                        >
+                            {_.formatCurrencyWithComa(value)}
+                        </button>
+                    ))}
+                </div>
+                <label className='game-action-overlay__top-up-toggle'>
+                    <input
+                        type='checkbox'
+                        checked={autoTopUp}
+                        onChange={(event) => onAutoTopUpChange(event.target.checked)}
+                    />
+                    <span>Auto top up after each loss</span>
+                </label>
+                <button type='button' className='game-action-overlay__top-up-submit' onClick={onSubmit}>
+                    Top Up
+                </button>
+            </section>
+        </div>
+    );
+}
+
+TableTopUpModal.propTypes = {
+    visible: PropTypes.bool.isRequired,
+    amount: PropTypes.number.isRequired,
+    autoTopUp: PropTypes.bool.isRequired,
+    tableBankroll: PropTypes.string.isRequired,
+    fullBankroll: PropTypes.string.isRequired,
+    onAmountChange: PropTypes.func.isRequired,
+    onAutoTopUpChange: PropTypes.func.isRequired,
+    onSubmit: PropTypes.func.isRequired,
+    onClose: PropTypes.func.isRequired,
+};
+
 const BUTTON_CLASS_BY_VARIANT = {
     primary: 'guest-entry-btn',
     secondary: 'about-entry-btn',
@@ -489,8 +551,12 @@ function GameActionOverlay({ isPaused = false }) {
     const [clockNow, setClockNow] = useState(() => Date.now());
     const [consoleWin, setConsoleWin] = useState({ visible: false, amount: 0, token: 0 });
     const [consoleBust, setConsoleBust] = useState({ active: false, token: 0 });
-    const [bankrollOverride, setBankrollOverride] = useState(null);
     const [utilityModal, setUtilityModal] = useState('');
+    const [bTopUpModalOpen, setTopUpModalOpen] = useState(false);
+    const [nTopUpAmount, setTopUpAmount] = useState(1000);
+    const [bAutoTopUp, setAutoTopUp] = useState(() => (
+        typeof window !== 'undefined' && window.localStorage?.getItem('bsg:auto-table-top-up') === '1'
+    ));
     const { data: profileData } = useQuery('profileData', getProfile, {
         select: (data) => data?.data?.data,
         refetchOnWindowFocus: false,
@@ -594,6 +660,21 @@ function GameActionOverlay({ isPaused = false }) {
         mutateBuyChips({ nPrice: item.nPrice });
     };
 
+    const handleSubmitTableTopUp = () => {
+        const nAmount = Math.max(0, Number(nTopUpAmount) || 0);
+        if (!nAmount) return;
+        emitGameActionOverlayCommand('topUpTable', {
+            amount: nAmount,
+            autoTopUp: bAutoTopUp,
+        });
+        setTopUpModalOpen(false);
+    };
+
+    useEffect(() => {
+        if (typeof window === 'undefined') return;
+        window.localStorage?.setItem('bsg:auto-table-top-up', bAutoTopUp ? '1' : '0');
+    }, [bAutoTopUp]);
+
     useEffect(() => {
         if (typeof window === 'undefined') return;
         window.dispatchEvent(new CustomEvent(GAME_BROWSER_EVENTS.SIDE_BETS_CHANGE, {
@@ -612,10 +693,7 @@ function GameActionOverlay({ isPaused = false }) {
                 ...createInitialSideBets(),
                 ...nextBets,
             });
-            if (Number.isFinite(Number(event?.detail?.nChips))) {
-                setBankrollOverride(Number(event.detail.nChips));
-                queryClient.invalidateQueries('profileData');
-            }
+            if (Number.isFinite(Number(event?.detail?.nChips))) queryClient.invalidateQueries('profileData');
             const payout = normalizeSideBetPayouts(event?.detail);
             if (payout.total > 0) setSideBetPayout(payout);
         };
@@ -791,8 +869,7 @@ function GameActionOverlay({ isPaused = false }) {
         : '--';
     const nLiveTableBankroll = Number(overlayState.tableBankroll);
     const nProfileBankroll = Number(profileData?.nChips);
-    const nOverrideBankroll = Number(bankrollOverride);
-    const nConsoleBankroll = getPreferredBankrollValue(nOverrideBankroll, nProfileBankroll, nLiveTableBankroll);
+    const nConsoleBankroll = getPreferredBankrollValue(nProfileBankroll, nLiveTableBankroll);
     const bankrollAmount = Number.isFinite(Number(nConsoleBankroll)) ? _.formatCurrency(Number(nConsoleBankroll)) : '--';
     const nBigBlind = Number(overlayState.bigBlind);
     const nSmallBlind = Number(overlayState.smallBlind);
@@ -800,7 +877,7 @@ function GameActionOverlay({ isPaused = false }) {
         ? `${formatBlindAmount(Number.isFinite(nSmallBlind) && nSmallBlind > 0 ? nSmallBlind : nBigBlind / 2)}/${formatBlindAmount(nBigBlind)}`
         : '';
     const sConsoleName = profileData?.sUserName || 'Player';
-    const sConsoleAvatar = getAvatarImageSrc(profileData?.sAvatar, sConsoleName);
+    const sConsoleAvatar = getAvatarImageSrc(profileData?.sAvatar, sConsoleName) || getAvatarImageSrc('', sConsoleName);
     const isVisible = Boolean(overlayState.visible);
     const bHasHoleCards = consoleCards.hand.length > 0;
     const bKeepConsoleVisible = isVisible || bSideBetWindowOpen || sideBetPayout.total > 0 || bHasHoleCards;
@@ -841,6 +918,17 @@ function GameActionOverlay({ isPaused = false }) {
                 isShopLoading={isShopLoading}
                 isBuyingShopItem={isBuyingShopItem}
                 onBuyShopItem={handleBuyShopItem}
+            />
+            <TableTopUpModal
+                visible={bTopUpModalOpen}
+                amount={nTopUpAmount}
+                autoTopUp={bAutoTopUp}
+                tableBankroll={tableBankrollAmount}
+                fullBankroll={bankrollAmount}
+                onAmountChange={setTopUpAmount}
+                onAutoTopUpChange={setAutoTopUp}
+                onSubmit={handleSubmitTableTopUp}
+                onClose={() => setTopUpModalOpen(false)}
             />
             <div className={`game-action-overlay ${bKeepConsoleVisible ? 'is-visible' : ''}`.trim()}>
             <div className='game-action-overlay__shell'>
@@ -971,8 +1059,18 @@ function GameActionOverlay({ isPaused = false }) {
                         </div>
                         <div className='game-action-overlay__console-col game-action-overlay__console-col--right'>
                             <div className='game-action-overlay__table-bankroll'>
-                                <span>Table</span>
-                                <strong>{tableBankrollAmount}</strong>
+                                <div>
+                                    <span>Table</span>
+                                    <strong>{tableBankrollAmount}</strong>
+                                </div>
+                                <button
+                                    type='button'
+                                    className='game-action-overlay__table-bankroll-top-up'
+                                    onClick={() => setTopUpModalOpen(true)}
+                                    aria-label='Top up table bankroll'
+                                >
+                                    +
+                                </button>
                             </div>
                             {/*
                                 <span className='game-action-overlay__side-bet-callout'>

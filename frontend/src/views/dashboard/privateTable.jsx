@@ -1,12 +1,31 @@
 import React, { useEffect, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from 'react-query';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Button, Col, Form, Modal, Row, Spinner } from 'react-bootstrap';
 import CustomTable from 'shared/components/Table';
 import { createPrivateTable, getTables, joinPrivateTable } from 'query/gameTable.query';
+import { getProfile } from 'query/profile.query';
 import { getCookie, ReactToastify } from 'shared/utils';
 import { useForm } from 'react-hook-form';
 import { getDirtyFormValues } from 'helper/helper';
+
+function hasPrivateTableAccess(profile = {}) {
+    return Boolean(
+        profile?.bIsMember ||
+        profile?.isMember ||
+        profile?.bMember ||
+        profile?.bIsSubscribed ||
+        profile?.isSubscribed ||
+        profile?.bPrivateTableAccess ||
+        profile?.bHasPrivateTableAccess ||
+        profile?.eUserType === 'member' ||
+        profile?.eUserType === 'premium' ||
+        profile?.eUserType === 'vip' ||
+        profile?.sUserType === 'member' ||
+        profile?.sUserType === 'premium' ||
+        profile?.sUserType === 'vip'
+    );
+}
 
 const PrivateTable = () => {
     const navigate = useNavigate();
@@ -15,13 +34,22 @@ const PrivateTable = () => {
     // const [microTablesData, setMicroTablesData] = useState([]);
     // const [normalTablesData, setNormalTablesData] = useState([]);
     // const [eliteTablesData, setEliteTablesData] = useState([]);
-    const [activeTab, setActiveTab] = useState('micro');
     const [modalShow, setModalShow] = useState(false);
     const queryClient = useQueryClient();
 
-    const { control, register, reset, watch, formState: { errors, isDirty, dirtyFields }, handleSubmit, setValue } = useForm({ mode: "all" });
+    const { register, watch, formState: { errors, isDirty, dirtyFields }, handleSubmit } = useForm({ mode: "all" });
 
-    const { data: dataTabel, isLoading: isDataTabelLoading } = useQuery("getTables", getTables, {
+    const { data: profileData } = useQuery("getProfile", getProfile, {
+        select: (data) => data?.data?.data || null,
+        onError: (error) => {
+            console.log(error);
+        },
+    });
+
+    const bPrivateTablesUnlocked = hasPrivateTableAccess(profileData);
+    const sPrivateCode = watch("sPrivateCode");
+
+    const { isLoading: isDataTabelLoading } = useQuery("getTables", getTables, {
         onSuccess: (data) => {
             if (data.status === 200) {
                 setTablesData([]);
@@ -44,7 +72,7 @@ const PrivateTable = () => {
         },
     });
 
-    const { mutate: mutateCreatePrivateTable, isLoading: joinTableLoading } = useMutation(createPrivateTable, {
+    const { mutate: mutateCreatePrivateTable } = useMutation(createPrivateTable, {
         onSuccess: (data) => {
             if (data.status === 200) {
                 console.log(data)
@@ -59,7 +87,7 @@ const PrivateTable = () => {
         },
     });
 
-    const { mutate: mutateJoinPrivateTable, isLoading: joinPrivateTableLoading } = useMutation(joinPrivateTable, {
+    const { mutate: mutateJoinPrivateTable } = useMutation(joinPrivateTable, {
         onSuccess: (data) => {
             if (data.status === 200) {
                 navigate(`/game`, { state: { sAuthToken: getCookie('sAuthToken'), iBoardId: data.data.data.iBoardId, sPrivateCode: data.data.data.sPrivateCode } });
@@ -77,14 +105,19 @@ const PrivateTable = () => {
 
     useEffect(() => {
         const isDirtyField = {
-            sPrivateCode: watch("sPrivateCode") || "-",
+            sPrivateCode: sPrivateCode || "-",
         };
 
         const payloadData = getDirtyFormValues(dirtyFields, isDirtyField);
         setPayload(payloadData);
-    }, [watch("sPrivateCode"), isDirty, dirtyFields]);
+    }, [sPrivateCode, isDirty, dirtyFields]);
 
-    const onSubmit = (data) => {
+    const onSubmit = () => {
+        if (!bPrivateTablesUnlocked) {
+            ReactToastify('Private tables are members-only. Unlock member access before joining.', 'error');
+            navigate('/lobby?tab=lobby-shop');
+            return;
+        }
         mutateJoinPrivateTable(payload);
     }
 
@@ -110,7 +143,22 @@ const PrivateTable = () => {
                             <div className='sub-dashboard-container__content'>
                                 <div className='dashboard-container__content-table-selection-content-options private-table'>
                                     <div className='title'>Private Table</div>
-                                    <Button className='join-button' onClick={() => setModalShow(true)}>Join Table</Button>
+                                    <div className={`private-table-access ${bPrivateTablesUnlocked ? 'is-unlocked' : 'is-locked'}`}>
+                                        {bPrivateTablesUnlocked ? 'Member Access' : 'Members Only'}
+                                    </div>
+                                    <Button
+                                        className={`join-button ${bPrivateTablesUnlocked ? '' : 'is-locked'}`}
+                                        onClick={() => {
+                                            if (!bPrivateTablesUnlocked) {
+                                                ReactToastify('Private tables are members-only. Visit the shop to unlock access.', 'error');
+                                                navigate('/lobby?tab=lobby-shop');
+                                                return;
+                                            }
+                                            setModalShow(true);
+                                        }}
+                                    >
+                                        {bPrivateTablesUnlocked ? 'Join Table' : 'Unlock'}
+                                    </Button>
                                 </div>
                                 <div className='dashboard-container__content-table-selection-content-tables'>
                                     <Row className='g-2'>
@@ -119,7 +167,14 @@ const PrivateTable = () => {
                                                 {
                                                     tablesData.length > 0 ? tablesData.map((table, index) => (
                                                         <Col xl={4} lg={4} md={6} sm={12} xs={12} key={index} className='dashboard-table'>
-                                                            <CustomTable isPrivate={true} key={table._id} tableName={table.sName} minChips={table.nMinBet} minBuyIn={table.nMinBuyIn} onPlay={() => mutateCreatePrivateTable(table._id)} />
+                                                            <CustomTable isPrivate={true} key={table._id} tableName={table.sName} minChips={table.nMinBet} minBuyIn={table.nMinBuyIn} onPlay={() => {
+                                                                if (!bPrivateTablesUnlocked) {
+                                                                    ReactToastify('Private tables are members-only. Visit the shop to unlock access.', 'error');
+                                                                    navigate('/lobby?tab=lobby-shop');
+                                                                    return;
+                                                                }
+                                                                mutateCreatePrivateTable(table._id);
+                                                            }} />
                                                         </Col>
                                                     )) : <Col xl={12} lg={12} md={12} sm={12} xs={12} className='no-table'>No tables found!</Col>
                                                 }

@@ -22,6 +22,7 @@ const config = {
     playerFont: 'playerFont',
     playerFontBold: 'playerFontBold',
     CardFont: 'CardFont',
+    popupDepth: 100000,
 };
 
 config.setLayout = function setLayout(layoutMode = 'mobile') {

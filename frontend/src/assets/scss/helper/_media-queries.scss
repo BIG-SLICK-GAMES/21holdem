@@ -1,29 +1,43 @@
+// The app is currently presented as a fixed mobile-width experience.
+// Force local SCSS breakpoints to compile the mobile branches even when the
+// browser viewport is wider than the app frame.
+$force-mobile-layout: true !default;
+
 @mixin media-max($breakpoint) {
-  @if map-has-key($grid-breakpoints, $breakpoint) {
-    // Get the breakpoint value
-    $breakpoint-value: map-get($grid-breakpoints, $breakpoint);
-    // Write the media query
-    @media (max-width: $breakpoint-value) {
-      @content;
-    }
-    // If the breakpoint doesn't exist in the map
+  @if $force-mobile-layout {
+    @content;
   } @else {
-    // Log a warning
-    @warn 'Invalid breakpoint: #{$breakpoint}.';
+    @if map-has-key($grid-breakpoints, $breakpoint) {
+      // Get the breakpoint value
+      $breakpoint-value: map-get($grid-breakpoints, $breakpoint);
+      // Write the media query
+      @media (max-width: $breakpoint-value) {
+        @content;
+      }
+      // If the breakpoint doesn't exist in the map
+    } @else {
+      // Log a warning
+      @warn 'Invalid breakpoint: #{$breakpoint}.';
+    }
   }
 }
 
 @mixin media-min($breakpoint) {
-  @if map-has-key($grid-breakpoints, $breakpoint) {
-    // Get the breakpoint value
-    $breakpoint-value: map-get($grid-breakpoints, $breakpoint);
-    // Write the media query
-    @media (min-width: $breakpoint-value) {
-      @content;
-    }
-    // If the breakpoint doesn't exist in the map
+  @if $force-mobile-layout {
+    // Desktop/tablet min-width branches are intentionally disabled while the
+    // app is constrained to the mobile frame.
   } @else {
-    // Log a warning
-    @warn 'Invalid breakpoint: #{$breakpoint}.';
+    @if map-has-key($grid-breakpoints, $breakpoint) {
+      // Get the breakpoint value
+      $breakpoint-value: map-get($grid-breakpoints, $breakpoint);
+      // Write the media query
+      @media (min-width: $breakpoint-value) {
+        @content;
+      }
+      // If the breakpoint doesn't exist in the map
+    } @else {
+      // Log a warning
+      @warn 'Invalid breakpoint: #{$breakpoint}.';
+    }
   }
 }
