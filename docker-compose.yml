@@ -1,0 +1,78 @@
+services:
+  mongodb:
+    image: mongo:7
+    container_name: holdem-mongodb
+    restart: unless-stopped
+    volumes:
+      - mongodb_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.runCommand({ ping: 1 }).ok"]
+      interval: 10s
+      timeout: 15s
+      retries: 20
+
+  redis:
+    image: redis:7-alpine
+    container_name: holdem-redis
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  game-backend:
+    build:
+      context: ./backend
+    container_name: holdem-game-backend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      APP_ENV: docker
+      GAME_ID: 21holdem
+      PORT: 4000
+      MONGO_URI: mongodb://mongodb:27017/holdem_test1
+      DB_URL: mongodb://mongodb:27017/holdem_test1
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      JWT_SECRET: docker-dev-secret-change-me
+      HASH_KEY: docker-hash-key-change-me
+      BASE_API_PATH: /api/v1
+      FRONTEND_URL: /
+      STRIPE_SUCCESS_URL: /shop?checkout=success
+      STRIPE_CANCEL_URL: /shop?checkout=cancel
+      SYSTEM_BOT_EMAIL_DOMAIN: playholdem.docker
+      SYSTEM_BOT_PASSWORD: docker-dev-bot-password-change-me
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    expose:
+      - "4000"
+
+  game-frontend:
+    build:
+      context: ./frontend
+    container_name: holdem-game-frontend
+    restart: unless-stopped
+    depends_on:
+      - game-backend
+    ports:
+      - "3100:80"
+
+  project-launcher:
+    image: nginx:1.27-alpine
+    container_name: holdem-project-launcher
+    restart: unless-stopped
+    volumes:
+      - ./launcher:/usr/share/nginx/html:ro
+    ports:
+      - "3200:80"
+
+volumes:
+  mongodb_data:
+  redis_data:

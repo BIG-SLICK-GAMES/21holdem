@@ -83,28 +83,83 @@ function formatBlindAmount(value) {
     return Number.isInteger(nValue) ? String(nValue) : String(Number(nValue.toFixed(2)));
 }
 
+function formatWholeCurrency(value) {
+    const nValue = Math.max(0, Math.round(Number(value) || 0));
+    return String(nValue).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
 function SoundToggle() {
-    const [muted, setMuted] = useState(false);
+    const [audioState, setAudioState] = useState({ soundOn: true, musicOn: true });
+    const [isOpen, setOpen] = useState(false);
 
     useEffect(() => {
-        const onState = (e) => setMuted(!!e?.detail?.muted);
+        const onState = (e) => {
+            setAudioState({
+                soundOn: e?.detail?.soundOn !== false,
+                musicOn: e?.detail?.musicOn !== false,
+            });
+        };
         window.addEventListener(GAME_BROWSER_EVENTS.SOUND_STATE, onState);
         return () => window.removeEventListener(GAME_BROWSER_EVENTS.SOUND_STATE, onState);
     }, []);
 
-    const handleClick = () => {
-        window.dispatchEvent(new CustomEvent(GAME_BROWSER_EVENTS.SOUND_TOGGLE));
+    const updateAudioSetting = (nextState) => {
+        setAudioState(nextState);
+        window.dispatchEvent(new CustomEvent(GAME_BROWSER_EVENTS.SOUND_SETTINGS_CHANGE, {
+            detail: nextState,
+        }));
     };
+    const bMuted = !audioState.soundOn && !audioState.musicOn;
+    const muted = bMuted;
 
     return (
+        <>
         <button
             type='button'
-            className={`sound-toggle${muted ? ' sound-toggle--muted' : ''}`}
-            aria-label={muted ? 'Unmute sound' : 'Mute sound'}
-            onClick={handleClick}
+            className={`sound-toggle${bMuted ? ' sound-toggle--muted' : ''}`}
+            aria-label='Open audio settings'
+            onClick={() => setOpen(true)}
         >
             {muted ? '🔇' : '🔊'}
         </button>
+        {isOpen ? (
+            <div
+                className='game-audio-modal'
+                role='dialog'
+                aria-modal='true'
+                aria-label='Audio settings'
+                onPointerDown={(event) => event.stopPropagation()}
+                onClick={(event) => event.stopPropagation()}
+            >
+                <div className='game-audio-modal__panel'>
+                    <div className='game-audio-modal__header'>
+                        <strong>Audio</strong>
+                        <button type='button' onClick={() => setOpen(false)} aria-label='Close audio settings'>x</button>
+                    </div>
+                    <label className='game-audio-modal__row'>
+                        <span>Music</span>
+                        <button
+                            type='button'
+                            className={audioState.musicOn ? 'is-on' : ''}
+                            onClick={() => updateAudioSetting({ ...audioState, musicOn: !audioState.musicOn })}
+                        >
+                            {audioState.musicOn ? 'On' : 'Off'}
+                        </button>
+                    </label>
+                    <label className='game-audio-modal__row'>
+                        <span>FX</span>
+                        <button
+                            type='button'
+                            className={audioState.soundOn ? 'is-on' : ''}
+                            onClick={() => updateAudioSetting({ ...audioState, soundOn: !audioState.soundOn })}
+                        >
+                            {audioState.soundOn ? 'On' : 'Off'}
+                        </button>
+                    </label>
+                </div>
+            </div>
+        ) : null}
+        </>
     );
 }
 
@@ -134,6 +189,7 @@ const SIDE_BET_OPTIONS = [
     {
         id: 'straight',
         label: 'Straight',
+        payout: 'Pays 5:1',
         icon: straightIcon,
         fallback: '',
         variant: 'straight',
@@ -141,6 +197,7 @@ const SIDE_BET_OPTIONS = [
     {
         id: 'flush',
         label: 'Flush',
+        payout: 'Pays 4:1',
         icon: flushIcon,
         fallback: 'Flush',
         variant: 'flush',
@@ -148,6 +205,7 @@ const SIDE_BET_OPTIONS = [
     {
         id: 'twenty-one',
         label: '21',
+        payout: 'Pays 3:1',
         icon: twentyOneIcon,
         fallback: '',
         variant: 'twenty-one',
@@ -160,7 +218,7 @@ const createInitialSideBets = () => SIDE_BET_OPTIONS.reduce((accumulator, option
     [option.id]: 0,
 }), {});
 
-function SideBetsModule({ bets, disabled = false, isFocus = false, isTable = false, showHeading = false, statuses = {}, unitAmount = SIDE_BET_STEP, onAdd, onClear }) {
+function SideBetsModule({ bets, disabled = false, isFocus = false, isTable = false, showHeading = false, showAddButtons = false, statuses = {}, unitAmount = SIDE_BET_STEP, onAdd, onClear }) {
     const stopSideBetPointer = (event) => {
         event.preventDefault();
         event.stopPropagation();
@@ -178,9 +236,18 @@ function SideBetsModule({ bets, disabled = false, isFocus = false, isTable = fal
                     <span>Place Side Bets</span>
                 </div>
             ) : null}
+            {!isTable && showHeading ? (
+                <div className='game-action-overlay__side-bets-heading'>
+                    <strong>Place Your Sidebets</strong>
+                    <span>Choose before the countdown ends</span>
+                </div>
+            ) : null}
             <div className='game-action-overlay__side-bets-rows'>
-                {SIDE_BET_OPTIONS.map((bet) => (
-                    <div className={`game-action-overlay__side-bet${!bets[bet.id] ? ' is-empty' : ''}${statuses[bet.id]?.unqualified ? ' is-unqualified' : ''}${statuses[bet.id]?.paid ? ' is-paid' : ''}`} key={bet.id}>
+                {SIDE_BET_OPTIONS.map((bet) => {
+                    const nBetAmount = Number(bets[bet.id]) || 0;
+                    const bActive = nBetAmount > 0 && !statuses[bet.id]?.unqualified;
+                    return (
+                    <div className={`game-action-overlay__side-bet${!nBetAmount ? ' is-empty' : ''}${bActive ? ' is-active' : ''}${statuses[bet.id]?.unqualified ? ' is-unqualified' : ''}${statuses[bet.id]?.paid ? ' is-paid' : ''}`} key={bet.id}>
                         <button
                             type='button'
                             className={`game-action-overlay__side-bet-icon game-action-overlay__side-bet-icon--${bet.variant}`}
@@ -198,7 +265,22 @@ function SideBetsModule({ bets, disabled = false, isFocus = false, isTable = fal
                                 <span>{bet.fallback}</span>
                             )}
                         </button>
-                        {bets[bet.id] ? (
+                        {showAddButtons ? (
+                            <button
+                                type='button'
+                                className='game-action-overlay__side-bet-add'
+                                aria-label={`Add ${_.formatCurrencyWithComa(unitAmount)} chips to ${bet.label}`}
+                                disabled={disabled}
+                                onPointerDown={stopSideBetPointer}
+                                onClick={(event) => {
+                                    stopSideBetPointer(event);
+                                    onAdd(bet.id);
+                                }}
+                            >
+                                +
+                            </button>
+                        ) : null}
+                        {nBetAmount ? (
                             <button
                                 type='button'
                                 className='game-action-overlay__side-bet-badge'
@@ -211,7 +293,7 @@ function SideBetsModule({ bets, disabled = false, isFocus = false, isTable = fal
                                 }}
                             >
                                 <img src={chipIcon} alt='' draggable='false' />
-                                <span>{_.formatCurrencyWithComa(bets[bet.id])}</span>
+                                <span>{_.formatCurrencyWithComa(nBetAmount)}</span>
                             </button>
                         ) : null}
                         {statuses[bet.id]?.paid ? (
@@ -219,8 +301,15 @@ function SideBetsModule({ bets, disabled = false, isFocus = false, isTable = fal
                                 +{_.formatCurrencyWithComa(statuses[bet.id].paid)}
                             </span>
                         ) : null}
+                        {showHeading ? (
+                            <span className='game-action-overlay__side-bet-copy'>
+                                <strong>{bet.label}</strong>
+                                <small>{bet.payout}</small>
+                            </span>
+                        ) : null}
                     </div>
-                ))}
+                    );
+                })}
             </div>
         </div>
     );
@@ -232,6 +321,7 @@ SideBetsModule.propTypes = {
     isFocus: PropTypes.bool,
     isTable: PropTypes.bool,
     showHeading: PropTypes.bool,
+    showAddButtons: PropTypes.bool,
     statuses: PropTypes.objectOf(PropTypes.shape({
         unqualified: PropTypes.bool,
         paid: PropTypes.number,
@@ -246,6 +336,7 @@ SideBetsModule.defaultProps = {
     isFocus: false,
     isTable: false,
     showHeading: false,
+    showAddButtons: false,
     statuses: {},
     unitAmount: SIDE_BET_STEP,
 };
@@ -269,12 +360,12 @@ function getHoleCardSuit(card) {
     }[sSuitKey] || { image: spadeImage, name: 'spade', red: false };
 }
 
-function HoleCardDisplay({ cards, score }) {
+function HoleCardDisplay({ cards, score, isFolded }) {
     const visibleCards = cards.slice(0, 2);
     if (!visibleCards.length) return null;
 
     return (
-        <div className='game-action-overlay__hole-card-display' aria-label='Your hole cards'>
+        <div className={`game-action-overlay__hole-card-display${isFolded ? ' is-folded' : ''}`} aria-label='Your hole cards'>
             <div className='game-action-overlay__hole-card-row'>
                 {visibleCards.map((card, index) => {
                     const suit = getHoleCardSuit(card);
@@ -297,11 +388,13 @@ function HoleCardDisplay({ cards, score }) {
 HoleCardDisplay.propTypes = {
     cards: PropTypes.arrayOf(PropTypes.object),
     score: PropTypes.number,
+    isFolded: PropTypes.bool,
 };
 
 HoleCardDisplay.defaultProps = {
     cards: [],
     score: 0,
+    isFolded: false,
 };
 
 function hasCardRun(cards = [], nMinimumLength = 3) {
@@ -329,6 +422,7 @@ function getSideBetStatuses(handCards = [], communityCards = [], sideBetLive = t
     const cards = [...handCards, ...communityCards];
     const nRemainingCommunityCards = Math.max(0, 5 - communityCards.length);
     const nScore = cards.reduce((sum, card) => sum + (Number(card?.nValue) || 0), 0);
+    const bTriggerWindowClosed = communityCards.length >= 2 || sideBetLive === false;
     const suitCounts = cards.reduce((accumulator, card) => {
         const suit = String(card?.eSuit || '').toLowerCase();
         if (!suit) return accumulator;
@@ -336,16 +430,19 @@ function getSideBetStatuses(handCards = [], communityCards = [], sideBetLive = t
         return accumulator;
     }, {});
     const nMaxSuitCount = Math.max(0, ...Object.values(suitCounts));
+    const bFlushTriggered = cards.length >= 3 && nMaxSuitCount >= 3;
+    const bStraightTriggered = cards.length >= 3 && hasCardRun(cards, 3);
+    const bTwentyOneTriggered = nScore === 21;
 
     return {
         'twenty-one': {
-            unqualified: cards.length > 0 && (nScore > 21 || (communityCards.length >= 5 && nScore !== 21)),
+            unqualified: cards.length > 0 && (nScore > 21 || (bTriggerWindowClosed && !bTwentyOneTriggered)),
         },
         flush: {
-            unqualified: cards.length < 3 || (!sideBetLive && nMaxSuitCount < 3) || (sideBetLive && nMaxSuitCount + nRemainingCommunityCards < 3),
+            unqualified: cards.length > 0 && ((bTriggerWindowClosed && !bFlushTriggered) || (sideBetLive && nMaxSuitCount + nRemainingCommunityCards < 3)),
         },
         straight: {
-            unqualified: cards.length < 3 || (!sideBetLive && !hasCardRun(cards, 3)) || (sideBetLive && communityCards.length >= 5 && !hasCardRun(cards, 3)),
+            unqualified: cards.length > 0 && ((bTriggerWindowClosed && !bStraightTriggered) || (sideBetLive && communityCards.length >= 5 && !bStraightTriggered)),
         },
     };
 }
@@ -544,9 +641,10 @@ function GameActionOverlay({ isPaused = false }) {
         endsAt: 0,
     });
     const [sideBetPayout, setSideBetPayout] = useState({ payouts: {}, total: 0, message: '', expiresAt: 0 });
-    const [consoleCards, setConsoleCards] = useState({ hand: [], community: [], sideBetCommunity: [], sideBetLive: true, score: 0 });
+    const [consoleCards, setConsoleCards] = useState({ hand: [], community: [], sideBetCommunity: [], sideBetLive: true, score: 0, isFolded: false });
     const [turnTimer, setTurnTimer] = useState({ active: false, endsAt: 0, totalMs: 0 });
     const [sideBetUnitAmount, setSideBetUnitAmount] = useState(SIDE_BET_STEP);
+    const [blindAmounts, setBlindAmounts] = useState({ smallBlind: null, bigBlind: null });
     const [bShowSideBetInfo, setShowSideBetInfo] = useState(false);
     const [clockNow, setClockNow] = useState(() => Date.now());
     const [consoleWin, setConsoleWin] = useState({ visible: false, amount: 0, token: 0 });
@@ -704,6 +802,7 @@ function GameActionOverlay({ isPaused = false }) {
                 sideBetCommunity: Array.isArray(event?.detail?.sideBetCommunity) ? event.detail.sideBetCommunity : [],
                 sideBetLive: event?.detail?.sideBetLive !== false,
                 score: Number(event?.detail?.score) || 0,
+                isFolded: Boolean(event?.detail?.isFolded),
             });
         };
 
@@ -729,6 +828,10 @@ function GameActionOverlay({ isPaused = false }) {
         const handleSideBetWindow = (event) => {
             const bVisible = Boolean(event?.detail?.visible);
             const nSeconds = Math.max(0, Number(event?.detail?.seconds) || 0);
+            if (bVisible) {
+                setSideBets(createInitialSideBets());
+                setSideBetPayout({ payouts: {}, total: 0, message: '', expiresAt: 0 });
+            }
             setSideBetWindow({
                 visible: bVisible,
                 dismissed: false,
@@ -745,6 +848,10 @@ function GameActionOverlay({ isPaused = false }) {
             const nBigBlind = Number(event?.detail?.bigBlind);
             if (Number.isFinite(nBigBlind) && nBigBlind > 0) {
                 setSideBetUnitAmount(nBigBlind);
+                setBlindAmounts({
+                    smallBlind: nBigBlind / 2,
+                    bigBlind: nBigBlind,
+                });
             }
         };
 
@@ -810,7 +917,7 @@ function GameActionOverlay({ isPaused = false }) {
             setConsoleWin({ visible: true, amount: nAmount, token: nToken });
             window.setTimeout(() => {
                 setConsoleWin((current) => (current.token === nToken ? { visible: false, amount: 0, token: 0 } : current));
-            }, 2400);
+            }, 7200);
         };
 
         window.addEventListener(GAME_BROWSER_EVENTS.CONSOLE_WIN, handleConsoleWin);
@@ -865,14 +972,14 @@ function GameActionOverlay({ isPaused = false }) {
     }), [rows]);
     const hasMessage = Boolean(overlayState.message);
     const tableBankrollAmount = Number.isFinite(Number(overlayState.tableBankroll))
-        ? _.formatCurrency(Number(overlayState.tableBankroll))
+        ? formatWholeCurrency(overlayState.tableBankroll)
         : '--';
     const nLiveTableBankroll = Number(overlayState.tableBankroll);
     const nProfileBankroll = Number(profileData?.nChips);
     const nConsoleBankroll = getPreferredBankrollValue(nProfileBankroll, nLiveTableBankroll);
-    const bankrollAmount = Number.isFinite(Number(nConsoleBankroll)) ? _.formatCurrency(Number(nConsoleBankroll)) : '--';
-    const nBigBlind = Number(overlayState.bigBlind);
-    const nSmallBlind = Number(overlayState.smallBlind);
+    const bankrollAmount = Number.isFinite(Number(nConsoleBankroll)) ? formatWholeCurrency(nConsoleBankroll) : '--';
+    const nBigBlind = Number(overlayState.bigBlind || blindAmounts.bigBlind);
+    const nSmallBlind = Number(overlayState.smallBlind || blindAmounts.smallBlind);
     const sBlindLabel = Number.isFinite(nBigBlind) && nBigBlind > 0
         ? `${formatBlindAmount(Number.isFinite(nSmallBlind) && nSmallBlind > 0 ? nSmallBlind : nBigBlind / 2)}/${formatBlindAmount(nBigBlind)}`
         : '';
@@ -881,6 +988,67 @@ function GameActionOverlay({ isPaused = false }) {
     const isVisible = Boolean(overlayState.visible);
     const bHasHoleCards = consoleCards.hand.length > 0;
     const bKeepConsoleVisible = isVisible || bSideBetWindowOpen || sideBetPayout.total > 0 || bHasHoleCards;
+    const sideBetsPanel = (
+        <div
+            className={`game-action-overlay__console-side-bets game-action-overlay__console-side-bets--top-menu${bSideBetWindowOpen ? ' is-open' : ''}`}
+            onPointerDown={(event) => event.stopPropagation()}
+            onClick={(event) => event.stopPropagation()}
+        >
+            <button
+                type='button'
+                className='game-action-overlay__side-bet-info game-action-overlay__side-bet-info--console'
+                onPointerDown={(event) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }}
+                onClick={(event) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    setShowSideBetInfo(true);
+                }}
+                aria-label='Side bet payout information'
+            >
+                i
+            </button>
+            <SideBetsModule
+                bets={sideBets}
+                disabled={isPaused || !bSideBetWindowOpen}
+                showHeading={bSideBetWindowOpen}
+                showAddButtons={bSideBetWindowOpen}
+                statuses={bSideBetWindowOpen ? {} : sideBetStatuses}
+                unitAmount={sideBetUnitAmount}
+                onAdd={addSideBet}
+                onClear={clearSideBet}
+            />
+            {sideBetPayout.total > 0 ? (
+                <div className='game-action-overlay__side-bet-payout game-action-overlay__side-bet-payout--console' aria-live='polite'>
+                    <span>{sideBetPayout.message || 'Side Bet Paid'}</span>
+                    <strong>+{_.formatCurrencyWithComa(sideBetPayout.total)}</strong>
+                </div>
+            ) : null}
+            {bSideBetWindowOpen ? (
+                <div className='game-action-overlay__console-side-bets-footer'>
+                    <span>{sideBetSecondsRemaining}s</span>
+                    <button
+                        type='button'
+                        className='game-action-overlay__side-bet-clear'
+                        disabled={isPaused || !totalSideBets}
+                        onPointerDown={(event) => {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }}
+                        onClick={(event) => {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            clearAllSideBets();
+                        }}
+                    >
+                        Clear
+                    </button>
+                </div>
+            ) : null}
+        </div>
+    );
 
     return (
         <>
@@ -891,24 +1059,27 @@ function GameActionOverlay({ isPaused = false }) {
                         <strong>{sBlindLabel}</strong>
                     </div>
                 ) : null}
-                <button
-                    type='button'
-                    className='game-stage-utility__icon-btn'
-                    onClick={() => setUtilityModal('rewards')}
-                    aria-label='Open daily rewards'
-                >
-                    <img src={rewardsIcon} alt='' />
-                </button>
-                <button
-                    type='button'
-                    className='game-stage-utility__icon-btn'
-                    onClick={() => setUtilityModal('shop')}
-                    aria-label='Open chip shop'
-                >
-                    <img src={shopIcon} alt='' />
-                </button>
-                <SoundToggle />
-                <ExitUtilityButton />
+                {sideBetsPanel}
+                <div className='game-stage-utility__actions'>
+                    <button
+                        type='button'
+                        className='game-stage-utility__icon-btn'
+                        onClick={() => setUtilityModal('rewards')}
+                        aria-label='Open daily rewards'
+                    >
+                        <img src={rewardsIcon} alt='' />
+                    </button>
+                    <button
+                        type='button'
+                        className='game-stage-utility__icon-btn'
+                        onClick={() => setUtilityModal('shop')}
+                        aria-label='Open chip shop'
+                    >
+                        <img src={shopIcon} alt='' />
+                    </button>
+                    <SoundToggle />
+                    <ExitUtilityButton />
+                </div>
             </div>
             <GameUtilityModal
                 type={utilityModal || 'rewards'}
@@ -938,9 +1109,6 @@ function GameActionOverlay({ isPaused = false }) {
                     </div>
                 ) : null}
                 <div className='game-action-overlay__tray'>
-                    {bHasHoleCards ? (
-                        <HoleCardDisplay cards={consoleCards.hand} score={consoleCards.score} />
-                    ) : null}
                     {hasButtons ? (
                         <div className={`game-action-overlay__rows game-action-overlay__rows--interactive${DEBUG_CONSOLE_LAYOUT ? ' is-debug-layout' : ''}`}>
                             {rows.map((row, rowIndex) => {
@@ -1000,62 +1168,9 @@ function GameActionOverlay({ isPaused = false }) {
                             </div>
                         </div>
                         <div className='game-action-overlay__console-col game-action-overlay__console-col--center'>
-                            <div
-                                className={`game-action-overlay__console-side-bets${bSideBetWindowOpen ? ' is-open' : ''}`}
-                                onPointerDown={(event) => event.stopPropagation()}
-                                onClick={(event) => event.stopPropagation()}
-                            >
-                                <button
-                                    type='button'
-                                    className='game-action-overlay__side-bet-info game-action-overlay__side-bet-info--console'
-                                    onPointerDown={(event) => {
-                                        event.preventDefault();
-                                        event.stopPropagation();
-                                    }}
-                                    onClick={(event) => {
-                                        event.preventDefault();
-                                        event.stopPropagation();
-                                        setShowSideBetInfo(true);
-                                    }}
-                                    aria-label='Side bet payout information'
-                                >
-                                    i
-                                </button>
-                                <SideBetsModule
-                                    bets={sideBets}
-                                    disabled={isPaused || !bSideBetWindowOpen}
-                                    showHeading={bSideBetWindowOpen}
-                                    statuses={bSideBetWindowOpen ? {} : sideBetStatuses}
-                                    unitAmount={sideBetUnitAmount}
-                                    onAdd={addSideBet}
-                                    onClear={clearSideBet}
-                                />
-                                {sideBetPayout.total > 0 ? (
-                                    <div className='game-action-overlay__side-bet-payout game-action-overlay__side-bet-payout--console' aria-live='polite'>
-                                        <span>{sideBetPayout.message || 'Side Bet Paid'}</span>
-                                        <strong>+{_.formatCurrencyWithComa(sideBetPayout.total)}</strong>
-                                    </div>
-                                ) : null}
-                                <div className='game-action-overlay__console-side-bets-footer'>
-                                    <span>{bSideBetWindowOpen ? `${sideBetSecondsRemaining}s` : `+${_.formatCurrencyWithComa(sideBetUnitAmount)}`}</span>
-                                    <button
-                                        type='button'
-                                        className='game-action-overlay__side-bet-clear'
-                                        disabled={isPaused || !bSideBetWindowOpen || !totalSideBets}
-                                        onPointerDown={(event) => {
-                                            event.preventDefault();
-                                            event.stopPropagation();
-                                        }}
-                                        onClick={(event) => {
-                                            event.preventDefault();
-                                            event.stopPropagation();
-                                            clearAllSideBets();
-                                        }}
-                                    >
-                                        Clear
-                                    </button>
-                                </div>
-                            </div>
+                            {bHasHoleCards ? (
+                                <HoleCardDisplay cards={consoleCards.hand} score={consoleCards.score} isFolded={consoleCards.isFolded} />
+                            ) : null}
                         </div>
                         <div className='game-action-overlay__console-col game-action-overlay__console-col--right'>
                             <div className='game-action-overlay__table-bankroll'>

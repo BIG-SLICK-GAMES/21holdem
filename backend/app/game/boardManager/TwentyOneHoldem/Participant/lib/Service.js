@@ -1,6 +1,8 @@
 const { User, PokerBoard, Analytics, Transaction } = require('../../../../../models');
 const { redis } = require('../../../../../utils');
 const systemBots = require('../../../../../utils/lib/system-bots');
+const { buildTurnTimerPayload } = require('../../config/turnTiming');
+const BettingSystem = require('../../bettingSystem');
 
 class Service {
   constructor(oParticipantData, oBoard) {
@@ -81,30 +83,25 @@ class Service {
   }
 
   hasActiveAllInOpponent() {
-    return this.oBoard.aParticipant.some(participant =>
-      String(participant.iUserId) !== String(this.iUserId) &&
-      participant.eState === 'playing' &&
-      participant.isAllInLock
-    );
+    return BettingSystem.hasActiveAllInOpponent(this.oBoard, this);
   }
 
-  getAvailableTurnActions() {
-    if (this.isAllInLock && this.bPendingAllInStandChoice) return ['c', 's'];
+  getTurnCallAmount() {
+    return BettingSystem.getCallAmount(this.oBoard, this);
+  }
 
-    const aActions = Array.isArray(this.aUserAction) ? [...this.aUserAction] : [];
-    if (!this.hasActiveAllInOpponent()) return aActions;
-    return aActions.filter(action => action !== 'r');
+  getAvailableTurnActions(toCallAmount = this.getTurnCallAmount()) {
+    return BettingSystem.getAvailableTurnActions(this.oBoard, this, toCallAmount);
   }
 
   async sendTurnInfo() {
-    const { nTurnTime, nTurnBuffer } = this.oBoard.oSetting;
     const bTutorialTurn = this.oBoard?.isTutorialTable?.() === true;
-    const bCheckOpenState = this.aUserAction.includes('ck') && !this.aUserAction.includes('c');
-    const toCallAmount = bCheckOpenState ? 0 : Math.max(this.oBoard.nMinBet - this.nLastBidChips, 0);
+    const toCallAmount = this.getTurnCallAmount();
+    const oTurnTimer = buildTurnTimerPayload(this.oBoard.oSetting, { tutorial: bTutorialTurn });
     const turnInfo = {
       iUserId: this.oBoard.iUserTurn,
-      nTotalTurnTime: bTutorialTurn ? null : nTurnTime - nTurnBuffer,
-      aUserAction: this.getAvailableTurnActions(),
+      nTotalTurnTime: oTurnTimer.nTotalTurnTime,
+      aUserAction: this.getAvailableTurnActions(toCallAmount),
       nMinBet: this.oBoard.nMinBet,
       toCallAmount,
       bAllInStandChoice: this.isAllInLock && this.bPendingAllInStandChoice,
@@ -118,7 +115,7 @@ class Service {
     if (bTutorialTurn || ttl == null) {
       turnInfo.ttl = null;
     } else {
-      turnInfo.ttl = ttl - nTurnBuffer;
+      turnInfo.ttl = ttl;
       if (turnInfo.ttl < 200) turnInfo.ttl = null;
     }
     turnInfo.nRemainingInitializeTime = nRemainingInitializeTime;

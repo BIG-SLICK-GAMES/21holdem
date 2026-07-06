@@ -1,0 +1,12 @@
+{
+  "projects": [
+    {
+      "id": "21holdem-game",
+      "name": "21 Hold'em",
+      "type": "game",
+      "status": "Docker",
+      "url": "http://DESKTOP-10JDCIN:3100",
+      "description": "21 Hold'em player frontend served by Docker, with API and socket traffic proxied to the Docker backend."
+    }
+  ]
+}

@@ -58,6 +58,8 @@ import {
     GAME_ACTION_OVERLAY_COMMAND_EVENT,
     hideGameActionOverlay,
 } from '../scripts/gameActionOverlayBridge';
+import { actionLabelText, getPlayerActionLabel } from './level/actionControls';
+import gameTimingControls from './level/gameTimingControls';
 import GameInfo from 'prefabs/GameInfo';
 /**
  * Level -- main Phaser game scene.
@@ -304,6 +306,53 @@ getFXOverlay() {
     return window.FXOverlay;
 }
 
+getFXOverlayViewportRect() {
+    if (typeof window === 'undefined') return null;
+
+    const canvas = this.game?.canvas;
+    const canvasRect = canvas?.getBoundingClientRect?.();
+    if (canvasRect?.width && canvasRect?.height) {
+        return canvasRect;
+    }
+
+    const width = Number(window.innerWidth) || 0;
+    const height = Number(window.innerHeight) || 0;
+    if (!width || !height) return null;
+
+    return {
+        left: 0,
+        top: 0,
+        right: width,
+        bottom: height,
+        width,
+        height,
+    };
+}
+
+normalizeFXOverlayAnchor(anchor, { minMargin = 14 } = {}) {
+    if (!anchor || !Number.isFinite(Number(anchor.x)) || !Number.isFinite(Number(anchor.y))) return null;
+
+    const viewport = this.getFXOverlayViewportRect();
+    const width = Math.max(0, Number(anchor.width) || 0);
+    const height = Math.max(0, Number(anchor.height) || 0);
+    if (!viewport?.width || !viewport?.height) {
+        return {
+            x: Number(anchor.x),
+            y: Number(anchor.y),
+            width,
+            height,
+        };
+    }
+
+    const margin = Math.max(0, Number(minMargin) || 0);
+    return {
+        x: Phaser.Math.Clamp(Number(anchor.x), viewport.left + margin, viewport.right - margin),
+        y: Phaser.Math.Clamp(Number(anchor.y), viewport.top + margin, viewport.bottom - margin),
+        width,
+        height,
+    };
+}
+
 callFXOverlay(effectName, ...args) {
     try {
         const overlay = this.getFXOverlay();
@@ -371,10 +420,39 @@ getChipTransferSourceAnchor(playerProfile) {
     if (playerProfile?.bSuppressProfileDisplay) {
         const overlay = this.getFXOverlay();
         const consoleAnchor = overlay?.getAnchor?.('myConsole');
-        if (consoleAnchor) return consoleAnchor;
+        if (consoleAnchor) return this.normalizeFXOverlayAnchor(consoleAnchor);
     }
 
-    return this.getFXOverlayProfileImageAnchor(playerProfile) || this.getFXOverlayPlayerAnchor(playerProfile);
+    const visibleSeatAnchor = this.getFXOverlayDomSeatAnchor(playerProfile);
+    if (visibleSeatAnchor) return this.normalizeFXOverlayAnchor(visibleSeatAnchor);
+
+    return this.normalizeFXOverlayAnchor(
+        this.getFXOverlayProfileImageAnchor(playerProfile) || this.getFXOverlayPlayerAnchor(playerProfile)
+    );
+}
+
+getFXOverlayDomSeatAnchor(playerProfile) {
+    if (typeof document === 'undefined' || !playerProfile) return null;
+
+    const player = Array.from(this.players?.values?.() || [])
+        .find((candidate) => candidate?.playerProfile === playerProfile);
+    const sUserId = String(player?.iUserId || '');
+    const sEscapedUserId = sUserId.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+    const selector = player?.iUserId
+        ? `[data-player-user-id="${sEscapedUserId}"]`
+        : `[data-player-seat="${Number(playerProfile.nPlayerIndex)}"]`;
+    const element = document.querySelector(selector);
+    if (!element) return null;
+
+    const rect = element.getBoundingClientRect();
+    if (!rect.width || !rect.height) return null;
+
+    return {
+        x: rect.left + rect.width / 2,
+        y: rect.top + rect.height / 2,
+        width: rect.width,
+        height: rect.height,
+    };
 }
 
 getFXOverlayScreenAnchor(gameObject, options = {}) {
@@ -395,12 +473,12 @@ getFXOverlayScreenAnchor(gameObject, options = {}) {
         const width = Number(options.width ?? gameObject.displayWidth ?? 0);
         const height = Number(options.height ?? gameObject.displayHeight ?? 0);
 
-        return {
+        return this.normalizeFXOverlayAnchor({
             x: rect.left + x * scaleX,
             y: rect.top + y * scaleY,
             width: width * scaleX,
             height: height * scaleY,
-        };
+        });
     } catch (_error) {
         return null;
     }
@@ -575,8 +653,9 @@ createGameActionOverlayRows(idPrefix, buttonKeys = [], buttonsPerRow = 2, classN
         const tableBankroll = Number.isFinite(Number(this.nOverlayTableBankroll))
             ? Number(this.nOverlayTableBankroll)
             : Number(this.oGameManager?.nMyPlayerChips);
-        const nSmallBlind = Number(this.oGameManager?.oGameInfo?.nSmallBlindAmount);
-        const nBigBlind = Number(this.oGameManager?.oGameInfo?.nBigBlindAmount);
+        const nFallbackSmallBlind = Number(this.oGameManager?.nMinRaiseAmount || this.oTurnContext?.nMinBet || 0);
+        const nSmallBlind = Number(this.oGameManager?.oGameInfo?.nSmallBlindAmount || nFallbackSmallBlind);
+        const nBigBlind = Number(this.oGameManager?.oGameInfo?.nBigBlindAmount || (nSmallBlind > 0 ? nSmallBlind * 2 : 0));
         const shouldShowTray = Boolean(this.isOverlayReady && (aVisibleRows.length > 0 || Number.isFinite(tableBankroll)));
 
         emitGameActionOverlayState({
@@ -713,24 +792,44 @@ bindGameActionOverlayEvents() {
     };
     this.cleanupRegistry?.addWindowListener(window, GAME_BROWSER_EVENTS.EMOJI_SENT, this.handleEmojiSent);
 
+    this.dispatchSoundState = () => {
+        const sm = this.oSoundManager;
+        if (!sm) return;
+        window.dispatchEvent(new CustomEvent(GAME_BROWSER_EVENTS.SOUND_STATE, {
+            detail: {
+                muted: !sm.isSoundOn && !sm.isMusicOn,
+                soundOn: sm.isSoundOn,
+                musicOn: sm.isMusicOn,
+            },
+        }));
+    };
+
+    this.applyAudioSettings = ({ soundOn = true, musicOn = true } = {}) => {
+        const sm = this.oSoundManager;
+        if (!sm) return;
+        sm.setSoundEnabled(soundOn);
+        sm.setMusicEnabled(musicOn);
+        if (sm.isMusicOn) sm.playMusic(sm.bg_music, true);
+        else sm.stopSound(sm.bg_music);
+        window.FXOverlay?.setSoundEnabled?.(sm.isSoundOn);
+        window.FXOverlay?.setMusicEnabled?.(sm.isMusicOn);
+        this.dispatchSoundState();
+    };
+
     this.handleSoundToggle = () => {
         const sm = this.oSoundManager;
         if (!sm) return;
-        const bothOff = !sm.isSoundOn && !sm.isMusicOn;
-        if (bothOff) {
-            sm.setSoundEnabled(true);
-            sm.setMusicEnabled(true);
-            if (sm.isMusicOn) sm.playMusic(sm.bg_music, true);
-        } else {
-            sm.setSoundEnabled(false);
-            sm.setMusicEnabled(false);
-            sm.stopMusic?.();
-        }
-        window.FXOverlay?.setSoundEnabled?.(sm.isSoundOn);
-        window.FXOverlay?.setMusicEnabled?.(sm.isMusicOn);
-        window.dispatchEvent(new CustomEvent(GAME_BROWSER_EVENTS.SOUND_STATE, { detail: { muted: !sm.isSoundOn } }));
+        const bNextEnabled = !sm.isSoundOn || !sm.isMusicOn;
+        this.applyAudioSettings({ soundOn: bNextEnabled, musicOn: bNextEnabled });
     };
     this.cleanupRegistry?.addWindowListener(window, GAME_BROWSER_EVENTS.SOUND_TOGGLE, this.handleSoundToggle);
+    this.handleSoundSettingsChange = (event) => {
+        this.applyAudioSettings({
+            soundOn: event?.detail?.soundOn !== false,
+            musicOn: event?.detail?.musicOn !== false,
+        });
+    };
+    this.cleanupRegistry?.addWindowListener(window, GAME_BROWSER_EVENTS.SOUND_SETTINGS_CHANGE, this.handleSoundSettingsChange);
 }
 
 openExitTablePopup() {
@@ -827,12 +926,12 @@ getFXOverlayProfileImageAnchor(playerProfile) {
     const width = Number(image.displayWidth || 0) * containerScale;
     const height = Number(image.displayHeight || 0) * containerScale;
 
-    return {
+    return this.normalizeFXOverlayAnchor({
         x: rect.left + x * scaleX,
         y: rect.top + y * scaleY,
         width: width * scaleX,
         height: height * scaleY,
-    };
+    });
 }
 
 getGameObjectScenePoint(gameObject) {
@@ -987,7 +1086,7 @@ updatePotPosition() {
 }
 
 commitPotAmount(nTableChips) {
-    const nNextPotAmount = Number(nTableChips) || 0;
+    const nNextPotAmount = Math.max(0, Math.round(Number(nTableChips) || 0));
     this.oClientGameState = clientGameStateReducer(this.oClientGameState, {
         type: CLIENT_GAME_STATE_ACTIONS.SET_TABLE_CHIPS,
         payload: { nTableChips: nNextPotAmount },
@@ -1003,41 +1102,57 @@ commitPotAmount(nTableChips) {
     }
 }
 
-queuePotUpdate({ amount = 0, targetAmount = 0, playerProfile = null } = {}) {
-    this.callFXOverlay('transferChips', {
-        sourceAnchor: this.getChipTransferSourceAnchor(playerProfile),
-        targetAnchor: this.getFXOverlayScreenAnchor(this.oPotAmount, {
-            width: 96,
-            height: 64,
-            offsetY: 42,
-        }),
-        amount,
-        direction: 'toPot',
-    });
-
-    return new Promise((resolve) => {
-        this.cleanupRegistry?.addTimeout(setTimeout(resolve, 940));
-    }).finally(() => {
-        this.commitPotAmount(targetAmount);
-    });
+getTransferChipCount(amount = 0) {
+    const value = Math.max(0, Number(amount) || 0);
+    if (value >= 5000) return 8;
+    if (value >= 1000) return 6;
+    if (value >= 100) return 4;
+    return 3;
 }
 
-queuePotPayout({ amount = 0, targetAmount = 0, playerProfile = null } = {}) {
-    this.callFXOverlay('transferChips', {
-        sourceAnchor: this.getFXOverlayScreenAnchor(this.oPotAmount, {
-            width: 96,
-            height: 64,
-            offsetY: 42,
-        }),
-        targetAnchor: this.getFXOverlayProfileImageAnchor(playerProfile) || this.getFXOverlayPlayerAnchor(playerProfile),
-        amount,
-        direction: 'toPlayer',
-    });
+getChipTransferSettleMs({
+    amount = 0,
+    count,
+    duration = gameTimingControls.potTransfer.animationDurationMs,
+    startDelay = gameTimingControls.potTransfer.startDelayMs,
+    stagger = gameTimingControls.potTransfer.chipStaggerMs,
+    buffer = gameTimingControls.potTransfer.settleBufferMs,
+} = {}) {
+    const chipCount = Math.max(1, Math.min(Number(count) || this.getTransferChipCount(amount), gameTimingControls.potTransfer.maxChips));
+    const lastDelay = Math.max(0, chipCount - 1) * Math.max(0, Number(stagger) || 0);
+    return Math.max(0, Number(startDelay) || 0)
+        + Math.max(0, Number(duration) || 0)
+        + (lastDelay * 2)
+        + Math.max(0, Number(buffer) || 0);
+}
 
-    return new Promise((resolve) => {
-        this.cleanupRegistry?.addTimeout(setTimeout(resolve, 980));
-    }).finally(() => {
-        this.commitPotAmount(targetAmount);
+queuePotUpdate({ targetAmount = 0 } = {}) {
+    const nTargetAmount = Math.max(0, Math.round(Number(targetAmount) || 0));
+    this.commitPotAmount(nTargetAmount);
+    return Promise.resolve();
+}
+
+queuePotPayout({ targetAmount = 0 } = {}) {
+    const nTargetAmount = Math.max(0, Math.round(Number(targetAmount) || 0));
+    this.commitPotAmount(nTargetAmount);
+    return Promise.resolve();
+}
+
+trackPotAnimation(animationPromise) {
+    if (!animationPromise || typeof animationPromise.then !== 'function') return;
+    this.pendingPotAnimation = Promise.resolve(this.pendingPotAnimation)
+        .catch(() => undefined)
+        .then(() => animationPromise)
+        .catch(() => undefined);
+}
+
+async waitForPotAnimationSettle() {
+    const pending = this.pendingPotAnimation;
+    if (pending && typeof pending.then === 'function') {
+        await pending.catch(() => undefined);
+    }
+    await new Promise((resolve) => {
+        this.cleanupRegistry?.addTimeout(setTimeout(resolve, gameTimingControls.potTransfer.afterAnimationBufferMs));
     });
 }
 
@@ -1055,9 +1170,7 @@ playWinPotFX() {
 
 playWinnerCelebrationFX(playerProfile, options = {}) {
     try {
-        const anchor =
-            this.getFXOverlayProfileImageAnchor(playerProfile) ||
-            this.getFXOverlayPlayerAnchor(playerProfile);
+        const anchor = this.getChipTransferSourceAnchor(playerProfile);
         if (!anchor) return false;
 
         return this.callFXOverlay('winnerCelebration', {
@@ -1119,7 +1232,7 @@ focusFXOverlayPlayer(playerProfile) {
         const overlay = this.getFXOverlay();
         if (!overlay || typeof overlay.setAnchor !== 'function') return false;
 
-        overlay.setAnchor('activePlayer', () => this.getFXOverlayPlayerAnchor(playerProfile));
+        overlay.setAnchor('activePlayer', () => this.getChipTransferSourceAnchor(playerProfile));
         return this.callFXOverlay('focusPlayer');
     } catch (_error) {
         return false;
@@ -2055,6 +2168,7 @@ setButtons() {
         }
     }
     arrangeSeats(mySeat = 0) {
+        this.nMySeat = Number.isFinite(Number(mySeat)) ? Number(mySeat) : 0;
         const aSeats = _.getSeats(mySeat);
         const aSeatProfileOrder = _.getPreferredSeatProfileOrder();
         for (let i = 0; i < aSeats.length; i++) {
@@ -2088,6 +2202,7 @@ setButtons() {
         this.container_body = this.add.container(0, 0);
         const bg = this.add.image(config.centerX, config.centerY, assets.game_bg);
         bg.setDisplaySize(config.width, config.height);
+        this.backgroundImage = bg;
         this.container_body.add(bg);
         this.table = this.add.image(config.centerX, config.centerY + 8 + tableImageOffsetY, assets.table);
         const tableCoverScale = Math.max(config.width / this.table.width, config.height / this.table.height) * 0.92;
@@ -2135,7 +2250,14 @@ setButtons() {
         this.setButtons();
         this.createPlayerProfiles();
         this.setSceneDepths();
+        this.container_player_profiles?.setVisible(false);
+        this.applyTableOnlyMode();
 
+    }
+    getVisualSeatForTableSeat(tableSeat) {
+        const aSeats = _.getSeats(this.nMySeat);
+        const nVisualSeat = aSeats.findIndex((seat) => Number(seat) === Number(tableSeat));
+        return nVisualSeat >= 0 ? nVisualSeat : Number(tableSeat);
     }
 
     // Connects SocketManager using sAuthToken + iBoardId.
@@ -2145,12 +2267,42 @@ setButtons() {
             iBoardId: this.iBoardId,
         });
     }
-    init({ sAuthToken, iBoardId, sPrivateCode, isGuestTutorial = false, fallbackPath = '/lobby' }) {
+    init({ sAuthToken, iBoardId, sPrivateCode, isGuestTutorial = false, fallbackPath = '/lobby', tableOnlyMode = false }) {
         this.sAuthToken = sAuthToken;
         this.iBoardId = iBoardId;
         this.sPrivateCode = sPrivateCode;
         this.isGuestTutorial = Boolean(isGuestTutorial);
         this.fallbackPath = fallbackPath;
+        this.tableOnlyMode = Boolean(tableOnlyMode);
+    }
+
+    applyTableOnlyMode() {
+        if (!this.tableOnlyMode) return;
+
+        this.backgroundImage?.setVisible(false);
+        this.table?.setVisible(true);
+        this.table?.setAlpha(1);
+
+        [
+            this.container_header,
+            this.container_pot_amount,
+            this.container_community_cards,
+            this.container_table,
+            this.container_bet_staging,
+            this.container_closed_cards,
+            this.container_player_cards,
+            this.container_player_profiles,
+            this.container_footer,
+            this.container_buttons,
+            this.container_raise_buttons,
+            this.container_confirm_raise,
+        ].forEach(container => container?.setVisible(false));
+
+        this.prompt?.hide?.();
+        this.settings?.setVisible?.(false);
+        this.gameInfo?.close?.();
+        this.popup?.close?.();
+        hideGameActionOverlay();
     }
 
     // Scene boot: initializes state, builds UI, connects socket, binds events.
@@ -2166,6 +2318,7 @@ setButtons() {
         this.iBigBlindId = '';
         this.iSmallBlindId = '';
         this.iLastTurnId = '';
+        this.nMySeat = 0;
         this.oBoard = {};
         this.oClientGameState = createInitialClientGameState();
         this.iGameId = '';
@@ -2195,6 +2348,7 @@ setButtons() {
         window.FXOverlay?.enable?.();
         window.FXOverlay?.setSoundEnabled?.(this.oSoundManager.isSoundOn);
         window.FXOverlay?.setMusicEnabled?.(this.oSoundManager.isMusicOn);
+        this.dispatchSoundState?.();
         // Fetch player settings (sound/music) and apply to sound manager.
         this.oServices.profile().then(res => {
             const data = res.data.data;
@@ -2202,6 +2356,7 @@ setButtons() {
             this.oSoundManager.setMusicEnabled(data.bMusicEnabled);
             window.FXOverlay?.setSoundEnabled?.(this.oSoundManager.isSoundOn);
             window.FXOverlay?.setMusicEnabled?.(this.oSoundManager.isMusicOn);
+            this.dispatchSoundState?.();
             this.settings.updateSoundSwitcher(this.oSoundManager.isSoundOn);
             this.settings.updateMusicSwitcher(this.oSoundManager.isMusicOn);
             if (this.oSoundManager.isMusicOn) {
@@ -2214,6 +2369,7 @@ setButtons() {
             if (this.oSoundManager.isMusicOn) {
                 this.oSoundManager.playMusic(this.oSoundManager.bg_music, true);
             }
+            this.dispatchSoundState?.();
         });
         this.visibilityChangeHandler = () => {
             if (document.visibilityState === 'hidden') this.exitGame();
@@ -2236,6 +2392,7 @@ setButtons() {
                 sideBetCommunity: [],
                 sideBetLive: true,
                 score: 0,
+                isFolded: false,
                 locked: false,
             };
         }
@@ -2248,6 +2405,7 @@ setButtons() {
                 sideBetCommunity: this.oLocalConsoleHandLock.sideBetCommunity,
                 sideBetLive: false,
                 score: this.oLocalConsoleHandLock.score,
+                isFolded: Boolean(this.oLocalConsoleHandLock.isFolded),
                 locked: true,
             };
         }
@@ -2263,6 +2421,7 @@ setButtons() {
             sideBetCommunity: aCommunityCards.slice(0, nEligibleCommunityCards),
             sideBetLive: bSideBetLive,
             score: Number(myPlayer?.nCardScore) || 0,
+            isFolded: String(myPlayer?.eState || '').toLowerCase() === 'fold',
             locked: false,
         };
     }
@@ -2287,6 +2446,36 @@ setButtons() {
         }
         Object.assign(player, participantData);
     }
+    patchParticipantLiveBalance(iUserId, sourceData = {}) {
+        const player = this.players.get(iUserId);
+        if (!player) return;
+
+        const participantPatch = { iUserId };
+        const nChips = Number(sourceData?.nChips);
+        const nLastBidChips = Number(sourceData?.nLastBidChips);
+        const nCurrentChips = Number(sourceData?.nCurrentChips);
+
+        if (Number.isFinite(nChips)) participantPatch.nChips = nChips;
+        if (Number.isFinite(nLastBidChips)) participantPatch.nLastBidChips = nLastBidChips;
+        if (Number.isFinite(nCurrentChips)) participantPatch.nCurrentChips = nCurrentChips;
+        if (Object.keys(participantPatch).length <= 1) return;
+
+        this.oClientGameState = clientGameStateReducer(this.oClientGameState, {
+            type: CLIENT_GAME_STATE_ACTIONS.APPLY_PARTICIPANT_PATCH,
+            payload: participantPatch,
+        });
+        this.assignParticipantData(player, participantPatch);
+
+        if (Number.isFinite(nChips)) {
+            player?.playerProfile?.setAmountIn(nChips);
+            if (iUserId === this.iUserId) {
+                this.oGameManager.nMyPlayerChips = nChips;
+                this.setAmountIn(nChips);
+            }
+        }
+
+        this.emitPlayerSlotState();
+    }
     markLocalConsoleStandLock() {
         this.bLocalConsoleStandLocked = true;
         this.lockLocalConsoleHand();
@@ -2300,6 +2489,7 @@ setButtons() {
             community: [...consoleCards.community],
             sideBetCommunity: [...consoleCards.sideBetCommunity],
             score: consoleCards.score,
+            isFolded: consoleCards.isFolded,
         };
     }
     clearLocalConsoleHand() {
@@ -2321,6 +2511,27 @@ setButtons() {
             },
         });
         this.emitConsoleCards();
+    }
+    showPlayerActionLabel(iUserId, sLabel) {
+        const player = this.players?.get?.(iUserId);
+        if (!player || !sLabel) return;
+
+        const nActionLabelKey = Date.now();
+        player.sActionLabel = sLabel;
+        player.nActionLabelKey = nActionLabelKey;
+        this.emitPlayerSlotState();
+    }
+    clearPlayerActionLabels() {
+        let bChanged = false;
+
+        this.players?.forEach?.((player) => {
+            if (!player?.sActionLabel && !player?.nActionLabelKey) return;
+            player.sActionLabel = '';
+            player.nActionLabelKey = 0;
+            bChanged = true;
+        });
+
+        if (bChanged) this.emitPlayerSlotState();
     }
     handleSideBetsChange(detail = {}) {
         if (!this.oSocketManager || !this.iUserId) return;
@@ -2581,11 +2792,13 @@ setButtons() {
             this.sActiveTurnKey = null;
             this.isOverlayReady = true;
             this.syncGameActionOverlay();
+            this.applyTableOnlyMode();
             // If resPlayerTurn arrived before setPlayersData finished, apply it now
             if (this.oPendingTurn) {
                 const pending = this.oPendingTurn;
                 this.oPendingTurn = null;
                 await this.setPlayerTurn(pending);
+                this.applyTableOnlyMode();
             }
         } catch (error) {
             console.error("Error while setting game data:", error);
@@ -2604,8 +2817,10 @@ setButtons() {
         const potIncrease = Math.max(0, Number(oData.nTableChips || 0) - Number(this.oGameManager.nPotAmount || 0));
         const nUpdatedScore = Number(oData.nCardScore);
 
+        const sPlayerActionLabel = getPlayerActionLabel({ sEventName, oData });
+        if (sPlayerActionLabel) this.showPlayerActionLabel(oData.iUserId, sPlayerActionLabel);
         this.oSoundManager.playSound(this.oSoundManager.doubleDown_sound, false);
-        player?.playerProfile?.setAmountIn(oData.nChips);
+        this.patchParticipantLiveBalance(oData.iUserId, oData);
         const aUpdatedHand = Array.isArray(oData.aCardHand) ? oData.aCardHand : [oData.oCard].filter(Boolean);
         player.aCardHand = aUpdatedHand;
         player.nCardScore = Number(nUpdatedScore) || player.nCardScore;
@@ -2624,11 +2839,6 @@ setButtons() {
             this.updatePotAmount(oData.nTableChips);
         }
         player.iUserId == this.iUserId && this.setAmountIn(oData.nChips);
-        this.playDoubleDownMomentFX(player?.playerProfile, {
-            isSelf: oData.iUserId === this.iUserId,
-            text: 'DOUBLE DOWN!',
-            duration: 2400,
-        });
         this.clearProfileSeatCards();
         if (oData.iUserId === this.iUserId) {
             this.oClientGameState = clientGameStateReducer(this.oClientGameState, {
@@ -2655,6 +2865,7 @@ setButtons() {
         const potIncrease = getPotIncrease(oData.nTableChips, this.oGameManager.nPotAmount);
         const effectName = getBetPotEffectName({ sEventName, nChips: oData.nChips, potIncrease });
         const aParticipantAdjustments = Array.isArray(oData.aParticipantAdjustments) ? oData.aParticipantAdjustments : [];
+        const bZeroChipCall = sEventName === SOCKET_RESPONSE_EVENTS.CALL && potIncrease <= 0 && Math.max(0, Number(oData.nLastBidChips ?? oData.nCurrentChips) || 0) <= 0;
 
         const bLocalStandIntent = oData.iUserId === this.iUserId && this.bLocalConsoleStandLocked;
         const bStandWithoutCard = (
@@ -2674,7 +2885,7 @@ setButtons() {
             player.bPendingAllInStandChoice = false;
             player.nStandAtRound = Number(oData.nStandAtRound) || this.nTableRound || 1;
         }
-        player?.playerProfile?.setAmountIn(oData.nChips);
+        this.patchParticipantLiveBalance(oData.iUserId, oData);
         player?.iUserId == this.iUserId && this.setMyPlayerData(oData);
         aParticipantAdjustments.forEach((participantData) => this.applyParticipantAdjustment(participantData));
         if (effectName) {
@@ -2711,10 +2922,18 @@ setButtons() {
             }
         }
 
+        const sPlayerActionLabel = getPlayerActionLabel({
+            sEventName,
+            oData,
+            recentLogs: this.oGameManager.recentLogs || [],
+            potIncrease,
+        });
+        if (sPlayerActionLabel) this.showPlayerActionLabel(oData.iUserId, sPlayerActionLabel);
+
         if (sEventName === SOCKET_RESPONSE_EVENTS.CALL) {
             const callAmount = oData.nLastBidChips ?? oData.nCurrentChips ?? 0;
             if (oData.iUserId != this.iUserId) {
-                player?.playerProfile?.setBettingLabel(oData.bAllIn ? 'All In' : 'Call', callAmount);
+                player?.playerProfile?.setBettingLabel(bZeroChipCall ? 'Check' : (oData.bAllIn ? 'All In' : 'Call'), bZeroChipCall ? undefined : callAmount);
             }
         } else if (sEventName === SOCKET_RESPONSE_EVENTS.RAISE) {
             this.markRaiseOccurred();
@@ -2750,6 +2969,10 @@ setButtons() {
             }
         }
     }
+    handleTurnMissed(oData = {}) {
+        this.resetTurnTimer();
+        if (oData.iUserId) this.showPlayerActionLabel(oData.iUserId, actionLabelText.missed);
+    }
     setFoldPlayer(iUserId, eState, sReason, bShowMessage, options = {}) {
         const playAudio = options.playAudio !== false;
         const player = this.players.get(iUserId);
@@ -2762,12 +2985,16 @@ setButtons() {
                 bShowMessage,
             },
         });
+        if (player) player.eState = eState;
         if (eState === 'fold') {
             playAudio && this.oSoundManager.playSound(this.oSoundManager.fold_sound, false);
             player?.playerProfile?.container_cards?.removeAll(true).setVisible(false);
             player?.playerProfile.setFolded();
             player?.playerProfile.setVisible(true);
+            this.showPlayerActionLabel(iUserId, actionLabelText.fold);
+            if (iUserId === this.iUserId) this.emitConsoleCards();
             iUserId !== this.iUserId && player?.playerProfile.setBettingLabel('Fold');
+            this.emitPlayerSlotState();
         } else if (eState === 'leave') {
             player?.playerProfile.setLeave();
             if (iUserId == this.iUserId) {
@@ -2782,18 +3009,19 @@ setButtons() {
                 }
             }
             this.players.delete(iUserId);
+            this.emitPlayerSlotState();
         } else if (eState === 'bust') {
             player?.playerProfile?.container_cards?.removeAll(true).setVisible(false);
             player?.playerProfile.showBustPrompt();
             player?.playerProfile.setVisible(true);
             if (iUserId === this.iUserId) {
                 this.emitConsoleBust();
-                this.playBustFX(player?.playerProfile, { isSelf: true, text: 'Bust' });
             }
+            this.showPlayerActionLabel(iUserId, actionLabelText.bust);
             iUserId !== this.iUserId && player?.playerProfile.setBettingLabel('Bust');
         }
     }
-    handleCommunityCard(oData) {
+    async handleCommunityCard(oData) {
         // A new community card has been dealt â€” reset check commitments for the next betting round.
         this.sActiveTurnKey = null;
         this.resetCheckCommitments();
@@ -2801,11 +3029,14 @@ setButtons() {
         const aUpdatedParticipants = Array.isArray(aParticipant) ? aParticipant : [];
 
         this.cleanupRegistry?.addTimeout(setTimeout(() => {
-        this.clearAllBettingLabels();
+            this.clearAllBettingLabels();
+            this.clearPlayerActionLabels();
         }, 1000));
-        this.flushStagedBetsToPot().finally(() => {
-            this.setCommunityCards(aCommunityCard, 'communityCard');
-        });
+        this.flushStagedBetsToPot()
+            .then(() => this.waitForPotAnimationSettle())
+            .finally(() => {
+                this.setCommunityCards(aCommunityCard, 'communityCard');
+            });
         aUpdatedParticipants.forEach((participant) => {
             if (!participant || !this.players.has(participant.iUserId)) return;
 
@@ -2823,7 +3054,7 @@ setButtons() {
         });
     }
     handleClearBettingLabels() {
-    this.clearAllBettingLabels();
+        this.clearAllBettingLabels();
     }
     setCommunityCards(aCommunityCards, sType) {
         const { scale: communityCardScale } = this.getCommunityCardLayoutMetrics();
@@ -2907,6 +3138,7 @@ setButtons() {
         if (iUserId === this.iUserId) {
             this.setMyPlayerData(participantData);
         }
+        this.emitPlayerSlotState();
     }
     async setPlayersData(aParticipant) {
         const updatePlan = buildParticipantUpdatePlan(aParticipant, this.players, this.aPlayerProfiles);
@@ -2919,11 +3151,43 @@ setButtons() {
                 await this.setProfiles(iUserId);
             }
         }
+        this.emitPlayerSlotState();
     }
     async mapPlayerData(iUserId, participant) {
         this.players.set(iUserId, participant);
         await this.setProfiles(iUserId);
     };
+    emitPlayerSlotState() {
+        if (typeof window === 'undefined') return;
+
+        const players = Array.from(this.players?.values?.() || [])
+            .filter(Boolean)
+            .map((player) => {
+                const nTableSeat = Number(player.nSeat);
+                return {
+                    iUserId: player.iUserId,
+                    nSeat: this.getVisualSeatForTableSeat(nTableSeat),
+                    nTableSeat,
+                    sUserName: player.sUserName || 'Player',
+                    sAvatar: player.sAvatar || '',
+                    eUserType: player.eUserType || 'user',
+                    eState: player.eState || '',
+                    nChips: Number.isFinite(Number(player.nChips)) ? Number(player.nChips) : null,
+                    nCardScore: Number.isFinite(Number(player.nCardScore)) ? Number(player.nCardScore) : null,
+                    bShowScore: Boolean(this.bShowingHandResult),
+                    aCardHand: this.bShowingHandResult && Array.isArray(player.aCardHand) ? player.aCardHand : [],
+                    bShowdownWinner: Boolean(this.bShowingHandResult && player.bShowdownWinner),
+                    nShowdownWinAmount: Number(player.nShowdownWinAmount) || 0,
+                    sActionLabel: player.sActionLabel || '',
+                    nActionLabelKey: Number(player.nActionLabelKey) || 0,
+                    sBlindRole: player.iUserId === this.iDealerId ? 'D' : (player.iUserId === this.iSmallBlindId ? 'SB' : (player.iUserId === this.iBigBlindId ? 'BB' : '')),
+                    bActiveTurn: player.iUserId === this.iActiveTurnId,
+                    nTurnTimerMs: player.iUserId === this.iActiveTurnId ? this.nActiveTurnTimerMs : 0,
+                };
+            });
+
+        window.dispatchEvent(new CustomEvent('bsg:game-player-slots', { detail: { players } }));
+    }
     async setUserJoined(oData) {
         this.oClientGameState = clientGameStateReducer(this.oClientGameState, {
             type: CLIENT_GAME_STATE_ACTIONS.APPLY_PARTICIPANT_PATCH,
@@ -2932,6 +3196,7 @@ setButtons() {
         if (!this.players.has(oData.iUserId)) {
             await this.mapPlayerData(oData.iUserId, { ...oData, playerProfile: this.aPlayerProfiles[oData.nSeat] });
         }
+        this.emitPlayerSlotState();
     }
     async setProfiles(iUserId) {
         const player = await this.players.get(iUserId);
@@ -3026,6 +3291,7 @@ setButtons() {
         this.players.forEach(player => {
             player?.playerProfile?.setBlind(player.iUserId);
         });
+        this.emitPlayerSlotState();
     }
 setCollectBootAmount({ nTableChips, aParticipant }) {
         let nRunningPot = Number(this.oGameManager.nPotAmount || 0);
@@ -3053,7 +3319,7 @@ setCollectBootAmount({ nTableChips, aParticipant }) {
         }
     }
     setAmountIn(nAmountIn) {
-        this.nOverlayTableBankroll = Number(nAmountIn) || 0;
+        this.nOverlayTableBankroll = Math.max(0, Math.round(Number(nAmountIn) || 0));
         this.oGameManager.nMyPlayerChips = this.nOverlayTableBankroll;
 
         this.oFooter?.player_price_base?.setVisible?.(false);
@@ -3062,13 +3328,16 @@ setCollectBootAmount({ nTableChips, aParticipant }) {
         this.oFooter?.txt_stack_label?.setVisible?.(false);
 
         const myPlayer = this.players?.get?.(this.iUserId);
-        myPlayer?.playerProfile?.setAmountIn?.(nAmountIn);
+        myPlayer?.playerProfile?.setAmountIn?.(this.nOverlayTableBankroll);
         this.syncGameActionOverlay();
     }
     async resetTurnTimer() {
         this.emitConsoleTurnTimer(false);
         if (this.iLastTurnId === this.iUserId) this.hideAllButtons();
         this.clearFXOverlayFocus();
+        this.iActiveTurnId = '';
+        this.nActiveTurnTimerMs = 0;
+        this.emitPlayerSlotState();
         if (!this.iLastTurnId) return undefined;
         const lastPlayer = await this.players.get(this.iLastTurnId);
         lastPlayer?.playerProfile?.resetTurnTimer();
@@ -3119,8 +3388,11 @@ setCollectBootAmount({ nTableChips, aParticipant }) {
         const player = await this.players.get(iUserId);
         this.isMyTurn = player?.iUserId === this.iUserId;
         this.iLastTurnId = iUserId;
+        await this.waitForPotAnimationSettle();
+        this.iActiveTurnId = iUserId;
+        this.nActiveTurnTimerMs = Math.max(0, Number(ttl) || 0);
         this.oGameManager.nMinRaiseAmount = nMinBet;
-        this.focusFXOverlayPlayer(player?.playerProfile);
+        this.emitPlayerSlotState();
 
         if (player?.playerProfile && ttl > 0) {
             const total = nTotalTurnTime > 0 ? nTotalTurnTime : ttl;
@@ -3170,6 +3442,7 @@ showAllButtons(aUserAction, nMinBet, toCallAmount, options = {}) {
         canDoubleDown: this.canShowDoubleDownAction(),
         hasRaiseSinceCheck: this.hasRaiseSinceCheck(this.iUserId),
         bAllInStandChoice,
+        suppressStandAfterLocked: this.isLocalConsoleHandLocked(),
         formatAmount: (amount) => _.formatCurrencyWithComa(amount),
     });
 
@@ -3288,6 +3561,7 @@ setDeclareResult({ nRoundStartsIn, aParticipant, bAllPlayerBust, bAllPlayersBust
 
   // Lock community cards on screen for the result display window
   this.bShowingHandResult = true;
+  this.emitPlayerSlotState();
   // Capture the final board cards now — setBoardState may arrive before the
   // timeout fires and clear oGameManager.aCommunityCards, so store locally.
   const _finalCommunityCards = [...(this.oGameManager.aCommunityCards || [])];
@@ -3310,6 +3584,7 @@ setDeclareResult({ nRoundStartsIn, aParticipant, bAllPlayerBust, bAllPlayersBust
   this.handResultClearTimeout = setTimeout(() => {
     if (!isActiveHandResultToken(this.nHandResultToken, nResultToken, this.bShowingHandResult)) return;
     this.bShowingHandResult = false;
+    this.emitPlayerSlotState();
     this.handResultShowTimeout = null;
     this.handResultClearTimeout = null;
     if (this.sPrivateCode) this.oTable.container_private_table.setVisible(true);
@@ -3327,6 +3602,10 @@ setDeclareResult({ nRoundStartsIn, aParticipant, bAllPlayerBust, bAllPlayersBust
       player.container_cards.removeAll(true);
       player.hideBettingLabel();
       player.unlockScoreDisplay?.({ clear: true });
+    });
+    this.players.forEach(player => {
+      player.bShowdownWinner = false;
+      player.nShowdownWinAmount = 0;
     });
     this.clearLocalConsoleHand();
     this.prompt.hide();
@@ -3346,25 +3625,26 @@ setDeclareResult({ nRoundStartsIn, aParticipant, bAllPlayerBust, bAllPlayersBust
 
   this.resetTurnTimer();
         this.flushStagedBetsToPot();
-    let nRemainingPot = Number(this.oGameManager.nPotAmount || 0);
+    const aWinnerParticipants = (Array.isArray(aParticipant) ? aParticipant : []).filter(participant => participant?.eState === "winner");
+    const aShowdownWinnerIds = aWinnerParticipants.map(participant => participant.iUserId);
     aParticipant?.forEach(participant => {
     if (!this.players.has(participant.iUserId)) return;
     const player = this.players.get(participant.iUserId);
     player?.playerProfile?.setAlpha(1);
-    player?.playerProfile?.setAmountIn(participant?.nChips);
-    participant.iUserId == this.iUserId && this.setAmountIn(participant?.nChips);
+    const nParticipantChips = Math.max(0, Math.round(Number(participant?.nChips) || 0));
+    player?.playerProfile?.setAmountIn(nParticipantChips);
+    participant.iUserId == this.iUserId && this.setAmountIn(nParticipantChips);
     const aParticipantHand = Array.isArray(participant.aCardHand) ? participant.aCardHand : [];
     player.aCardHand = aParticipantHand;
     player.nCardScore = Number(participant.nCardScore) || player.nCardScore;
+    player.bShowdownWinner = participant.eState === "winner";
+    player.nShowdownWinAmount = player.bShowdownWinner ? Math.max(0, Math.round(Number(participant.nWinningAmount) || 0)) : 0;
     this.syncPlayerScoreDisplay(player, participant.nCardScore, aParticipantHand, { forceReveal: true });
     player?.playerProfile?.lockScoreDisplay(participant.nCardScore);
-    player?.playerProfile?.container_cards?.removeAll(true);
-    player?.playerProfile?.container_cards?.setVisible(false);
     if (participant.iUserId === this.iUserId) this.emitConsoleCards();
     
     if (participant.eState == "winner") {
       this.cleanupRegistry?.addTimeout(setTimeout(() => {
-        player?.playerProfile?.showWinnerPrompt();
         participant.iUserId == this.iUserId && this.oSoundManager.playSound(this.oSoundManager.winAnimation_sound, false);
         participant.nCardScore === 21 && this.callFXOverlay('blackjack');
       }, 3000));
@@ -3372,21 +3652,30 @@ setDeclareResult({ nRoundStartsIn, aParticipant, bAllPlayerBust, bAllPlayersBust
       
       this.cleanupRegistry?.addTimeout(setTimeout(() => {
         participant.iUserId == this.iUserId && this.oSoundManager.playSound(this.oSoundManager.winCoin_sound, false);
-                if (participant.iUserId === this.iUserId) this.emitConsoleWin(participant.nWinningAmount || 0);
-                player?.playerProfile?.showWinAmountPopup(participant.nWinningAmount || 0);
-                nRemainingPot = Math.max(0, nRemainingPot - Math.max(0, Number(participant.nWinningAmount) || 0));
+                const nPayoutAmount = Math.max(0, Math.round(Number(participant.nWinningAmount) || 0));
+                if (participant.iUserId === this.iUserId) this.emitConsoleWin(nPayoutAmount);
                 this.queuePotPayout({
-                    amount: participant.nWinningAmount || 0,
-                    targetAmount: nRemainingPot,
+                    amount: nPayoutAmount,
+                    targetAmount: 0,
                     playerProfile: player?.playerProfile,
+                    track: false,
                 });
-      }, 4200));
+      }, 6200));
 
-      this.cleanupRegistry?.addTimeout(setTimeout(() => {
-        player?.playerProfile?.hideWinnerPrompt();
-      }, 5200));
     }
   });
+  this.emitPlayerSlotState();
+  if (aShowdownWinnerIds.length) {
+    this.cleanupRegistry?.addTimeout(setTimeout(() => {
+      aShowdownWinnerIds.forEach((iWinnerId) => {
+        const winner = this.players.get(iWinnerId);
+        if (!winner) return;
+        winner.bShowdownWinner = false;
+        winner.nShowdownWinAmount = 0;
+      });
+      this.emitPlayerSlotState();
+    }, 15600));
+  }
 }
     setRefundOnLongWait({ message, nMaxWaitingTime }) {
         this.oGameManager.exitMessage = 'Are you sure you want to quit?';

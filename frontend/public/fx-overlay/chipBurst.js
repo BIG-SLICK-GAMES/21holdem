@@ -25,6 +25,13 @@
     return 1 + c3 * Math.pow(value - 1, 3) + c1 * Math.pow(value - 1, 2);
   }
 
+  function easeInOutQuint(t) {
+    var value = clamp(t, 0, 1);
+    return value < 0.5
+      ? 16 * value * value * value * value * value
+      : 1 - Math.pow(-2 * value + 2, 5) / 2;
+  }
+
   function lerp(start, end, t) {
     return start + (end - start) * t;
   }
@@ -89,11 +96,18 @@
     node.style.opacity = '0';
     node.style.willChange = 'transform, opacity';
     node.style.transformOrigin = '50% 50%';
-    node.style.backgroundImage = 'url("' + getChipImageSource() + '")';
+    node.style.borderRadius = '50%';
+    node.style.backgroundImage =
+      'radial-gradient(circle at 34% 26%, rgba(255,255,255,0.2) 0 9%, transparent 10%), ' +
+      'radial-gradient(circle, #3a3d42 0 31%, #ff7f1d 32% 40%, #1c1f24 41% 57%, #ff8a24 58% 65%, #2b2e34 66% 100%)';
     node.style.backgroundRepeat = 'no-repeat';
     node.style.backgroundPosition = 'center';
-    node.style.backgroundSize = 'contain';
-    node.style.filter = 'drop-shadow(0 8px 14px rgba(0, 0, 0, 0.28))';
+    node.style.backgroundSize = '100% 100%';
+    node.style.boxShadow =
+      'inset 0 0 0 2px rgba(255, 151, 43, 0.42), ' +
+      'inset 0 -5px 8px rgba(0, 0, 0, 0.38), ' +
+      '0 8px 16px rgba(0, 0, 0, 0.34)';
+    node.style.filter = 'drop-shadow(0 4px 9px rgba(255, 107, 24, 0.22))';
     return node;
   }
 
@@ -204,10 +218,11 @@
     }
 
     var progress = clamp(chip.elapsed / Math.max(1, chip.duration), 0, 1);
-    var eased = easeOutCubic(progress);
+    var eased = chip.state === 'collecting' ? easeInOutQuint(progress) : easeOutCubic(progress);
+    var personality = Math.sin(progress * Math.PI * 3 + chip.startRotation * 0.03) * (1 - progress);
     var arc = Math.sin(progress * Math.PI) * chip.arcHeight;
-    var sway = Math.sin(progress * Math.PI) * chip.wobble;
-    var curve = Math.sin(progress * Math.PI) * chip.curveX;
+    var sway = Math.sin(progress * Math.PI) * chip.wobble + personality * 10;
+    var curve = Math.sin(progress * Math.PI) * chip.curveX + Math.sin(progress * Math.PI * 2) * chip.curveX * 0.22;
     var nextX = lerp(chip.startX, chip.targetX, eased) + sway + curve;
     var nextY = lerp(chip.startY, chip.targetY, eased) - arc;
     var frameDelta = Math.max(deltaMs, 16);
@@ -287,19 +302,20 @@
   }
 
   function createStackedChip(fromX, fromY, potX, potY, index, count, options) {
-    var spread = Math.min(18, 6 + count * 1.8);
+    var spread = Math.min(22, 8 + count * 2.2);
+    var stackBaseY = potY + 22;
     var settleX = potX + random(-spread, spread);
-    var settleY = potY + random(-spread * 0.45, spread * 0.45);
+    var settleY = stackBaseY + random(-spread * 0.25, spread * 0.5);
     var chip = createChipObject({
       x: fromX + random(-12, 12),
       y: fromY + random(-10, 10),
       targetX: settleX,
       targetY: settleY,
-      duration: Number(options.duration) || random(520, 760),
-      delay: index * (Number(options.stagger) || 52),
-      arcHeight: random(24, 72),
-      curveX: random(-16, 16),
-      wobble: random(-10, 10),
+      duration: Number(options.duration) || random(620, 920),
+      delay: index * (Number(options.stagger) || 58) + random(0, 24),
+      arcHeight: random(52, 118),
+      curveX: random(-42, 42),
+      wobble: random(-18, 18),
       size: Number(options.size) || random(22, 28),
       scale: random(0.92, 1.06),
       rotation: random(-14, 14),
@@ -432,6 +448,94 @@
     return 3;
   }
 
+  function createStaticChipFromNode(node, x, y, size, scale, rotation) {
+    return {
+      x: x,
+      y: y,
+      startX: x,
+      startY: y,
+      targetX: x,
+      targetY: y,
+      settleX: x,
+      settleY: y,
+      velocity: { x: 0, y: 0 },
+      state: 'stacked',
+      duration: 1,
+      elapsed: 0,
+      delay: 0,
+      arcHeight: 0,
+      curveX: 0,
+      wobble: 0,
+      size: size,
+      scale: scale,
+      opacity: 1,
+      rotation: rotation,
+      startRotation: rotation,
+      endRotation: rotation,
+      node: node,
+      removeOnArrival: false,
+      stackRotation: rotation,
+      stackScale: scale,
+      spawnedAt: 0,
+    };
+  }
+
+  function createLandingChip(layer, x, y, size, direction, index, count, existingNode) {
+    if (!layer) return null;
+
+    var node = existingNode || createChipNode(size);
+    var isPotChip = direction !== 'toPlayer';
+    var potColumns = 5;
+    var column = index % potColumns;
+    var row = Math.floor(index / potColumns);
+    var centeredColumn = column - (Math.min(count, potColumns) - 1) / 2;
+    var spread = direction === 'toPlayer' ? 18 : 10;
+    var angle = (Math.PI * 2 / Math.max(1, count)) * index;
+    var potBaseY = y + 24;
+    var stackX = isPotChip
+      ? x + (centeredColumn * random(5.5, 8.5)) + random(-5.5, 5.5)
+      : x + (Math.cos(angle) * random(2, spread));
+    var stackY = isPotChip
+      ? potBaseY - (row * 4.4) + random(-2.5, 6.5)
+      : y + (Math.sin(angle) * random(2, spread * 0.52));
+    var scale = direction === 'toPlayer' ? random(0.72, 0.88) : random(0.82, 1.02);
+    var rotation = random(-18, 18);
+    var halfSize = size / 2;
+
+    if (!node.parentNode) layer.appendChild(node);
+    node.style.opacity = '1';
+    node.style.transform =
+      'translate3d(' + (stackX - halfSize) + 'px,' + (stackY - halfSize) + 'px,0) ' +
+      'scale(' + scale + ') rotate(' + rotation + 'deg)';
+
+    if (isPotChip) {
+      return createStaticChipFromNode(node, stackX, stackY, size, scale, rotation);
+    }
+
+    var holdMs = 900;
+    global.setTimeout(function () {
+      if (!node || !node.parentNode) return;
+      var fade = node.animate([
+        { opacity: 1, transform: node.style.transform },
+        {
+          opacity: 0,
+          transform:
+            'translate3d(' + (stackX - halfSize) + 'px,' + (stackY - halfSize + 8) + 'px,0) ' +
+            'scale(' + (scale * 0.86) + ') rotate(' + rotation + 'deg)',
+        },
+      ], {
+        duration: 220,
+        easing: 'ease-out',
+        fill: 'forwards',
+      });
+      fade.onfinish = function () {
+        removeNode(node);
+      };
+    }, holdMs + (index * 24));
+
+    return null;
+  }
+
   function transferChips(options) {
     var source = resolvePoint(options && options.source, options && options.sourceAnchor, 'betSource');
     var target = resolvePoint(options && options.target, options && options.targetAnchor, 'potPile') ||
@@ -442,7 +546,7 @@
 
     var amount = Number(options && options.amount) || 0;
     var count = clamp(Number(options && options.count) || getTransferChipCount(amount), 1, 10);
-    var duration = clamp(Number(options && options.duration) || 940, 520, 1600);
+    var duration = clamp(Number(options && options.duration) || 1180, 680, 1900);
     var hold = clamp(Number(options && options.hold) || 190, 80, 420);
     var direction = options && options.direction === 'toPlayer' ? 'toPlayer' : 'toPot';
     var spread = direction === 'toPlayer' ? 32 : 24;
@@ -453,14 +557,15 @@
       var angle = (Math.PI * 2 / count) * index;
       var popX = Math.cos(angle) * (spread + random(-5, 10));
       var popY = Math.sin(angle) * (spread * 0.7 + random(-4, 8));
-      var curveX = random(-54, 54);
-      var lift = direction === 'toPlayer' ? random(112, 174) : random(82, 132);
-      var finalX = target.x + random(-14, 14);
-      var finalY = target.y + random(-9, 9);
-      var delay = index * 46;
-      var spin = direction === 'toPlayer' ? random(360, 620) : random(-460, -240);
-      var cameraX = source.x + ((target.x - source.x) * 0.38) + random(-44, 44);
-      var cameraY = Math.min(source.y, target.y) - random(118, 178);
+      var curveX = random(-92, 92);
+      var lift = direction === 'toPlayer' ? random(126, 198) : random(118, 188);
+      var finalX = target.x + random(-18, 18);
+      var finalY = target.y + (direction === 'toPot' ? 24 : 0) + random(-8, 14);
+      var delay = index * random(35, 58) + random(0, 28);
+      var spinDirection = Math.random() > 0.5 ? 1 : -1;
+      var spin = spinDirection * (direction === 'toPlayer' ? random(320, 560) : random(300, 620));
+      var cameraX = source.x + ((target.x - source.x) * random(0.28, 0.48)) + random(-72, 72);
+      var cameraY = Math.min(source.y, target.y) - random(132, 218);
 
       layer.appendChild(node);
       node.style.opacity = '1';
@@ -469,8 +574,8 @@
         ? [
           {
             offset: 0,
-            opacity: 0,
-            transform: 'translate3d(' + (source.x - size / 2) + 'px,' + (source.y - size / 2) + 'px,0) scale(0.52) rotate(0deg)',
+            opacity: 0.82,
+            transform: 'translate3d(' + (source.x - size / 2) + 'px,' + (source.y - size / 2) + 'px,0) scale(0.62) rotate(0deg)',
           },
           {
             offset: 0.18,
@@ -489,20 +594,20 @@
           },
           {
             offset: 1,
-            opacity: 0,
-            transform: 'translate3d(' + (finalX - size / 2) + 'px,' + (finalY - size / 2) + 'px,0) scale(0.58) rotate(' + spin + 'deg)',
+            opacity: 0.98,
+            transform: 'translate3d(' + (finalX - size / 2) + 'px,' + (finalY - size / 2) + 'px,0) scale(0.72) rotate(' + spin + 'deg)',
           },
         ]
         : [
           {
             offset: 0,
-            opacity: 0,
-            transform: 'translate3d(' + (source.x - size / 2) + 'px,' + (source.y - size / 2) + 'px,0) scale(0.42) rotate(0deg)',
+            opacity: 0.86,
+            transform: 'translate3d(' + (source.x - size / 2) + 'px,' + (source.y - size / 2) + 'px,0) scale(0.72) rotate(0deg)',
           },
           {
             offset: 0.16,
             opacity: 1,
-            transform: 'translate3d(' + (source.x + popX - size / 2) + 'px,' + (source.y + popY - size / 2) + 'px,0) scale(1.14) rotate(' + (spin * 0.12) + 'deg)',
+            transform: 'translate3d(' + (source.x + popX - size / 2) + 'px,' + (source.y + popY - size / 2) + 'px,0) scale(1.02) rotate(' + (spin * 0.12) + 'deg)',
           },
           {
             offset: Math.min(0.44, 0.18 + (hold / duration)),
@@ -510,26 +615,52 @@
             transform: 'translate3d(' + (source.x + popX - size / 2) + 'px,' + (source.y + popY - size / 2) + 'px,0) scale(0.98) rotate(' + (spin * 0.18) + 'deg)',
           },
           {
-            offset: 0.78,
+            offset: 0.68,
             opacity: 1,
             transform: 'translate3d(' + (((source.x + popX + finalX) / 2) + curveX - size / 2) + 'px,' + (((source.y + popY + finalY) / 2) - lift - size / 2) + 'px,0) scale(0.94) rotate(' + (spin * 0.72) + 'deg)',
           },
           {
+            offset: 0.86,
+            opacity: 1,
+            transform: 'translate3d(' + (finalX + random(-22, 22) - size / 2) + 'px,' + (finalY - random(22, 44) - size / 2) + 'px,0) scale(1.06) rotate(' + (spin * 0.9) + 'deg)',
+          },
+          {
             offset: 1,
-            opacity: 0.92,
-            transform: 'translate3d(' + (finalX - size / 2) + 'px,' + (finalY - size / 2) + 'px,0) scale(0.72) rotate(' + spin + 'deg)',
+            opacity: 1,
+            transform: 'translate3d(' + (finalX - size / 2) + 'px,' + (finalY - size / 2) + 'px,0) scale(0.9) rotate(' + spin + 'deg)',
           },
         ];
 
       var animation = node.animate(keyframes, {
-        duration: duration + delay,
+        duration: duration + random(-90, 140),
         delay: delay,
-        easing: 'cubic-bezier(0.2, 0.8, 0.16, 1)',
+        easing: 'cubic-bezier(0.16, 0.9, 0.18, 1.08)',
         fill: 'forwards',
       });
       animation._chipNode = node;
+      animation._chipLayer = layer;
+      animation._chipFinalX = finalX;
+      animation._chipFinalY = finalY;
+      animation._chipSize = size;
+      animation._chipDirection = direction;
+      animation._chipIndex = index;
+      animation._chipCount = count;
       animation.onfinish = function () {
-        removeNode(this._chipNode);
+        var landingChip = createLandingChip(
+          this._chipLayer,
+          this._chipFinalX,
+          this._chipFinalY,
+          this._chipSize,
+          this._chipDirection,
+          this._chipIndex,
+          this._chipCount,
+          this._chipNode
+        );
+        if (landingChip) {
+          chipSystem.chips.push(landingChip);
+          chipSystem.potChips.push(landingChip);
+          prunePotChips();
+        }
       };
     }
 

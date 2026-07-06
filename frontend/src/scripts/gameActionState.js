@@ -40,6 +40,7 @@ export function buildGameActionState({
     canDoubleDown = false,
     hasRaiseSinceCheck = false,
     bAllInStandChoice = false,
+    suppressStandAfterLocked = false,
     formatAmount = (amount) => String(amount),
 } = {}) {
     const state = createInitialActionState();
@@ -53,7 +54,8 @@ export function buildGameActionState({
     const canAffordRaise = safeMaxRaiseAmount >= safeMinBet;
     const potRaiseTarget = Math.max(safeMinRaise, safePotAmount);
     const canAllInRaise = safeMyChips > 0 && safeMaxRaiseAmount > 0 && safeMaxRaiseAmount < potRaiseTarget;
-    const raisedAfterCheck = Boolean(hasRaiseSinceCheck) && callAmount > 0 && !bAllInStandChoice;
+    const raisedAfterCheck = Boolean(hasRaiseSinceCheck) && Boolean(suppressStandAfterLocked) && callAmount > 0 && !bAllInStandChoice;
+    const canOfferStand = Boolean(canStand) && !(suppressStandAfterLocked && callAmount > 0);
 
     state.raisedAfterCheck = raisedAfterCheck;
 
@@ -63,6 +65,10 @@ export function buildGameActionState({
                 state.fold.visible = true;
                 break;
             case 'c':
+                if (callAmount <= 0 && !bAllInStandChoice && !raisedAfterCheck) {
+                    state.check.visible = true;
+                    break;
+                }
                 state.call.visible = true;
                 state.call.bAllInMode = false;
                 state.call.label = bAllInStandChoice || raisedAfterCheck
@@ -73,7 +79,7 @@ export function buildGameActionState({
                 state.raise.visible = !raisedAfterCheck && (canAffordRaise || canAllInRaise);
                 break;
             case 's':
-                if (canStand && !raisedAfterCheck) {
+                if (canOfferStand && !raisedAfterCheck) {
                     state.stand.visible = true;
                     state.stand.bCallStandMode = actions.includes('c') && callAmount > 0;
                     state.stand.label = state.stand.bCallStandMode ? 'Call/Stand' : 'Stand';
@@ -96,7 +102,7 @@ export function buildGameActionState({
         }
     });
 
-    if (canStand && actions.includes('c') && callAmount > 0 && !actions.includes('s') && !raisedAfterCheck) {
+    if (canOfferStand && actions.includes('c') && callAmount > 0 && !actions.includes('s') && !raisedAfterCheck) {
         state.stand.visible = true;
         state.stand.bCallStandMode = true;
         state.stand.label = 'Stand';

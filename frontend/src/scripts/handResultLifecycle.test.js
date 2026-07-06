@@ -11,7 +11,7 @@ import {
 describe('handResultLifecycle', () => {
     test('exports current result timing constants', () => {
         expect(HAND_RESULT_REVEAL_DELAY_MS).toBe(500);
-        expect(HAND_RESULT_CLEAR_DELAY_MS).toBe(6000);
+        expect(HAND_RESULT_CLEAR_DELAY_MS).toBe(6600);
     });
 
     test('creates deterministic token when clock is injected', () => {
@@ -25,9 +25,9 @@ describe('handResultLifecycle', () => {
     });
 
     test('calculates side bet reopen seconds after result clear delay', () => {
-        expect(getHandResultSideBetSeconds(10000)).toBe(4);
-        expect(getHandResultSideBetSeconds(6000)).toBe(0);
-        expect(getHandResultSideBetSeconds(5000)).toBe(0);
+        expect(getHandResultSideBetSeconds(16600)).toBe(10);
+        expect(getHandResultSideBetSeconds(6600)).toBe(0);
+        expect(getHandResultSideBetSeconds(10000)).toBe(0);
         expect(getHandResultSideBetSeconds(undefined)).toBe(0);
     });
 

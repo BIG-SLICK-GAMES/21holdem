@@ -17,10 +17,12 @@ if (missingEnv.length) {
   try {
     await mongodb.initialize();
     await redis.initialize();
-    await require('./app/game/boardManager').flushStuckBoards();
     router.initialize();
     queue.initialize();
     socket.initialize(router.httpServer);
+    require('./app/game/boardManager').flushStuckBoards().catch(error => {
+      log.red(`flushStuckBoards background error: ${error.message || error}`);
+    });
   } catch (err) {
     log.blue(':-(');
     log.red(`reason: ${err.message}, stack: ${err.stack}`);

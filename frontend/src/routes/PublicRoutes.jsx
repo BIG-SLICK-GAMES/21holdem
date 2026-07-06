@@ -8,7 +8,7 @@ function PublicRoute() {
   const token = getCookie('sAuthToken')
   const location = useLocation()
   const redirect = location?.pathname === '/' ? location?.pathname : '/lobby'
-  if (token) return <Navigate to={redirect} replace />
+  if (token && location?.pathname !== '/login') return <Navigate to={redirect} replace />
   return (
     <AuthLayout>
       <Outlet />

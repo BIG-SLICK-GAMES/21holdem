@@ -1,0 +1,19 @@
+{
+  "_howToUse": [
+    "Change these numbers, then rebuild/restart the Docker frontend.",
+    "Each seat is positioned directly over the table using xPercent and yPercent.",
+    "xPercent: 0 is left edge, 50 is center, 100 is right edge.",
+    "yPercent: 0 is top of table area, 50 is middle, 100 is bottom.",
+    "moveRightPx and moveDownPx are fine tuning nudges for one seat."
+  ],
+  "seats": {
+    "1": { "xPercent": 15, "yPercent": 60, "moveRightPx": 0, "moveDownPx": 0 },
+    "2": { "xPercent": 15, "yPercent": 45, "moveRightPx": 0, "moveDownPx": 0 },
+    "3": { "xPercent": 20, "yPercent": 30, "moveRightPx": 0, "moveDownPx": 0 },
+    "4": { "xPercent": 32.5, "yPercent": 15, "moveRightPx": 0, "moveDownPx": 0 },
+    "5": { "xPercent": 67.5, "yPercent": 15, "moveRightPx": 0, "moveDownPx": 0 },
+    "6": { "xPercent": 80, "yPercent": 30, "moveRightPx": 0, "moveDownPx": 0 },
+    "7": { "xPercent": 85, "yPercent": 45, "moveRightPx": 0, "moveDownPx": 0 },
+    "8": { "xPercent": 85, "yPercent": 60, "moveRightPx": 0, "moveDownPx": 0 }
+  }
+}

@@ -3,11 +3,19 @@ import { Spinner } from 'react-bootstrap'
 import { Route, BrowserRouter, Routes, Navigate } from 'react-router-dom'
 import Router from 'routes/Router'
 import NotFound from 'shared/components/404'
-import { getCookie } from 'shared/utils'
+import { getCookie, setCookie } from 'shared/utils'
 
 function RootRedirect() {
+    const params = new URLSearchParams(window.location.search)
+    const hubToken = params.get('hubToken')
+
+    if (hubToken) {
+        setCookie('sAuthToken', hubToken, 14)
+        return <Navigate to='/lobby' replace />
+    }
+
     const token = getCookie('sAuthToken')
-    return <Navigate to={token ? '/lobby' : '/guest'} replace />
+    return <Navigate to={token ? '/lobby' : '/login'} replace />
 }
 
 function AllRoutes() {

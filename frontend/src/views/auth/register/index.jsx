@@ -1,21 +1,17 @@
-// import { register } from 'query/login.query';
-import React, { useState } from 'react';
+import { register as registerAPI } from 'query/login.query';
+import React from 'react';
 import { useForm } from 'react-hook-form';
 import { useMutation } from 'react-query';
-import { register as registerAPI } from 'query/login.query';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { ReactToastify } from 'shared/utils';
-import { Button, Col, Form, Row, Tooltip } from 'react-bootstrap';
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-import eye from '../../../assets/images/icons/eye_icon.svg';
-import eye_slash_icon from '../../../assets/images/icons/eye_slash_icon.svg';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
+import holdemLogoImg from '../../../assets/images/bg/21HLogo.png';
+import { getBigSlickGamesUrl } from '../authDestination';
+
 const Register = () => {
-    const { register, handleSubmit, formState: { errors } } = useForm();
-    const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
-    const { mutate } = useMutation(registerAPI, {
+    const { register, handleSubmit, formState: { errors } } = useForm({ mode: 'onSubmit' });
+
+    const { mutate, isLoading } = useMutation(registerAPI, {
         onSuccess: (response) => {
             if (response.status === 200) {
                 const devVerificationLink = response?.data?.data?.oDevMailPreview?.sLink;
@@ -24,176 +20,109 @@ const Register = () => {
                     return;
                 }
 
-                ReactToastify('Email sent successfully', 'success');
-                navigate('/login');
+                ReactToastify('Account created. Check your email to verify, then return through Big Slick Games.', 'success');
+                window.location.assign(getBigSlickGamesUrl());
             } else {
                 ReactToastify(response.data.message, 'error');
             }
         },
         onError: (error) => {
             console.error('Registration failed:', error);
-            ReactToastify(error.response.data.message, 'error');
+            ReactToastify(error?.response?.data?.message || 'Registration failed', 'error');
         },
     });
 
     const onSubmit = (formData) => {
-        const payload = {
+        mutate({
             sEmail: formData.email,
             sPassword: formData.password,
-            sUserName: formData.username
-        };
-
-        mutate(payload);
+            sUserName: formData.username,
+        });
     };
 
-    const renderGuestPanel = () => (
-        <div className='auth-guest-panel'>
-            <div className='auth-guest-actions'>
-                <Button type='button' className='guest-entry-btn' onClick={() => navigate('/guest')}>
-                    Guest
-                </Button>
-            </div>
-        </div>
-    );
-
     return (
-        <div className='sign-in-container'>
-            <div className='login-container'>
-                <div className="auth-container auth-shell">
-                    <Row className='justify-content-center'>
-                        <Col xl={7} lg={8} md={10} sm={12}>
-                            <div className="auth-box auth-box--centered">
-                                <div className="auth-form-container">
-                                    <div className='auth-login-brand'>
-                                        <div className='auth-login-brand__title'>
-                                            <span className='auth-login-brand__title-number'>21</span>
-                                            <span className='auth-login-brand__title-word'>Hold&apos;em</span>
-                                        </div>
-                                    </div>
-
-                                    <h2 className="auth-title">REGISTER</h2>
-                                    <div className='auth-form'>
-                                        <form onSubmit={handleSubmit(onSubmit)} className="form">
-                                            <div className="form-group">
-                                                <label>Email ID</label>
-                                                <Form.Control
-                                                    type="email"
-                                                    className={`form-control ${errors.email ? 'border border-danger' : ''}`}
-                                                    placeholder="Enter Email ID"
-                                                    isInvalid={!!errors.email}
-                                                    {...register("email", {
-                                                        required: "Email ID is required",
-                                                        pattern: {
-                                                            value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                                                            message: "Invalid email address"
-                                                        }
-                                                    })}
-                                                />
-                                            </div>
-
-                                            <div className="form-group">
-                                                <label>Username</label>
-                                                <Form.Control
-                                                    type="text"
-                                                    className={`form-control ${errors.username ? 'border border-danger' : ''}`}
-                                                    placeholder="Enter Username"
-                                                    isInvalid={!!errors.username}
-                                                    {...register("username", {
-                                                        required: "Username is required",
-                                                        minLength: {
-                                                            value: 4,
-                                                            message: "Username must be at least 4 characters"
-                                                        }
-                                                    })}
-                                                />
-                                            </div>
-                                            <div className="form-group">
-                                                <label>Password
-                                                    <OverlayTrigger
-                                                        placement='right'
-                                                        overlay={
-                                                            <Tooltip id="button-tooltip" className='register-tooltips'>
-                                                                Password must be 8-16 characters with a mix of letters, numbers, and a special character.
-                                                            </Tooltip>
-                                                        }
-                                                    >
-                                                        <span className="ms-1">
-                                                            <FontAwesomeIcon icon={faInfoCircle} />
-                                                        </span>
-                                                    </OverlayTrigger>
-                                                </label>
-                                                <div className="position-relative">
-                                                    <Form.Control
-                                                        type={showPassword ? "text" : "password"}
-                                                        className={`form-control ${errors.password ? 'border border-danger' : ''}`}
-                                                        placeholder="Enter Password"
-                                                        isInvalid={!!errors.password}
-                                                        {...register("password", {
-                                                            required: "Password is required",
-                                                            validate: (value) => {
-                                                                const passwordPattern = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,16}$/;
-                                                                if (!passwordPattern.test(value)) {
-                                                                    ReactToastify('Password must be 8-16 characters with a mix of letters, numbers, and a special character.', 'error', 'password');
-                                                                    return false;
-                                                                }
-                                                                return true;
-                                                            },
-                                                            minLength: {
-                                                                value: 8,
-                                                                message: "Password must be at least 8 characters"
-                                                            },
-                                                            maxLength: {
-                                                                value: 16,
-                                                                message: "Password must be less than 16 characters"
-                                                            }
-                                                        })}
-                                                    />
-                                                    <img src={showPassword ? eye : eye_slash_icon} alt="eye" className='eye-icon' onClick={() => setShowPassword(!showPassword)} />
-                                                </div>
-                                            </div>
-                                            <div className="form-group d-flex justify-content-between align-items-center">
-                                                <div className="form-check auth-terms-check">
-                                                    <input
-                                                        type="checkbox"
-                                                        className={`form-check-input ${errors.terms ? 'border border-danger' : ''}`}
-                                                        id="terms"
-                                                        {...register("terms", { required: "You must accept Terms & Conditions and Privacy Policy" })}
-                                                    />
-                                                    <label className="form-check-label" htmlFor="terms">
-                                                        I accept
-                                                    </label>
-                                                    <span className="auth-terms-copy">
-                                                        <a href="/terms-conditions" target="_blank" rel="noreferrer" className="btn btn-link p-0 align-baseline auth-terms-link">
-                                                            Terms & Conditions
-                                                        </a>
-                                                        <span className="auth-terms-joiner">and</span>
-                                                        <a href="/privacy-policy" target="_blank" rel="noreferrer" className="btn btn-link p-0 align-baseline auth-terms-link">
-                                                            Privacy Policy
-                                                        </a>
-                                                    </span>
-                                                </div>
-                                                {errors.terms ? <div className="text-danger small mt-1">{errors.terms.message}</div> : null}
-                                                <div className='forgot-password'>
-                                                    Already have an account? &nbsp;
-                                                    <Link to="/login" className="">
-                                                        Sign In
-                                                    </Link>
-                                                </div>
-                                            </div>
-                                            <button type="submit" className="btn btn-primary sign-in-btn">
-                                                Register
-                                            </button>
-                                        </form>
-                                    </div>
-                                    {renderGuestPanel()}
-                                </div>
-                            </div>
-                        </Col>
-                    </Row>
+        <main className='auth-modern auth-modern--register'>
+            <section className='auth-modern__product auth-modern__product--simple' aria-label="Big Slick Games 21 Hold'em">
+                <div className='auth-modern__brand-lockup'>
+                    <img src={holdemLogoImg} alt="21 Hold'em" className='auth-modern__logo' />
+                    <p className='auth-modern__signup-line'>
+                        You are signing up to Big Slick Games - The home of 21 Hold&apos;em.
+                    </p>
                 </div>
-            </div>
-        </div>
-    )
-}
+            </section>
+
+            <section className='auth-modern__panel' aria-label='Create account form'>
+                <form onSubmit={handleSubmit(onSubmit)} className='auth-modern__form'>
+                    <label className='auth-modern__field'>
+                        <span>Email</span>
+                        <input
+                            type='email'
+                            placeholder='you@example.com'
+                            className={errors.email ? 'is-error' : ''}
+                            {...register('email', {
+                                required: 'Email is required',
+                                pattern: {
+                                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                                    message: 'Invalid email address',
+                                },
+                            })}
+                        />
+                    </label>
+                    <label className='auth-modern__field'>
+                        <span>Username</span>
+                        <input
+                            type='text'
+                            placeholder='Choose a table name'
+                            className={errors.username ? 'is-error' : ''}
+                            {...register('username', {
+                                required: 'Username is required',
+                                minLength: {
+                                    value: 4,
+                                    message: 'Username must be at least 4 characters',
+                                },
+                            })}
+                        />
+                    </label>
+                    <label className='auth-modern__field'>
+                        <span>Password</span>
+                        <input
+                            type='password'
+                            placeholder='8-16 chars, mixed case, number, symbol'
+                            className={errors.password ? 'is-error' : ''}
+                            {...register('password', {
+                                required: 'Password is required',
+                                validate: (value) => {
+                                    const passwordPattern = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,16}$/;
+                                    if (!passwordPattern.test(value)) {
+                                        ReactToastify('Password must be 8-16 characters with a mix of letters, numbers, and a special character.', 'error', 'password');
+                                        return false;
+                                    }
+                                    return true;
+                                },
+                            })}
+                        />
+                    </label>
+                    <label className='auth-modern__check auth-modern__check--terms'>
+                        <input
+                            type='checkbox'
+                            {...register('terms', { required: 'You must accept Terms & Conditions and Privacy Policy' })}
+                        />
+                        <span>
+                            I agree to the <a href='/terms-conditions' target='_blank' rel='noreferrer'>Terms</a>
+                            {' '}and <a href='/privacy-policy' target='_blank' rel='noreferrer'>Privacy Policy</a>.
+                        </span>
+                    </label>
+                    <button type='submit' className='auth-modern__submit' disabled={isLoading}>
+                        {isLoading ? 'Creating account...' : 'Create 21 Hold\'em account'}
+                    </button>
+                </form>
+
+                <div className='auth-modern__switch'>
+                    <button type='button' onClick={() => navigate('/login')}>Sign in</button>
+                </div>
+            </section>
+        </main>
+    );
+};
 
 export default Register;

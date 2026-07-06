@@ -32,39 +32,11 @@
   }
 
   function chipThrow(count, amount, size, duration, options) {
-    var chipBurst = getModule('chipBurst');
-    if (!chipBurst || typeof chipBurst.throwToPot !== 'function') return false;
-
-    return safe(function () {
-      return chipBurst.throwToPot({
-        count: count,
-        amount: amount,
-        size: size,
-        duration: duration,
-        palette: options && options.palette,
-        source: options && options.source,
-        sourceAnchor: options && options.sourceAnchor,
-        target: options && options.target,
-        targetAnchor: options && options.targetAnchor,
-      });
-    });
+    return false;
   }
 
   function chipWinBurst(count, amount, spread, duration, options) {
-    var chipBurst = getModule('chipBurst');
-    if (!chipBurst || typeof chipBurst.celebrateWin !== 'function') return false;
-
-    return safe(function () {
-      return chipBurst.celebrateWin({
-        count: count,
-        amount: amount,
-        spread: spread,
-        duration: duration,
-        palette: options && options.palette,
-        target: options && options.target,
-        targetAnchor: options && options.targetAnchor,
-      });
-    });
+    return false;
   }
 
   function pulsePot(options) {
@@ -78,10 +50,10 @@
 
   function setPotAmount(amount, options) {
     var potEffects = getModule('potEffects');
-    if (!potEffects || typeof potEffects.setPotStackAmount !== 'function') return false;
+    if (!potEffects || typeof potEffects.clearPotStack !== 'function') return false;
 
     return safe(function () {
-      return potEffects.setPotStackAmount(amount, options || {});
+      return potEffects.clearPotStack();
     });
   }
 
@@ -150,12 +122,7 @@
   }
 
   function chipTransfer(options) {
-    var chipBurst = getModule('chipBurst');
-    if (!chipBurst || typeof chipBurst.transferChips !== 'function') return false;
-
-    return safe(function () {
-      return chipBurst.transferChips(options || {});
-    });
+    return false;
   }
 
   function showOverlayEffect(methodName, options) {

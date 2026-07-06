@@ -225,71 +225,62 @@ export default class Preload extends Phaser.Scene {
         this.load.audio('doubleDown_sound', raise_sound);
     }
     editorCreate() {
-        this.cameras.main.setBackgroundColor('#04101a');
+        this.cameras.main.setBackgroundColor('#000000');
 
-        const table = this.add.image(config.centerX, config.centerY, 'preload_table');
-        table.setDisplaySize(config.width, config.height);
-
-        this.add.rectangle(config.centerX, 220, config.width, 440, 0x04111d, 0.52);
-        this.add.rectangle(config.centerX, config.height - 190, config.width, 380, 0x02070d, 0.68);
-        const glow = this.add.circle(config.centerX, config.centerY + 40, 300, 0x67c4ff, 0.09);
-        const ring = this.add.circle(config.centerX, config.centerY + 40, 264, 0x9fe1ff, 0.06);
-        ring.setStrokeStyle(3, 0xb8e9ff, 0.2);
-
-        this.loading_hint = this.add.text(config.centerX, config.height - 212, 'Get your chips ready!', {
-            fontFamily: config.ButtonFont,
-            fontSize: '54px',
-            color: '#f4fbff',
-            fontStyle: 'bold',
-            stroke: '#03111d',
-            strokeThickness: 3,
-            align: 'center',
-        }).setOrigin(0.5);
-        this.loading_hint.setLetterSpacing(2);
-
+        const splash = this.add.image(config.centerX, config.centerY, 'preload_splash');
+        const splashScale = Math.min(config.width / splash.width, config.height / splash.height);
+        splash.setScale(splashScale);
         this.tweens.add({
-            targets: [glow, ring],
-            alpha: { from: 0.05, to: 0.16 },
-            scale: { from: 0.96, to: 1.04 },
-            duration: 1800,
-            repeat: -1,
-            yoyo: true,
-            ease: 'Sine.easeInOut',
-        });
-
-        this.tweens.add({
-            targets: this.loading_hint,
-            alpha: { from: 0.84, to: 1 },
-            scale: { from: 0.985, to: 1.015 },
-            duration: 1200,
-            repeat: -1,
-            yoyo: true,
-            ease: 'Sine.easeInOut',
+            targets: splash,
+            scale: splashScale * 1.08,
+            duration: 5600,
+            ease: 'Sine.easeOut',
         });
     }
-    init({ sAuthToken, iBoardId, sPrivateCode, fallbackPath, isGuestTutorial = false }) {
+    init({ sAuthToken, iBoardId, sPrivateCode, fallbackPath, isGuestTutorial = false, tableOnlyMode = false }) {
         this.sAuthToken = sAuthToken;
         this.iBoardId = iBoardId;
         this.sPrivateCode = sPrivateCode;
         this.fallbackPath = fallbackPath;
         this.isGuestTutorial = Boolean(isGuestTutorial);
+        this.tableOnlyMode = Boolean(tableOnlyMode);
     }
     // preload() runs once. Keep it fast; only load what you need.
     preload() {
         this.editorCreate();
-        this.editorPreload();
         const data = {
             sAuthToken: this.sAuthToken,
             iBoardId: this.iBoardId,
             sPrivateCode: this.sPrivateCode,
             fallbackPath: this.fallbackPath,
             isGuestTutorial: this.isGuestTutorial,
+            tableOnlyMode: this.tableOnlyMode,
         };
-        this.load.on(Phaser.Loader.Events.COMPLETE, () => {
+
+        let bLevelStarted = false;
+        const startLevel = (reason = 'complete') => {
+            if (bLevelStarted) return;
+            bLevelStarted = true;
             this.cameras.main.fadeOut(400);
             setTimeout(() => {
                 this.scene.start("Level", data);
             }, 400);
+        };
+
+        this.load.on(Phaser.Loader.Events.LOAD_ERROR, (file) => {
+            console.error('Preload asset failed:', file?.key || '', file?.src || file?.url || '');
+        });
+        this.load.on(Phaser.Loader.Events.COMPLETE, () => startLevel('complete'));
+
+        this.editorPreload();
+
+        this.time.delayedCall(12000, () => {
+            if (bLevelStarted) return;
+            const pending = this.load?.list?.getArray
+                ? this.load.list.getArray().map((file) => file?.key || file?.url || '').filter(Boolean)
+                : [];
+            console.warn('Preload timeout; starting Level with pending assets:', pending);
+            startLevel('timeout');
         });
     }
 

@@ -1,0 +1,28 @@
+{
+  "_howToUse": [
+    "Change these values, then rebuild/restart the Docker frontend.",
+    "These numbers control individual visual elements on the game screen.",
+    "Seat positions are still controlled in profileLayoutControls.json."
+  ],
+  "playerProfile": {
+    "avatarSizePx": 60,
+    "actionLabelTopPx": -10,
+    "actionLabelHeightPx": 24,
+    "cardBackWidthPx": 26,
+    "cardBackHeightPx": 37,
+    "cardBackRightPx": 12,
+    "cardBackTopPx": 26,
+    "nameFontPx": 10,
+    "chipFontPx": 10,
+    "scoreTopPx": -22,
+    "blindLeftPx": -42,
+    "blindTopPx": -9
+  },
+  "bottomConsole": {
+    "mobileHeightPx": 90,
+    "holeCardHeightOffsetPx": 14,
+    "holeCardGapPx": 5,
+    "holeCardMoveUpPx": 10,
+    "foldedHoleCardOpacity": 0.2
+  }
+}

@@ -9,7 +9,7 @@
 import io from 'socket.io-client';
 import { getApiRoot } from '../axios';
 import { SOCKET_REQUEST_EVENTS, SOCKET_TRANSPORT_EVENTS } from './socketEvents';
-import { routeSocketEventToScene } from './socketReceiveRouter';
+import { routeSocketEventToSceneAsync } from './socketReceiveRouter';
 import { routeSocketCallbackToScene } from './socketCallbackRouter';
 import CleanupRegistry from './CleanupRegistry';
 
@@ -20,9 +20,10 @@ export default class SocketManager {
         this.sRoot = process.env.REACT_APP_SOCKET_URL || getApiRoot();
         this.sAuthToken = sAuthToken;
         this.iBoardId = iBoardId;
+        this.receiveQueue = Promise.resolve();
         this.cleanupRegistry = new CleanupRegistry();
         this.socket = io(this.sRoot, {
-            transports: ["websocket", "polling"],
+            transports: ["polling", "websocket"],
             forceNew: true,
             query: {
                 authorization: this.sAuthToken,
@@ -76,8 +77,16 @@ export default class SocketManager {
         this.oScene.setGameData(callback);
     }
     onReceive(data) {
+        this.receiveQueue = this.receiveQueue
+            .catch(() => undefined)
+            .then(() => this.processReceive(data))
+            .catch((error) => {
+                console.error("Error while receiving data:", error);
+            });
+    }
+    async processReceive(data) {
         this.oScene.applySocketEventToClientState?.(data);
-        routeSocketEventToScene(this.oScene, data);
+        await routeSocketEventToSceneAsync(this.oScene, data);
     }
     onCallBackReceive(sEventName, response, error) {
         routeSocketCallbackToScene(this.oScene, sEventName, response, error);

@@ -79,7 +79,7 @@ class PlayerListener {
       log.green('## call table called from user', this.iUserId);
       if (!participant.hasValidTurn()) return this.logError(messages.custom.wait_for_turn, callback);
 
-      participant.call(oData, callback);
+      await participant.call(oData, callback);
     } catch (error) {
       console.log('Error in PlayerListener call method:', error);
       this.logError(error, callback);
@@ -91,7 +91,7 @@ class PlayerListener {
       log.green('## raise table called from user', this.iUserId);
       if (!participant.hasValidTurn()) return this.logError(messages.custom.wait_for_turn, callback);
 
-      participant.raise(oData, callback);
+      await participant.raise(oData, callback);
     } catch (error) {
       console.log('Error in PlayerListener raise method:', error);
       this.logError(error, callback);
@@ -103,7 +103,7 @@ class PlayerListener {
       log.green('## doubleDown table called from user', this.iUserId);
       if (!participant.hasValidTurn()) return this.logError(messages.custom.wait_for_turn, callback);
 
-      participant.doubleDown(oData, callback);
+      await participant.doubleDown(oData, callback);
     } catch (error) {
       console.log('Error in PlayerListener doubleDown method:', error);
       this.logError(error, callback);
@@ -132,7 +132,7 @@ class PlayerListener {
       log.green('## stand table called from user', this.iUserId);
       if (!participant.hasValidTurn()) return this.logError(messages.custom.wait_for_turn, callback);
 
-      participant.stand(oData, callback);
+      await participant.stand(oData, callback);
     } catch (error) {
       console.log('Error in PlayerListener stand method:', error);
       this.logError(error, callback);
@@ -144,7 +144,7 @@ class PlayerListener {
       log.green('## check table called from user', this.iUserId);
       if (!participant.hasValidTurn()) return this.logError(messages.custom.wait_for_turn, callback);
 
-      participant.check(oData, callback);
+      await participant.check(oData, callback);
     } catch (error) {
       console.log('Error in PlayerListener check method:', error);
       this.logError(error, callback);

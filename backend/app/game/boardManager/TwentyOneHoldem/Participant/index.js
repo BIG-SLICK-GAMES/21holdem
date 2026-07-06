@@ -2,6 +2,9 @@
 /* eslint-disable no-continue */
 const { Analytics, User } = require('../../../../models');
 const Service = require('./lib/Service');
+const timing = require('../config/timing');
+const { buildTurnTimerPayload, getPlayerTurnDurationMs } = require('../config/turnTiming');
+const BettingSystem = require('../bettingSystem');
 
 class Participant extends Service {
   async call(oData, callback) {
@@ -64,25 +67,21 @@ class Participant extends Service {
 
       await this.oBoard.update({ nTableChips: this.oBoard.nTableChips, nMaxBet: this.oBoard.nMaxBet, aParticipant: [this.toJSON()] });
       if (bCallStand) {
-        await this.oBoard.emit('resStand', {
-          iUserId: this.iUserId,
-          nStandAtRound: this.nStandAtRound,
-          nTableChips: this.oBoard.nTableChips,
-          nLastBidChips: nCallAmount,
-          nChips: this.nChips,
-          nMinBet: this.oBoard.nMinBet,
-          bAllIn: this.isAllInLock || undefined,
-        });
+        await this.oBoard.emit('resStand', BettingSystem.buildActionPayload(this.oBoard, this, {
+          nActionAmount: nCallAmount,
+          extra: {
+            nStandAtRound: this.nStandAtRound,
+            bAllIn: this.isAllInLock || undefined,
+          },
+        }));
         await this.oBoard.saveLogs([{ sAction: 'call+stand', eLogType: 'game', iUserId: this.iUserId, nCallAmount }]);
       } else {
-        await this.oBoard.emit('resCall', {
-          iUserId: this.iUserId,
-          nTableChips: this.oBoard.nTableChips,
-          nLastBidChips: nCallAmount,
-          nChips: this.nChips,
-          nMinBet: this.oBoard.nMinBet,
-          bAllIn: this.isAllInLock || undefined,
-        });
+        await this.oBoard.emit('resCall', BettingSystem.buildActionPayload(this.oBoard, this, {
+          nActionAmount: nCallAmount,
+          extra: {
+            bAllIn: this.isAllInLock || undefined,
+          },
+        }));
         await this.oBoard.saveLogs([{ sAction: 'call', eLogType: 'game', iUserId: this.iUserId, nCallAmount }]);
       }
 
@@ -171,29 +170,25 @@ class Participant extends Service {
         });
 
         if (bRaiseStand) {
-          await this.oBoard.emit('resStand', {
-            iUserId: this.iUserId,
-            nStandAtRound: this.nStandAtRound,
-            nTableChips: this.oBoard.nTableChips,
-            nLastBidChips: nAllInDebit,
-            nChips: this.nChips,
-            nMinBet: this.oBoard.nMinBet,
-            bAllIn: true,
-            bShortRaise: true,
+          await this.oBoard.emit('resStand', BettingSystem.buildActionPayload(this.oBoard, this, {
+            nActionAmount: nAllInDebit,
             aParticipantAdjustments: oRefundAdjustment?.aParticipantAdjustments || [],
-          });
+            extra: {
+              nStandAtRound: this.nStandAtRound,
+              bAllIn: true,
+              bShortRaise: true,
+            },
+          }));
           await this.oBoard.saveLogs([{ sAction: 'allin-raise+stand', eLogType: 'game', iUserId: this.iUserId, nRaiseAmount, nToCallAmount, nAllInDebit, nActualRaiseAmount }]);
         } else {
-          await this.oBoard.emit('resRaise', {
-            iUserId: this.iUserId,
-            nTableChips: this.oBoard.nTableChips,
-            nLastBidChips: nAllInDebit,
-            nChips: this.nChips,
-            nMinBet: this.oBoard.nMinBet,
-            bAllIn: true,
-            bShortRaise: true,
+          await this.oBoard.emit('resRaise', BettingSystem.buildActionPayload(this.oBoard, this, {
+            nActionAmount: nAllInDebit,
             aParticipantAdjustments: oRefundAdjustment?.aParticipantAdjustments || [],
-          });
+            extra: {
+              bAllIn: true,
+              bShortRaise: true,
+            },
+          }));
           await this.oBoard.saveLogs([{ sAction: 'allin-raise', eLogType: 'game', iUserId: this.iUserId, nRaiseAmount, nToCallAmount, nAllInDebit, nActualRaiseAmount }]);
         }
 
@@ -249,25 +244,21 @@ class Participant extends Service {
         aParticipant: this.oBoard.aParticipant.map(p => p.toJSON()),
       });
       if (bRaiseStand) {
-        await this.oBoard.emit('resStand', {
-          iUserId: this.iUserId,
-          nStandAtRound: this.nStandAtRound,
-          nTableChips: this.oBoard.nTableChips,
-          nLastBidChips: nTotalDebit,
-          nChips: this.nChips,
-          nMinBet: this.oBoard.nMinBet,
-          bAllIn: this.isAllInLock || undefined,
-        });
+        await this.oBoard.emit('resStand', BettingSystem.buildActionPayload(this.oBoard, this, {
+          nActionAmount: nTotalDebit,
+          extra: {
+            nStandAtRound: this.nStandAtRound,
+            bAllIn: this.isAllInLock || undefined,
+          },
+        }));
         await this.oBoard.saveLogs([{ sAction: 'raise+stand', eLogType: 'game', iUserId: this.iUserId, nRaiseAmount, nToCallAmount, nTotalDebit }]);
       } else {
-        await this.oBoard.emit('resRaise', {
-          iUserId: this.iUserId,
-          nTableChips: this.oBoard.nTableChips,
-          nLastBidChips: nTotalDebit,
-          nChips: this.nChips,
-          nMinBet: this.oBoard.nMinBet,
-          bAllIn: this.isAllInLock || undefined,
-        });
+        await this.oBoard.emit('resRaise', BettingSystem.buildActionPayload(this.oBoard, this, {
+          nActionAmount: nTotalDebit,
+          extra: {
+            bAllIn: this.isAllInLock || undefined,
+          },
+        }));
         await this.oBoard.saveLogs([{ sAction: 'raise', eLogType: 'game', iUserId: this.iUserId, nRaiseAmount, nToCallAmount, nTotalDebit }]);
       }
 
@@ -283,8 +274,7 @@ class Participant extends Service {
     return aParticipants
       .filter(Boolean)
       .map(participant => ({
-        iUserId: participant.iUserId,
-        nChips: participant.nChips,
+        ...BettingSystem.buildParticipantPatch(participant),
         nLastBidChips: participant.nLastBidChips,
       }));
   }
@@ -410,18 +400,16 @@ class Participant extends Service {
         aParticipant: oRefundAdjustment ? this.oBoard.aParticipant.map(participant => participant.toJSON()) : [this.toJSON()],
       });
 
-      await this.oBoard.emit('resCall', {
-        iUserId: this.iUserId,
-        nTableChips: this.oBoard.nTableChips,
-        nLastBidChips: nAllInAmount,
-        nChips: this.nChips,
-        nMinBet: this.oBoard.nMinBet,
-        bAllIn: true,
-        bShortCall: true,
-        bStandMode,
-        nShortAmount: Math.max(nToCallAmount - nAllInAmount, 0),
+      await this.oBoard.emit('resCall', BettingSystem.buildActionPayload(this.oBoard, this, {
+        nActionAmount: nAllInAmount,
         aParticipantAdjustments: oRefundAdjustment?.aParticipantAdjustments || [],
-      });
+        extra: {
+          bAllIn: true,
+          bShortCall: true,
+          bStandMode,
+          nShortAmount: Math.max(nToCallAmount - nAllInAmount, 0),
+        },
+      }));
       await this.oBoard.saveLogs([
         {
           sAction: 'allin-short-call',
@@ -463,7 +451,7 @@ class Participant extends Service {
       this.nChips -= nDoubleDownAmount;
       this.oBoard.nTableChips += nDoubleDownAmount;
       this.oBoard.nMaxBet = this.oBoard.nTableChips;
-      this.nLastBidChips = nDoubleDownAmount;
+      this.nLastBidChips = (this.nLastBidChips ?? 0) + nDoubleDownAmount;
       this.nTotalBidChips = (this.nTotalBidChips ?? 0) + nDoubleDownAmount;
 
       await this.recordTransaction({
@@ -498,16 +486,15 @@ class Participant extends Service {
         nTableChips: this.oBoard.nTableChips,
         nMaxBet: this.oBoard.nMaxBet,
       });
-      await this.oBoard.emit('resDoubledown', {
-        iUserId: this.iUserId,
-        oCard,
-        // aCardHand: this.aCardHand,
-        nCardScore: this.nCardScore,
-        nLastBidChips: this.nLastBidChips,
-        bHasAceAndBust: this.bHasAceAndBust,
-        nTableChips: this.oBoard.nTableChips,
-        nChips: this.nChips,
-      });
+      await this.oBoard.emit('resDoubledown', BettingSystem.buildActionPayload(this.oBoard, this, {
+        nActionAmount: nDoubleDownAmount,
+        extra: {
+          oCard,
+          // aCardHand: this.aCardHand,
+          nCardScore: this.nCardScore,
+          bHasAceAndBust: this.bHasAceAndBust,
+        },
+      }));
       await this.oBoard.saveLogs([{ sAction: 'doubledown', eLogType: 'game', iUserId: this.iUserId, nDoubleDownAmount }]);
 
       if (this.nCardScore === 21) {
@@ -574,15 +561,13 @@ class Participant extends Service {
         await this.oBoard.update({ aParticipant: this.oBoard.aParticipant.map(p => p.toJSON()) });
       }
 
-      await this.oBoard.emit('resStand', {
-        iUserId: this.iUserId,
-        nStandAtRound: this.nStandAtRound,
-        nTableChips: this.oBoard.nTableChips,
-        nLastBidChips: nStandAmount,
-        nChips: this.nChips,
-        nMinBet: this.oBoard.nMinBet,
-        bAllIn: bResolvingAllInStandChoice || undefined,
-      });
+      await this.oBoard.emit('resStand', BettingSystem.buildActionPayload(this.oBoard, this, {
+        nActionAmount: nStandAmount,
+        extra: {
+          nStandAtRound: this.nStandAtRound,
+          bAllIn: bResolvingAllInStandChoice || undefined,
+        },
+      }));
       await this.oBoard.saveLogs([{ sAction: 'stand', eLogType: 'game', iUserId: this.iUserId, nStandAmount, bIsDefendingRaise }]);
 
       // if (this.oBoard.nTableChips >= this.oBoard.nMaxTableAmount) return this.reachMaxTableAmount();
@@ -645,6 +630,8 @@ class Participant extends Service {
         await this.oBoard.update({ aParticipant: [this.toJSON()] });
       }
 
+      await this.oBoard.emit('resCheck', BettingSystem.buildActionPayload(this.oBoard, this));
+
       if (this.bHasSplit && this.eSplitPhase) {
         await this.advanceSplitPhase();
       } else {
@@ -677,21 +664,21 @@ class Participant extends Service {
 
       if (this.isAllInLock && this.bPendingAllInStandChoice) {
         this.oBoard.iUserTurn = this.iUserId;
-        const { nTurnTime } = this.oBoard.oSetting;
         const bTutorialTurn = this.oBoard?.isTutorialTable?.() === true;
+        const nTurnDurationMs = getPlayerTurnDurationMs(this.oBoard.oSetting, { tutorial: bTutorialTurn });
+        const oTurnTimer = buildTurnTimerPayload(this.oBoard.oSetting, { tutorial: bTutorialTurn });
 
         this.nPlayerTurnCount += 1;
         this.aUserAction = ['c', 's'];
 
         const turnScheduler = await this.oBoard.getScheduler('assignTurnTimeout');
         if (turnScheduler) await this.oBoard.deleteScheduler('assignTurnTimeout');
-        if (!bTutorialTurn) await this.oBoard.setSchedular('assignTurnTimeout', this.iUserId, nTurnTime);
+        if (!bTutorialTurn && nTurnDurationMs > 0) await this.oBoard.setSchedular('assignTurnTimeout', this.iUserId, nTurnDurationMs);
 
         await this.oBoard.update({ iUserTurn: this.iUserId, aParticipant: [this.toJSON()] });
         await this.oBoard.emit('resPlayerTurn', {
           iUserId: this.iUserId,
-          ttl: bTutorialTurn ? null : nTurnTime,
-          nTotalTurnTime: bTutorialTurn ? null : nTurnTime,
+          ...oTurnTimer,
           aUserAction: this.aUserAction,
           nMinBet: this.oBoard.nMinBet,
           toCallAmount: 0,
@@ -724,14 +711,15 @@ class Participant extends Service {
       }
 
       this.oBoard.iUserTurn = this.iUserId;
-      const { nTurnTime, nTurnBuffer } = this.oBoard.oSetting;
       const bTutorialTurn = this.oBoard?.isTutorialTable?.() === true;
+      const nTurnDurationMs = getPlayerTurnDurationMs(this.oBoard.oSetting, { tutorial: bTutorialTurn });
+      const oTurnTimer = buildTurnTimerPayload(this.oBoard.oSetting, { tutorial: bTutorialTurn });
 
       this.nPlayerTurnCount += 1;
 
       const turnScheduler = await this.oBoard.getScheduler('assignTurnTimeout');
       if (turnScheduler) await this.oBoard.deleteScheduler('assignTurnTimeout');
-      if (!bTutorialTurn) await this.oBoard.setSchedular('assignTurnTimeout', this.iUserId, nTurnTime);
+      if (!bTutorialTurn && nTurnDurationMs > 0) await this.oBoard.setSchedular('assignTurnTimeout', this.iUserId, nTurnDurationMs);
 
       const bCheckOpenState = this.aUserAction.includes('ck') && !this.aUserAction.includes('c');
       const nToCallAmount = bCheckOpenState ? 0 : Math.max(this.oBoard.nMinBet - this.nLastBidChips, 0);
@@ -752,9 +740,8 @@ class Participant extends Service {
 
       this.oBoard.emit('resPlayerTurn', {
         iUserId: this.iUserId,
-        ttl: bTutorialTurn ? null : nTurnTime,
-        nTotalTurnTime: bTutorialTurn ? null : nTurnTime,
-        aUserAction: this.getAvailableTurnActions(),
+        ...oTurnTimer,
+        aUserAction: this.getAvailableTurnActions(nToCallAmount),
         nMinBet: this.oBoard.nMinBet,
         toCallAmount: nToCallAmount,
         eSplitPhase: this.eSplitPhase ?? null,
@@ -771,7 +758,10 @@ class Participant extends Service {
 
   async playAutomatedAllInStandChoice() {
     const noop = () => {};
-    const nDecisionDelay = _.randomBetween(650, 950);
+    const nDecisionDelay = _.randomBetween(
+      timing.automatedAllInStandChoiceDelayMs.min,
+      timing.automatedAllInStandChoiceDelayMs.max,
+    );
 
     await _.delay(nDecisionDelay);
     await this.waitForGuestResume();
@@ -801,7 +791,10 @@ class Participant extends Service {
 
   async playAutomatedTurn({ toCallAmount = 0 } = {}) {
     const noop = () => {};
-    const nDecisionDelay = _.randomBetween(1450, 1900);
+    const nDecisionDelay = _.randomBetween(
+      timing.automatedTurnDelayMs.min,
+      timing.automatedTurnDelayMs.max,
+    );
 
     await _.delay(nDecisionDelay);
     await this.waitForGuestResume();
@@ -867,7 +860,10 @@ class Participant extends Service {
 
   async playTutorialTurn({ toCallAmount = 0 } = {}) {
     const noop = () => {};
-    await _.delay(_.randomBetween(1400, 1800));
+    await _.delay(_.randomBetween(
+      timing.tutorialTurnDelayMs.min,
+      timing.tutorialTurnDelayMs.max,
+    ));
     await this.waitForGuestResume();
 
     if (!this.oBoard?.isTutorialTable?.() || this.eState !== 'playing' || !this.hasValidTurn()) return false;
@@ -1006,6 +1002,8 @@ class Participant extends Service {
       // current player turn count is same as next participant turn count, then dealer is next participant
       this.oBoard.iUserTurn = nextParticipant.iUserId;
       await this.oBoard.update({ iUserTurn: this.oBoard.iUserTurn });
+
+      await _.delay(timing.playerTurnHandoffPauseMs);
 
       return emitter.emit('takeTurn', { iBoardId: this.oBoard._id, iUserId: nextParticipant.iUserId });
     } catch (error) {

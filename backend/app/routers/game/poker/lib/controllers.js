@@ -128,6 +128,14 @@ async function ensureLiveLobbySeedBoards(aProtoData = []) {
         continue;
       }
 
+      if (board.eState === 'finished') {
+        await Promise.all([
+          PokerBoard.deleteOne({ iBoardId: pokerBoard.iBoardId }),
+          User.updateMany({ aPokerBoard: pokerBoard.iBoardId }, { $pull: { aPokerBoard: pokerBoard.iBoardId } }),
+        ]);
+        continue;
+      }
+
       const nBoardParticipantCount = board.aParticipant.filter(participant => participant.eState !== 'leave').length;
       nCurrentParticipantCount += nBoardParticipantCount;
 

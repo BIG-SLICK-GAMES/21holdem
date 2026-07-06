@@ -560,11 +560,8 @@ export default class PlayerProfile extends Phaser.GameObjects.Container {
     this.txt_price.setPosition(startX + 18 + 5 + (textWidth / 2), this.bankrollY + 1);
   }
   setAmountIn(nAmountIn) {
-    this.txt_price.setText(
-      nAmountIn < 9999
-        ? _.formatCurrencyWithComa(nAmountIn)
-        : _.formatCurrency(nAmountIn)
-    );
+    const nSafeAmount = Math.max(0, Math.round(Number(nAmountIn) || 0));
+    this.txt_price.setText(String(nSafeAmount).replace(/\B(?=(\d{3})+(?!\d))/g, ','));
     this.drawBankrollTablet();
   }
   createCard() {
@@ -690,6 +687,24 @@ export default class PlayerProfile extends Phaser.GameObjects.Container {
     this.setIdentityState('bust');
     this.profileRenderer.setFrameColor(0x882222);
     this.profileRenderer.stopActivePulse();
+    this.scene.tweens.killTweensOf(this);
+    this.setAlpha(1);
+    this.scene.tweens.add({
+      targets: this,
+      alpha: 0.28,
+      duration: 95,
+      ease: "Sine.easeInOut",
+      yoyo: true,
+      repeat: 2,
+      onComplete: () => {
+        this.scene.tweens.add({
+          targets: this,
+          alpha: 0.38,
+          duration: 460,
+          ease: "Sine.easeOut",
+        });
+      },
+    });
     this.container_bust.setVisible(true);
     this.scene.oAnimations.scale({
       aGameObjects: [this.container_bust],
@@ -709,9 +724,7 @@ export default class PlayerProfile extends Phaser.GameObjects.Container {
           ease: "Quint.easeInOut",
           yoyo: false,
           repeat: 0,
-          onComplete: () => {
-            this.setAlpha(0.7);
-          },
+          onComplete: () => {},
         });
       },
     });

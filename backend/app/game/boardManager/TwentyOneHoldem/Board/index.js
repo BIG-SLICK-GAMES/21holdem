@@ -2,6 +2,7 @@ const Service = require('./lib/Service');
 const { redis, deck, mongodb } = require('../../../../utils');
 const { PokerFinishGame, PokerBoard, BoardProtoType, Transaction, User, Setting, Analytics } = require('../../../../models');
 const systemBots = require('../../../../utils/lib/system-bots');
+const timing = require('../config/timing');
 
 const MAX_COMMUNITY_CARDS = 5;
 const SIDE_BET_PAYOUTS = {
@@ -31,6 +32,10 @@ function hasRun(cards = [], nMinimumLength = 3) {
     }
   }
   return false;
+}
+
+function delay(ms = 0) {
+  return new Promise(resolve => setTimeout(resolve, Math.max(0, Number(ms) || 0)));
 }
 
 function hasFlush(cards = [], nMinimumLength = 3) {
@@ -130,6 +135,9 @@ class Board extends Service {
           }
         }
 
+        participant.oSideBets = {};
+        participant.bSideBetsQueuedForNextHand = false;
+
         if (multiplier) {
           const betAmount = this.nMinBet * multiplier;
 
@@ -191,7 +199,7 @@ class Board extends Service {
       const userTurn = this.getParticipant(this.iUserTurn);
       if (!userTurn) return log.red('userTurn not found in distributeCard');
       await _.delay(1200);
-      userTurn.takeTurn();
+      await userTurn.takeTurn();
     } catch (error) {
       console.log('cardDistribution', error);
     }
@@ -199,6 +207,9 @@ class Board extends Service {
 
   async dealCommunityCard() {
     try {
+      const nTurnBufferMs = Number(this.oSetting?.nTurnBuffer) || 0;
+      await delay(Math.max(timing.communityCardDealDelayMs, nTurnBufferMs));
+
       const oCard = this.aDeck.pop();
       this.aCommunityCard.push(oCard);
 
@@ -328,16 +339,8 @@ class Board extends Service {
         await this.update({ aParticipant: this.aParticipant.map(p => p.toJSON()) });
       }
 
-      // Round opener stays fixed within a hand: player to the left of the BB.
-      const bigBlind = this.getParticipant(this.iBigBlindId);
-      let userTurn = bigBlind ? this.getNextParticipant(bigBlind.nSeat) : null;
-      if (!userTurn) userTurn = this.getParticipant(this.iUserTurn);
-      if (!userTurn) {
-        const aPlayingParticipants = this.aParticipant.filter(p => p.eState === 'playing');
-        userTurn = aPlayingParticipants[0];
-      } else if (userTurn.eState !== 'playing') {
-        userTurn = this.getNextParticipant(userTurn.nSeat);
-      }
+      // Every betting round starts with the active player after the big blind.
+      let userTurn = this.getFirstParticipantAfterBigBlind();
 
       if (!userTurn || userTurn.eState !== 'playing') {
         const aPlayingParticipants = this.aParticipant.filter(p => p.eState === 'playing');
@@ -347,7 +350,7 @@ class Board extends Service {
 
       const nRevealDelay = Math.max(Number(this.oSetting?.nAnimationCountdown) || 0, 850);
       await _.delay(nRevealDelay);
-      userTurn.takeTurn();
+      await userTurn.takeTurn();
     } catch (error) {
       console.log('dealCommunityCard', error);
     }
@@ -428,6 +431,8 @@ class Board extends Service {
       }
 
       if (!participant.bSideBetsQueuedForNextHand) participant.oSideBets = {};
+      participant.oSideBets = {};
+      participant.bSideBetsQueuedForNextHand = false;
       participant.oCommittedSideBets = {};
       await participant.emit('resSideBets', {
         bets: participant.oSideBets || {},
@@ -605,8 +610,8 @@ class Board extends Service {
 
       await this.update({ aParticipant: this.aParticipant.map(p => p.toJSON()), eState: this.eState });
 
-      const nClientShowdownMs = 6000;
-      const nSideBetWindowMs = 10000;
+      const nClientShowdownMs = timing.clientShowdownMs;
+      const nSideBetWindowMs = timing.sideBetWindowMs;
       const resultData = {
         nRoundStartsIn: bTutorialCompleted ? 0 : nClientShowdownMs + nSideBetWindowMs,
         aParticipant: this.aParticipant.map(p => ({

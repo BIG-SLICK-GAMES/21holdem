@@ -316,12 +316,19 @@
     chip.style.pointerEvents = 'none';
     chip.style.opacity = '0';
     chip.style.willChange = 'transform, opacity';
-    chip.style.backgroundImage = 'url("' + getChipImageSource() + '")';
+    chip.style.borderRadius = '50%';
+    chip.style.backgroundImage =
+      'radial-gradient(circle at 34% 26%, rgba(255,255,255,0.2) 0 9%, transparent 10%), ' +
+      'radial-gradient(circle, #3a3d42 0 31%, #ff7f1d 32% 40%, #1c1f24 41% 57%, #ff8a24 58% 65%, #2b2e34 66% 100%)';
     chip.style.backgroundRepeat = 'no-repeat';
     chip.style.backgroundPosition = 'center';
-    chip.style.backgroundSize = 'contain';
-    chip.style.filter = 'drop-shadow(0 6px 10px rgba(0, 0, 0, 0.28))';
-    chip.style.transition = 'transform 220ms cubic-bezier(0.22, 1, 0.36, 1), opacity 180ms ease-out';
+    chip.style.backgroundSize = '100% 100%';
+    chip.style.boxShadow =
+      'inset 0 0 0 2px rgba(255, 151, 43, 0.42), ' +
+      'inset 0 -5px 8px rgba(0, 0, 0, 0.38), ' +
+      '0 8px 16px rgba(0, 0, 0, 0.34)';
+    chip.style.filter = 'drop-shadow(0 4px 9px rgba(255, 107, 24, 0.22))';
+    chip.style.transition = 'transform 240ms cubic-bezier(0.16, 0.9, 0.18, 1.08), opacity 180ms ease-out';
     return chip;
   }
 
@@ -341,8 +348,8 @@
   function positionPotStackChip(chip, anchor, index) {
     var row = Math.floor(index / 3);
     var column = index % 3;
-    var offsetX = (column - 1) * 7 + (row % 2 ? 3 : 0);
-    var offsetY = row * -4 + Math.abs(column - 1) * 1.2;
+    var offsetX = (column - 1) * 9 + (row % 2 ? 4 : 0);
+    var offsetY = 22 + row * -4.5 + Math.abs(column - 1) * 1.8;
     var scale = 0.76 + row * 0.025;
     var x = anchor.x + offsetX;
     var y = anchor.y + offsetY;
@@ -400,7 +407,7 @@
       potStackState.shadow.style.width = '60px';
       potStackState.shadow.style.height = '18px';
       potStackState.shadow.style.left = anchor.x - 30 + 'px';
-      potStackState.shadow.style.top = anchor.y + 5 + 'px';
+      potStackState.shadow.style.top = anchor.y + 28 + 'px';
       potStackState.shadow.style.opacity = '1';
     }
 

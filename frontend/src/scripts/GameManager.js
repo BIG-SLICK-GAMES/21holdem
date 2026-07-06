@@ -75,15 +75,15 @@ export default class GameManager {
                 { x: 1320, y: 760 }, // 8
             ]
             : [
-                { x: 540, y: 1200 }, // 0
-                { x: 332, y: 1212 }, // 1
-                { x: 280, y: 1014 }, // 2
-                { x: 298, y: 804 },  // 3
-                { x: 348, y: 664 },  // 4
-                { x: 732, y: 664 },  // 5
-                { x: 782, y: 804 },  // 6
-                { x: 800, y: 1014 }, // 7
-                { x: 748, y: 1212 }, // 8
+                { x: 540, y: 1264 }, // 0 - local player
+                { x: 254, y: 1130 }, // 1 - left rail row 4
+                { x: 232, y: 990 },  // 2 - left rail row 3
+                { x: 210, y: 850 },  // 3 - left rail row 2
+                { x: 188, y: 710 },  // 4 - left rail row 1
+                { x: 892, y: 710 },  // 5 - right rail row 1
+                { x: 870, y: 850 },  // 6 - right rail row 2
+                { x: 848, y: 990 },  // 7 - right rail row 3
+                { x: 826, y: 1130 }, // 8 - right rail row 4
             ];
         return aPlayerProfile[nPlayer];
     }

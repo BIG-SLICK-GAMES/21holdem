@@ -232,6 +232,7 @@ class BoardManager {
     const key = _.getBoardKey(iBoardId);
     const oTableData = await redis.client.json.GET(key);
     if (!oTableData) return false;
+    if (!oTableData._id) oTableData._id = _.toString(iBoardId);
 
     const aParticipant = [];
     for (const [boardKey, value] of Object.entries(oTableData)) {

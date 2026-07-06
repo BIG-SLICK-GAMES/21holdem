@@ -165,8 +165,10 @@ const Dashboard = () => {
     const [nActiveBuyIn, setActiveBuyIn] = useState(BUY_IN_OPTIONS[0]);
     const [bHasAdjustedFilters, setHasAdjustedFilters] = useState(false);
     const [nCarouselDragOffset, setCarouselDragOffset] = useState(0);
+    const [aFallbackTablesData, setFallbackTablesData] = useState([]);
+    const [bIsJoiningTable, setIsJoiningTable] = useState(false);
 
-    const { data: tablesData = [], isLoading: isDataTableLoading } = useQuery('getTables', getTables, {
+    const { data: tablesData = [], isLoading: isDataTableLoading, refetch: refetchTables } = useQuery('getTables', getTables, {
         select: (data) => getArrayPayload(data?.data?.data),
         onError: (error) => {
             console.log(error);
@@ -196,18 +198,75 @@ const Dashboard = () => {
         },
     });
 
-    const { mutate: joinTableMutate, isLoading: joinTableLoading } = useMutation(joinTable, {
-        onSuccess: (data) => {
+    const joinTableLoading = bIsJoiningTable;
+
+    const joinTableMutate = async (sTableId) => {
+        if (!sTableId || bIsJoiningTable) return;
+
+        setIsJoiningTable(true);
+        try {
+            const data = await joinTable(sTableId);
             if (data.status === 200) {
                 navigate('/game', { state: { sAuthToken: getCookie('sAuthToken'), iBoardId: data.data.data.iBoardId } });
             }
-        },
-        onError: (error) => {
+        } catch (error) {
             console.log(error);
+            const sResponseMessage = error?.response?.data?.message || '';
+            if (/maximum limit of joining boards/i.test(sResponseMessage)) {
+                try {
+                    const profileResponse = await getProfile();
+                    const sActiveBoardId = profileResponse?.data?.data?.aPokerBoard?.[0] || profileData?.aPokerBoard?.[0];
+                    if (sActiveBoardId) {
+                        navigate('/game', { state: { sAuthToken: getCookie('sAuthToken'), iBoardId: sActiveBoardId } });
+                        return;
+                    }
+                } catch (profileError) {
+                    console.log(profileError);
+                }
+            }
             ReactToastify(error?.response?.data?.message || 'Unable to join table', 'error');
             queryClient.invalidateQueries('getTables');
-        },
-    });
+        } finally {
+            setIsJoiningTable(false);
+        }
+    };
+
+    const handleJoinTable = async (table) => {
+        if (joinTableLoading) return;
+
+        const sActiveBoardId = profileData?.aPokerBoard?.[0];
+        if (sActiveBoardId) {
+            navigate('/game', { state: { sAuthToken: getCookie('sAuthToken'), iBoardId: sActiveBoardId } });
+            return;
+        }
+
+        const sTableId = table?._id || table?.id;
+        if (sTableId) {
+            joinTableMutate(sTableId);
+            return;
+        }
+
+        try {
+            await refetchTables();
+            const response = await getTables();
+            const aRefetchedTables = getArrayPayload(response?.data?.data).filter(Boolean).sort(sortTablesByPriority);
+            const oFallbackTable = (
+                aRefetchedTables.find(oTable => Number(oTable.nMinBuyIn) === nActiveBuyIn) ||
+                aRefetchedTables[0]
+            );
+            const sFallbackTableId = oFallbackTable?._id || oFallbackTable?.id;
+
+            if (sFallbackTableId) {
+                joinTableMutate(sFallbackTableId);
+                return;
+            }
+
+            ReactToastify('Tables are still loading. Try again in a moment.', 'error');
+        } catch (error) {
+            console.log(error);
+            ReactToastify(error?.response?.data?.message || 'Unable to load tables', 'error');
+        }
+    };
 
     const { mutate: mutateDailyRewardsClaimed, isLoading: isClaimingReward } = useMutation(updateDailyRewards, {
         onSuccess: (response) => {
@@ -267,10 +326,30 @@ const Dashboard = () => {
 
     const aSafeShopItems = useMemo(() => getArrayPayload(aShopItems).filter(Boolean), [aShopItems]);
     const aSortedTables = useMemo(() => (
-        getArrayPayload(tablesData)
+        getArrayPayload(tablesData).length ? getArrayPayload(tablesData) : getArrayPayload(aFallbackTablesData)
+    )
             .filter(Boolean)
             .sort(sortTablesByPriority)
-    ), [tablesData]);
+    , [aFallbackTablesData, tablesData]);
+
+    useEffect(() => {
+        let bIsMounted = true;
+        const nFallbackTimer = window.setTimeout(async () => {
+            if (getArrayPayload(tablesData).length) return;
+
+            try {
+                const response = await getTables();
+                if (bIsMounted) setFallbackTablesData(getArrayPayload(response?.data?.data));
+            } catch (error) {
+                console.log(error);
+            }
+        }, 1500);
+
+        return () => {
+            bIsMounted = false;
+            window.clearTimeout(nFallbackTimer);
+        };
+    }, [tablesData]);
 
     useEffect(() => {
         if (bHasAdjustedFilters || !aSortedTables.length) return;
@@ -802,7 +881,7 @@ const Dashboard = () => {
                                     <button
                                         type='button'
                                         className='dashboard-hub__table-card'
-                                        onClick={() => joinTableMutate(table?._id || table?.id)}
+                                        onClick={() => handleJoinTable(table)}
                                         disabled={joinTableLoading || !(table?._id || table?.id)}
                                         aria-label={`${sTableName}: ${nOccupied} playing, ${nOpenSeats} seat${nOpenSeats === 1 ? '' : 's'} open.`}
                                     >
@@ -851,6 +930,14 @@ const Dashboard = () => {
                     <div className='dashboard-hub__empty'>
                         <strong>{isDataTableLoading ? 'Loading tables...' : 'No tables at this buy-in yet'}</strong>
                         <span>Try another buy-in to find an open table.</span>
+                        <button
+                            type='button'
+                            className='dashboard-hub__cta dashboard-hub__cta--primary'
+                            onClick={() => handleJoinTable(null)}
+                            disabled={joinTableLoading}
+                        >
+                            {joinTableLoading ? 'Joining...' : 'Start Table'}
+                        </button>
                     </div>
                 ) : null}
             </div>
@@ -1074,8 +1161,8 @@ const Dashboard = () => {
                     <button
                         type='button'
                         className='dashboard-hub__desktop-cta dashboard-hub__desktop-cta--primary'
-                        onClick={() => oFeaturedTable && joinTableMutate(oFeaturedTable._id)}
-                        disabled={!oFeaturedTable || joinTableLoading}
+                        onClick={() => handleJoinTable(oFeaturedTable)}
+                        disabled={joinTableLoading}
                     >
                         {joinTableLoading ? 'Joining...' : 'Join Table'}
                     </button>

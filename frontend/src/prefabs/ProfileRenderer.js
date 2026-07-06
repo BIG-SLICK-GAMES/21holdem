@@ -55,9 +55,9 @@ export default class ProfileRenderer extends Phaser.GameObjects.Container {
     this.timerGlow = scene.add.graphics().setVisible(false);
 
     this.shell.add(this.backdrop);
+    this.shell.add(this.timerGlow);
     this.shell.add(this.avatar);
     this.shell.add(this.initialsText);
-    this.shell.add(this.timerGlow);
     this.shell.add(this.frameOverlay);
 
     // Suit badge: themed card suit symbol on the frame bottom-right edge
@@ -324,20 +324,32 @@ export default class ProfileRenderer extends Phaser.GameObjects.Container {
         color = (r << 16) | (g << 8) | b;
       }
 
+      const urgent = fraction <= 0.28;
+      const pulse = 0.68 + (Math.sin(Date.now() / 115) * 0.18);
+      color = urgent ? 0xff4f12 : 0xff8a1d;
       const endArc = startAngle + fraction * Math.PI * 2;
 
       this.timerGlow.clear();
-      this.timerGlow.fillStyle(0x020913, 0.22);
-      this.timerGlow.fillCircle(0, 0, radius);
-
+      this.timerGlow.fillStyle(0xff7a18, 0.1 * pulse);
+      this.timerGlow.fillCircle(0, 0, radius + 11);
+      this.timerGlow.fillStyle(0xff9a26, 0.15 * pulse);
+      this.timerGlow.fillCircle(0, 0, radius + 6);
+      this.timerGlow.lineStyle(urgent ? 5 : 4, 0xff8a1d, urgent ? 0.78 : 0.54);
+      this.timerGlow.strokeCircle(0, 0, radius + 3);
+      this.timerGlow.lineStyle(2, 0xffd18a, urgent ? 0.72 : 0.42);
+      this.timerGlow.strokeCircle(0, 0, radius - 1);
       if (fraction > 0) {
-        this.timerGlow.fillStyle(color, 0.34);
+        this.timerGlow.fillStyle(color, urgent ? 0.48 : 0.38);
         this.timerGlow.beginPath();
         this.timerGlow.moveTo(0, 0);
         this.timerGlow.arc(0, 0, radius, startAngle, endArc, false);
         this.timerGlow.closePath();
         this.timerGlow.fillPath();
-        this.timerGlow.fillStyle(0xffffff, 0.08);
+        this.timerGlow.lineStyle(urgent ? 4 : 3, 0xffb347, urgent ? 0.82 : 0.58);
+        this.timerGlow.beginPath();
+        this.timerGlow.arc(0, 0, radius + 1, startAngle, endArc, false);
+        this.timerGlow.strokePath();
+        this.timerGlow.fillStyle(0xffffff, 0.1);
         this.timerGlow.fillCircle(-radius * 0.32, -radius * 0.34, radius * 0.38);
       }
       this.timerGlow.setVisible(true);
@@ -351,11 +363,15 @@ export default class ProfileRenderer extends Phaser.GameObjects.Container {
     this.turnInterval = setInterval(tick, 100);
   }
 
-  setTimerTint(color = 0xf2d57e, alpha = 0.28) {
+  setTimerTint(color = 0xff8a1d, alpha = 0.34) {
     const radius = Math.max(8, this.maskDiameter / 2 - 2);
     this.timerGlow.clear();
-    this.timerGlow.fillStyle(color, alpha);
-    this.timerGlow.fillCircle(0, 0, radius);
+    this.timerGlow.fillStyle(0xff7a18, 0.12);
+    this.timerGlow.fillCircle(0, 0, radius + 10);
+    this.timerGlow.lineStyle(4, 0xff8a1d, 0.55);
+    this.timerGlow.strokeCircle(0, 0, radius + 3);
+    this.timerGlow.lineStyle(2, color, alpha);
+    this.timerGlow.strokeCircle(0, 0, radius);
     this.timerGlow.setVisible(true);
   }
 

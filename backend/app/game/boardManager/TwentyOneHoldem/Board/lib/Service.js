@@ -126,8 +126,7 @@ class Service {
       if (!dealer) dealer = this.getParticipant(this.iBigBlindId);
       if (!dealer) dealer = this.aParticipant[0];
       dealer = this.getNextParticipant(dealer?.nSeat);
-      this.iUserTurn = dealer?.iUserId;
-      this.iDealerId = this.iUserTurn;
+      this.iDealerId = dealer?.iUserId;
 
       // this.iDealerId = dealer?.iUserId;
 
@@ -138,6 +137,8 @@ class Service {
       this.iSmallBlindId = smallBlind?.iUserId;
       const bigBlind = this.getNextParticipant(smallBlind?.nSeat);
       this.iBigBlindId = bigBlind?.iUserId;
+      const firstToAct = this.getFirstParticipantAfterBigBlind();
+      this.iUserTurn = firstToAct?.iUserId || dealer?.iUserId;
 
       await this.update({
         iUserTurn: this.iUserTurn,
@@ -164,7 +165,7 @@ class Service {
 
   updateClass(oBoardData) {
     try {
-      this._id = oBoardData._id;
+      this._id = oBoardData._id || this._id;
       this.iProtoId = oBoardData.iProtoId;
       this.eTableMode = oBoardData.eTableMode ?? 'live';
       this.oTutorial = oBoardData.oTutorial ?? null;
@@ -208,8 +209,11 @@ class Service {
 
   getNextParticipant(nSeat) {
     try {
-      let participant = this.aParticipant.find(p => p.nSeat > nSeat && p.eState === 'playing');
-      if (!participant) participant = this.aParticipant.find(p => p.nSeat < nSeat && p.eState === 'playing');
+      const aPlayingParticipants = this.aParticipant
+        .filter(p => p.eState === 'playing')
+        .sort((a, b) => Number(a.nSeat) - Number(b.nSeat));
+      let participant = aPlayingParticipants.find(p => Number(p.nSeat) > Number(nSeat));
+      if (!participant) participant = aPlayingParticipants[0];
       if (!participant) return log.red('No next participant found');
       return participant;
     } catch (error) {
@@ -219,12 +223,33 @@ class Service {
 
   getPreviousParticipant(nSeat) {
     try {
-      let participant = this.aParticipant.find(p => p.nSeat < nSeat && p.eState === 'playing');
-      if (!participant) participant = this.aParticipant.find(p => p.nSeat > nSeat && p.eState === 'playing');
+      const aPlayingParticipants = this.aParticipant
+        .filter(p => p.eState === 'playing')
+        .sort((a, b) => Number(b.nSeat) - Number(a.nSeat));
+      let participant = aPlayingParticipants.find(p => Number(p.nSeat) < Number(nSeat));
+      if (!participant) participant = aPlayingParticipants[0];
       if (!participant) return log.red('No previous participant found');
       return participant;
     } catch (error) {
       console.log('getPreviousParticipant', error);
+    }
+  }
+
+  getFirstParticipantAfterBigBlind() {
+    try {
+      const bigBlind = this.getParticipant(this.iBigBlindId);
+      if (bigBlind && Number.isFinite(Number(bigBlind.nSeat))) {
+        const participant = this.getNextParticipant(bigBlind.nSeat);
+        if (participant) return participant;
+      }
+
+      const aPlayingParticipants = this.aParticipant
+        .filter(p => p.eState === 'playing')
+        .sort((a, b) => Number(a.nSeat) - Number(b.nSeat));
+      return aPlayingParticipants[0] || null;
+    } catch (error) {
+      console.log('getFirstParticipantAfterBigBlind', error);
+      return null;
     }
   }
 
@@ -300,6 +325,7 @@ class Service {
 
   async save(oData = this.toJSON()) {
     try {
+      if (!this._id) throw new Error('Cannot save board without _id');
       delete oData.aParticipant;
       await redis.client.json.set(_.getBoardKey(this._id), '.', oData);
       return true;
@@ -310,6 +336,7 @@ class Service {
 
   async update(oData) {
     try {
+      if (!this._id) throw new Error(`Cannot update board without _id: ${_.stringify(oData)}`);
       const _key = _.getBoardKey(this._id);
       for (const [field, value] of Object.entries(oData)) {
         if (field !== 'aParticipant') {

@@ -146,7 +146,7 @@ middleware.joiningProcess = async (req, res, next) => {
       const activeBoardId = req.user.aPokerBoard[0].toString();
       const activeBoard = await boardManager.getBoard(activeBoardId);
       const participant = activeBoard?.getParticipant?.(req.user._id.toString());
-      if (!activeBoard || !participant) {
+      if (!activeBoard || activeBoard.eState === 'finished' || !participant) {
         await User.updateOne({ _id: req.user._id }, { $pull: { aPokerBoard: activeBoardId } });
         await PokerBoard.updateMany({ iBoardId: activeBoardId }, { $pull: { aParticipants: req.user._id } });
         req.user.aPokerBoard = [];
@@ -169,6 +169,15 @@ middleware.joiningProcess = async (req, res, next) => {
       while (pokerBoard) {
         const board = await boardManager.getBoard(pokerBoard.iBoardId.toString());
         if (board) {
+          if (board.eState === 'finished') {
+            await Promise.all([
+              PokerBoard.deleteOne({ iBoardId: pokerBoard.iBoardId }, session ? { session } : {}),
+              User.updateMany({ aPokerBoard: pokerBoard.iBoardId }, { $pull: { aPokerBoard: pokerBoard.iBoardId } }, session ? { session } : {}),
+            ]);
+            pokerBoard = await PokerBoard.findOneAndUpdate(query, update, options);
+            continue;
+          }
+
           const participant = board.getParticipant(req.user._id.toString());
           if (participant?.eState === 'leave') {
             req.board = await boardManager.createBoard(req.boardProto);
@@ -195,6 +204,14 @@ middleware.joiningProcess = async (req, res, next) => {
       for (const candidateBoard of candidateBoards) {
         const board = await boardManager.getBoard(candidateBoard.iBoardId.toString());
         if (!board) {
+          await Promise.all([
+            PokerBoard.deleteOne({ iBoardId: candidateBoard.iBoardId }, session ? { session } : {}),
+            User.updateMany({ aPokerBoard: candidateBoard.iBoardId }, { $pull: { aPokerBoard: candidateBoard.iBoardId } }, session ? { session } : {}),
+          ]);
+          continue;
+        }
+
+        if (board.eState === 'finished') {
           await Promise.all([
             PokerBoard.deleteOne({ iBoardId: candidateBoard.iBoardId }, session ? { session } : {}),
             User.updateMany({ aPokerBoard: candidateBoard.iBoardId }, { $pull: { aPokerBoard: candidateBoard.iBoardId } }, session ? { session } : {}),

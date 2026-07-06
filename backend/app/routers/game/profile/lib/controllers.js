@@ -1,10 +1,27 @@
-const { User, Setting } = require('../../../../models');
+const boardManager = require('../../../../game/boardManager');
+const { User, Setting, PokerBoard } = require('../../../../models');
 
 const controllers = {};
 
 controllers.get = async (req, res) => {
   try {
     const userResponse = { ...req.user };
+    const aActiveBoards = [];
+
+    for (const iBoardId of userResponse.aPokerBoard || []) {
+      const board = await boardManager.getBoard(iBoardId.toString());
+      if (board) {
+        aActiveBoards.push(iBoardId);
+        continue;
+      }
+
+      await Promise.all([
+        User.updateOne({ _id: req.user._id }, { $pull: { aPokerBoard: iBoardId } }),
+        PokerBoard.deleteOne({ iBoardId }),
+      ]);
+    }
+
+    userResponse.aPokerBoard = aActiveBoards;
     delete userResponse.sToken;
     delete userResponse.sPassword;
     delete userResponse.sVerificationToken;
