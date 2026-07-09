@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mini Games Hub | Big Slick Games</title>
+  <style>
+    :root { color-scheme: dark; --orange: #ff6a00; --ink: #fff; --soft: #c5cad3; --panel: rgba(15, 17, 21, 0.88); }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100svh; font-family: Arial, Helvetica, sans-serif; color: var(--ink); background: radial-gradient(circle at 74% 10%, rgba(255,106,0,.22), transparent 30%), url("../assets/depth-casino-room.png?v=20260707a") center / cover fixed no-repeat, #0a0d12; }
+    main { width: min(100% - 28px, 1120px); margin: 0 auto; padding: 28px 0 44px; }
+    .top { display: flex; justify-content: space-between; gap: 16px; align-items: center; margin-bottom: 18px; }
+    a { color: inherit; text-decoration: none; }
+    .back, .play { border-radius: 999px; padding: 12px 16px; font-weight: 950; text-transform: uppercase; font-size: 12px; }
+    .back { background: rgba(255,255,255,.08); box-shadow: inset 0 0 0 1px rgba(255,106,0,.5); }
+    .play { background: linear-gradient(180deg, #ff7a12, #ff3d00); color: #170700; }
+    .hero { display: grid; gap: 22px; padding: clamp(18px, 4vw, 34px); border-radius: 24px; background: var(--panel); box-shadow: inset 0 0 0 1px rgba(255,106,0,.78), 0 0 24px rgba(255,106,0,.22), 0 30px 80px rgba(0,0,0,.46); }
+    img { width: 100%; max-height: 420px; object-fit: contain; border-radius: 18px; }
+    h1 { margin: 0; font-size: clamp(40px, 8vw, 84px); line-height: .9; }
+    p { margin: 0; max-width: 760px; color: var(--soft); font-size: clamp(18px, 3vw, 24px); line-height: 1.35; }
+    .facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+    .fact { min-height: 110px; padding: 18px; border-radius: 16px; background: linear-gradient(145deg, rgba(36,38,43,.96), rgba(9,10,13,.98)); box-shadow: inset 0 0 0 1px rgba(255,106,0,.78), 0 0 14px rgba(255,106,0,.22); }
+    .fact span { color: var(--orange); font-size: 12px; font-weight: 950; letter-spacing: .12em; text-transform: uppercase; }
+    .fact strong { display: block; margin-top: 10px; font-size: 22px; line-height: 1.05; }
+    @media (max-width: 720px) { .top { align-items: stretch; } .facts { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <main>
+    <nav class="top"><a class="back" href="../index.html">Back</a><a class="play" href="../index.html">Play</a></nav>
+    <section class="hero">
+      <img src="../assets/generated-mini-games-hub.png?v=20260707b" alt="Mini Games Hub">
+      <h1>Mini Games Hub</h1>
+      <p>A compact lobby for quick Big Slick Games modes, events, and lightweight challenges.</p>
+      <div class="facts">
+        <div class="fact"><span>Mode</span><strong>Multiple quick games</strong></div>
+        <div class="fact"><span>Skill</span><strong>Short-session variety</strong></div>
+        <div class="fact"><span>Goal</span><strong>Jump in fast</strong></div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
