@@ -7,6 +7,7 @@ body,
     // overflow: hidden;
     max-width: 100%;
     overflow-x: hidden;
+    overscroll-behavior-x: none;
 }
 
 #game-stage canvas {
@@ -14,11 +15,15 @@ body,
     top: calc(50% + var(--game-playfield-offset-y, 0px));
     left: 50%;
     transform: translate(-50%, -50%);
+    max-width: 100% !important;
+    max-height: 100% !important;
     margin: 0 !important;
 }
 
 .gameplay-layout {
     --game-visible-height: calc(var(--vh, 1vh) * 100);
+    width: 100%;
+    max-width: 100%;
     min-height: calc(var(--vh, 1vh) * 100);
     height: var(--game-visible-height);
     overflow: hidden;
@@ -27,7 +32,10 @@ body,
 .gameplay-layout .main-container,
 .gameplay-layout .container-fluid {
     width: 100%;
+    max-width: 100%;
+    min-width: 0;
     height: 100%;
+    overflow: hidden;
 }
 
 .gameplay-layout .main-container,
@@ -47,9 +55,10 @@ body,
     width: 100%;
     height: var(--game-visible-height);
     max-width: 100%;
+    min-width: 0;
     overflow-x: clip;
     overflow-y: hidden;
-    --game-frame-width: min(100vw, calc(var(--game-visible-height) * 0.5625));
+    --game-frame-width: min(100%, calc(var(--game-visible-height) * 0.5625));
     --game-top-banner-height: 54px;
     --game-playfield-offset-y: calc(var(--game-top-banner-height) * 1.38);
 }
@@ -59,6 +68,9 @@ body,
     display: grid;
     grid-template-rows: minmax(64px, 0.58fr) repeat(5, minmax(0, 1fr)) minmax(24px, 0.32fr);
     grid-template-columns: 1fr;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
     min-height: var(--game-visible-height);
     background: #02070c;
     --game-playfield-offset-y: 0px;
@@ -97,6 +109,9 @@ body,
     display: grid;
     grid-template-rows: minmax(64px, 0.58fr) repeat(5, minmax(0, 1fr)) minmax(24px, 0.32fr);
     grid-template-columns: minmax(0, 1fr);
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
     pointer-events: none;
 }
 
@@ -616,7 +631,7 @@ body,
     top: 48%;
     z-index: 140;
     grid-template-columns: 24px minmax(0, 1fr);
-    width: min(360px, calc(100vw - 28px));
+    width: min(360px, calc(var(--app-mobile-frame-width) - 28px));
     min-height: 166px;
     padding: 14px 14px 12px 12px;
     border: 1px solid rgba(137, 213, 255, 0.46);
@@ -853,6 +868,9 @@ body,
 
 #game-stage {
     position: relative;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
     overflow: hidden;
 }
 
@@ -2658,9 +2676,9 @@ body,
 
 .game-shell--mobile #game-stage,
 .game-stage--mobile {
-    width: min(100%, 100vw);
+    width: min(100%, var(--game-frame-width));
     height: var(--game-visible-height);
-    max-width: 1080px;
+    max-width: 100%;
     max-height: var(--game-visible-height);
     margin: 0;
 }
@@ -2710,7 +2728,7 @@ body,
 .game-stage--table-only {
     width: min(100%, var(--game-frame-width));
     height: min(var(--game-visible-height), calc(var(--game-frame-width) * 1.7777778));
-    max-width: 1080px;
+    max-width: 100%;
     max-height: var(--game-visible-height);
     margin: 0;
 }
@@ -2727,7 +2745,7 @@ body,
 @media (max-width: 1280px) {
     .game-shell--mobile #game-stage,
     .game-stage--mobile {
-        width: min(100%, 100vw);
+        width: min(100%, var(--game-frame-width));
         height: var(--game-visible-height);
         max-height: var(--game-visible-height);
     }
@@ -3020,7 +3038,7 @@ body,
 }
 
 .game-audio-modal__panel {
-    width: min(260px, calc(100vw - 32px));
+    width: min(260px, calc(var(--app-mobile-frame-width) - 32px));
     border: 1px solid rgba(255, 139, 43, 0.36);
     border-radius: 8px;
     background: rgba(7, 18, 31, 0.96);
