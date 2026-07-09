@@ -53,12 +53,13 @@ body,
 .game-shell {
     position: relative;
     width: 100%;
-    height: var(--game-visible-height);
+    height: var(--game-frame-height);
     max-width: 100%;
     min-width: 0;
     overflow-x: clip;
     overflow-y: hidden;
     --game-frame-width: min(100%, calc(var(--game-visible-height) * 0.5625));
+    --game-frame-height: min(var(--game-visible-height), calc(var(--game-frame-width) * 1.7777778));
     --game-top-banner-height: 54px;
     --game-playfield-offset-y: calc(var(--game-top-banner-height) * 1.38);
 }
@@ -71,7 +72,8 @@ body,
     width: 100%;
     max-width: 100%;
     min-width: 0;
-    min-height: var(--game-visible-height);
+    min-height: var(--game-frame-height);
+    height: var(--game-frame-height);
     background: #02070c;
     --game-playfield-offset-y: 0px;
     --seat-slot-width: clamp(74px, 18vw, 96px);
@@ -2677,9 +2679,9 @@ body,
 .game-shell--mobile #game-stage,
 .game-stage--mobile {
     width: min(100%, var(--game-frame-width));
-    height: var(--game-visible-height);
+    height: var(--game-frame-height);
     max-width: 100%;
-    max-height: var(--game-visible-height);
+    max-height: var(--game-frame-height);
     margin: 0;
 }
 
@@ -2727,9 +2729,9 @@ body,
 
 .game-stage--table-only {
     width: min(100%, var(--game-frame-width));
-    height: min(var(--game-visible-height), calc(var(--game-frame-width) * 1.7777778));
+    height: var(--game-frame-height);
     max-width: 100%;
-    max-height: var(--game-visible-height);
+    max-height: var(--game-frame-height);
     margin: 0;
 }
 
@@ -2746,8 +2748,8 @@ body,
     .game-shell--mobile #game-stage,
     .game-stage--mobile {
         width: min(100%, var(--game-frame-width));
-        height: var(--game-visible-height);
-        max-height: var(--game-visible-height);
+        height: var(--game-frame-height);
+        max-height: var(--game-frame-height);
     }
 }
 

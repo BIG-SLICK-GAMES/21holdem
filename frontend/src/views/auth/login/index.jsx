@@ -221,6 +221,11 @@ const Login = () => {
                             {isLoading || isHandoffLoading ? 'Signing in...' : 'Sign in'}
                         </button>
                     </form>
+
+                    <div className='auth-modern__switch'>
+                        <span>Need an account?</span>
+                        <button type='button' onClick={() => navigate('/register')}>Sign up</button>
+                    </div>
                 </section>
             </main>
         </>
