@@ -4,6 +4,12 @@ const { Setting, Transaction, User } = require('../../../../models');
 const controllers = {};
 
 const STRIPE_NOT_CONFIGURED_MESSAGE = 'Stripe checkout is not configured';
+const STRIPE_RETURN_URL_NOT_CONFIGURED_MESSAGE = 'Stripe checkout return URL is not configured';
+
+function isProductionRuntime() {
+  return [process.env.NODE_ENV, process.env.APP_ENV]
+    .some(value => ['production', 'prod'].includes(String(value || '').toLowerCase()));
+}
 
 function getStripe() {
   if (!process.env.STRIPE_SECRET_KEY) throw new Error(STRIPE_NOT_CONFIGURED_MESSAGE);
@@ -15,9 +21,16 @@ function getCurrency(item) {
 }
 
 function getReturnUrl(type) {
-  const fallbackFrontendUrl = process.env.FRONTEND_URL || '';
-  const fallbackPath = type === 'success' ? '/shop?checkout=success' : '/shop?checkout=cancel';
-  return process.env[type === 'success' ? 'STRIPE_SUCCESS_URL' : 'STRIPE_CANCEL_URL'] || `${fallbackFrontendUrl}${fallbackPath}`;
+  const configuredUrl = process.env[type === 'success' ? 'STRIPE_SUCCESS_URL' : 'STRIPE_CANCEL_URL'];
+  if (configuredUrl) return configuredUrl;
+
+  const fallbackFrontendUrl = String(process.env.FRONTEND_URL || '').replace(/\/$/, '');
+  if (!fallbackFrontendUrl) throw new Error(STRIPE_RETURN_URL_NOT_CONFIGURED_MESSAGE);
+
+  const fallbackPath = type === 'success'
+    ? '/lobby?tab=lobby-shop&checkout=success'
+    : '/lobby?tab=lobby-shop&checkout=cancel';
+  return `${fallbackFrontendUrl}${fallbackPath}`;
 }
 
 function addQueryParam(url, key, value) {
@@ -77,7 +90,7 @@ controllers.buyItem = async (req, res) => {
     if (!nPrice || nPrice <= 0) return res.reply(messages.invalid_req('nPrice'));
     if (!nChips || nChips <= 0) return res.reply(messages.invalid_req('nChips'));
 
-    if (!process.env.STRIPE_SECRET_KEY) {
+    if (!process.env.STRIPE_SECRET_KEY && !isProductionRuntime()) {
       const user = await User.findById(req.user._id, { nChips: 1 }).lean();
       const nPreviousChips = Number(user?.nChips) || 0;
       const nNewChips = nPreviousChips + nChips;
@@ -142,7 +155,10 @@ controllers.buyItem = async (req, res) => {
     });
   } catch (error) {
     console.log('controllers.buyItem error ::', error);
-    if (error.message === STRIPE_NOT_CONFIGURED_MESSAGE) {
+    if (
+      error.message === STRIPE_NOT_CONFIGURED_MESSAGE
+      || error.message === STRIPE_RETURN_URL_NOT_CONFIGURED_MESSAGE
+    ) {
       return res.reply(messages.customCodeAndMessage(503, STRIPE_NOT_CONFIGURED_MESSAGE));
     }
     return res.reply(messages.server_error('buyItem'), error.message || error);
