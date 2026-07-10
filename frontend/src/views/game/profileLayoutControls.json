@@ -9,10 +9,10 @@
   "seats": {
     "1": { "xPercent": 15, "yPercent": 60, "moveRightPx": 0, "moveDownPx": 0 },
     "2": { "xPercent": 15, "yPercent": 45, "moveRightPx": 0, "moveDownPx": 0 },
-    "3": { "xPercent": 20, "yPercent": 30, "moveRightPx": 0, "moveDownPx": 0 },
-    "4": { "xPercent": 32.5, "yPercent": 15, "moveRightPx": 0, "moveDownPx": 0 },
-    "5": { "xPercent": 67.5, "yPercent": 15, "moveRightPx": 0, "moveDownPx": 0 },
-    "6": { "xPercent": 80, "yPercent": 30, "moveRightPx": 0, "moveDownPx": 0 },
+    "3": { "xPercent": 15, "yPercent": 28, "moveRightPx": 0, "moveDownPx": 0 },
+    "4": { "xPercent": 28, "yPercent": 12, "moveRightPx": 0, "moveDownPx": 0 },
+    "5": { "xPercent": 72, "yPercent": 12, "moveRightPx": 0, "moveDownPx": 0 },
+    "6": { "xPercent": 85, "yPercent": 28, "moveRightPx": 0, "moveDownPx": 0 },
     "7": { "xPercent": 85, "yPercent": 45, "moveRightPx": 0, "moveDownPx": 0 },
     "8": { "xPercent": 85, "yPercent": 60, "moveRightPx": 0, "moveDownPx": 0 }
   }

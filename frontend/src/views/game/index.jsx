@@ -76,54 +76,11 @@ function buildGameElementStyle() {
 }
 
 function buildActionLabelStyle(nSeat) {
-    const sAvatarOffset = 'calc(50% + (var(--seat-avatar-size, 60px) / 2) + 6px)';
-    const sAvatarInsetOffset = 'calc(50% - (var(--seat-avatar-size, 60px) / 2) - 6px)';
-    const sTopOffset = 'calc(50% - (var(--seat-avatar-size, 60px) / 2) - 4px)';
-    const sBottomOffset = 'calc(50% + (var(--seat-avatar-size, 60px) / 2) + 4px)';
-    const bySeat = {
-        1: {
-            '--seat-action-label-left': '50%',
-            '--seat-action-label-top': sTopOffset,
-            '--seat-action-label-transform': 'translate(-50%, -100%)',
-        },
-        2: {
-            '--seat-action-label-left': sAvatarOffset,
-            '--seat-action-label-top': '50%',
-            '--seat-action-label-transform': 'translate(0, -50%)',
-        },
-        3: {
-            '--seat-action-label-left': sAvatarOffset,
-            '--seat-action-label-top': '50%',
-            '--seat-action-label-transform': 'translate(0, -50%)',
-        },
-        4: {
-            '--seat-action-label-left': '50%',
-            '--seat-action-label-top': sBottomOffset,
-            '--seat-action-label-transform': 'translate(-50%, 0)',
-        },
-        5: {
-            '--seat-action-label-left': '50%',
-            '--seat-action-label-top': sBottomOffset,
-            '--seat-action-label-transform': 'translate(-50%, 0)',
-        },
-        6: {
-            '--seat-action-label-left': sAvatarInsetOffset,
-            '--seat-action-label-top': '50%',
-            '--seat-action-label-transform': 'translate(-100%, -50%)',
-        },
-        7: {
-            '--seat-action-label-left': sAvatarInsetOffset,
-            '--seat-action-label-top': '50%',
-            '--seat-action-label-transform': 'translate(-100%, -50%)',
-        },
-        8: {
-            '--seat-action-label-left': '50%',
-            '--seat-action-label-top': sTopOffset,
-            '--seat-action-label-transform': 'translate(-50%, -100%)',
-        },
+    return {
+        '--seat-action-label-left': '50%',
+        '--seat-action-label-top': '50%',
+        '--seat-action-label-transform': 'translate(-50%, -50%)',
     };
-
-    return bySeat[nSeat] || {};
 }
 
 function formatSlotChips(value) {
