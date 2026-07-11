@@ -95,7 +95,7 @@ describe('gameActionState', () => {
         });
 
         expect(state.raisedAfterCheck).toBe(true);
-        expect(state.call).toMatchObject({ visible: true, label: 'Confirm' });
+        expect(state.call).toMatchObject({ visible: true, label: 'HIT' });
         expect(state.raise.visible).toBe(false);
         expect(state.stand.visible).toBe(false);
     });
@@ -131,7 +131,7 @@ describe('gameActionState', () => {
         });
 
         expect(state.raisedAfterCheck).toBe(false);
-        expect(state.call).toMatchObject({ visible: true, label: 'Confirm' });
+        expect(state.call).toMatchObject({ visible: true, label: 'HIT' });
         expect(state.raise.visible).toBe(true);
         expect(state.stand.visible).toBe(true);
     });

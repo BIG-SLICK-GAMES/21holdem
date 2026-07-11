@@ -1475,7 +1475,7 @@ openRaiseConfirm(nRaiseAmount, options = {}) {
     this.oButtons?.btn_cancelRaise?.setVisible(true);
     this.enableContainerButtons(this.container_confirm_raise);
     this.sRaiseUiMode = 'confirm';
-    this.setConsolePrompt(bAllIn ? 'Confirm all in' : 'Confirm your raise');
+    this.setConsolePrompt(bAllIn ? 'HIT to go all in' : 'HIT to raise');
     this.syncGameActionOverlay();
     return true;
 }
@@ -2144,7 +2144,7 @@ setButtons() {
         btn_allIn: this.createGameActionButtonState('allInRaise', 'All In', 'primary'),
         btn_allInCommon: this.createGameActionButtonState('allIn', 'All In', 'primary'),
         btn_cancel: this.createGameActionButtonState('cancelRaiseBuilder', 'Cancel', 'secondary'),
-        btn_confirmRaise: this.createGameActionButtonState('confirmRaise', 'Confirm', 'primary'),
+        btn_confirmRaise: this.createGameActionButtonState('confirmRaise', 'HIT', 'primary'),
         btn_standRaise: this.createGameActionButtonState('standRaise', 'Stand', 'secondary'),
         btn_cancelRaise: this.createGameActionButtonState('cancelRaiseConfirm', 'Cancel', 'secondary'),
         btn_declare: this.createGameActionButtonState('declare', 'Declare', 'primary'),

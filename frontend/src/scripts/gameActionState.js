@@ -72,7 +72,7 @@ export function buildGameActionState({
                 state.call.visible = true;
                 state.call.bAllInMode = false;
                 state.call.label = bAllInStandChoice || raisedAfterCheck
-                    ? 'Confirm'
+                    ? 'HIT'
                     : (callAmount > 0 ? `Call ${formatAmount(callAmount)}` : 'Call');
                 break;
             case 'r':
