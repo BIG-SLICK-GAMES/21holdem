@@ -22,6 +22,8 @@ import dailyRewardsLightsVideo from '../../assets/videos/daily_rewards_lights.mp
 import liveTablesImage from '../../assets/images/bg/live_tables.png';
 import privateTableImage from '../../assets/images/bg/private_table.png';
 import portraitTableImage from '../../assets/images/gameplay/portrate_table.png';
+import bigSlickGamesImage from '../../assets/images/bsg/big-slick-games.png';
+import bigSlickGamesIcon from '../../assets/images/bsg/big-slick-games-cutout.png';
 
 function formatAmount(amount) {
     return _.formatCurrencyWithComa(Number(amount) || 0);
@@ -82,8 +84,16 @@ function sortTablesByPriority(a, b) {
 
 const PLAYER_OPTIONS = [4, 6, 9];
 const BUY_IN_OPTIONS = [1000, 5000, 15000, 20000];
-const LOBBY_TAB_IDS = ['lobby-live-tables', 'lobby-missions', 'lobby-private-table', 'lobby-player-profile', 'lobby-shop', 'lobby-settings'];
+const LOBBY_TAB_IDS = ['lobby-live-tables', 'lobby-bsg-games', 'lobby-missions', 'lobby-private-table', 'lobby-player-profile', 'lobby-shop', 'lobby-settings'];
 const TABLE_SEAT_COLORS = ['#d4af6a', '#58c7ff', '#ff6b8a', '#7ee081', '#c38cff', '#ffb15c', '#5eead4', '#f7e36b', '#9bb6ff'];
+const BSG_GAME_PLACEHOLDERS = [
+    { title: '21 Holdem', status: 'Live' },
+    { title: 'Blackjack Rush', status: 'Coming Soon' },
+    { title: 'Poker Rooms', status: 'Coming Soon' },
+    { title: 'Slots Arcade', status: 'Coming Soon' },
+    { title: 'Tournament Hub', status: 'Coming Soon' },
+    { title: 'VIP Games', status: 'Coming Soon' },
+];
 const stripePromise = process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY
     ? loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY)
     : Promise.resolve(null);
@@ -548,6 +558,17 @@ const Dashboard = () => {
             },
         },
         {
+            id: 'lobby-bsg-games',
+            label: 'BSG Games',
+            iconSrc: bigSlickGamesIcon,
+            kind: 'tab',
+            theme: {
+                '--dashboard-theme-rgb': '213, 93, 30',
+                '--dashboard-theme-soft-rgb': '65, 65, 65',
+                '--dashboard-theme-accent-rgb': '255, 143, 52',
+            },
+        },
+        {
             id: 'lobby-missions',
             label: 'Missions & Rewards',
             iconSrc: iconRewards,
@@ -952,6 +973,31 @@ const Dashboard = () => {
         </>
     );
 
+    const renderBsgGamesGrid = (bCompact = false) => (
+        <div className={`dashboard-hub__bsg-games-grid${bCompact ? ' dashboard-hub__bsg-games-grid--compact' : ''}`}>
+            {BSG_GAME_PLACEHOLDERS.map((game) => (
+                <article className='dashboard-hub__bsg-game-card' key={game.title}>
+                    <div className='dashboard-hub__bsg-game-poster' aria-hidden='true'>
+                        <span className='dashboard-hub__bsg-game-poster-mark'>BSG</span>
+                    </div>
+                    <div className='dashboard-hub__bsg-game-copy'>
+                        <strong>{game.title}</strong>
+                        <span>{game.status}</span>
+                    </div>
+                </article>
+            ))}
+        </div>
+    );
+
+    const renderBsgGamesPanel = () => (
+        <div className='dashboard-hub__tab-body dashboard-hub__tab-body--bsg-games'>
+            <div className='dashboard-hub__bsg-hero'>
+                <img src={bigSlickGamesImage} alt='Big Slick Games' />
+            </div>
+            {renderBsgGamesGrid()}
+        </div>
+    );
+
     const renderStoreItems = (bCompact = false) => {
         if (!aSafeShopItems.length) {
             return (
@@ -1225,6 +1271,26 @@ const Dashboard = () => {
         </article>
     );
 
+    const renderDesktopBsgGamesCard = () => (
+        <article
+            id='lobby-bsg-games-desktop-card'
+            className={`dashboard-hub__desktop-card dashboard-hub__desktop-card--bsg-games${sActiveTab === 'lobby-bsg-games' ? ' is-active' : ''}`}
+            style={getLobbyIconBackgroundStyle('lobby-bsg-games')}
+        >
+            <header className='dashboard-hub__desktop-card-header'>
+                <h3>BSG GAMES</h3>
+            </header>
+
+            <div className='dashboard-hub__desktop-card-media dashboard-hub__desktop-card-media--bsg-games'>
+                <img src={bigSlickGamesImage} alt='Big Slick Games' />
+            </div>
+
+            <div className='dashboard-hub__desktop-card-body dashboard-hub__desktop-card-body--bsg-games'>
+                {renderBsgGamesGrid(true)}
+            </div>
+        </article>
+    );
+
     const renderDesktopPrivateCard = () => (
         <article
             id='lobby-private-table-desktop-card'
@@ -1322,20 +1388,65 @@ const Dashboard = () => {
         </article>
     );
 
-    const renderSettingsPanel = () => (
-        <>
+    const renderSettingsPanel = () => {
+        const aBasicSettings = [
+            { label: 'Player Profile', description: 'Avatar, display name, and account overview.', path: '/profile' },
+            { label: 'Daily Rewards', description: 'Claim streak rewards and view upcoming bonuses.', tabId: 'lobby-missions' },
+            { label: 'Chip Shop', description: 'Buy chips and review available packs.', tabId: 'lobby-shop' },
+            { label: 'Live Tables', description: 'Return to table selection.', tabId: 'lobby-live-tables' },
+        ];
+        const aAdvancedSettings = [
+            { label: 'Transactions', description: 'Review chip purchases and account activity.', path: '/transactions' },
+            { label: 'How To Play', description: 'Gameplay guide and table flow.', path: '/how-to-play' },
+            { label: 'Rules', description: '21 Holdem rules and side bet details.', path: '/game-rule' },
+            { label: 'Report Issue', description: 'Send feedback or flag a game problem.', path: '/contact' },
+        ];
+        const handleSettingsItemClick = (item) => {
+            if (item.tabId) {
+                setActiveTab(item.tabId);
+                return;
+            }
+            if (item.path) navigate(item.path);
+        };
+
+        return (
             <div className='dashboard-hub__tab-body dashboard-hub__tab-body--settings'>
                 <div className='dashboard-hub__settings-card'>
-                    <span className='dashboard-hub__section-kicker'>Account Controls</span>
-                    <strong>Manage your profile, sound, security, and account preferences.</strong>
-                    <p>Open settings when you want to update your player details or adjust how the game feels.</p>
-                    <button type='button' className='dashboard-hub__desktop-cta dashboard-hub__desktop-cta--primary' onClick={() => navigate('/profile')}>
-                        Open Settings
-                    </button>
+                    <span className='dashboard-hub__section-kicker'>Settings</span>
+                    <strong>Player Settings</strong>
+                    <p>Quick access to common player controls, with advanced account tools separated below.</p>
+
+                    <section className='dashboard-hub__settings-section' aria-label='Basic settings'>
+                        <div className='dashboard-hub__settings-section-header'>
+                            <span>Basic</span>
+                        </div>
+                        <div className='dashboard-hub__settings-option-grid'>
+                            {aBasicSettings.map((item) => (
+                                <button type='button' className='dashboard-hub__settings-option' key={item.label} onClick={() => handleSettingsItemClick(item)}>
+                                    <strong>{item.label}</strong>
+                                    <span>{item.description}</span>
+                                </button>
+                            ))}
+                        </div>
+                    </section>
+
+                    <section className='dashboard-hub__settings-section' aria-label='Advanced settings'>
+                        <div className='dashboard-hub__settings-section-header'>
+                            <span>Advanced</span>
+                        </div>
+                        <div className='dashboard-hub__settings-option-grid dashboard-hub__settings-option-grid--advanced'>
+                            {aAdvancedSettings.map((item) => (
+                                <button type='button' className='dashboard-hub__settings-option' key={item.label} onClick={() => handleSettingsItemClick(item)}>
+                                    <strong>{item.label}</strong>
+                                    <span>{item.description}</span>
+                                </button>
+                            ))}
+                        </div>
+                    </section>
                 </div>
             </div>
-        </>
-    );
+        );
+    };
 
     return (
         <div className='dashboard-container'>
@@ -1436,6 +1547,7 @@ const Dashboard = () => {
 
                         <div className='dashboard-hub__desktop-grid'>
                             {renderDesktopLiveCard()}
+                            {renderDesktopBsgGamesCard()}
                             {renderDesktopRewardsCard()}
                             {renderDesktopPrivateCard()}
                             {renderDesktopProfileCard()}
@@ -1451,6 +1563,14 @@ const Dashboard = () => {
                                 hidden={sActiveTab !== 'lobby-live-tables'}
                             >
                                 {renderLiveTablesPanel()}
+                            </section>
+
+                            <section
+                                id='lobby-bsg-games-panel'
+                                className={`dashboard-hub__tab-panel dashboard-hub__tab-panel--bsg-games${sActiveTab === 'lobby-bsg-games' ? ' is-active' : ''}`}
+                                hidden={sActiveTab !== 'lobby-bsg-games'}
+                            >
+                                {renderBsgGamesPanel()}
                             </section>
 
                             <section

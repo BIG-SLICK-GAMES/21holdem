@@ -15,7 +15,8 @@ async function ensureBoardInitializeScheduler(board) {
 
   if (!nRemainingInitializeTime && !nRemainingResetTime) {
     await board.deleteScheduler('refundOnLongWait', '');
-    await board.setSchedular('initializeGame', null, board.oSetting.nInitializeTimer);
+    const nInitializeTimer = Number(board.oSetting?.nInitializeTimer) || 10000;
+    await board.setSchedular('initializeGame', null, nInitializeTimer);
   }
 
   return boardManager.getBoard(board._id.toString()) || board;

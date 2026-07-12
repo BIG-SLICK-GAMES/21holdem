@@ -20,6 +20,20 @@ function formatActionAmount(value) {
     return ` +${String(nAmount).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`;
 }
 
+function getRaiseAmount(oData = {}, potIncrease = 0) {
+    const nExplicitRaiseAmount = Number(oData.nRaiseAmount ?? oData.nActualRaiseAmount);
+    if (Number.isFinite(nExplicitRaiseAmount) && nExplicitRaiseAmount > 0) return nExplicitRaiseAmount;
+
+    const nTotalDebit = Number(oData.nTotalDebit ?? oData.nLastBidChips ?? potIncrease);
+    const nToCallAmount = Number(oData.nToCallAmount);
+    if (Number.isFinite(nTotalDebit) && nTotalDebit > 0 && Number.isFinite(nToCallAmount) && nToCallAmount > 0) {
+        return Math.max(0, nTotalDebit - nToCallAmount);
+    }
+
+    if (Number.isFinite(nTotalDebit) && nTotalDebit > 0) return nTotalDebit;
+    return Math.max(0, Number(potIncrease) || 0);
+}
+
 export function getPlayerActionLabel({ sEventName, oData = {}, recentLogs = [], potIncrease = 0 } = {}) {
     if (sEventName === SOCKET_RESPONSE_EVENTS.CALL) {
         const nCallAmount = Math.max(0, Number(oData.nLastBidChips ?? oData.nCurrentChips ?? potIncrease) || 0);
@@ -29,7 +43,7 @@ export function getPlayerActionLabel({ sEventName, oData = {}, recentLogs = [], 
     }
 
     if (sEventName === SOCKET_RESPONSE_EVENTS.RAISE) {
-        const sAmount = formatActionAmount(oData.nChips ?? oData.nLastBidChips ?? oData.nCurrentChips ?? potIncrease);
+        const sAmount = formatActionAmount(getRaiseAmount(oData, potIncrease));
         return oData.bAllIn ? `${actionLabelText.allIn}${sAmount}` : `${actionLabelText.raise}${sAmount}`;
     }
 

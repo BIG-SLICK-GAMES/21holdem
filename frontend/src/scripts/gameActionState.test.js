@@ -95,7 +95,7 @@ describe('gameActionState', () => {
         });
 
         expect(state.raisedAfterCheck).toBe(true);
-        expect(state.call).toMatchObject({ visible: true, label: 'HIT' });
+        expect(state.call).toMatchObject({ visible: true, label: 'Call #300' });
         expect(state.raise.visible).toBe(false);
         expect(state.stand.visible).toBe(false);
     });

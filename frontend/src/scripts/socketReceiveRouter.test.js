@@ -21,6 +21,7 @@ const createScene = () => ({
     handleDoubleDown: jest.fn(),
     handleResReaction: jest.fn(),
     handleSideBetsState: jest.fn(),
+    handleShowdownCardReveal: jest.fn(),
     exitGame: jest.fn(),
 });
 
@@ -81,6 +82,9 @@ describe('socketReceiveRouter', () => {
 
         routeSocketEventToScene(scene, { sEventName: SOCKET_RESPONSE_EVENTS.SIDE_BETS, oData: payload });
         expect(scene.handleSideBetsState).toHaveBeenCalledWith(payload);
+
+        routeSocketEventToScene(scene, { sEventName: SOCKET_RESPONSE_EVENTS.SHOWDOWN_CARD_REVEAL, oData: payload });
+        expect(scene.handleShowdownCardReveal).toHaveBeenCalledWith(payload);
     });
 
     test('returns false for unknown or invalid events', () => {

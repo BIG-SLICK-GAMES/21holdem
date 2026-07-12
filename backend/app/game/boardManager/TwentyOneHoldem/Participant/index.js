@@ -175,6 +175,9 @@ class Participant extends Service {
             aParticipantAdjustments: oRefundAdjustment?.aParticipantAdjustments || [],
             extra: {
               nStandAtRound: this.nStandAtRound,
+              nRaiseAmount: nActualRaiseAmount,
+              nToCallAmount,
+              nTotalDebit: nAllInDebit,
               bAllIn: true,
               bShortRaise: true,
             },
@@ -185,6 +188,9 @@ class Participant extends Service {
             nActionAmount: nAllInDebit,
             aParticipantAdjustments: oRefundAdjustment?.aParticipantAdjustments || [],
             extra: {
+              nRaiseAmount: nActualRaiseAmount,
+              nToCallAmount,
+              nTotalDebit: nAllInDebit,
               bAllIn: true,
               bShortRaise: true,
             },
@@ -248,6 +254,9 @@ class Participant extends Service {
           nActionAmount: nTotalDebit,
           extra: {
             nStandAtRound: this.nStandAtRound,
+            nRaiseAmount,
+            nToCallAmount,
+            nTotalDebit,
             bAllIn: this.isAllInLock || undefined,
           },
         }));
@@ -256,6 +265,9 @@ class Participant extends Service {
         await this.oBoard.emit('resRaise', BettingSystem.buildActionPayload(this.oBoard, this, {
           nActionAmount: nTotalDebit,
           extra: {
+            nRaiseAmount,
+            nToCallAmount,
+            nTotalDebit,
             bAllIn: this.isAllInLock || undefined,
           },
         }));

@@ -71,9 +71,13 @@ export function buildGameActionState({
                 }
                 state.call.visible = true;
                 state.call.bAllInMode = false;
-                state.call.label = bAllInStandChoice || raisedAfterCheck
-                    ? 'HIT'
-                    : (callAmount > 0 ? `Call ${formatAmount(callAmount)}` : 'Call');
+                if (raisedAfterCheck) {
+                    state.call.label = callAmount > 0 ? `Call ${formatAmount(callAmount)}` : 'Call';
+                } else {
+                    state.call.label = bAllInStandChoice
+                        ? 'HIT'
+                        : (callAmount > 0 ? `Call ${formatAmount(callAmount)}` : 'Call');
+                }
                 break;
             case 'r':
                 state.raise.visible = !raisedAfterCheck && (canAffordRaise || canAllInRaise);

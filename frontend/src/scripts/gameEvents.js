@@ -12,6 +12,7 @@ export const GAME_BROWSER_EVENTS = Object.freeze({
     SIDE_BET_WINDOW: 'bsg:side-bet-window',
     SIDE_BETS_CHANGE: 'bsg:side-bets-change',
     SIDE_BETS_SERVER_STATE: 'bsg:side-bets-server-state',
+    SHOWDOWN_CARD_REVEAL_CHANGE: 'bsg:showdown-card-reveal-change',
     SOUND_STATE: 'bsg:sound-state',
     SOUND_SETTINGS_CHANGE: 'bsg:sound-settings-change',
     SOUND_TOGGLE: 'bsg:sound-toggle',

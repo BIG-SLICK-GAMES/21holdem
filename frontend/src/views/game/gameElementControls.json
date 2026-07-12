@@ -6,7 +6,7 @@
   ],
   "playerProfile": {
     "avatarSizePx": 60,
-    "actionLabelTopPx": -10,
+    "actionLabelTopPx": -30,
     "actionLabelHeightPx": 24,
     "cardBackWidthPx": 26,
     "cardBackHeightPx": 37,

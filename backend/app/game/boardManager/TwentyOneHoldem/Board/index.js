@@ -621,6 +621,7 @@ class Board extends Service {
           nChips: p.nChips,
           aCardHand: p.aCardHand,
           nCardScore: p.nCardScore,
+          sShowdownRevealCardId: p.sShowdownRevealCardId,
           oSideBetResult: p.oSideBetResult,
         })),
         nTableChips: 0,
@@ -901,7 +902,7 @@ class Board extends Service {
     try {
       const board = await redis.client.json.GET(_.getBoardKey(this._id));
       if (!board) return log.red(`emit :: Board not found :: ${this._id} :: sEventName :: ${sEventName}`);
-      Object.values(board?.oSocketId).forEach(sRootSocket => {
+      Object.values(board?.oSocketId || {}).forEach(sRootSocket => {
         if (sRootSocket) global.io.to(sRootSocket).emit(this._id, { sEventName, oData });
       });
     } catch (error) {

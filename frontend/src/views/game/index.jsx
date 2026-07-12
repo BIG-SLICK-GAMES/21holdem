@@ -14,6 +14,8 @@ import clubImage from '../../assets/images/card/club.png';
 import diamondImage from '../../assets/images/card/diamond.png';
 import heartImage from '../../assets/images/card/heart.png';
 import spadeImage from '../../assets/images/card/spades.png';
+import nathanReedSpriteSheet from '../../assets/images/player-profile/sprites/nathan-reed-actions-sprite-sheet-4x5.png';
+import nathanReedSpriteMeta from '../../assets/images/player-profile/sprites/nathan-reed-actions-sprite-sheet.json';
 import GameActionOverlay from "./GameActionOverlay";
 import { hideGameActionOverlay } from "../../scripts/gameActionOverlayBridge";
 import { getAvatarImageSrc } from "../../shared/constants/builtInAvatars";
@@ -56,7 +58,7 @@ function buildGameElementStyle() {
     const consoleControls = gameElementControls.bottomConsole || {};
     return {
         '--seat-avatar-size': `${clampNumber(profile.avatarSizePx, 60, 24, 120)}px`,
-        '--seat-action-label-top': `${clampNumber(profile.actionLabelTopPx, -10, -120, 120)}px`,
+        '--seat-action-label-top': `${clampNumber(profile.actionLabelTopPx, -30, -120, 120)}px`,
         '--seat-action-label-height': `${clampNumber(profile.actionLabelHeightPx, 24, 14, 60)}px`,
         '--seat-card-back-width': `${clampNumber(profile.cardBackWidthPx, 26, 0, 90)}px`,
         '--seat-card-back-height': `${clampNumber(profile.cardBackHeightPx, 37, 0, 130)}px`,
@@ -72,14 +74,6 @@ function buildGameElementStyle() {
         '--game-hole-card-gap': `${clampNumber(consoleControls.holeCardGapPx, 5, 0, 30)}px`,
         '--game-hole-card-move-up': `${clampNumber(consoleControls.holeCardMoveUpPx, 10, -80, 80)}px`,
         '--game-folded-hole-card-opacity': clampNumber(consoleControls.foldedHoleCardOpacity, 0.2, 0, 1),
-    };
-}
-
-function buildActionLabelStyle(nSeat) {
-    return {
-        '--seat-action-label-left': '50%',
-        '--seat-action-label-top': '50%',
-        '--seat-action-label-transform': 'translate(-50%, -50%)',
     };
 }
 
@@ -108,6 +102,22 @@ function getShowdownCardSuit(card) {
     }[sSuitKey] || { image: spadeImage, name: 'spade', red: false };
 }
 
+function getNathanReedActionKey(player, sActionLabel, bShowdownWinner, bShowdownEligible, isInactiveHand) {
+    const sUserName = String(player?.sUserName || '').replace(/[^a-z0-9]/gi, '').toLowerCase();
+    if (sUserName !== 'nathanreed') return '';
+
+    const sLabel = String(sActionLabel || '').toLowerCase();
+    if (sLabel.includes('check')) return 'check';
+    if (sLabel.includes('raise') || sLabel.includes('bet')) return 'raise';
+    if (sLabel.includes('call')) return 'call';
+    if (sLabel.includes('bust')) return 'lose';
+    if (bShowdownWinner) return 'win';
+    if (bShowdownEligible && !bShowdownWinner) return 'lose';
+    if (isInactiveHand) return 'lose';
+
+    return '';
+}
+
 function PlayerRailSlot({ nSeat, player, style }) {
     if (!player) return null;
 
@@ -121,17 +131,20 @@ function PlayerRailSlot({ nSeat, player, style }) {
     const nScore = Number(player?.nCardScore);
     const bShowScore = Boolean(player?.bShowScore);
     const sBlindRole = String(player?.sBlindRole || '').trim();
-    const sActionLabel = String(player?.sActionLabel || '').trim();
-    const aShowdownCards = bShowScore && Array.isArray(player?.aCardHand) ? player.aCardHand.slice(0, 2) : [];
+    const sActionLabel = !player?.bLocalPlayer ? String(player?.sActionLabel || '').trim() : '';
+    const bShowdownEligible = bShowScore && !isInactiveHand;
+    const aShowdownCards = bShowdownEligible && Array.isArray(player?.aCardHand) ? player.aCardHand.slice(0, 2) : [];
     const bShowdownWinner = Boolean(player?.bShowdownWinner);
     const nShowdownWinAmount = Math.max(0, Number(player?.nShowdownWinAmount) || 0);
+    const sNathanActionKey = getNathanReedActionKey(player, sActionLabel, bShowdownWinner, bShowdownEligible, isInactiveHand);
+    const oNathanAnimation = sNathanActionKey ? nathanReedSpriteMeta.animations?.[sNathanActionKey] : null;
+    const sSpriteRestartKey = `${player.iUserId || nSeat}-${sNathanActionKey}-${player.nActionLabelKey || bShowScore || sPlayerState}`;
 
     return (
         <span
             className={`game-table-page__seat-slot game-table-page__seat-slot--seat-${nSeat} is-occupied${isFolded ? ' is-folded' : ''}${isBusted ? ' is-busted' : ''}${isInactiveHand ? ' is-inactive-hand' : ''}${player?.bActiveTurn ? ' is-active-turn' : ''}`}
             style={{
                 ...style,
-                ...buildActionLabelStyle(nSeat),
                 '--seat-turn-ms': `${nTurnMs}ms`,
             }}
             data-player-seat={nSeat}
@@ -139,26 +152,36 @@ function PlayerRailSlot({ nSeat, player, style }) {
         >
             <span className={`game-table-page__seat-avatar${aShowdownCards.length ? ' has-showdown-cards' : ''}`}>
                 {avatarSrc ? <img className='game-table-page__seat-avatar-image' src={avatarSrc} alt='' draggable='false' /> : <span className='game-table-page__seat-initials'>{initials}</span>}
-                {aShowdownCards.length ? (
-                    <span className='game-table-page__seat-showdown-cards'>
-                        {aShowdownCards.map((card, index) => {
-                            const suit = getShowdownCardSuit(card);
-                            const label = getShowdownCardLabel(card);
-                            const key = card?._id || `${card?.eSuit || 'card'}-${card?.nLabel || index}-${index}`;
-                            return (
-                                <span className={`game-table-page__seat-showdown-card${suit.red ? ' is-red' : ''}`} key={key}>
-                                    <img className='game-table-page__seat-showdown-card-face' src={cardFrontImage} alt='' draggable='false' />
-                                    <img className='game-table-page__seat-showdown-card-suit' src={suit.image} alt={suit.name} draggable='false' />
-                                    <strong>{label}</strong>
-                                </span>
-                            );
-                        })}
-                    </span>
+                {oNathanAnimation ? (
+                    <span
+                        className={`game-table-page__seat-avatar-sprite game-table-page__seat-avatar-sprite--${sNathanActionKey}`}
+                        key={sSpriteRestartKey}
+                        style={{
+                            '--seat-avatar-sprite': `url("${nathanReedSpriteSheet}")`,
+                            '--seat-avatar-sprite-duration': `${Math.max(80, Number(oNathanAnimation.frameDurationMs) || 120) * 4}ms`,
+                        }}
+                    />
                 ) : null}
                 {bShowScore && Number.isFinite(nScore) && nScore > 0 ? (
                     <span className='game-table-page__seat-score'>{nScore}</span>
                 ) : null}
             </span>
+            {aShowdownCards.length ? (
+                <span className='game-table-page__seat-showdown-cards'>
+                    {aShowdownCards.map((card, index) => {
+                        const suit = getShowdownCardSuit(card);
+                        const label = getShowdownCardLabel(card);
+                        const key = card?._id || `${card?.eSuit || 'card'}-${card?.nLabel || index}-${index}`;
+                        return (
+                            <span className={`game-table-page__seat-showdown-card${suit.red ? ' is-red' : ''}`} key={key}>
+                                <img className='game-table-page__seat-showdown-card-face' src={cardFrontImage} alt='' draggable='false' />
+                                <img className='game-table-page__seat-showdown-card-suit' src={suit.image} alt={suit.name} draggable='false' />
+                                <strong>{label}</strong>
+                            </span>
+                        );
+                    })}
+                </span>
+            ) : null}
             {sBlindRole ? <span className='game-table-page__seat-blind'>{sBlindRole}</span> : null}
             {bShowdownWinner ? (
                 <span className='game-table-page__seat-win' aria-label='Winner'>
@@ -204,7 +227,7 @@ class Boot extends Phaser.Scene {
             tableOnlyMode: this.tableOnlyMode,
         }
         let bPreloadStarted = false;
-        const startPreload = (reason = 'complete') => {
+        const startPreload = () => {
             if (bPreloadStarted) return;
             bPreloadStarted = true;
             this.scene.start("Preload", data);
@@ -212,10 +235,10 @@ class Boot extends Phaser.Scene {
         this.load.on(Phaser.Loader.Events.LOAD_ERROR, (file) => {
             console.error('Boot asset failed:', file?.key || '', file?.src || file?.url || '');
         });
-        this.load.on(Phaser.Loader.Events.COMPLETE, () => startPreload('complete'));
+        this.load.on(Phaser.Loader.Events.COMPLETE, () => startPreload());
         this.load.image('game_bg', game_bg);
         this.load.image('preload_splash', loadingSplash);
-        this.time.delayedCall(8000, () => startPreload('timeout'));
+        this.time.delayedCall(8000, () => startPreload());
     }
 }
 function Game({ isPausedExternally = false }) {
@@ -417,6 +440,7 @@ PlayerRailSlot.propTypes = {
         aCardHand: PropTypes.arrayOf(PropTypes.object),
         sActionLabel: PropTypes.string,
         nActionLabelKey: PropTypes.number,
+        bLocalPlayer: PropTypes.bool,
         bShowdownWinner: PropTypes.bool,
         nShowdownWinAmount: PropTypes.number,
     }),

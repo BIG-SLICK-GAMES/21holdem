@@ -40,6 +40,7 @@ class Service {
     this.oCommittedSideBets = oParticipantData.oCommittedSideBets ?? {};
     this.oSideBetResult = oParticipantData.oSideBetResult ?? null;
     this.bSideBetsQueuedForNextHand = oParticipantData.bSideBetsQueuedForNextHand ?? false;
+    this.sShowdownRevealCardId = oParticipantData.sShowdownRevealCardId ?? '';
     this.nPlayerTurnCount = oParticipantData.nPlayerTurnCount ?? 0;
     this.dGameStartedAt = oParticipantData.dGameStartedAt ?? Date.now();
     this.oBoard = oBoard;
@@ -63,6 +64,7 @@ class Service {
     this.nWinningAmount = 0;
     this.oCommittedSideBets = {};
     this.oSideBetResult = null;
+    this.sShowdownRevealCardId = '';
     this.nPlayerTurnCount = 0;
     this.bHasSplit = false;
     this.aSplitHand = [];
@@ -303,6 +305,24 @@ class Service {
     });
   }
 
+  async setShowdownCardReveal(oData = {}) {
+    const sRequestedCardId = _.toString(oData?.sCardId || oData?.cardId || '');
+    const aCardIds = (Array.isArray(this.aCardHand) ? this.aCardHand : [])
+      .slice(0, 2)
+      .map((card, index) => _.toString(card?._id || card?.id || `${card?.eSuit || 'card'}-${card?.nLabel || index}-${index}`));
+    const sCardId = sRequestedCardId && aCardIds.includes(sRequestedCardId) ? sRequestedCardId : '';
+
+    this.sShowdownRevealCardId = sCardId;
+    await this.oBoard.update({ aParticipant: [this.toJSON()] });
+    await this.oBoard.emit('resShowdownCardReveal', {
+      iUserId: this.iUserId,
+      sCardId,
+      sShowdownRevealCardId: sCardId,
+    });
+
+    return { success: true, sCardId };
+  }
+
   shouldPersistFinancialState() {
     return this.oBoard?.isLiveTable?.() !== false;
   }
@@ -386,6 +406,7 @@ class Service {
       'oCommittedSideBets',
       'oSideBetResult',
       'bSideBetsQueuedForNextHand',
+      'sShowdownRevealCardId',
       'nPlayerTurnCount',
       'dGameStartedAt',
     ]);

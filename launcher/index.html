@@ -1871,6 +1871,7 @@
 
   <script>
     const fallbackData = JSON.parse(document.getElementById('fallbackProjects').textContent);
+    const devCacheBust = Date.now().toString(36);
 
     function resolveGameUrl(path) {
       if (path.startsWith('./') || path.startsWith('../') || path.startsWith('#')) return path;
@@ -1881,7 +1882,7 @@
         const parsedUrl = new URL(baseUrl);
         if (window.location.hostname) parsedUrl.hostname = window.location.hostname;
         parsedUrl.pathname = path;
-        parsedUrl.search = '';
+        parsedUrl.search = path.startsWith('/') ? `?dev=${devCacheBust}` : '';
         parsedUrl.hash = '';
         return parsedUrl.toString();
       } catch {

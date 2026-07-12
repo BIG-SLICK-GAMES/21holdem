@@ -64,6 +64,9 @@ class PlayerListener {
       case 'reqSideBets':
         this.sideBets(oData, participant, callback);
         break;
+      case 'reqShowdownCardReveal':
+        this.showdownCardReveal(oData, participant, callback);
+        break;
       case 'reqForcePair':
         this.forcePair(oData, participant, callback);
         break;
@@ -184,6 +187,15 @@ class PlayerListener {
     try {
       await participant.setSideBets(oData?.bets || {});
       callback(null, { success: true });
+    } catch (error) {
+      this.logError(error.message || error, callback);
+    }
+  }
+
+  async showdownCardReveal(oData, participant, callback) {
+    try {
+      const result = await participant.setShowdownCardReveal(oData || {});
+      callback(null, result);
     } catch (error) {
       this.logError(error.message || error, callback);
     }

@@ -1,5 +1,5 @@
 import { loadStripe } from '@stripe/stripe-js';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
@@ -178,6 +178,7 @@ function ExitUtilityButton() {
 
 const SIDE_BET_STEP = 100;
 const SIDE_BET_MAX = 5000;
+const SIDE_BET_INFO_DISMISSED_STORAGE_KEY = 'bsg:side-bet-info-dismissed';
 const SIDE_BET_INFO = [
     { title: '21', text: 'Your final hand total is exactly 21. Pays 3:1 plus your stake.' },
     { title: 'Flush', text: 'Your card and community cards make three or more cards of one suit. Pays 4:1 plus your stake.' },
@@ -360,7 +361,11 @@ function getHoleCardSuit(card) {
     }[sSuitKey] || { image: spadeImage, name: 'spade', red: false };
 }
 
-function HoleCardDisplay({ cards, score, isFolded }) {
+function getHoleCardId(card, index = 0) {
+    return String(card?._id || card?.id || `${card?.eSuit || 'card'}-${card?.nLabel || index}-${index}`);
+}
+
+function HoleCardDisplay({ cards, score, isFolded, revealCardId, onRevealCardToggle }) {
     const visibleCards = cards.slice(0, 2);
     if (!visibleCards.length) return null;
 
@@ -370,12 +375,30 @@ function HoleCardDisplay({ cards, score, isFolded }) {
                 {visibleCards.map((card, index) => {
                     const suit = getHoleCardSuit(card);
                     const label = getHoleCardLabel(card);
-                    const key = card?._id || `${card?.eSuit || 'card'}-${card?.nLabel || index}-${index}`;
+                    const key = getHoleCardId(card, index);
+                    const bRevealSelected = key === revealCardId;
                     return (
-                        <span className={`game-action-overlay__hole-card${suit.red ? ' is-red' : ''}`} key={key}>
+                        <span className={`game-action-overlay__hole-card${suit.red ? ' is-red' : ''}${bRevealSelected ? ' is-reveal-selected' : ''}`} key={key}>
                             <img className='game-action-overlay__hole-card-face' src={cardFrontImage} alt='' draggable='false' />
                             <img className='game-action-overlay__hole-card-suit' src={suit.image} alt={suit.name} draggable='false' />
                             <strong>{label}</strong>
+                            <button
+                                type='button'
+                                className={`game-action-overlay__hole-card-reveal-toggle${bRevealSelected ? ' is-active' : ''}`}
+                                aria-label={bRevealSelected ? 'Do not show this card at showdown' : 'Show this card at showdown'}
+                                aria-pressed={bRevealSelected}
+                                onPointerDown={(event) => {
+                                    event.preventDefault();
+                                    event.stopPropagation();
+                                }}
+                                onClick={(event) => {
+                                    event.preventDefault();
+                                    event.stopPropagation();
+                                    onRevealCardToggle?.(bRevealSelected ? '' : key);
+                                }}
+                            >
+                                <span className='game-action-overlay__hole-card-eye' />
+                            </button>
                         </span>
                     );
                 })}
@@ -389,12 +412,16 @@ HoleCardDisplay.propTypes = {
     cards: PropTypes.arrayOf(PropTypes.object),
     score: PropTypes.number,
     isFolded: PropTypes.bool,
+    revealCardId: PropTypes.string,
+    onRevealCardToggle: PropTypes.func,
 };
 
 HoleCardDisplay.defaultProps = {
     cards: [],
     score: 0,
     isFolded: false,
+    revealCardId: '',
+    onRevealCardToggle: null,
 };
 
 function hasCardRun(cards = [], nMinimumLength = 3) {
@@ -467,7 +494,7 @@ function normalizeSideBetPayouts(detail = {}) {
     };
 }
 
-function SideBetInfoDialog({ visible, onClose }) {
+function SideBetInfoDialog({ visible, onClose, dontShowAgain, onDontShowAgainChange }) {
     if (!visible) return null;
 
     return (
@@ -485,6 +512,14 @@ function SideBetInfoDialog({ visible, onClose }) {
                         </div>
                     ))}
                 </div>
+                <label className='game-action-overlay__side-bet-info-dismiss'>
+                    <input
+                        type='checkbox'
+                        checked={dontShowAgain}
+                        onChange={(event) => onDontShowAgainChange(event.target.checked)}
+                    />
+                    <span>Don&apos;t show again</span>
+                </label>
             </div>
         </div>
     );
@@ -493,6 +528,8 @@ function SideBetInfoDialog({ visible, onClose }) {
 SideBetInfoDialog.propTypes = {
     visible: PropTypes.bool.isRequired,
     onClose: PropTypes.func.isRequired,
+    dontShowAgain: PropTypes.bool.isRequired,
+    onDontShowAgainChange: PropTypes.func.isRequired,
 };
 
 function GameUtilityModal({ type, visible, onClose, shopItems, isShopLoading, isBuyingShopItem, onBuyShopItem }) {
@@ -633,6 +670,7 @@ const BUTTON_CLASS_BY_VARIANT = {
 function GameActionOverlay({ isPaused = false }) {
     const navigate = useNavigate();
     const queryClient = useQueryClient();
+    const bAutoSideBetInfoShownRef = useRef(false);
     const [overlayState, setOverlayState] = useState(() => createHiddenGameActionOverlayState());
     const [sideBets, setSideBets] = useState(createInitialSideBets);
     const [sideBetWindow, setSideBetWindow] = useState({
@@ -642,10 +680,14 @@ function GameActionOverlay({ isPaused = false }) {
     });
     const [sideBetPayout, setSideBetPayout] = useState({ payouts: {}, total: 0, message: '', expiresAt: 0 });
     const [consoleCards, setConsoleCards] = useState({ hand: [], community: [], sideBetCommunity: [], sideBetLive: true, score: 0, isFolded: false });
+    const [sRevealCardId, setRevealCardId] = useState('');
     const [turnTimer, setTurnTimer] = useState({ active: false, endsAt: 0, totalMs: 0 });
     const [sideBetUnitAmount, setSideBetUnitAmount] = useState(SIDE_BET_STEP);
     const [blindAmounts, setBlindAmounts] = useState({ smallBlind: null, bigBlind: null });
     const [bShowSideBetInfo, setShowSideBetInfo] = useState(false);
+    const [bDontShowSideBetInfo, setDontShowSideBetInfo] = useState(() => (
+        typeof window !== 'undefined' && window.localStorage?.getItem(SIDE_BET_INFO_DISMISSED_STORAGE_KEY) === '1'
+    ));
     const [clockNow, setClockNow] = useState(() => Date.now());
     const [consoleWin, setConsoleWin] = useState({ visible: false, amount: 0, token: 0 });
     const [consoleBust, setConsoleBust] = useState({ active: false, token: 0 });
@@ -718,7 +760,8 @@ function GameActionOverlay({ isPaused = false }) {
     const sideBetSecondsRemaining = sideBetWindow.endsAt
         ? Math.max(0, Math.ceil((sideBetWindow.endsAt - clockNow) / 1000))
         : 0;
-    const bSideBetWindowOpen = sideBetWindow.visible && sideBetSecondsRemaining > 0;
+    const bSideBetWindowLive = sideBetWindow.visible && sideBetSecondsRemaining > 0;
+    const bSideBetWindowOpen = bSideBetWindowLive && !bDontShowSideBetInfo;
     const turnTimerRemainingMs = turnTimer.active && turnTimer.endsAt
         ? Math.max(0, turnTimer.endsAt - clockNow)
         : 0;
@@ -753,6 +796,17 @@ function GameActionOverlay({ isPaused = false }) {
         setSideBets(createInitialSideBets());
     };
 
+    const handleRevealCardToggle = (cardId) => {
+        const nextCardId = String(cardId || '');
+        setRevealCardId(nextCardId);
+        if (typeof window === 'undefined') return;
+        window.dispatchEvent(new CustomEvent(GAME_BROWSER_EVENTS.SHOWDOWN_CARD_REVEAL_CHANGE, {
+            detail: {
+                sCardId: nextCardId,
+            },
+        }));
+    };
+
     const handleBuyShopItem = (item) => {
         if (!item || isBuyingShopItem) return;
         mutateBuyChips({ nPrice: item.nPrice });
@@ -772,6 +826,21 @@ function GameActionOverlay({ isPaused = false }) {
         if (typeof window === 'undefined') return;
         window.localStorage?.setItem('bsg:auto-table-top-up', bAutoTopUp ? '1' : '0');
     }, [bAutoTopUp]);
+
+    useEffect(() => {
+        if (typeof window === 'undefined') return;
+        window.localStorage?.setItem(SIDE_BET_INFO_DISMISSED_STORAGE_KEY, bDontShowSideBetInfo ? '1' : '0');
+    }, [bDontShowSideBetInfo]);
+
+    useEffect(() => {
+        if (!bDontShowSideBetInfo) return;
+        setShowSideBetInfo(false);
+        setSideBets(createInitialSideBets());
+        setSideBetWindow((currentWindow) => ({
+            ...currentWindow,
+            dismissed: true,
+        }));
+    }, [bDontShowSideBetInfo]);
 
     useEffect(() => {
         if (typeof window === 'undefined') return;
@@ -814,6 +883,21 @@ function GameActionOverlay({ isPaused = false }) {
         };
     }, [queryClient]);
 
+    const sHandSignature = useMemo(
+        () => consoleCards.hand.map((card, index) => getHoleCardId(card, index)).join('|'),
+        [consoleCards.hand]
+    );
+
+    useEffect(() => {
+        setRevealCardId('');
+        if (typeof window === 'undefined') return;
+        window.dispatchEvent(new CustomEvent(GAME_BROWSER_EVENTS.SHOWDOWN_CARD_REVEAL_CHANGE, {
+            detail: {
+                sCardId: '',
+            },
+        }));
+    }, [sHandSignature]);
+
     useEffect(() => {
         const handleSideBetPayout = (event) => {
             const payout = normalizeSideBetPayouts(event?.detail);
@@ -831,6 +915,10 @@ function GameActionOverlay({ isPaused = false }) {
             if (bVisible) {
                 setSideBets(createInitialSideBets());
                 setSideBetPayout({ payouts: {}, total: 0, message: '', expiresAt: 0 });
+                if (!bDontShowSideBetInfo && !bAutoSideBetInfoShownRef.current) {
+                    setShowSideBetInfo(true);
+                    bAutoSideBetInfoShownRef.current = true;
+                }
             }
             setSideBetWindow({
                 visible: bVisible,
@@ -841,7 +929,7 @@ function GameActionOverlay({ isPaused = false }) {
 
         window.addEventListener(GAME_BROWSER_EVENTS.SIDE_BET_WINDOW, handleSideBetWindow);
         return () => window.removeEventListener(GAME_BROWSER_EVENTS.SIDE_BET_WINDOW, handleSideBetWindow);
-    }, []);
+    }, [bDontShowSideBetInfo]);
 
     useEffect(() => {
         const handleSideBetConfig = (event) => {
@@ -895,14 +983,14 @@ function GameActionOverlay({ isPaused = false }) {
     }, [clockNow, sideBetPayout.expiresAt]);
 
     useEffect(() => {
-        const bNeedsClock = (sideBetWindow.visible && sideBetWindow.endsAt > clockNow)
+        const bNeedsClock = (bSideBetWindowLive && sideBetWindow.endsAt > clockNow)
             || (turnTimer.active && turnTimer.endsAt > clockNow)
             || (sideBetPayout.expiresAt > clockNow);
         if (!bNeedsClock) return undefined;
         const timer = window.setInterval(() => setClockNow(Date.now()), 250);
 
         return () => window.clearInterval(timer);
-    }, [clockNow, sideBetPayout.expiresAt, sideBetWindow.endsAt, sideBetWindow.visible, turnTimer.active, turnTimer.endsAt]);
+    }, [bSideBetWindowLive, clockNow, sideBetPayout.expiresAt, sideBetWindow.endsAt, turnTimer.active, turnTimer.endsAt]);
 
     useEffect(() => {
         if (!turnTimer.active || !turnTimer.endsAt || clockNow < turnTimer.endsAt) return undefined;
@@ -1045,6 +1133,18 @@ function GameActionOverlay({ isPaused = false }) {
                     >
                         Clear
                     </button>
+                    <label
+                        className='game-action-overlay__side-bet-popup-dismiss'
+                        onPointerDown={(event) => event.stopPropagation()}
+                        onClick={(event) => event.stopPropagation()}
+                    >
+                        <input
+                            type='checkbox'
+                            checked={bDontShowSideBetInfo}
+                            onChange={(event) => setDontShowSideBetInfo(event.target.checked)}
+                        />
+                        <span>Don&apos;t show again</span>
+                    </label>
                 </div>
             ) : null}
         </div>
@@ -1169,7 +1269,13 @@ function GameActionOverlay({ isPaused = false }) {
                         </div>
                         <div className='game-action-overlay__console-col game-action-overlay__console-col--center'>
                             {bHasHoleCards ? (
-                                <HoleCardDisplay cards={consoleCards.hand} score={consoleCards.score} isFolded={consoleCards.isFolded} />
+                                <HoleCardDisplay
+                                    cards={consoleCards.hand}
+                                    score={consoleCards.score}
+                                    isFolded={consoleCards.isFolded}
+                                    revealCardId={sRevealCardId}
+                                    onRevealCardToggle={handleRevealCardToggle}
+                                />
                             ) : null}
                         </div>
                         <div className='game-action-overlay__console-col game-action-overlay__console-col--right'>
@@ -1207,6 +1313,8 @@ function GameActionOverlay({ isPaused = false }) {
         <SideBetInfoDialog
             visible={bShowSideBetInfo}
             onClose={() => setShowSideBetInfo(false)}
+            dontShowAgain={bDontShowSideBetInfo}
+            onDontShowAgainChange={setDontShowSideBetInfo}
         />
 
         </>

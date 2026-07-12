@@ -2376,10 +2376,12 @@ setButtons() {
         };
         this.popStateHandler = () => this.exitGame();
         this.sideBetsChangeHandler = (event) => this.handleSideBetsChange(event?.detail);
+        this.showdownCardRevealHandler = (event) => this.handleLocalShowdownCardRevealChange(event?.detail);
         // Exit game on tab hide or browser back â€” prevents desync and seat abuse.
         this.cleanupRegistry.addWindowListener(window, 'visibilitychange', this.visibilityChangeHandler);
         this.cleanupRegistry.addWindowListener(window, 'popstate', this.popStateHandler);
         this.cleanupRegistry.addWindowListener(window, GAME_BROWSER_EVENTS.SIDE_BETS_CHANGE, this.sideBetsChangeHandler);
+        this.cleanupRegistry.addWindowListener(window, GAME_BROWSER_EVENTS.SHOWDOWN_CARD_REVEAL_CHANGE, this.showdownCardRevealHandler);
         this.events.once('shutdown', this.cleanupGameBindings, this);
         this.events.once('destroy', this.cleanupGameBindings, this);
     }
@@ -2406,6 +2408,7 @@ setButtons() {
                 sideBetLive: false,
                 score: this.oLocalConsoleHandLock.score,
                 isFolded: Boolean(this.oLocalConsoleHandLock.isFolded),
+                sShowdownRevealCardId: myPlayer?.sShowdownRevealCardId || '',
                 locked: true,
             };
         }
@@ -2422,6 +2425,7 @@ setButtons() {
             sideBetLive: bSideBetLive,
             score: Number(myPlayer?.nCardScore) || 0,
             isFolded: String(myPlayer?.eState || '').toLowerCase() === 'fold',
+            sShowdownRevealCardId: myPlayer?.sShowdownRevealCardId || '',
             locked: false,
         };
     }
@@ -2501,6 +2505,7 @@ setButtons() {
             myPlayer.nCardScore = 0;
             myPlayer.isDoubleDownLock = false;
             myPlayer.nStandAtRound = 1;
+            myPlayer.sShowdownRevealCardId = '';
         }
         this.oClientGameState = clientGameStateReducer(this.oClientGameState, {
             type: CLIENT_GAME_STATE_ACTIONS.SET_PARTICIPANT_HAND_SCORE,
@@ -2512,14 +2517,53 @@ setButtons() {
         });
         this.emitConsoleCards();
     }
+    getCardId(card = {}, index = 0) {
+        return String(card?._id || card?.id || `${card?.eSuit || 'card'}-${card?.nLabel || index}-${index}`);
+    }
+    handleLocalShowdownCardRevealChange(detail = {}) {
+        const myPlayer = this.players?.get?.(this.iUserId);
+        if (!myPlayer) return;
+
+        const sRequestedCardId = String(detail?.sCardId || detail?.cardId || '');
+        const aCardIds = (Array.isArray(myPlayer.aCardHand) ? myPlayer.aCardHand : [])
+            .slice(0, 2)
+            .map((card, index) => this.getCardId(card, index));
+        const sCardId = sRequestedCardId && aCardIds.includes(sRequestedCardId) ? sRequestedCardId : '';
+
+        if (myPlayer.sShowdownRevealCardId === sCardId) return;
+        myPlayer.sShowdownRevealCardId = sCardId;
+        this.emitConsoleCards();
+        this.emitPlayerSlotState();
+
+        if (!this.oSocketManager || !this.iUserId) return;
+        this.oSocketManager.emit(SOCKET_REQUEST_EVENTS.SHOWDOWN_CARD_REVEAL, {
+            sCardId,
+        });
+    }
+    handleShowdownCardReveal(oData = {}) {
+        const iUserId = String(oData?.iUserId || '');
+        if (!iUserId || !this.players?.has?.(iUserId)) return;
+
+        const player = this.players.get(iUserId);
+        player.sShowdownRevealCardId = String(oData?.sCardId || oData?.sShowdownRevealCardId || '');
+        this.emitPlayerSlotState();
+        if (iUserId === this.iUserId) this.emitConsoleCards();
+    }
     showPlayerActionLabel(iUserId, sLabel) {
         const player = this.players?.get?.(iUserId);
-        if (!player || !sLabel) return;
+        if (!player || !sLabel || iUserId === this.iUserId) return;
 
         const nActionLabelKey = Date.now();
         player.sActionLabel = sLabel;
         player.nActionLabelKey = nActionLabelKey;
         this.emitPlayerSlotState();
+
+        this.cleanupRegistry?.addTimeout(setTimeout(() => {
+            if (player.nActionLabelKey !== nActionLabelKey) return;
+            player.sActionLabel = '';
+            player.nActionLabelKey = 0;
+            this.emitPlayerSlotState();
+        }, 1700));
     }
     clearPlayerActionLabels() {
         let bChanged = false;
@@ -2825,9 +2869,6 @@ setButtons() {
         player.aCardHand = aUpdatedHand;
         player.nCardScore = Number(nUpdatedScore) || player.nCardScore;
         this.syncPlayerScoreDisplay(player, nUpdatedScore, aUpdatedHand);
-        if (oData.iUserId !== this.iUserId && sEventName === SOCKET_RESPONSE_EVENTS.DOUBLE_DOWN) {
-            player?.playerProfile?.setBettingLabel('DD', oData.nLastBidChips);
-        }
         if (potIncrease > 0) {
             this.queuePotUpdate({
                 amount: potIncrease,
@@ -2865,8 +2906,6 @@ setButtons() {
         const potIncrease = getPotIncrease(oData.nTableChips, this.oGameManager.nPotAmount);
         const effectName = getBetPotEffectName({ sEventName, nChips: oData.nChips, potIncrease });
         const aParticipantAdjustments = Array.isArray(oData.aParticipantAdjustments) ? oData.aParticipantAdjustments : [];
-        const bZeroChipCall = sEventName === SOCKET_RESPONSE_EVENTS.CALL && potIncrease <= 0 && Math.max(0, Number(oData.nLastBidChips ?? oData.nCurrentChips) || 0) <= 0;
-
         const bLocalStandIntent = oData.iUserId === this.iUserId && this.bLocalConsoleStandLocked;
         const bStandWithoutCard = (
             bLocalStandIntent
@@ -2930,43 +2969,10 @@ setButtons() {
         });
         if (sPlayerActionLabel) this.showPlayerActionLabel(oData.iUserId, sPlayerActionLabel);
 
-        if (sEventName === SOCKET_RESPONSE_EVENTS.CALL) {
-            const callAmount = oData.nLastBidChips ?? oData.nCurrentChips ?? 0;
-            if (oData.iUserId != this.iUserId) {
-                player?.playerProfile?.setBettingLabel(bZeroChipCall ? 'Check' : (oData.bAllIn ? 'All In' : 'Call'), bZeroChipCall ? undefined : callAmount);
-            }
-        } else if (sEventName === SOCKET_RESPONSE_EVENTS.RAISE) {
+        if (sEventName === SOCKET_RESPONSE_EVENTS.RAISE) {
             this.markRaiseOccurred();
-            const raiseAmount = oData.nLastBidChips ?? oData.nCurrentChips ?? 0;
-            if (oData.iUserId != this.iUserId) {
-                player?.playerProfile?.setBettingLabel('Raised', raiseAmount);
-            }
-        } else if (sEventName === SOCKET_RESPONSE_EVENTS.STAND) {
-            const logs = this.oGameManager.recentLogs || [];
-            const lastRaiseLog = logs.find(log =>
-                log.sAction === 'raise+stand' && log.iUserId === oData.iUserId
-            );
-            const lastCallStandLog = logs.find(log =>
-                log.sAction === 'call+stand' && log.iUserId === oData.iUserId
-            );
-            if (lastRaiseLog) {
-                if (oData.iUserId != this.iUserId) {
-                    player?.playerProfile?.setBettingLabel('Raise+Stand');
-                }
-            } else if (lastCallStandLog) {
-                if (oData.iUserId != this.iUserId) {
-                    player?.playerProfile?.setBettingLabel('Call+Stand');
-                }
-            } else {
-                if (oData.iUserId != this.iUserId) {
-                    player?.playerProfile?.setBettingLabel('Stand');
-                }
-            }
         } else if (sEventName === SOCKET_RESPONSE_EVENTS.CHECK) {
             this.markCheckCommitment(oData.iUserId);
-            if (oData.iUserId != this.iUserId) {
-                player?.playerProfile?.setBettingLabel('Check');
-            }
         }
     }
     handleTurnMissed(oData = {}) {
@@ -2993,7 +2999,6 @@ setButtons() {
             player?.playerProfile.setVisible(true);
             this.showPlayerActionLabel(iUserId, actionLabelText.fold);
             if (iUserId === this.iUserId) this.emitConsoleCards();
-            iUserId !== this.iUserId && player?.playerProfile.setBettingLabel('Fold');
             this.emitPlayerSlotState();
         } else if (eState === 'leave') {
             player?.playerProfile.setLeave();
@@ -3018,7 +3023,6 @@ setButtons() {
                 this.emitConsoleBust();
             }
             this.showPlayerActionLabel(iUserId, actionLabelText.bust);
-            iUserId !== this.iUserId && player?.playerProfile.setBettingLabel('Bust');
         }
     }
     async handleCommunityCard(oData) {
@@ -3178,11 +3182,13 @@ setButtons() {
                     aCardHand: this.bShowingHandResult && Array.isArray(player.aCardHand) ? player.aCardHand : [],
                     bShowdownWinner: Boolean(this.bShowingHandResult && player.bShowdownWinner),
                     nShowdownWinAmount: Number(player.nShowdownWinAmount) || 0,
+                    sShowdownRevealCardId: this.bShowingHandResult ? (player.sShowdownRevealCardId || '') : '',
                     sActionLabel: player.sActionLabel || '',
                     nActionLabelKey: Number(player.nActionLabelKey) || 0,
+                    bLocalPlayer: player.iUserId === this.iUserId,
                     sBlindRole: player.iUserId === this.iDealerId ? 'D' : (player.iUserId === this.iSmallBlindId ? 'SB' : (player.iUserId === this.iBigBlindId ? 'BB' : '')),
-                    bActiveTurn: player.iUserId === this.iActiveTurnId,
-                    nTurnTimerMs: player.iUserId === this.iActiveTurnId ? this.nActiveTurnTimerMs : 0,
+                    bActiveTurn: !this.bShowingHandResult && player.iUserId === this.iActiveTurnId,
+                    nTurnTimerMs: !this.bShowingHandResult && player.iUserId === this.iActiveTurnId ? this.nActiveTurnTimerMs : 0,
                 };
             });
 
@@ -3606,6 +3612,7 @@ setDeclareResult({ nRoundStartsIn, aParticipant, bAllPlayerBust, bAllPlayersBust
     this.players.forEach(player => {
       player.bShowdownWinner = false;
       player.nShowdownWinAmount = 0;
+      player.sShowdownRevealCardId = '';
     });
     this.clearLocalConsoleHand();
     this.prompt.hide();
@@ -3637,6 +3644,7 @@ setDeclareResult({ nRoundStartsIn, aParticipant, bAllPlayerBust, bAllPlayersBust
     const aParticipantHand = Array.isArray(participant.aCardHand) ? participant.aCardHand : [];
     player.aCardHand = aParticipantHand;
     player.nCardScore = Number(participant.nCardScore) || player.nCardScore;
+    player.sShowdownRevealCardId = participant.sShowdownRevealCardId || player.sShowdownRevealCardId || '';
     player.bShowdownWinner = participant.eState === "winner";
     player.nShowdownWinAmount = player.bShowdownWinner ? Math.max(0, Math.round(Number(participant.nWinningAmount) || 0)) : 0;
     this.syncPlayerScoreDisplay(player, participant.nCardScore, aParticipantHand, { forceReveal: true });

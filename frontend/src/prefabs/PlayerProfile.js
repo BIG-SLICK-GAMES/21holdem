@@ -456,38 +456,8 @@ export default class PlayerProfile extends Phaser.GameObjects.Container {
         break;
     }
   }
-  setBettingLabel(sBettingLabel, nAmount = null) {
-    if (!sBettingLabel && nAmount === null) {
-      this.hideBettingLabel();
-      return;
-    }
-    this.removeSplitArtifacts();
-    this.updateBettingLabelLayout();
-    this.container_bettingLabel.setVisible(true).setScale(0);
-    if (this._bettingLabelTween) this._bettingLabelTween.stop();
-    this._bettingLabelTween = this.scene.tweens.add({
-      targets: this.container_bettingLabel,
-      scaleX: 1, scaleY: 1,
-      duration: 180,
-      ease: 'Back.easeOut',
-    });
-    this.txt_bettingLabel.setText(sBettingLabel);
-
-    if (nAmount !== null) {
-      this.txt_bettingAmount.setText(nAmount);
-      this.txt_bettingAmount.setVisible(true);
-    } else {
-      this.txt_bettingAmount.setVisible(false);
-    }
-
-    this.raise_arrow.setVisible(sBettingLabel === "Raised");
-    this.dd_highlighter.setVisible(sBettingLabel === "DD");
-
-    if (this.bettingLabelTimeout) clearTimeout(this.bettingLabelTimeout);
-
-    this.bettingLabelTimeout = setTimeout(() => {
-      this.hideBettingLabel();
-    }, 3000);
+  setBettingLabel() {
+    this.hideBettingLabel();
   }
 
   hideBettingLabel() {

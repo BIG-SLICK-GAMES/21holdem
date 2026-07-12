@@ -4,6 +4,21 @@ const { redis, deck } = require('../../../../../utils');
 const Participant = require('../../Participant');
 
 const TUTORIAL_TABLE_MODE = 'guest_tutorial';
+const DEFAULT_BOARD_SETTING = {
+  nInitializeTimer: 10000,
+  nMaxWaitingTime: 60000,
+  nMaxTurnMissAllowed: 2,
+  nTurnBuffer: 1000,
+  nRoundStartsIn: 6000,
+  nTurnTime: 20000,
+};
+
+function normalizeBoardSetting(oSetting = {}) {
+  return {
+    ...DEFAULT_BOARD_SETTING,
+    ...(oSetting && typeof oSetting === 'object' ? oSetting : {}),
+  };
+}
 
 function getCardValue(nLabel) {
   if (nLabel === 1) return 11;
@@ -94,7 +109,7 @@ class Service {
     this.nTableRound = oBoardData.nTableRound ?? 1;
     this.nGameRound = oBoardData.nGameRound ?? 1;
     this.ePokerType = oBoardData.ePokerType;
-    this.oSetting = oBoardData.oSetting;
+    this.oSetting = normalizeBoardSetting(oBoardData.oSetting);
     this.sPrivateCode = oBoardData.sPrivateCode;
     this.oGameInfo = oBoardData.oGameInfo;
   }
@@ -190,7 +205,7 @@ class Service {
       this.nGameRound = oBoardData.nGameRound ?? 1;
       this.sPrivateCode = oBoardData.sPrivateCode;
       this.ePokerType = oBoardData.ePokerType;
-      this.oSetting = oBoardData.oSetting;
+      this.oSetting = normalizeBoardSetting(oBoardData.oSetting);
       this.oGameInfo = oBoardData.oGameInfo;
       return this;
     } catch (error) {
