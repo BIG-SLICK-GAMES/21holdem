@@ -5307,7 +5307,7 @@ $nav-button-font:   13px;
         place-items: center;
         width: 100%;
         aspect-ratio: 3 / 4;
-        border: 1px dashed rgba(255, 156, 74, 0.42);
+        border: 1px solid rgba(255, 156, 74, 0.42);
         border-radius: 9px;
         overflow: hidden;
         background:
@@ -5321,18 +5321,89 @@ $nav-button-font:   13px;
             border: 1px solid rgba(255, 143, 52, 0.18);
             border-radius: 7px;
         }
+
+        &::after {
+            content: '';
+            position: absolute;
+            inset: auto 10px 12px;
+            height: 4px;
+            border-radius: 999px;
+            background: rgba(255, 151, 56, 0.52);
+            box-shadow: 0 0 14px rgba(255, 105, 24, 0.4);
+        }
+    }
+
+    &__bsg-game-poster--holdem {
+        background:
+            radial-gradient(circle at 50% 25%, rgba(255, 225, 135, 0.28) 0%, rgba(255, 225, 135, 0) 28%),
+            linear-gradient(150deg, rgba(255, 99, 36, 0.28) 0%, rgba(255, 99, 36, 0) 42%),
+            linear-gradient(180deg, #606064 0%, #171719 100%);
+    }
+
+    &__bsg-game-poster--stackem {
+        background:
+            repeating-linear-gradient(0deg, rgba(255, 145, 52, 0.18) 0 8px, rgba(255, 145, 52, 0) 8px 18px),
+            linear-gradient(180deg, #6b6b6b 0%, #181818 100%);
+    }
+
+    &__bsg-game-poster--sinkem {
+        background:
+            radial-gradient(circle at 52% 28%, rgba(255, 145, 52, 0.34) 0%, rgba(255, 145, 52, 0) 24%),
+            linear-gradient(165deg, rgba(120, 120, 120, 0.92) 0%, rgba(35, 35, 35, 0.98) 58%, rgba(255, 98, 24, 0.24) 100%);
+    }
+
+    &__bsg-game-poster--other-a,
+    &__bsg-game-poster--other-b,
+    &__bsg-game-poster--other-c {
+        background:
+            linear-gradient(135deg, rgba(255, 145, 52, 0.2) 0%, rgba(255, 145, 52, 0) 34%),
+            linear-gradient(180deg, #5b5b5d 0%, #151515 100%);
+    }
+
+    &__bsg-game-poster--other-b {
+        background:
+            linear-gradient(45deg, rgba(255, 145, 52, 0.18) 0 18%, transparent 18% 34%, rgba(255, 145, 52, 0.12) 34% 52%, transparent 52%),
+            linear-gradient(180deg, #646464 0%, #181818 100%);
+    }
+
+    &__bsg-game-poster--other-c {
+        background:
+            radial-gradient(circle at 50% 50%, rgba(255, 145, 52, 0.24) 0%, rgba(255, 145, 52, 0) 32%),
+            linear-gradient(180deg, #5f5f5f 0%, #161616 100%);
+    }
+
+    &__bsg-game-poster-ribbon {
+        position: absolute;
+        top: 8px;
+        right: -24px;
+        z-index: 2;
+        width: 82px;
+        padding: 3px 0;
+        transform: rotate(36deg);
+        border: 1px solid rgba(255, 232, 204, 0.28);
+        background: linear-gradient(180deg, #ffb35f 0%, #f26b1d 100%);
+        color: #171717;
+        font-size: 8px;
+        font-weight: 1000;
+        letter-spacing: 0;
+        line-height: 1;
+        text-align: center;
+        text-transform: uppercase;
+        box-shadow: 0 5px 12px rgba(0, 0, 0, 0.24);
     }
 
     &__bsg-game-poster-mark {
         position: relative;
         z-index: 1;
-        color: #ff9a3f;
+        color: #ffe0ad;
         font-family: 'Neue Plak Condensed';
-        font-size: clamp(18px, 5vw, 30px);
+        font-size: 24px;
         font-weight: 900;
-        letter-spacing: 0.08em;
+        letter-spacing: 0;
         line-height: 1;
-        text-shadow: 0 0 16px rgba(255, 105, 24, 0.34);
+        text-shadow:
+            0 2px 0 rgba(25, 25, 25, 0.9),
+            0 0 16px rgba(255, 105, 24, 0.42);
     }
 
     &__bsg-game-copy {
@@ -5361,7 +5432,7 @@ $nav-button-font:   13px;
             color: #ffb26b;
             font-size: 9px;
             font-weight: 800;
-            letter-spacing: 0.08em;
+            letter-spacing: 0;
             line-height: 1;
             text-transform: uppercase;
         }

@@ -87,12 +87,12 @@ const BUY_IN_OPTIONS = [1000, 5000, 15000, 20000];
 const LOBBY_TAB_IDS = ['lobby-live-tables', 'lobby-bsg-games', 'lobby-missions', 'lobby-private-table', 'lobby-player-profile', 'lobby-shop', 'lobby-settings'];
 const TABLE_SEAT_COLORS = ['#d4af6a', '#58c7ff', '#ff6b8a', '#7ee081', '#c38cff', '#ffb15c', '#5eead4', '#f7e36b', '#9bb6ff'];
 const BSG_GAME_PLACEHOLDERS = [
-    { title: '21 Holdem', status: 'Live' },
-    { title: 'Blackjack Rush', status: 'Coming Soon' },
-    { title: 'Poker Rooms', status: 'Coming Soon' },
-    { title: 'Slots Arcade', status: 'Coming Soon' },
-    { title: 'Tournament Hub', status: 'Coming Soon' },
-    { title: 'VIP Games', status: 'Coming Soon' },
+    { title: "21 Hold'em", status: 'In Dev', mark: '21H', theme: 'holdem' },
+    { title: "21 Stack'em", status: 'In Dev', mark: '21S', theme: 'stackem' },
+    { title: "21 Sink'em", status: 'In Dev', mark: '21K', theme: 'sinkem' },
+    { title: 'My Other Games', status: 'In Dev', mark: 'B1', theme: 'other-a' },
+    { title: 'My Other Games', status: 'In Dev', mark: 'B2', theme: 'other-b' },
+    { title: 'My Other Games', status: 'In Dev', mark: 'B3', theme: 'other-c' },
 ];
 const stripePromise = process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY
     ? loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY)
@@ -975,10 +975,11 @@ const Dashboard = () => {
 
     const renderBsgGamesGrid = (bCompact = false) => (
         <div className={`dashboard-hub__bsg-games-grid${bCompact ? ' dashboard-hub__bsg-games-grid--compact' : ''}`}>
-            {BSG_GAME_PLACEHOLDERS.map((game) => (
-                <article className='dashboard-hub__bsg-game-card' key={game.title}>
-                    <div className='dashboard-hub__bsg-game-poster' aria-hidden='true'>
-                        <span className='dashboard-hub__bsg-game-poster-mark'>BSG</span>
+            {BSG_GAME_PLACEHOLDERS.map((game, index) => (
+                <article className='dashboard-hub__bsg-game-card' key={`${game.title}-${index}`}>
+                    <div className={`dashboard-hub__bsg-game-poster dashboard-hub__bsg-game-poster--${game.theme}`} aria-hidden='true'>
+                        <span className='dashboard-hub__bsg-game-poster-ribbon'>In Dev</span>
+                        <span className='dashboard-hub__bsg-game-poster-mark'>{game.mark}</span>
                     </div>
                     <div className='dashboard-hub__bsg-game-copy'>
                         <strong>{game.title}</strong>
@@ -991,9 +992,6 @@ const Dashboard = () => {
 
     const renderBsgGamesPanel = () => (
         <div className='dashboard-hub__tab-body dashboard-hub__tab-body--bsg-games'>
-            <div className='dashboard-hub__bsg-hero'>
-                <img src={bigSlickGamesImage} alt='Big Slick Games' />
-            </div>
             {renderBsgGamesGrid()}
         </div>
     );
