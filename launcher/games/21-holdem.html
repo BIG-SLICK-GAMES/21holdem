@@ -3,39 +3,517 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>21 Hold'em | Big Slick Games</title>
+  <title>21 Hold'em | Rules & How To Play | Big Slick Games</title>
   <style>
-    :root { color-scheme: dark; --orange: #ff6a00; --ink: #fff; --soft: #c5cad3; --panel: rgba(15, 17, 21, 0.88); }
+    :root {
+      color-scheme: dark;
+      --page: #070a10;
+      --panel: rgba(10, 14, 23, 0.9);
+      --panel-2: rgba(18, 25, 40, 0.88);
+      --line: rgba(255, 106, 0, 0.42);
+      --line-blue: rgba(101, 154, 255, 0.42);
+      --ink: #fff;
+      --soft: #c5cad3;
+      --muted: #8d96a8;
+      --orange: #ff6a00;
+      --gold: #ffb13b;
+      --blue: #63a5ff;
+      --purple: #9b5cff;
+    }
+
     * { box-sizing: border-box; }
-    body { margin: 0; min-height: 100svh; font-family: Arial, Helvetica, sans-serif; color: var(--ink); background: radial-gradient(circle at 74% 10%, rgba(255,106,0,.22), transparent 30%), url("../assets/depth-casino-room.png?v=20260707a") center / cover fixed no-repeat, #0a0d12; }
-    main { width: min(100% - 28px, 1120px); margin: 0 auto; padding: 28px 0 44px; }
-    .top { display: flex; justify-content: space-between; gap: 16px; align-items: center; margin-bottom: 18px; }
-    a { color: inherit; text-decoration: none; }
-    .back, .play { border-radius: 999px; padding: 12px 16px; font-weight: 950; text-transform: uppercase; font-size: 12px; }
-    .back { background: rgba(255,255,255,.08); box-shadow: inset 0 0 0 1px rgba(255,106,0,.5); }
-    .play { background: linear-gradient(180deg, #ff7a12, #ff3d00); color: #170700; }
-    .hero { display: grid; gap: 22px; padding: clamp(18px, 4vw, 34px); border-radius: 24px; background: var(--panel); box-shadow: inset 0 0 0 1px rgba(255,106,0,.78), 0 0 24px rgba(255,106,0,.22), 0 30px 80px rgba(0,0,0,.46); }
-    img { width: 100%; max-height: 420px; object-fit: contain; border-radius: 18px; }
-    h1 { margin: 0; font-size: clamp(40px, 8vw, 84px); line-height: .9; }
-    p { margin: 0; max-width: 760px; color: var(--soft); font-size: clamp(18px, 3vw, 24px); line-height: 1.35; }
-    .facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
-    .fact { min-height: 110px; padding: 18px; border-radius: 16px; background: linear-gradient(145deg, rgba(36,38,43,.96), rgba(9,10,13,.98)); box-shadow: inset 0 0 0 1px rgba(255,106,0,.78), 0 0 14px rgba(255,106,0,.22); }
-    .fact span { color: var(--orange); font-size: 12px; font-weight: 950; letter-spacing: .12em; text-transform: uppercase; }
-    .fact strong { display: block; margin-top: 10px; font-size: 22px; line-height: 1.05; }
-    @media (max-width: 720px) { .top { align-items: stretch; } .facts { grid-template-columns: 1fr; } }
+
+    html,
+    body {
+      min-height: 100%;
+      margin: 0;
+    }
+
+    body {
+      min-height: 100svh;
+      overflow-x: hidden;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 72% 8%, rgba(255, 106, 0, 0.24), transparent 30%),
+        radial-gradient(circle at 18% 18%, rgba(99, 165, 255, 0.2), transparent 28%),
+        linear-gradient(135deg, rgba(255, 255, 255, 0.04), transparent 28%, rgba(0, 0, 0, 0.5)),
+        url("../assets/hub-bokeh-background.png?v=20260716a") center / cover fixed no-repeat,
+        var(--page);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.035) 0 1px, transparent 1px 20px),
+        repeating-linear-gradient(135deg, rgba(255, 106, 0, 0.05) 0 1px, transparent 1px 28px);
+      opacity: 0.52;
+      animation: patternDrift 28s linear infinite;
+    }
+
+    @keyframes patternDrift {
+      from { background-position: 0 0, 0 0; }
+      to { background-position: 80px 0, 84px 84px; }
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    main {
+      position: relative;
+      z-index: 1;
+      width: min(100% - 28px, 1180px);
+      margin: 0 auto;
+      padding: 24px 0 54px;
+    }
+
+    .top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .back,
+    .play {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      padding: 12px 16px 11px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 950;
+      line-height: 1;
+      text-transform: uppercase;
+    }
+
+    .back {
+      background: rgba(255, 255, 255, 0.08);
+      box-shadow: inset 0 0 0 1px rgba(101, 154, 255, 0.44);
+    }
+
+    .play {
+      background: linear-gradient(180deg, #ffb13b, #ff6a00 54%, #ff6a00);
+      color: #170700;
+      box-shadow: 0 0 22px rgba(255, 106, 0, 0.32);
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(260px, 430px);
+      gap: clamp(18px, 4vw, 42px);
+      align-items: center;
+      min-height: 520px;
+      padding: clamp(22px, 5vw, 52px);
+      border-radius: 28px;
+      background:
+        linear-gradient(120deg, rgba(6, 10, 18, 0.96), rgba(12, 20, 38, 0.82)),
+        var(--panel);
+      box-shadow:
+        inset 0 0 0 1px rgba(255, 106, 0, 0.52),
+        inset 0 0 0 2px rgba(101, 154, 255, 0.18),
+        0 0 36px rgba(255, 106, 0, 0.18),
+        0 34px 90px rgba(0, 0, 0, 0.48);
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 82% 20%, rgba(255, 106, 0, 0.2), transparent 30%),
+        radial-gradient(circle at 24% 42%, rgba(101, 154, 255, 0.16), transparent 34%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.06), transparent 42%);
+      mix-blend-mode: screen;
+    }
+
+    .hero-copy,
+    .hero-art {
+      position: relative;
+      z-index: 1;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      width: fit-content;
+      align-items: center;
+      min-height: 34px;
+      padding: 9px 12px 8px;
+      border-radius: 999px;
+      background: rgba(99, 165, 255, 0.14);
+      color: #b9d6ff;
+      font-size: 11px;
+      font-weight: 950;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      box-shadow: inset 0 0 0 1px rgba(101, 154, 255, 0.36);
+    }
+
+    h1 {
+      margin: 18px 0 14px;
+      max-width: 720px;
+      font-size: clamp(48px, 8vw, 94px);
+      font-weight: 950;
+      letter-spacing: 0;
+      line-height: 0.88;
+      text-transform: uppercase;
+      text-shadow:
+        0 0 18px rgba(101, 154, 255, 0.2),
+        0 12px 34px rgba(0, 0, 0, 0.5);
+    }
+
+    .lead {
+      max-width: 670px;
+      margin: 0;
+      color: var(--soft);
+      font-size: clamp(18px, 2.4vw, 26px);
+      font-weight: 800;
+      line-height: 1.25;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .hero-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 12px 16px 11px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--ink);
+      font-size: 12px;
+      font-weight: 950;
+      text-transform: uppercase;
+      box-shadow: inset 0 0 0 1px rgba(255, 106, 0, 0.38);
+    }
+
+    .hero-link--primary {
+      background: linear-gradient(180deg, #ffb13b, #ff6a00);
+      color: #170700;
+    }
+
+    .hero-art img {
+      display: block;
+      width: 100%;
+      border-radius: 24px;
+      filter:
+        drop-shadow(0 20px 34px rgba(0, 0, 0, 0.5))
+        drop-shadow(0 0 20px rgba(255, 106, 0, 0.22));
+    }
+
+    .quick-facts {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin: 16px 0;
+    }
+
+    .fact,
+    .panel,
+    .step,
+    .side-bet,
+    .rule-card {
+      border-radius: 18px;
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.055), transparent 38%),
+        var(--panel-2);
+      box-shadow:
+        inset 0 0 0 1px rgba(255, 106, 0, 0.34),
+        0 18px 48px rgba(0, 0, 0, 0.32);
+    }
+
+    .fact {
+      min-height: 118px;
+      padding: 16px;
+    }
+
+    .fact span,
+    .section-label,
+    .step span,
+    .side-bet span,
+    .rule-card span {
+      display: block;
+      color: var(--gold);
+      font-size: 11px;
+      font-weight: 950;
+      letter-spacing: 0.12em;
+      line-height: 1;
+      text-transform: uppercase;
+    }
+
+    .fact strong {
+      display: block;
+      margin-top: 10px;
+      font-size: 22px;
+      line-height: 1.05;
+    }
+
+    section {
+      margin-top: 18px;
+    }
+
+    .panel {
+      padding: clamp(20px, 4vw, 34px);
+    }
+
+    h2 {
+      margin: 8px 0 14px;
+      font-size: clamp(30px, 5vw, 54px);
+      line-height: 0.95;
+      text-transform: uppercase;
+    }
+
+    .panel p {
+      margin: 0;
+      max-width: 860px;
+      color: var(--soft);
+      font-size: 18px;
+      font-weight: 750;
+      line-height: 1.45;
+    }
+
+    .steps,
+    .actions,
+    .side-bets,
+    .rules-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .step,
+    .side-bet,
+    .rule-card {
+      min-height: 160px;
+      padding: 18px;
+    }
+
+    .step strong,
+    .side-bet strong,
+    .rule-card strong {
+      display: block;
+      margin-top: 10px;
+      font-size: 22px;
+      line-height: 1.05;
+    }
+
+    .step p,
+    .side-bet p,
+    .rule-card p {
+      margin-top: 10px;
+      color: var(--soft);
+      font-size: 15px;
+      font-weight: 750;
+      line-height: 1.35;
+    }
+
+    .action-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .action {
+      display: grid;
+      grid-template-columns: 96px minmax(0, 1fr);
+      gap: 12px;
+      align-items: center;
+      min-height: 82px;
+      padding: 14px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.055);
+      box-shadow: inset 0 0 0 1px rgba(101, 154, 255, 0.24);
+    }
+
+    .action b {
+      color: var(--gold);
+      font-size: 14px;
+      text-transform: uppercase;
+    }
+
+    .action span {
+      color: var(--soft);
+      font-size: 14px;
+      font-weight: 750;
+      line-height: 1.35;
+    }
+
+    .wide {
+      grid-column: 1 / -1;
+    }
+
+    .note {
+      margin-top: 16px;
+      padding: 16px;
+      border-radius: 16px;
+      background: rgba(99, 165, 255, 0.1);
+      color: #d6e7ff;
+      font-size: 15px;
+      font-weight: 850;
+      line-height: 1.4;
+      box-shadow: inset 0 0 0 1px rgba(101, 154, 255, 0.28);
+    }
+
+    @media (max-width: 900px) {
+      main {
+        width: min(100% - 18px, 720px);
+        padding-top: 12px;
+      }
+
+      .hero {
+        grid-template-columns: 1fr;
+        min-height: 0;
+      }
+
+      .hero-art {
+        max-width: 420px;
+      }
+
+      .quick-facts,
+      .steps,
+      .side-bets,
+      .rules-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .action-list {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .top,
+      .hero-actions {
+        align-items: stretch;
+      }
+
+      .back,
+      .play,
+      .hero-link {
+        flex: 1 1 auto;
+      }
+
+      .hero {
+        padding: 18px;
+        border-radius: 22px;
+      }
+
+      .quick-facts,
+      .steps,
+      .side-bets,
+      .rules-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .action {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 <body>
   <main>
-    <nav class="top"><a class="back" href="../index.html">Back</a><a class="play" href="../index.html">Play</a></nav>
-    <section class="hero">
-      <img src="../assets/icon-21-holdem.png?v=20260707d" alt="21 Hold'em">
-      <h1>21 Hold'em</h1>
-      <p>Blackjack pressure meets Hold'em table reads. Play against real players, make the strongest 21-style decisions, and control the pot.</p>
-      <div class="facts">
-        <div class="fact"><span>Mode</span><strong>Multiplayer table play</strong></div>
-        <div class="fact"><span>Skill</span><strong>Reads, betting, discipline</strong></div>
-        <div class="fact"><span>Goal</span><strong>Win hands and build balance</strong></div>
+    <nav class="top">
+      <a class="back" href="../index.html">Back</a>
+      <a class="play" href="../index.html">Play</a>
+    </nav>
+
+    <header class="hero">
+      <div class="hero-copy">
+        <span class="eyebrow">Multiplayer table game</span>
+        <h1>21 Hold'em</h1>
+        <p class="lead">A blackjack-pressure table game played against other players. Build the strongest total of 21 or less, decide when to stand, and use betting pressure to control the hand.</p>
+        <div class="hero-actions">
+          <a class="hero-link hero-link--primary" href="../index.html">Play Now</a>
+          <a class="hero-link" href="#how-to-play">How To Play</a>
+          <a class="hero-link" href="#official-rules">Rules</a>
+          <a class="hero-link" href="#side-bets">Side Bets</a>
+        </div>
+      </div>
+      <div class="hero-art">
+        <img src="../assets/redesign-holdem.png?v=20260707c" alt="21 Hold'em table">
+      </div>
+    </header>
+
+    <section class="quick-facts" aria-label="Game facts">
+      <div class="fact"><span>Players</span><strong>2 to 9</strong></div>
+      <div class="fact"><span>Deck</span><strong>52 cards</strong></div>
+      <div class="fact"><span>Goal</span><strong>Best total under 22</strong></div>
+      <div class="fact"><span>Opponent</span><strong>The table, not a dealer</strong></div>
+    </section>
+
+    <section class="panel" id="how-to-play">
+      <span class="section-label">How to play</span>
+      <h2>Win the pot without going bust</h2>
+      <p>Every player starts with one private hole card. Betting and community-card stages then decide who keeps improving, who locks their score, and who folds under pressure.</p>
+      <div class="steps">
+        <div class="step"><span>Step 1</span><strong>Start with one card</strong><p>Blinds post, the dealer button rotates, and each player receives one private card.</p></div>
+        <div class="step"><span>Step 2</span><strong>Bet or check</strong><p>If no bet is open, check or open the betting. If a bet is open, call, raise, or fold when eligible.</p></div>
+        <div class="step"><span>Step 3</span><strong>Hit or stand</strong><p>Hit continues to the next community-card step. Stand locks your current total for the rest of the hand.</p></div>
+        <div class="step"><span>Step 4</span><strong>Watch the table cards</strong><p>Action, Stage, Show, and Caboose cards can improve live hands that have not locked.</p></div>
+        <div class="step"><span>Step 5</span><strong>Handle pressure</strong><p>Standing or doubling down stops future cards, but you may still need to call or fold if betting reopens.</p></div>
+        <div class="step"><span>Step 6</span><strong>Showdown</strong><p>All active players reveal. The highest valid total of 21 or less wins, and tied winning totals split the pot.</p></div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <span class="section-label">Player actions</span>
+      <h2>The decisions</h2>
+      <p>21 Hold'em uses familiar betting actions, with blackjack-style score pressure layered on top.</p>
+      <div class="action-list">
+        <div class="action"><b>Check</b><span>Pass the action when no bet is currently open.</span></div>
+        <div class="action"><b>Call</b><span>Match the current amount required to stay in the hand.</span></div>
+        <div class="action"><b>Raise</b><span>Increase the current bet when raising is available.</span></div>
+        <div class="action"><b>Fold</b><span>Drop the hand and forfeit any claim to the pot.</span></div>
+        <div class="action"><b>Stand</b><span>Lock your current total. Future community cards no longer affect your hand.</span></div>
+        <div class="action"><b>Double Down</b><span>First-round option: post the required amount, take a second private card, and lock your total.</span></div>
+      </div>
+      <div class="note">If you stand or double down, later betting pressure is resolved with call-or-fold decisions. Raising may also be unavailable when the active action state or all-in state blocks it.</div>
+    </section>
+
+    <section class="panel" id="side-bets">
+      <span class="section-label">Optional side bets</span>
+      <h2>Extra ways to sweat the hand</h2>
+      <p>Side bets are placed before the hand begins and resolve from your final evaluated cards.</p>
+      <div class="side-bets">
+        <div class="side-bet"><span>Pays 3:1</span><strong>21</strong><p>Your final evaluated hand total is exactly 21.</p></div>
+        <div class="side-bet"><span>Pays 4:1</span><strong>Flush</strong><p>Your private card and available community cards make three or more cards of one suit.</p></div>
+        <div class="side-bet"><span>Pays 5:1</span><strong>Straight</strong><p>Your private card and available community cards make three or more running ranks.</p></div>
+        <div class="side-bet wide"><span>Bonus</span><strong>Straight Flush</strong><p>A qualifying straight that is also all one suit pays the straight-flush bonus on the Straight side bet.</p></div>
+      </div>
+    </section>
+
+    <section class="panel" id="official-rules">
+      <span class="section-label">Official rules</span>
+      <h2>Table rules</h2>
+      <div class="rules-grid">
+        <div class="rule-card"><span>Setup</span><strong>Blinds and button</strong><p>The dealer button rotates every hand. Small blind and big blind are posted by the next two players clockwise.</p></div>
+        <div class="rule-card"><span>Scoring</span><strong>Aces are flexible</strong><p>Number cards use face value, face cards count as 10, and aces count as 1 or 11 for the best valid total.</p></div>
+        <div class="rule-card"><span>Bust</span><strong>Over 21 loses</strong><p>A total above 21 is bust and cannot win the main pot.</p></div>
+        <div class="rule-card"><span>Standing</span><strong>Locked totals</strong><p>A standing player keeps the score they had when they stood. Later community cards do not help or hurt that hand.</p></div>
+        <div class="rule-card"><span>Showdown</span><strong>All active cards reveal</strong><p>Every active player still in the hand must reveal at showdown. Folded players cannot win the pot.</p></div>
+        <div class="rule-card"><span>Ties</span><strong>Split pot</strong><p>If multiple active players tie for the best valid total, the pot is split between them.</p></div>
+        <div class="rule-card"><span>Instant wins</span><strong>First-round 21</strong><p>A first-round blackjack, or a double-down hand that reaches exactly 21, can win immediately under table rules.</p></div>
+        <div class="rule-card"><span>Reveal eye</span><strong>Current hand only</strong><p>The eye icon marks your hole card for reveal this hand, but all active showdown players reveal regardless.</p></div>
+        <div class="rule-card"><span>Pressure</span><strong>Call or fold</strong><p>Players who already stood or doubled down can still face later call-or-fold decisions if another player reopens betting.</p></div>
       </div>
     </section>
   </main>

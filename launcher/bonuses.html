@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bonuses | Big Slick Games</title>
+  <style>
+    :root { color-scheme: dark; --ink:#fff; --soft:#c5cad3; --muted:#8f96a3; --orange:#ff6a00; --gold:#ffb13b; --panel:rgba(13,17,25,.9); --line:rgba(255,106,0,.48); --blue:#63a5ff; }
+    * { box-sizing:border-box; }
+    body { margin:0; min-height:100svh; font-family:Arial,Helvetica,sans-serif; color:var(--ink); background:radial-gradient(circle at 78% 8%, rgba(255,106,0,.28), transparent 30%), radial-gradient(circle at 18% 18%, rgba(99,165,255,.18), transparent 28%), url("./assets/hub-bokeh-background.png?v=20260716a") center/cover fixed no-repeat, #070a10; }
+    body::before { content:""; position:fixed; inset:0; pointer-events:none; background:repeating-linear-gradient(135deg, rgba(255,106,0,.06) 0 1px, transparent 1px 26px); animation:drift 28s linear infinite; }
+    @keyframes drift { to { background-position:104px 104px; } }
+    a { color:inherit; text-decoration:none; }
+    main { position:relative; z-index:1; width:min(100% - 28px, 1180px); margin:0 auto; padding:24px 0 54px; }
+    .top { display:flex; justify-content:space-between; gap:12px; margin-bottom:16px; }
+    .pill { display:inline-flex; align-items:center; justify-content:center; min-height:42px; padding:12px 16px 11px; border-radius:999px; background:rgba(255,255,255,.08); box-shadow:inset 0 0 0 1px rgba(255,106,0,.38); font-size:12px; font-weight:950; text-transform:uppercase; }
+    .pill--hot { background:linear-gradient(180deg,#ffb13b,#ff6a00); color:#170700; }
+    .hero, .panel, .bonus-card, .day { border-radius:24px; background:linear-gradient(145deg, rgba(255,255,255,.06), transparent 40%), var(--panel); box-shadow:inset 0 0 0 1px var(--line), 0 28px 80px rgba(0,0,0,.44); }
+    .hero { padding:clamp(22px,5vw,46px); }
+    h1 { margin:0; font-size:clamp(46px,8vw,86px); line-height:.88; text-transform:uppercase; }
+    .lead { margin:14px 0 0; max-width:760px; color:var(--soft); font-size:clamp(18px,2.4vw,25px); font-weight:800; line-height:1.3; }
+    .status { display:flex; flex-wrap:wrap; gap:10px; margin-top:18px; }
+    .status span { display:inline-flex; min-height:36px; align-items:center; padding:9px 12px; border-radius:999px; background:rgba(255,255,255,.08); color:var(--soft); font-size:12px; font-weight:950; text-transform:uppercase; }
+    .grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; margin-top:16px; }
+    .bonus-card, .panel { padding:18px; }
+    .bonus-card span, .day span { color:var(--gold); font-size:11px; font-weight:950; letter-spacing:.12em; text-transform:uppercase; }
+    .bonus-card strong { display:block; margin-top:8px; font-size:25px; line-height:1.05; }
+    .bonus-card p { margin:10px 0 0; color:var(--soft); font-weight:750; line-height:1.35; }
+    .panel { margin-top:16px; }
+    .panel h2 { margin:0 0 14px; font-size:34px; text-transform:uppercase; }
+    .calendar { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:9px; }
+    .day { min-height:92px; padding:12px; border-radius:16px; box-shadow:inset 0 0 0 1px rgba(255,106,0,.32); }
+    .day strong { display:block; margin-top:8px; color:var(--ink); font-size:20px; }
+    .day.is-today { box-shadow:inset 0 0 0 1px rgba(255,177,59,.9), 0 0 22px rgba(255,106,0,.3); }
+    .day.is-completed { opacity:.62; }
+    button { margin-top:8px; min-height:30px; width:100%; border:0; border-radius:999px; background:linear-gradient(180deg,#ffb13b,#ff6a00); color:#170700; cursor:pointer; font:inherit; font-size:11px; font-weight:950; text-transform:uppercase; }
+    button:disabled { cursor:not-allowed; filter:grayscale(.8); opacity:.6; }
+    @media (max-width:850px) { .grid { grid-template-columns:1fr; } .calendar { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+  </style>
+</head>
+<body>
+  <main>
+    <nav class="top"><a class="pill" href="./index.html">Back</a><a id="loginLink" class="pill pill--hot" href="/login">Sign in</a></nav>
+    <header class="hero">
+      <h1>Bonuses</h1>
+      <p class="lead">Daily streaks, shop boosts, and event promos belong here now. One signed-in BSG account, one wallet, bonuses available across the hub and game ecosystem.</p>
+      <div id="status" class="status"><span>Checking session...</span></div>
+    </header>
+    <section class="grid">
+      <article class="bonus-card"><span>Daily</span><strong>Streak Rewards</strong><p>Claim daily chip rewards and keep the streak alive.</p></article>
+      <article class="bonus-card"><span>Store</span><strong>Shop Boosts</strong><p>Bonus chip offers and limited-time store promos will surface here.</p></article>
+      <article class="bonus-card"><span>Events</span><strong>Game Missions</strong><p>Game-specific leaderboard and launch bonuses can be added as BSG grows.</p></article>
+    </section>
+    <section class="panel">
+      <h2>Daily Rewards</h2>
+      <div id="calendar" class="calendar" aria-label="Daily rewards"></div>
+    </section>
+  </main>
+  <script>
+    const fallbackRewards = [100, 200, 300, 400, 500, 750, 1000, 1250, 1500, 1750, 2000, 2500, 3000, 5000];
+    const readCookie = (name) => document.cookie.split(';').map((v) => v.trim()).find((v) => v.startsWith(`${name}=`))?.split('=').slice(1).join('=') || '';
+    const token = readCookie('sAuthToken');
+    const status = document.getElementById('status');
+    const calendar = document.getElementById('calendar');
+    const loginLink = document.getElementById('loginLink');
+    const chips = (value) => new Intl.NumberFormat('en-US').format(Number(value) || 0);
+    let gameBaseUrl = '/';
+
+    async function loadProjectConfig() {
+      try {
+        const response = await fetch('./projects.json');
+        const payload = await response.json();
+        gameBaseUrl = payload?.projects?.find((item) => item.id === '21holdem-game')?.url || gameBaseUrl;
+      } catch {
+        gameBaseUrl = '/';
+      }
+    }
+
+    function resolveGameUrl(path) {
+      try {
+        const parsedUrl = new URL(gameBaseUrl, window.location.href);
+        parsedUrl.pathname = path;
+        parsedUrl.search = '';
+        parsedUrl.hash = '';
+        return parsedUrl.toString();
+      } catch {
+        return path;
+      }
+    }
+
+    function gameFetch(path, options = {}) {
+      return fetch(resolveGameUrl(path), options);
+    }
+
+    function setStatus(items) {
+      status.innerHTML = items.map((item) => `<span>${item}</span>`).join('');
+    }
+
+    function render(days, claimableDay = 1, claimedThrough = 0) {
+      calendar.innerHTML = days.map((amount, index) => {
+        const day = index + 1;
+        const isCompleted = day <= claimedThrough;
+        const isToday = day === claimableDay && token && !isCompleted;
+        return `<article class="day${isCompleted ? ' is-completed' : ''}${isToday ? ' is-today' : ''}">
+          <span>Day ${day}</span><strong>${chips(amount)}</strong>
+          ${isToday ? '<button type="button" data-claim="1">Claim</button>' : ''}
+        </article>`;
+      }).join('');
+    }
+
+    async function loadRewards() {
+      await loadProjectConfig();
+      loginLink.href = token ? './index.html' : resolveGameUrl('/login');
+      loginLink.textContent = token ? 'Signed in' : 'Sign in';
+      if (!token) {
+        setStatus(['Signed out', 'Preview rewards']);
+        render(fallbackRewards);
+        return;
+      }
+      setStatus(['Signed in', 'Shared BSG session']);
+      try {
+        const response = await gameFetch('/api/v1/daily_rewards', { headers: { Authorization: token } });
+        const payload = await response.json();
+        const data = payload?.data || {};
+        const rewards = Array.isArray(data.rewards) && data.rewards.length ? data.rewards : fallbackRewards;
+        const eligible = Math.max(1, Number(data.eligibleDay) || 1);
+        const claimedThrough = data.bTodayRewardClaimed ? eligible : Math.max(eligible - 1, 0);
+        render(rewards.slice(0, 28), eligible, claimedThrough);
+      } catch {
+        setStatus(['Signed in', 'Preview rewards', 'API unavailable']);
+        render(fallbackRewards, 1, 0);
+      }
+    }
+
+    calendar.addEventListener('click', async (event) => {
+      const button = event.target.closest('button[data-claim]');
+      if (!button || !token) return;
+      button.disabled = true;
+      button.textContent = 'Claiming';
+      try {
+        const response = await gameFetch('/api/v1/daily_rewards/claim', { method: 'POST', headers: { Authorization: token } });
+        const payload = await response.json();
+        setStatus(['Claimed', payload?.message || 'Reward collected']);
+        await loadRewards();
+      } catch {
+        setStatus(['Unable to claim', 'Try again in game']);
+        button.disabled = false;
+        button.textContent = 'Claim';
+      }
+    });
+
+    loadRewards();
+  </script>
+</body>
+</html>

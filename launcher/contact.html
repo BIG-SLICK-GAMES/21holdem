@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Support | Big Slick Games</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --ink: #ffffff;
+      --soft: #c5cad3;
+      --muted: #8f96a3;
+      --brand-orange: #ff6a00;
+      --brand-orange-deep: #ff6a00;
+      --brand-amber: #ffb13b;
+      --brand-orange-rgb: 255, 106, 0;
+      --brand-amber-rgb: 255, 177, 59;
+      --panel: rgba(13, 17, 25, 0.9);
+      --line: rgba(var(--brand-orange-rgb), 0.48);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100svh;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 78% 8%, rgba(var(--brand-orange-rgb), 0.24), transparent 30%),
+        radial-gradient(circle at 14% 20%, rgba(92, 124, 255, 0.16), transparent 28%),
+        url("./assets/hub-bokeh-background.png?v=20260716a") center/cover fixed no-repeat,
+        #070a10;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: repeating-linear-gradient(90deg, rgba(255,255,255,0.035) 0 1px, transparent 1px 22px);
+      opacity: 0.5;
+      animation: drift 24s linear infinite;
+    }
+
+    @keyframes drift {
+      to { background-position: 88px 0; }
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    main {
+      position: relative;
+      z-index: 1;
+      width: min(100% - 28px, 980px);
+      margin: 0 auto;
+      padding: 24px 0 54px;
+    }
+
+    .top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .pill,
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      padding: 12px 16px 11px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 950;
+      text-transform: uppercase;
+    }
+
+    .pill {
+      background: rgba(255,255,255,0.08);
+      box-shadow: inset 0 0 0 1px rgba(var(--brand-orange-rgb), 0.38);
+    }
+
+    .button {
+      border: 0;
+      background: linear-gradient(180deg, var(--brand-amber), var(--brand-orange));
+      color: #170700;
+      box-shadow: 0 0 24px rgba(var(--brand-orange-rgb), 0.34);
+    }
+
+    .site-nav {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 16px;
+      padding: 8px;
+      border-radius: 16px;
+      background: linear-gradient(145deg, rgba(255,255,255,0.06), transparent 44%), rgba(8,11,16,0.72);
+      box-shadow: inset 0 0 0 1px rgba(var(--brand-orange-rgb), 0.28), 0 14px 32px rgba(0,0,0,0.28);
+      backdrop-filter: blur(12px) saturate(1.2);
+    }
+
+    .site-nav__link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      padding: 10px 14px 9px;
+      border-radius: 12px;
+      color: var(--soft);
+      font-size: 11px;
+      font-weight: 950;
+      letter-spacing: 0.06em;
+      line-height: 1;
+      text-transform: uppercase;
+      white-space: nowrap;
+      box-shadow: inset 0 0 0 1px rgba(var(--brand-amber-rgb), 0.16);
+    }
+
+    .site-nav__link.is-active {
+      background: linear-gradient(180deg, var(--brand-amber), var(--brand-orange));
+      color: #170700;
+      box-shadow: 0 0 16px rgba(var(--brand-orange-rgb), 0.3);
+    }
+
+    .hero,
+    .contact-card {
+      border-radius: 24px;
+      background: linear-gradient(145deg, rgba(255,255,255,0.06), transparent 40%), var(--panel);
+      box-shadow: inset 0 0 0 1px var(--line), 0 28px 80px rgba(0,0,0,0.44);
+    }
+
+    .hero {
+      padding: clamp(24px, 5vw, 54px);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(48px, 9vw, 92px);
+      line-height: 0.88;
+      text-transform: uppercase;
+    }
+
+    .lead {
+      margin: 16px 0 0;
+      max-width: 720px;
+      color: var(--soft);
+      font-size: clamp(18px, 2.4vw, 25px);
+      font-weight: 800;
+      line-height: 1.3;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(260px, 0.72fr);
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .contact-card {
+      display: grid;
+      gap: 14px;
+      align-content: start;
+      padding: 22px;
+    }
+
+    .contact-card span {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 950;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .contact-card strong {
+      color: var(--brand-amber);
+      font-size: clamp(24px, 4vw, 38px);
+      line-height: 1;
+      word-break: break-word;
+    }
+
+    .contact-card p {
+      margin: 0;
+      color: var(--soft);
+      font-size: 16px;
+      font-weight: 800;
+      line-height: 1.35;
+    }
+
+    @media (max-width: 760px) {
+      .site-nav {
+        justify-content: flex-start;
+        overflow-x: auto;
+        scrollbar-width: thin;
+      }
+
+      .site-nav__link {
+        flex: 0 0 auto;
+        min-height: 34px;
+        padding: 9px 11px 8px;
+        font-size: 10px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <nav class="top">
+      <a class="pill" href="./index.html">Back</a>
+      <a class="button" href="mailto:bigslickgames@gmail.com">Email Support</a>
+    </nav>
+
+    <nav class="site-nav" aria-label="Primary navigation">
+      <a class="site-nav__link" href="./index.html">Hub</a>
+      <a class="site-nav__link" href="./shop.html">Shop</a>
+      <a class="site-nav__link" href="./socials.html">Socials</a>
+      <a class="site-nav__link is-active" href="./contact.html">Contact</a>
+    </nav>
+
+    <header class="hero">
+      <h1>Support</h1>
+      <p class="lead">For account help, wallet questions, gameplay issues, bug reports, or general Big Slick Games support, contact the support inbox below.</p>
+    </header>
+
+    <section class="grid" aria-label="Support contact options">
+      <article class="contact-card">
+        <span>Support Email</span>
+        <strong>bigslickgames@gmail.com</strong>
+        <p>This is the main support contact for Big Slick Games.</p>
+        <a class="button" href="mailto:bigslickgames@gmail.com?subject=Big%20Slick%20Games%20Support">Open Email</a>
+      </article>
+
+      <article class="contact-card">
+        <span>What To Include</span>
+        <p>Your username, the game you were playing, what happened, and roughly when it happened. Screenshots help if the issue is visual or payment related.</p>
+      </article>
+    </section>
+  </main>
+</body>
+</html>

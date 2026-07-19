@@ -57,6 +57,8 @@ services:
   game-frontend:
     build:
       context: ./frontend
+      args:
+        REACT_APP_BSG_HOME_URL: ${REACT_APP_BSG_HOME_URL:-}
     container_name: holdem-game-frontend
     restart: unless-stopped
     depends_on:
