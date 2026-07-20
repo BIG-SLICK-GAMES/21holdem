@@ -9,6 +9,7 @@ import { Col, Form, Row, Tooltip } from 'react-bootstrap';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import eye from '../../../assets/images/icons/eye_icon.svg';
 import eye_slash_icon from '../../../assets/images/icons/eye_slash_icon.svg';
+import bigSlickGamesLogoImg from '../../../assets/images/bsg/big-slick-games.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 const Register = () => {
@@ -55,13 +56,11 @@ const Register = () => {
                             <div className="auth-box auth-box--centered">
                                 <div className="auth-form-container">
                                     <div className='auth-login-brand'>
-                                        <div className='auth-login-brand__title'>
-                                            <span className='auth-login-brand__title-number'>21</span>
-                                            <span className='auth-login-brand__title-word'>Hold&apos;em</span>
-                                        </div>
+                                        <img src={bigSlickGamesLogoImg} alt='Big Slick Games' className='auth-login-brand__logo' />
+                                        <span className='auth-login-brand__subtitle'>Profile, wallet, hub, and games</span>
                                     </div>
 
-                                    <h2 className="auth-title">REGISTER</h2>
+                                    <h2 className="auth-title">CREATE BSG ACCOUNT</h2>
                                     <div className='auth-form'>
                                         <form onSubmit={handleSubmit(onSubmit)} className="form">
                                             <div className="form-group">
@@ -171,7 +170,7 @@ const Register = () => {
                                                 </div>
                                             </div>
                                             <button type="submit" className="btn btn-primary sign-in-btn">
-                                                Register
+                                                Create Account
                                             </button>
                                         </form>
                                     </div>

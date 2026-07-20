@@ -6,6 +6,7 @@ const customMessages = {
   wait_for_turn: { code: 419, message: 'Please wait for your turn' },
   no_player_found: { code: 409, message: 'Oops! Not enough players joined.' },
   invalid_code: { code: 404, message: 'Invalid code or board has been started already!' },
+  members_area_requires_approval: { code: 403, message: 'Access to members area requires approval. Email bigslickgames@gmail.com for information.' },
   can_not_join_board: { code: 401, message: 'can not join board.' },
   login_otp_success: { code: 205, message: 'Verification OTP sent to your registered mobile number.' },
   daily_reward_already_claimed: { code: 406, message: 'You have already claimed today reward' },

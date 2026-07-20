@@ -21,6 +21,7 @@ const DEFAULT_BOARD_PROTOTYPES = [
     nMaxPlayer: 9,
     nMinBuyIn: 1000,
     nMinBet: 50,
+    eBoardType: 'public',
     ePokerType: 'TwentyOneHoldem',
     eStatus: 'y',
   },
@@ -30,6 +31,7 @@ const DEFAULT_BOARD_PROTOTYPES = [
     nMaxPlayer: 9,
     nMinBuyIn: 5000,
     nMinBet: 125,
+    eBoardType: 'public',
     ePokerType: 'TwentyOneHoldem',
     eStatus: 'y',
   },
@@ -39,6 +41,7 @@ const DEFAULT_BOARD_PROTOTYPES = [
     nMaxPlayer: 9,
     nMinBuyIn: 25000,
     nMinBet: 500,
+    eBoardType: 'public',
     ePokerType: 'TwentyOneHoldem',
     eStatus: 'y',
   },
@@ -58,6 +61,7 @@ const LEGACY_BOARD_MIN_BET_UPDATES = {
 
 async function syncDefaultBoardPrototypes() {
   await BoardProtoType.collection.updateMany({ ePokerType: 'pokerJack' }, { $set: { ePokerType: 'TwentyOneHoldem' } });
+  await BoardProtoType.collection.updateMany({ eBoardType: { $exists: false } }, { $set: { eBoardType: 'public' } });
 
   for (const oPrototype of DEFAULT_BOARD_PROTOTYPES) {
     const oExistingPrototype = await BoardProtoType.findOne({ sName: oPrototype.sName }).lean();
@@ -71,6 +75,7 @@ async function syncDefaultBoardPrototypes() {
     if (!(Number(oExistingPrototype.nMaxPlayer) > 0)) oUpdate.nMaxPlayer = oPrototype.nMaxPlayer;
     if (!(Number(oExistingPrototype.nMinBuyIn) > 0)) oUpdate.nMinBuyIn = oPrototype.nMinBuyIn;
     if (!oExistingPrototype.ePokerType) oUpdate.ePokerType = oPrototype.ePokerType;
+    if (!oExistingPrototype.eBoardType) oUpdate.eBoardType = oPrototype.eBoardType;
     if (!oExistingPrototype.eStatus) oUpdate.eStatus = oPrototype.eStatus;
 
     if (Object.keys(oUpdate).length) {

@@ -24,6 +24,7 @@ const User = new mongoose.Schema(
     },
     sToken: String,
     nChips: { type: Number, default: 10000 },
+    bIsMember: { type: Boolean, default: false },
     isEmailVerified: { type: Boolean, default: false },
     // isMobileVerified: { type: Boolean, default: false },
     bVibrationEnabled: { type: Boolean, default: true },

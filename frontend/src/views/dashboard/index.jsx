@@ -23,6 +23,7 @@ import dailyRewardsLightsVideo from '../../assets/videos/daily_rewards_lights.mp
 import liveTablesImage from '../../assets/images/bg/live_tables.png';
 import privateTableImage from '../../assets/images/bg/private_table.png';
 import portraitTableImage from '../../assets/images/gameplay/portrate_table.png';
+import { getBigSlickGamesUrl } from '../auth/authDestination';
 
 function formatAmount(amount) {
     return _.formatCurrencyWithComa(Number(amount) || 0);
@@ -67,6 +68,7 @@ const PLAYER_OPTIONS = [4, 6, 9];
 const BUY_IN_OPTIONS = [1000, 5000, 15000, 20000];
 const LOBBY_TAB_IDS = ['lobby-live-tables', 'lobby-missions', 'lobby-private-table', 'lobby-player-profile', 'lobby-shop', 'lobby-bsg-games', 'lobby-settings'];
 const TABLE_SEAT_COLORS = ['#d4af6a', '#58c7ff', '#ff6b8a', '#7ee081', '#c38cff', '#ffb15c', '#5eead4', '#f7e36b', '#9bb6ff'];
+const MEMBERS_AREA_APPROVAL_MESSAGE = 'Access to members area requires approval. Email bigslickgames@gmail.com for information.';
 const stripePromise = process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY
     ? loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY)
     : Promise.resolve(null);
@@ -104,6 +106,10 @@ function getShopChipImage(nChips) {
     if (Number(nChips) <= 1000) return chips3;
     if (Number(nChips) <= 2500) return chips4;
     return chips5;
+}
+
+function hasPrivateTableAccess(profile = {}) {
+    return profile?.bIsMember === true;
 }
 
 function formatStorePrice(nPrice, sCurrency = 'USD') {
@@ -149,7 +155,7 @@ const Dashboard = () => {
     const [bHasAdjustedFilters, setHasAdjustedFilters] = useState(false);
     const [nCarouselDragOffset, setCarouselDragOffset] = useState(0);
 
-    const { data: tablesData = [], isLoading: isDataTableLoading } = useQuery('getTables', getTables, {
+    const { data: tablesData = [], isLoading: isDataTableLoading } = useQuery(['getTables', 'public'], () => getTables('public'), {
         select: (data) => getArrayPayload(data?.data?.data),
         onError: (error) => {
             console.log(error);
@@ -188,7 +194,7 @@ const Dashboard = () => {
         onError: (error) => {
             console.log(error);
             ReactToastify(error?.response?.data?.message || 'Unable to join table', 'error');
-            queryClient.invalidateQueries('getTables');
+            queryClient.invalidateQueries(['getTables', 'public']);
         },
     });
 
@@ -401,6 +407,7 @@ const Dashboard = () => {
     const nTotalWinnings = Number(profileData?.nTotalWinningAmount) || 0;
     const sDisplayName = profileData?.sUserName || 'Player';
     const sAvatarSrc = getAvatarImageSrc(profileData?.sAvatar, profileData?.sUserName);
+    const bPrivateTablesUnlocked = hasPrivateTableAccess(profileData);
     const aRewards = dataDailyRewards?.rewards?.length ? dataDailyRewards.rewards : [1000, 2500, 5000, 7500, 10000, 12500, 15000];
     const nEligibleDay = Number(dataDailyRewards?.eligibleDay) || 1;
     const bTodayRewardClaimed = Boolean(dataDailyRewards?.bTodayRewardClaimed);
@@ -410,6 +417,19 @@ const Dashboard = () => {
     const getBuyInPlayerCount = (nBuyIn) => (
         oBuyInPlayerCounts[Number(nBuyIn) || 0] || 0
     );
+
+    const handlePrivateTablesClick = () => {
+        if (!bPrivateTablesUnlocked) {
+            ReactToastify(MEMBERS_AREA_APPROVAL_MESSAGE, 'info');
+            return;
+        }
+
+        navigate('/private-table');
+    };
+
+    const handleOpenBsgHub = () => {
+        window.location.assign(getBigSlickGamesUrl());
+    };
 
     const aQuickNavItems = useMemo(() => ([
         {
@@ -930,14 +950,20 @@ const Dashboard = () => {
                 <div className='dashboard-hub__tab-stack'>
                     <div className='dashboard-hub__card-media'>
                         <img src={privateTableImage} alt='21 Holdem private table' />
+                        {!bPrivateTablesUnlocked ? (
+                            <div className='dashboard-hub__private-lock-badge'>
+                                <strong>Approval required</strong>
+                                <span>{MEMBERS_AREA_APPROVAL_MESSAGE}</span>
+                            </div>
+                        ) : null}
                     </div>
 
                     <button
                         type='button'
                         className='dashboard-hub__cta dashboard-hub__cta--private'
-                        onClick={() => navigate('/private-table')}
+                        onClick={handlePrivateTablesClick}
                     >
-                        Create Private Table
+                        {bPrivateTablesUnlocked ? 'Create Private Table' : 'Private Tables Locked'}
                     </button>
                 </div>
             </div>
@@ -1166,6 +1192,12 @@ const Dashboard = () => {
 
             <div className='dashboard-hub__desktop-card-media'>
                 <img src={privateTableImage} alt='21 Holdem private table' />
+                {!bPrivateTablesUnlocked ? (
+                    <div className='dashboard-hub__private-lock-badge dashboard-hub__private-lock-badge--desktop'>
+                        <strong>Approval required</strong>
+                        <span>{MEMBERS_AREA_APPROVAL_MESSAGE}</span>
+                    </div>
+                ) : null}
             </div>
 
             <div className='dashboard-hub__desktop-card-body'>
@@ -1179,9 +1211,9 @@ const Dashboard = () => {
                 <button
                     type='button'
                     className='dashboard-hub__desktop-cta dashboard-hub__desktop-cta--primary'
-                    onClick={() => navigate('/private-table')}
+                    onClick={handlePrivateTablesClick}
                 >
-                    Create Table
+                    {bPrivateTablesUnlocked ? 'Create Table' : 'Locked'}
                 </button>
             </div>
         </article>
@@ -1323,6 +1355,9 @@ const Dashboard = () => {
 
                 <div className='dashboard-hub__shell'>
                     <header className='dashboard-hub__hero'>
+                        <button type='button' className='dashboard-hub__hub-link' onClick={handleOpenBsgHub}>
+                            BSG Hub
+                        </button>
                         {renderLobbyIconCarousel()}
                     </header>
 

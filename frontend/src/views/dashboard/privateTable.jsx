@@ -7,6 +7,13 @@ import { createPrivateTable, getTables, joinPrivateTable } from 'query/gameTable
 import { getCookie, ReactToastify } from 'shared/utils';
 import { useForm } from 'react-hook-form';
 import { getDirtyFormValues } from 'helper/helper';
+import { getProfile } from 'query/profile.query';
+
+const MEMBERS_AREA_APPROVAL_MESSAGE = 'Access to members area requires approval. Email bigslickgames@gmail.com for information.';
+
+function hasPrivateTableAccess(profile = {}) {
+    return profile?.bIsMember === true;
+}
 
 const PrivateTable = () => {
     const navigate = useNavigate();
@@ -21,7 +28,16 @@ const PrivateTable = () => {
     const { register, watch, formState: { errors, isDirty, dirtyFields }, handleSubmit } = useForm({ mode: "all" });
     const privateCode = watch("sPrivateCode");
 
-    const { isLoading: isDataTabelLoading } = useQuery("getTables", getTables, {
+    const { data: profileData } = useQuery("profileData", getProfile, {
+        select: (data) => data?.data?.data || null,
+        onError: (error) => {
+            console.log(error);
+        },
+    });
+
+    const bPrivateTablesUnlocked = hasPrivateTableAccess(profileData);
+
+    const { isLoading: isDataTabelLoading } = useQuery(["getTables", "private"], () => getTables('private'), {
         onSuccess: (data) => {
             if (data.status === 200) {
                 setTablesData([]);
@@ -41,6 +57,7 @@ const PrivateTable = () => {
         },
         onError: (error) => {
             console.log(error);
+            ReactToastify(error?.response?.data?.message || 'Unable to load private tables', 'error');
         },
     });
 
@@ -55,7 +72,7 @@ const PrivateTable = () => {
         onError: (error) => {
             console.log(error);
             ReactToastify(error?.response?.data?.message, 'error');
-            queryClient.invalidateQueries("getTables");
+            queryClient.invalidateQueries(["getTables", "private"]);
         },
     });
 
@@ -70,7 +87,7 @@ const PrivateTable = () => {
             console.log(error);
             setModalShow(false);
             ReactToastify(error?.response?.data?.message, 'error');
-            queryClient.invalidateQueries("getTables");
+            queryClient.invalidateQueries(["getTables", "private"]);
             queryClient.invalidateQueries("profileData");
         },
     });
@@ -84,7 +101,16 @@ const PrivateTable = () => {
         setPayload(payloadData);
     }, [privateCode, isDirty, dirtyFields]);
 
+    const handleLockedAccess = () => {
+        ReactToastify(MEMBERS_AREA_APPROVAL_MESSAGE, 'info');
+    };
+
     const onSubmit = () => {
+        if (!bPrivateTablesUnlocked) {
+            handleLockedAccess();
+            return;
+        }
+
         mutateJoinPrivateTable(payload);
     }
 
@@ -108,10 +134,17 @@ const PrivateTable = () => {
                         </div> */}
                         <div className='dashboard-container__content-table-selection-content'>
                             <div className='sub-dashboard-container__content'>
-                                <div className='dashboard-container__content-table-selection-content-options private-table'>
-                                    <div className='title'>Private Table</div>
-                                    <Button className='join-button' onClick={() => setModalShow(true)}>Join Table</Button>
-                                </div>
+                                    <div className='dashboard-container__content-table-selection-content-options private-table'>
+                                        <div className='title'>Private Table</div>
+                                        {!bPrivateTablesUnlocked ? (
+                                            <div className='private-table-approval-message'>
+                                                {MEMBERS_AREA_APPROVAL_MESSAGE}
+                                            </div>
+                                        ) : null}
+                                        <Button className='join-button' onClick={() => bPrivateTablesUnlocked ? setModalShow(true) : handleLockedAccess()}>
+                                            Join Table
+                                        </Button>
+                                    </div>
                                 <div className='dashboard-container__content-table-selection-content-tables'>
                                     <Row className='g-2'>
                                         {!isDataTabelLoading
@@ -119,7 +152,7 @@ const PrivateTable = () => {
                                                 {
                                                     tablesData.length > 0 ? tablesData.map((table, index) => (
                                                         <Col xl={4} lg={4} md={6} sm={12} xs={12} key={index} className='dashboard-table'>
-                                                            <CustomTable isPrivate={true} key={table._id} tableName={table.sName} minChips={table.nMinBet} minBuyIn={table.nMinBuyIn} onPlay={() => mutateCreatePrivateTable(table._id)} />
+                                                            <CustomTable isPrivate={true} key={table._id} tableName={table.sName} minChips={table.nMinBet} minBuyIn={table.nMinBuyIn} onPlay={() => bPrivateTablesUnlocked ? mutateCreatePrivateTable(table._id) : handleLockedAccess()} />
                                                         </Col>
                                                     )) : <Col xl={12} lg={12} md={12} sm={12} xs={12} className='no-table'>No tables found!</Col>
                                                 }

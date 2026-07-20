@@ -9,6 +9,11 @@ const BoardProtoTypeSchema = new mongoose.Schema(
     // nMaxBuyIn: { type: Number, default: 0 },
     // nMaxTableAmount: { type: Number, default: 0 },
     nMinBet: { type: Number, default: 0 },
+    eBoardType: {
+      type: String,
+      enum: ['public', 'private'],
+      default: 'public',
+    },
     ePokerType: {
       type: String,
       enum: ['TwentyOneHoldem'],

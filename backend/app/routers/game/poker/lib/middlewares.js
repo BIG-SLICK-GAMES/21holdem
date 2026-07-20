@@ -128,8 +128,15 @@ async function evictExcessLiveBotsForIncomingHuman({ board, boardProto, nIncomin
 middleware.getPrototype = async (req, res, next) => {
   try {
     const { iProtoId } = _.pick(req.body, ['iProtoId']);
+    const sExpectedBoardType = req.path.includes('/private/') ? 'private' : 'public';
+    const query = { _id: iProtoId };
+    if (sExpectedBoardType === 'private') {
+      query.eBoardType = 'private';
+    } else {
+      query.$or = [{ eBoardType: 'public' }, { eBoardType: { $exists: false } }];
+    }
 
-    const boardProtoType = await BoardProtoType.findOne({ _id: iProtoId }).lean();
+    const boardProtoType = await BoardProtoType.findOne(query).lean();
     if (!boardProtoType || boardProtoType.eStatus != 'y') return res.reply(messages.custom.table_not_found);
 
     req.boardProto = boardProtoType;
@@ -276,6 +283,7 @@ middleware.enableGuestTutorialMode = (req, _res, next) => {
 };
 
 middleware.createPrivateBoard = async (req, res, next) => {
+  if (req.user.bIsMember !== true) return res.reply(messages.custom.members_area_requires_approval);
   if (req.user.aPokerBoard.length) return res.reply(messages.custom.max_board_join_limit);
 
   const { nChips } = req.user;
@@ -286,13 +294,20 @@ middleware.createPrivateBoard = async (req, res, next) => {
     eOpponent: 'user',
   });
 
-  await new PokerBoard({ iBoardId: req.board._id, sPrivateCode: req.board.sPrivateCode, aParticipants: [req.user._id] }).save();
+  await new PokerBoard({
+    iBoardId: req.board._id,
+    iProtoId: req.boardProto._id,
+    sPrivateCode: req.board.sPrivateCode,
+    aParticipants: [req.user._id],
+    eTableMode: 'private',
+  }).save();
 
   next();
 };
 
 middleware.joinPrivateBoard = async (req, res, next) => {
   try {
+    if (req.user.bIsMember !== true) return res.reply(messages.custom.members_area_requires_approval);
     if (req.user.aPokerBoard.length) return res.reply(messages.custom.max_board_join_limit);
 
     const body = _.pick(req.body, ['sPrivateCode']);

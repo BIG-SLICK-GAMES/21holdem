@@ -243,6 +243,78 @@ $nav-button-font:   13px;
     }
 }
 
+.dashboard-hub__hub-link {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    z-index: 6;
+    min-height: 38px;
+    padding: 0 14px;
+    border: 1px solid rgba(207, 236, 255, 0.38);
+    border-radius: 999px;
+    background: rgba(5, 15, 27, 0.76);
+    color: #f5fbff;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    backdrop-filter: blur(14px) saturate(140%);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.28);
+}
+
+.dashboard-hub__hub-link:hover,
+.dashboard-hub__hub-link:focus {
+    border-color: rgba(255, 213, 90, 0.72);
+    color: #ffffff;
+}
+
+.dashboard-hub__private-lock-badge {
+    position: absolute;
+    inset: auto 12px 12px 12px;
+    z-index: 3;
+    display: grid;
+    gap: 4px;
+    padding: 12px;
+    border: 1px solid rgba(255, 213, 90, 0.5);
+    border-radius: 8px;
+    background: rgba(8, 15, 25, 0.86);
+    color: #f7fbff;
+    box-shadow: 0 16px 30px rgba(0, 0, 0, 0.34);
+    backdrop-filter: blur(12px) saturate(135%);
+}
+
+.dashboard-hub__private-lock-badge strong {
+    color: #ffe28a;
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.06em;
+    line-height: 1.1;
+    text-transform: uppercase;
+}
+
+.dashboard-hub__private-lock-badge span {
+    color: rgba(238, 247, 255, 0.9);
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.3;
+}
+
+.dashboard-hub__private-lock-badge--desktop {
+    inset: auto 14px 14px 14px;
+}
+
+.private-table-approval-message {
+    max-width: 520px;
+    padding: 10px 12px;
+    border: 1px solid rgba(255, 213, 90, 0.44);
+    border-radius: 8px;
+    background: rgba(20, 29, 42, 0.88);
+    color: #ffe28a;
+    font-size: 13px;
+    font-weight: 800;
+    line-height: 1.35;
+}
+
 /* Dashboard Hub Studio Override */
 .dashboard-hub {
     &__hero {
@@ -5817,7 +5889,9 @@ $nav-button-font:   13px;
     }
 
     &__card-media {
+        position: relative;
         height: clamp(220px, 31dvh, 320px);
+        overflow: hidden;
     }
 
     &__tab-body--live {

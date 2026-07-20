@@ -1,10 +1,11 @@
 import { exchangeHandoff, login } from 'query/login.query';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useMutation } from 'react-query';
 import { useForm } from 'react-hook-form';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ReactToastify, setCookie } from 'shared/utils';
-import holdemLogoImg from '../../../assets/images/bg/21HLogo.png';
+import bigSlickGamesLogoImg from '../../../assets/images/bsg/big-slick-games.png';
+import { getBigSlickGamesUrl } from '../authDestination';
 
 const LOGIN_REMEMBER_ME_KEY = 'bsg:remember-me';
 const LOGIN_REMEMBERED_IDENTIFIER_KEY = 'bsg:remembered-login';
@@ -16,19 +17,14 @@ const Login = () => {
     const verificationStatus = searchParams.get('verificationStatus');
     const verifiedUserName = searchParams.get('sUserName');
 
-    const [showSplash, setShowSplash] = useState(false);
-    const splashTimerRef = useRef(null);
-
-    const goToLobby = (path = '/lobby', opts = {}) => {
-        setShowSplash(true);
-        splashTimerRef.current = setTimeout(() => {
-            navigate(path, { replace: true, ...opts });
-        }, 4200);
+    const goToBigSlickGames = (opts = {}) => {
+        const destination = getBigSlickGamesUrl();
+        if (typeof window !== 'undefined') {
+            window.location.assign(destination);
+            return;
+        }
+        navigate('/', { replace: true, ...opts });
     };
-
-    useEffect(() => () => {
-        if (splashTimerRef.current) clearTimeout(splashTimerRef.current);
-    }, []);
     const [rememberMe, setRememberMe] = useState(() => {
         if (typeof window === 'undefined') return false;
         return window.localStorage.getItem(LOGIN_REMEMBER_ME_KEY) === 'true';
@@ -40,7 +36,7 @@ const Login = () => {
         onSuccess: (data) => {
             if (data.status === 200) {
                 setCookie('sAuthToken', data.data.data.authorization, rememberMe ? 14 : undefined);
-                goToLobby('/lobby');
+                goToBigSlickGames();
             } else {
                 ReactToastify(data.data.message, 'error', 'login');
             }
@@ -60,7 +56,7 @@ const Login = () => {
         onSuccess: (data) => {
             if (data.status === 200) {
                 setCookie('sAuthToken', data.data.data.authorization, 14);
-                goToLobby('/lobby', { replace: true });
+                goToBigSlickGames({ replace: true });
             } else {
                 ReactToastify(data?.data?.message || 'Website handoff failed', 'error', 'handoff');
             }
@@ -124,21 +120,14 @@ const Login = () => {
 
     return (
         <>
-        {showSplash && (
-            <div className='login-splash' aria-hidden='true'>
-                <span className='login-splash__ring' />
-                <span className='login-splash__ring login-splash__ring--two' />
-                <span className='login-splash__ring login-splash__ring--three' />
-                <div className='login-splash__logo-wrap'>
-                    <img src={holdemLogoImg} alt="21 Hold'em" className='login-splash__logo' />
-                    <span className='login-splash__tagline'>Big Slick Games</span>
-                </div>
-            </div>
-        )}
         <div className='login-background-only'>
+            <div className='login-background-only__brand'>
+                <img src={bigSlickGamesLogoImg} alt='Big Slick Games' />
+                <span>Profile, wallet, hub, and games</span>
+            </div>
             <div className='login-background-only__promo'>
-                <span className='login-background-only__promo-kicker'>New players</span>
-                <span className='login-background-only__promo-main'>10K Free Chips</span>
+                <span className='login-background-only__promo-kicker'>Big Slick Games</span>
+                <span className='login-background-only__promo-main'>Member Login</span>
             </div>
             <form autoComplete='off' onSubmit={handleSubmit(onLogin)} className='login-background-only__fields'>
                 <input

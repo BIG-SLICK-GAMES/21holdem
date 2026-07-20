@@ -4,7 +4,10 @@
     z-index: 20;
     min-height: 100vh;
     overflow: hidden;
-    background: #020915 url("../../../images/bg/login_bg_new.png") no-repeat center 93px / contain;
+    background:
+        radial-gradient(circle at 50% 14%, rgba(255, 213, 90, 0.18) 0%, rgba(255, 213, 90, 0) 28%),
+        radial-gradient(circle at 18% 16%, rgba(70, 203, 255, 0.2) 0%, rgba(70, 203, 255, 0) 34%),
+        linear-gradient(145deg, #061423 0%, #101722 46%, #090d13 100%);
 
     &__burst {
         position: absolute;
@@ -257,7 +260,7 @@
     &__promo {
         position: absolute;
         left: 50%;
-        top: 16px;
+        top: 158px;
         bottom: auto;
         transform: translateX(-50%);
         z-index: 3;
@@ -281,6 +284,34 @@
         text-align: center;
         text-transform: uppercase;
         animation: loginPromoFlash 1.25s ease-in-out infinite;
+    }
+
+    &__brand {
+        position: relative;
+        z-index: 4;
+        display: grid;
+        justify-items: center;
+        gap: 8px;
+        width: min(calc(100vw - 32px), 430px);
+        margin: 16px auto 0;
+        text-align: center;
+
+        img {
+            width: min(300px, 78vw);
+            max-height: 132px;
+            object-fit: contain;
+            filter: drop-shadow(0 16px 26px rgba(0, 0, 0, 0.42));
+        }
+
+        span {
+            color: rgba(224, 242, 255, 0.82);
+            font-family: "TT Commons";
+            font-size: 13px;
+            font-weight: 850;
+            line-height: 1.15;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
     }
 
     &__promo-kicker {
@@ -3599,7 +3630,10 @@
                     border: 0 !important;
                     border-radius: 0 !important;
                     overflow: visible !important;
-                    background: url("../../../images/bg/login_bg_new.png") no-repeat center / 100% 100% !important;
+                    background:
+                        radial-gradient(circle at 50% 8%, rgba(255, 213, 90, 0.18) 0%, rgba(255, 213, 90, 0) 34%),
+                        radial-gradient(circle at 18% 18%, rgba(70, 203, 255, 0.18) 0%, rgba(70, 203, 255, 0) 38%),
+                        linear-gradient(145deg, #061423 0%, #101722 46%, #090d13 100%) !important;
                     box-shadow: none !important;
                     backdrop-filter: none !important;
 
@@ -3625,7 +3659,10 @@
                     border-radius: 0 !important;
                     display: block !important;
                     overflow: visible !important;
-                    background: url("../../../images/bg/login_bg_new.png") no-repeat center / 100% 100% !important;
+                    background:
+                        radial-gradient(circle at 50% 8%, rgba(255, 213, 90, 0.18) 0%, rgba(255, 213, 90, 0) 34%),
+                        radial-gradient(circle at 18% 18%, rgba(70, 203, 255, 0.18) 0%, rgba(70, 203, 255, 0) 38%),
+                        linear-gradient(145deg, #061423 0%, #101722 46%, #090d13 100%) !important;
                     box-shadow: none !important;
                     backdrop-filter: none !important;
                     pointer-events: none;
@@ -3856,73 +3893,3 @@
     }
 }
 
-@keyframes splashLogoIn {
-    0%   { opacity: 0; transform: scale(0.75) translateY(14px); }
-    65%  { opacity: 1; transform: scale(1.04) translateY(-3px); }
-    100% { opacity: 1; transform: scale(1) translateY(0); }
-}
-@keyframes splashRingExpand {
-    0%   { transform: scale(0.5); opacity: 0.6; }
-    100% { transform: scale(2.8); opacity: 0; }
-}
-@keyframes splashTagline {
-    0%   { opacity: 0; letter-spacing: 0.32em; }
-    100% { opacity: 1; letter-spacing: 0.18em; }
-}
-@keyframes splashFadeOut {
-    0%   { opacity: 1; }
-    100% { opacity: 0; }
-}
-
-.login-splash {
-    position: fixed;
-    inset: 0;
-    z-index: 9999;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: radial-gradient(ellipse at 50% 42%, #0c2038 0%, #010a14 100%);
-
-    &--fade-out {
-        animation: splashFadeOut 0.5s ease-in forwards;
-    }
-
-    &__ring {
-        position: absolute;
-        width: 160px;
-        height: 160px;
-        border-radius: 50%;
-        border: 1.5px solid rgba(202, 162, 44, 0.5);
-        animation: splashRingExpand 1.8s ease-out forwards;
-        opacity: 0;
-
-        &--two   { animation-delay: 0.45s; }
-        &--three { animation-delay: 0.9s; }
-    }
-
-    &__logo-wrap {
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 20px;
-    }
-
-    &__logo {
-        width: min(58vw, 280px);
-        height: auto;
-        display: block;
-        animation: splashLogoIn 0.7s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
-        filter: drop-shadow(0 2px 24px rgba(202, 162, 44, 0.55));
-    }
-
-    &__tagline {
-        font-size: 11px;
-        letter-spacing: 0.18em;
-        text-transform: uppercase;
-        color: rgba(244, 251, 255, 0.82);
-        font-weight: 900;
-        opacity: 0;
-        animation: splashTagline 0.5s ease 0.9s forwards;
-    }
-}

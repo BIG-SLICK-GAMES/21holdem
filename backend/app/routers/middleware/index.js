@@ -13,6 +13,7 @@ const authProject = {
   eStatus: true,
   sToken: true,
   nChips: true,
+  bIsMember: true,
   isEmailVerified: true,
   bVibrationEnabled: true,
   bSoundEnabled: true,
