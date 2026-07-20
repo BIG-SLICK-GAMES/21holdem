@@ -232,7 +232,7 @@ export default class Preload extends Phaser.Scene {
         splash.setScale(splashScale);
         this.tweens.add({
             targets: splash,
-            scale: splashScale * 1.08,
+            scale: splashScale * 1.015,
             duration: 5600,
             ease: 'Sine.easeOut',
         });

@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import { ReactToastify } from 'shared/utils';
-import holdemLogoImg from '../../../assets/images/bg/21HLogo.png';
+import bigSlickGamesLogoImg from '../../../assets/images/bsg/big-slick-games.png';
 import { getBigSlickGamesUrl } from '../authDestination';
 
 const Register = () => {
@@ -42,11 +42,11 @@ const Register = () => {
 
     return (
         <main className='auth-modern auth-modern--register'>
-            <section className='auth-modern__product auth-modern__product--simple' aria-label="Big Slick Games 21 Hold'em">
+            <section className='auth-modern__product auth-modern__product--simple' aria-label='Big Slick Games'>
                 <div className='auth-modern__brand-lockup'>
-                    <img src={holdemLogoImg} alt="21 Hold'em" className='auth-modern__logo' />
+                    <img src={bigSlickGamesLogoImg} alt='Big Slick Games' className='auth-modern__logo auth-modern__logo--bsg' />
                     <p className='auth-modern__signup-line'>
-                        You are signing up to Big Slick Games - The home of 21 Hold&apos;em.
+                        Create your Big Slick Games profile for the hub, wallet, and game access.
                     </p>
                 </div>
             </section>
@@ -113,7 +113,7 @@ const Register = () => {
                         </span>
                     </label>
                     <button type='submit' className='auth-modern__submit' disabled={isLoading}>
-                        {isLoading ? 'Creating account...' : 'Create 21 Hold\'em account'}
+                        {isLoading ? 'Creating account...' : 'Create BSG account'}
                     </button>
                 </form>
 

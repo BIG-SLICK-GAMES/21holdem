@@ -6051,22 +6051,49 @@ $nav-button-font:   13px;
         position: absolute;
         left: 14px;
         bottom: 14px;
+        right: 14px;
         z-index: 2;
-        display: inline-flex;
-        align-items: center;
+        display: grid;
+        gap: 4px;
         min-height: 34px;
-        padding: 8px 12px 6px;
+        padding: 10px 12px 9px;
         border: 1px solid rgba(255, 226, 160, 0.52);
-        border-radius: 999px;
+        border-radius: 14px;
         background: rgba(18, 11, 4, 0.78);
         color: #ffe6a8;
         font-family: 'TT Commons';
-        font-size: 11px;
-        font-weight: 900;
-        letter-spacing: 0.12em;
-        line-height: 1;
-        text-transform: uppercase;
+        line-height: 1.16;
         backdrop-filter: blur(10px);
+
+        strong {
+            font-size: 11px;
+            font-weight: 900;
+            letter-spacing: 0.12em;
+            line-height: 1;
+            text-transform: uppercase;
+        }
+
+        span {
+            max-width: 100%;
+            color: rgba(255, 246, 223, 0.92);
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0;
+            text-transform: none;
+        }
+    }
+
+    &__private-lock-badge--desktop {
+        z-index: 3;
+        left: 16px;
+        right: 16px;
+        bottom: 16px;
+        background:
+            linear-gradient(180deg, rgba(42, 18, 8, 0.9) 0%, rgba(16, 8, 4, 0.92) 100%);
+
+        span {
+            font-size: 13px;
+        }
     }
 
     &__tab-body--live {
@@ -6891,7 +6918,7 @@ $nav-button-font:   13px;
         }
 
         &__desktop-topbar {
-            grid-template-columns: minmax(0, 1fr) auto;
+            grid-template-columns: auto minmax(0, 1fr);
             align-items: center;
             gap: 14px;
         }
@@ -7016,6 +7043,45 @@ $nav-button-font:   13px;
 }
 
 .dashboard-hub {
+    &__hub-link {
+        position: relative;
+        z-index: 9;
+        min-height: 34px;
+        padding: 7px 13px;
+        border: 1px solid rgba(255, 226, 150, 0.48);
+        border-radius: 999px;
+        color: #ffeec2;
+        background: linear-gradient(180deg, rgba(39, 48, 65, 0.9), rgba(11, 18, 29, 0.9));
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.26), inset 0 1px 0 rgba(255, 255, 255, 0.13);
+        font-family: 'TT Commons', sans-serif;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0;
+        line-height: 1;
+        text-transform: uppercase;
+        white-space: nowrap;
+
+        &:hover,
+        &:focus-visible {
+            border-color: rgba(255, 224, 139, 0.78);
+            color: #fff8e3;
+            background: linear-gradient(180deg, rgba(66, 76, 95, 0.94), rgba(22, 31, 46, 0.94));
+        }
+
+        &--mobile {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+
+        &--desktop {
+            flex: 0 0 auto;
+            min-height: 40px;
+            padding-inline: 16px;
+            font-size: 13px;
+        }
+    }
+
     &__icon-carousel {
         position: relative;
         z-index: 1;

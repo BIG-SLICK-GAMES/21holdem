@@ -17,6 +17,7 @@ import _ from 'scripts/helper';
 import DailyRewardsPanel from 'shared/components/DailyRewardsPanel';
 import { DEFAULT_PROFILE_BANNER, getAvatarImageSrc } from 'shared/constants/builtInAvatars';
 import { getCookie, ReactToastify } from 'shared/utils';
+import { getBigSlickGamesUrl } from 'views/auth/authDestination';
 import dailyRewardsLobbyBackground from '../../assets/images/bg/daily_rewards_bg.png';
 import dailyRewardsLightsVideo from '../../assets/videos/daily_rewards_lights.mp4';
 import liveTablesImage from '../../assets/images/bg/live_tables.png';
@@ -52,22 +53,10 @@ function getAvailableTableCount(table) {
 }
 
 function hasPrivateTableAccess(profile = {}) {
-    return Boolean(
-        profile?.bIsMember ||
-        profile?.isMember ||
-        profile?.bMember ||
-        profile?.bIsSubscribed ||
-        profile?.isSubscribed ||
-        profile?.bPrivateTableAccess ||
-        profile?.bHasPrivateTableAccess ||
-        profile?.eUserType === 'member' ||
-        profile?.eUserType === 'premium' ||
-        profile?.eUserType === 'vip' ||
-        profile?.sUserType === 'member' ||
-        profile?.sUserType === 'premium' ||
-        profile?.sUserType === 'vip'
-    );
+    return profile?.bIsMember === true;
 }
+
+const MEMBERS_AREA_APPROVAL_MESSAGE = 'Access to members area requires approval. Email bigslickgames@gmail.com for information.';
 
 function sortTablesByPriority(a, b) {
     const nLiveTableDiff = Number(b?.nLiveTableCount || 0) - Number(a?.nLiveTableCount || 0);
@@ -178,7 +167,7 @@ const Dashboard = () => {
     const [aFallbackTablesData, setFallbackTablesData] = useState([]);
     const [bIsJoiningTable, setIsJoiningTable] = useState(false);
 
-    const { data: tablesData = [], isLoading: isDataTableLoading, refetch: refetchTables } = useQuery('getTables', getTables, {
+    const { data: tablesData = [], isLoading: isDataTableLoading, refetch: refetchTables } = useQuery('getTables', () => getTables('public'), {
         select: (data) => getArrayPayload(data?.data?.data),
         onError: (error) => {
             console.log(error);
@@ -685,6 +674,10 @@ const Dashboard = () => {
         }
     };
 
+    const handleReturnToHub = () => {
+        window.location.assign(getBigSlickGamesUrl());
+    };
+
     const handleCarouselStep = (nDirection) => {
         if (!aQuickNavItems.length) return;
         const nNextIndex = (nActiveCarouselIndex + nDirection + aQuickNavItems.length) % aQuickNavItems.length;
@@ -840,15 +833,9 @@ const Dashboard = () => {
         setActiveBuyIn(Number(nBuyIn) || BUY_IN_OPTIONS[0]);
     };
 
-    const handleOpenShopTab = (bScrollDesktop = false) => {
-        const oShopTab = aQuickNavItems.find((item) => item.id === 'lobby-shop');
-        if (oShopTab) handleQuickNavSelect(oShopTab, { bScrollDesktop });
-    };
-
     const handlePrivateTablesClick = () => {
         if (!bPrivateTablesUnlocked) {
-            ReactToastify('Private tables are members-only. Visit the shop to unlock member access.', 'error');
-            handleOpenShopTab();
+            ReactToastify(MEMBERS_AREA_APPROVAL_MESSAGE, 'error');
             return;
         }
         navigate('/private-table');
@@ -1057,7 +1044,12 @@ const Dashboard = () => {
                 <div className='dashboard-hub__tab-stack'>
                     <div className={`dashboard-hub__card-media dashboard-hub__card-media--private${bPrivateTablesUnlocked ? '' : ' is-locked'}`}>
                         <img src={privateTableImage} alt='21 Holdem private table' />
-                        {!bPrivateTablesUnlocked ? <span className='dashboard-hub__private-lock-badge'>Members Only</span> : null}
+                        {!bPrivateTablesUnlocked ? (
+                            <span className='dashboard-hub__private-lock-badge'>
+                                <strong>Members Only</strong>
+                                <span>{MEMBERS_AREA_APPROVAL_MESSAGE}</span>
+                            </span>
+                        ) : null}
                     </div>
 
                     <button
@@ -1066,7 +1058,7 @@ const Dashboard = () => {
                         onClick={handlePrivateTablesClick}
                         aria-disabled={!bPrivateTablesUnlocked}
                     >
-                        {bPrivateTablesUnlocked ? 'Create Private Table' : 'Unlock Private Tables'}
+                        {bPrivateTablesUnlocked ? 'Create Private Table' : 'Members Only'}
                     </button>
                 </div>
             </div>
@@ -1301,12 +1293,18 @@ const Dashboard = () => {
 
             <div className='dashboard-hub__desktop-card-media'>
                 <img src={privateTableImage} alt='21 Holdem private table' />
+                {!bPrivateTablesUnlocked ? (
+                    <span className='dashboard-hub__private-lock-badge dashboard-hub__private-lock-badge--desktop'>
+                        <strong>Members Only</strong>
+                        <span>{MEMBERS_AREA_APPROVAL_MESSAGE}</span>
+                    </span>
+                ) : null}
             </div>
 
             <div className='dashboard-hub__desktop-card-body'>
                 <div className='dashboard-hub__desktop-spotlight'>
                     <strong>Host your own room</strong>
-                    <span>{bPrivateTablesUnlocked ? 'Create a code, invite your players, and keep the table private from the public lobby.' : 'Private tables are reserved for members. Unlock access before creating or joining a room.'}</span>
+                    <span>{bPrivateTablesUnlocked ? 'Create a code, invite your players, and keep the table private from the public lobby.' : MEMBERS_AREA_APPROVAL_MESSAGE}</span>
                 </div>
             </div>
 
@@ -1472,6 +1470,9 @@ const Dashboard = () => {
 
                 <div className='dashboard-hub__shell'>
                     <header className='dashboard-hub__hero'>
+                        <button type='button' className='dashboard-hub__hub-link dashboard-hub__hub-link--mobile' onClick={handleReturnToHub}>
+                            BSG Hub
+                        </button>
                         <div className={`dashboard-hub__icon-carousel${Math.abs(nCarouselDragOffset) > 0.02 ? ' is-dragging' : ''}`} aria-label='Lobby pages'>
                             <div className='dashboard-hub__carousel-label' aria-live='polite'>
                                 {oActiveCarouselItem?.label}
@@ -1520,6 +1521,9 @@ const Dashboard = () => {
 
                     <div className='dashboard-hub__desktop-stage'>
                         <div className='dashboard-hub__desktop-topbar'>
+                            <button type='button' className='dashboard-hub__hub-link dashboard-hub__hub-link--desktop' onClick={handleReturnToHub}>
+                                BSG Hub
+                            </button>
                             <nav className='dashboard-hub__desktop-nav' aria-label='Lobby shortcuts'>
                                 {aQuickNavItems.map((item) => {
                                     const bIsActive = item.kind === 'tab' && sActiveTab === item.id;

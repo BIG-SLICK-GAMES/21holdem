@@ -1,8 +1,11 @@
 
 import axios from "../axios";
 
-export async function getTables() {
-    return await axios.get('/api/v1/poker/board/list')
+export async function getTables(eBoardType = 'public') {
+    const params = new URLSearchParams()
+    if (eBoardType) params.set('eBoardType', eBoardType)
+    const query = params.toString()
+    return await axios.get(`/api/v1/poker/board/list${query ? `?${query}` : ''}`)
 }
 
 export async function joinTable(iTableId) {

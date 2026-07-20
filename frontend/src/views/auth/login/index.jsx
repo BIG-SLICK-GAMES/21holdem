@@ -1,11 +1,10 @@
 import { exchangeHandoff, login } from 'query/login.query';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useMutation } from 'react-query';
 import { useForm } from 'react-hook-form';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ReactToastify, setCookie } from 'shared/utils';
-import holdemLogoImg from '../../../assets/images/bg/21HLogo.png';
-import loadingSplashImg from '../../../assets/images/splash/21holdem-loading.png';
+import bigSlickGamesLogoImg from '../../../assets/images/bsg/big-slick-games.png';
 import { getBigSlickGamesUrl } from '../authDestination';
 
 const LOGIN_REMEMBER_ME_KEY = 'bsg:remember-me';
@@ -19,24 +18,14 @@ const Login = () => {
     const verificationStatus = searchParams.get('verificationStatus');
     const verifiedUserName = searchParams.get('sUserName');
 
-    const [showSplash, setShowSplash] = useState(false);
-    const splashTimerRef = useRef(null);
-
     const goToBigSlickGames = (opts = {}) => {
-        setShowSplash(true);
-        splashTimerRef.current = setTimeout(() => {
-            const destination = getBigSlickGamesUrl();
-            if (typeof window !== 'undefined') {
-                window.location.assign(destination);
-                return;
-            }
-            navigate('/', { replace: true, ...opts });
-        }, 1800);
+        const destination = getBigSlickGamesUrl();
+        if (typeof window !== 'undefined') {
+            window.location.assign(destination);
+            return;
+        }
+        navigate('/', { replace: true, ...opts });
     };
-
-    useEffect(() => () => {
-        if (splashTimerRef.current) clearTimeout(splashTimerRef.current);
-    }, []);
     const [rememberMe, setRememberMe] = useState(() => {
         if (typeof window === 'undefined') return false;
         return window.localStorage.getItem(LOGIN_REMEMBER_ME_KEY) === 'true';
@@ -144,17 +133,12 @@ const Login = () => {
 
     return (
         <>
-            {showSplash && (
-                <div className='login-splash' aria-hidden='true'>
-                    <img src={loadingSplashImg} alt='' className='login-splash__image' />
-                </div>
-            )}
             <main className='auth-modern auth-modern--login'>
-                <section className='auth-modern__product auth-modern__product--simple' aria-label="Big Slick Games 21 Hold'em">
+                <section className='auth-modern__product auth-modern__product--simple' aria-label='Big Slick Games'>
                     <div className='auth-modern__brand-lockup'>
-                        <img src={holdemLogoImg} alt="21 Hold'em" className='auth-modern__logo' />
+                        <img src={bigSlickGamesLogoImg} alt='Big Slick Games' className='auth-modern__logo auth-modern__logo--bsg' />
                         <p className='auth-modern__signup-line'>
-                            You are signing up to Big Slick Games - The home of 21 Hold&apos;em.
+                            Sign in to Big Slick Games to access your profile, wallet, hub, and games.
                         </p>
                     </div>
                 </section>

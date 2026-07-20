@@ -167,7 +167,14 @@ async function ensureLiveLobbySeedBoards(aProtoData = []) {
 
 controllers.listBoard = async (req, res) => {
   try {
+    const { eBoardType } = _.pick(req.query, ['eBoardType']);
+    const sBoardType = eBoardType === 'private' ? 'private' : 'public';
     const query = { eStatus: 'y' };
+    if (sBoardType === 'private') {
+      query.eBoardType = 'private';
+    } else {
+      query.$or = [{ eBoardType: 'public' }, { eBoardType: { $exists: false } }];
+    }
     const project = {
       sName: 1,
       nMinBet: 1,
@@ -175,10 +182,11 @@ controllers.listBoard = async (req, res) => {
       nMinBuyIn: 1,
       // nMaxBuyIn: 1,
       nMaxPlayer: 1,
+      eBoardType: 1,
     };
 
     const aProtoData = await BoardProtoType.find(query, project).sort({ nMinBet: 1 }).lean();
-    await ensureLiveLobbySeedBoards(aProtoData);
+    if (sBoardType === 'public') await ensureLiveLobbySeedBoards(aProtoData);
     const aProtoIds = aProtoData.map(proto => proto._id);
 
     const aLiveBoardStats = aProtoIds.length

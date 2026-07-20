@@ -11,6 +11,24 @@ function getBrowserHostname() {
     return window.location?.hostname || "";
 }
 
+function getBrowserApiOriginForLocalEndpoint(parsedUrl) {
+    if (typeof window === "undefined") return "";
+
+    const browserHostname = getBrowserHostname();
+    if (!browserHostname) return "";
+
+    if (process.env.NODE_ENV === "development") {
+        const port = parsedUrl.port || "4000";
+        return `${window.location.protocol}//${browserHostname}:${port}`;
+    }
+
+    return window.location.origin || "";
+}
+
+function stripApiSuffix(url = "") {
+    return String(url || "").replace(/\/api\/v1\/?$/i, "").replace(/\/api\/?$/i, "").replace(/\/$/, "");
+}
+
 function isValidApiEndpoint(url) {
     if (typeof url !== "string" || !url.trim()) return false;
 
@@ -26,14 +44,15 @@ export function getApiRoot(url = process.env.REACT_APP_API_ENDPOINT) {
     const configuredUrl = isValidApiEndpoint(url) ? url : "";
 
     if (!configuredUrl) return "";
-    if (process.env.NODE_ENV !== "development") return configuredUrl.replace(/\/$/, "");
 
     const browserHostname = getBrowserHostname();
-    if (!browserHostname || isLocalHostname(browserHostname)) return configuredUrl.replace(/\/$/, "");
-
     try {
         const parsedUrl = new URL(configuredUrl);
-        return parsedUrl.toString().replace(/\/$/, "");
+        if (browserHostname && !isLocalHostname(browserHostname) && isLocalHostname(parsedUrl.hostname)) {
+            return stripApiSuffix(getBrowserApiOriginForLocalEndpoint(parsedUrl));
+        }
+
+        return stripApiSuffix(parsedUrl.toString());
     } catch {
         return "";
     }

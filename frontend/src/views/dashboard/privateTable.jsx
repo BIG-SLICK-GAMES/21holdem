@@ -10,22 +10,10 @@ import { useForm } from 'react-hook-form';
 import { getDirtyFormValues } from 'helper/helper';
 
 function hasPrivateTableAccess(profile = {}) {
-    return Boolean(
-        profile?.bIsMember ||
-        profile?.isMember ||
-        profile?.bMember ||
-        profile?.bIsSubscribed ||
-        profile?.isSubscribed ||
-        profile?.bPrivateTableAccess ||
-        profile?.bHasPrivateTableAccess ||
-        profile?.eUserType === 'member' ||
-        profile?.eUserType === 'premium' ||
-        profile?.eUserType === 'vip' ||
-        profile?.sUserType === 'member' ||
-        profile?.sUserType === 'premium' ||
-        profile?.sUserType === 'vip'
-    );
+    return profile?.bIsMember === true;
 }
+
+const MEMBERS_AREA_APPROVAL_MESSAGE = 'Access to members area requires approval. Email bigslickgames@gmail.com for information.';
 
 const PrivateTable = () => {
     const navigate = useNavigate();
@@ -49,7 +37,7 @@ const PrivateTable = () => {
     const bPrivateTablesUnlocked = hasPrivateTableAccess(profileData);
     const sPrivateCode = watch("sPrivateCode");
 
-    const { isLoading: isDataTabelLoading } = useQuery("getTables", getTables, {
+    const { isLoading: isDataTabelLoading } = useQuery(["getTables", "private"], () => getTables('private'), {
         onSuccess: (data) => {
             if (data.status === 200) {
                 setTablesData([]);
@@ -83,7 +71,7 @@ const PrivateTable = () => {
         onError: (error) => {
             console.log(error);
             ReactToastify(error?.response?.data?.message, 'error');
-            queryClient.invalidateQueries("getTables");
+            queryClient.invalidateQueries(["getTables", "private"]);
         },
     });
 
@@ -98,7 +86,7 @@ const PrivateTable = () => {
             console.log(error);
             setModalShow(false);
             ReactToastify(error?.response?.data?.message, 'error');
-            queryClient.invalidateQueries("getTables");
+            queryClient.invalidateQueries(["getTables", "private"]);
             queryClient.invalidateQueries("profileData");
         },
     });
@@ -114,8 +102,7 @@ const PrivateTable = () => {
 
     const onSubmit = () => {
         if (!bPrivateTablesUnlocked) {
-            ReactToastify('Private tables are members-only. Unlock member access before joining.', 'error');
-            navigate('/lobby?tab=lobby-shop');
+            ReactToastify(MEMBERS_AREA_APPROVAL_MESSAGE, 'error');
             return;
         }
         mutateJoinPrivateTable(payload);
@@ -150,8 +137,7 @@ const PrivateTable = () => {
                                         className={`join-button ${bPrivateTablesUnlocked ? '' : 'is-locked'}`}
                                         onClick={() => {
                                             if (!bPrivateTablesUnlocked) {
-                                                ReactToastify('Private tables are members-only. Visit the shop to unlock access.', 'error');
-                                                navigate('/lobby?tab=lobby-shop');
+                                                ReactToastify(MEMBERS_AREA_APPROVAL_MESSAGE, 'error');
                                                 return;
                                             }
                                             setModalShow(true);
@@ -169,8 +155,7 @@ const PrivateTable = () => {
                                                         <Col xl={4} lg={4} md={6} sm={12} xs={12} key={index} className='dashboard-table'>
                                                             <CustomTable isPrivate={true} key={table._id} tableName={table.sName} minChips={table.nMinBet} minBuyIn={table.nMinBuyIn} onPlay={() => {
                                                                 if (!bPrivateTablesUnlocked) {
-                                                                    ReactToastify('Private tables are members-only. Visit the shop to unlock access.', 'error');
-                                                                    navigate('/lobby?tab=lobby-shop');
+                                                                    ReactToastify(MEMBERS_AREA_APPROVAL_MESSAGE, 'error');
                                                                     return;
                                                                 }
                                                                 mutateCreatePrivateTable(table._id);
