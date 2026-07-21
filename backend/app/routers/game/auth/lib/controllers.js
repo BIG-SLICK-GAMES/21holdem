@@ -5,6 +5,7 @@ const axios = require('axios');
 const nodemailer = require('../../../../utils/lib/nodemailer');
 
 const controllers = {};
+const LOCAL_PLATFORM_API_BASE = process.env.BSG_PLATFORM_API_BASE || 'http://127.0.0.1:4100';
 
 function escapeRegExp(value = '') {
   return String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -137,6 +138,7 @@ controllers.login = async (req, res) => {
     return res.reply(messages.server_error(), error.toString());
   }
 };
+
 controllers.verifyOtp = async (req, res) => {
   try {
     const body = _.pick(req.body, ['code', 'sMobile', 'sPushToken']);
@@ -349,6 +351,51 @@ controllers.login = async (req, res) => {
   } catch (error) {
     console.log('🚀 :: controllers.login= :: error:', error);
     return res.reply(messages.server_error(), error.toString());
+  }
+};
+
+controllers.exchangeHandoff = async (req, res) => {
+  try {
+    const handoffCode = String(req.body?.handoffCode || '').trim();
+    if (!handoffCode) return res.reply(messages.required_field('handoffCode'));
+
+    const platformResponse = await axios.post(`${LOCAL_PLATFORM_API_BASE}/handoff/consume`, { handoffCode }, { timeout: 5000 });
+    const platformUser = platformResponse?.data?.user;
+    if (!platformUser?.id) return res.reply(messages.unauthorized());
+
+    const sEmail = String(platformUser.email || platformUser.sEmail || `${platformUser.id}@bsg.local`).toLowerCase();
+    const sUserName = String(platformUser.username || platformUser.sUserName || `bsg_${platformUser.id}`).replace(/[^a-zA-Z0-9_]/g, '_').slice(0, 32);
+    const nChips = Math.max(0, Number(platformUser.chips ?? platformUser.nChips ?? 0));
+
+    let user = await User.findOne({ sEmail });
+    if (!user) {
+      user = new User({
+        sEmail,
+        sUserName,
+        sPassword: _.encryptPassword(`local-platform-${platformUser.id}`),
+        eUserType: 'user',
+        isEmailVerified: true,
+        bIsMember: true,
+        nChips,
+        sAvatar: platformUser.avatar || '',
+      });
+    }
+
+    user.sUserName = user.sUserName || sUserName;
+    user.isEmailVerified = true;
+    user.bIsMember = true;
+    user.nChips = nChips;
+    user.sAvatar = platformUser.avatar || user.sAvatar || '';
+    user.sToken = _.encodeToken({ _id: user._id.toString(), eUserType: user.eUserType });
+    await user.save();
+
+    return res.reply(messages.success('Login'), {
+      authorization: user.sToken,
+      platformUser,
+    }, { authorization: user.sToken });
+  } catch (error) {
+    const message = error?.response?.data?.message || error.message || 'Website handoff failed';
+    return res.reply(messages.customCodeAndMessage(error?.response?.status || 502, message));
   }
 };
 controllers.refreshToken = async (req, res) => {

@@ -14,7 +14,6 @@ const Login = () => {
     const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
     const handoffCode = searchParams.get('handoffCode');
-    const hubToken = searchParams.get('hubToken');
     const verificationStatus = searchParams.get('verificationStatus');
     const verifiedUserName = searchParams.get('sUserName');
 
@@ -74,13 +73,6 @@ const Login = () => {
             exchangeHandoffMutate({ handoffCode });
         }
     }, [exchangeHandoffMutate, handoffCode]);
-
-    useEffect(() => {
-        if (!hubToken) return;
-
-        setCookie('sAuthToken', hubToken, 14);
-        navigate('/lobby', { replace: true });
-    }, [hubToken, navigate]);
 
     useEffect(() => {
         if (!verificationStatus) return;
