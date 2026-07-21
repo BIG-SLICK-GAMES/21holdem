@@ -17,6 +17,10 @@ function getBrowserApiOriginForLocalEndpoint(parsedUrl) {
     const browserHostname = getBrowserHostname();
     if (!browserHostname) return "";
 
+    if (String(browserHostname).toLowerCase().endsWith(".bsg.local")) {
+        return window.location.origin || "";
+    }
+
     if (process.env.NODE_ENV === "development") {
         const port = parsedUrl.port || "4000";
         return `${window.location.protocol}//${browserHostname}:${port}`;
