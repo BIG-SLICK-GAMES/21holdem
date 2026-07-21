@@ -1,5 +1,5 @@
 import { exchangeHandoff, login } from 'query/login.query';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useMutation } from 'react-query';
 import { useForm } from 'react-hook-form';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -16,6 +16,7 @@ const Login = () => {
     const handoffCode = searchParams.get('handoffCode');
     const verificationStatus = searchParams.get('verificationStatus');
     const verifiedUserName = searchParams.get('sUserName');
+    const exchangedHandoffCodeRef = useRef('');
 
     const goToBigSlickGames = (opts = {}) => {
         const destination = getBigSlickGamesUrl();
@@ -56,7 +57,7 @@ const Login = () => {
         onSuccess: (data) => {
             if (data.status === 200) {
                 setCookie('sAuthToken', data.data.data.authorization, 14);
-                goToBigSlickGames({ replace: true });
+                navigate('/lobby', { replace: true });
             } else {
                 ReactToastify(data?.data?.message || 'Website handoff failed', 'error', 'handoff');
             }
@@ -69,9 +70,9 @@ const Login = () => {
     });
 
     useEffect(() => {
-        if (handoffCode) {
-            exchangeHandoffMutate({ handoffCode });
-        }
+        if (!handoffCode || exchangedHandoffCodeRef.current === handoffCode) return;
+        exchangedHandoffCodeRef.current = handoffCode;
+        exchangeHandoffMutate({ handoffCode });
     }, [exchangeHandoffMutate, handoffCode]);
 
     useEffect(() => {
