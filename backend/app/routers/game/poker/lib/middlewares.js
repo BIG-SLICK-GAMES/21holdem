@@ -52,6 +52,15 @@ function getLiveBotParticipantCount(board) {
   return board.aParticipant.filter(participant => participant.eUserType === 'bot' && participant.eState !== 'leave').length;
 }
 
+function isBotOnlyStartedBoard(board) {
+  if (!board) return false;
+
+  const nHumanParticipantCount = getLiveHumanParticipantCount(board);
+  const nActiveParticipantCount = board.aParticipant.filter(participant => participant.eState !== 'leave').length;
+
+  return nHumanParticipantCount === 0 && (board.eState !== 'waiting' || nActiveParticipantCount >= 3);
+}
+
 function getTargetLiveBotCount({ board, boardProto }) {
   const nHumanParticipantCount = getLiveHumanParticipantCount(board);
   if (nHumanParticipantCount < 1) return 0;
@@ -166,22 +175,35 @@ middleware.joiningProcess = async (req, res, next) => {
     if (nChips < req.boardProto.nMinBuyIn) return res.reply(messages.custom.insufficient_chips);
 
     const runJoinFlow = async session => {
-      const query = { iProtoId: req.boardProto._id, $expr: { $lt: [{ $size: '$aParticipants' }, req.boardProto.nMaxPlayer] } };
+      const aSkippedBoardIds = [];
+      const getOpenBoardQuery = () => ({
+        iProtoId: req.boardProto._id,
+        ...(aSkippedBoardIds.length ? { _id: { $nin: aSkippedBoardIds } } : {}),
+        $expr: { $lt: [{ $size: '$aParticipants' }, req.boardProto.nMaxPlayer] },
+      });
       const update = { $addToSet: { aParticipants: req.user._id } };
       const options = session ? { session, new: true } : { new: true };
 
-      let pokerBoard = await PokerBoard.findOneAndUpdate(query, update, options);
+      let pokerBoard = await PokerBoard.findOneAndUpdate(getOpenBoardQuery(), update, options);
 
       // Self-heal stale mongo board rows that reference missing Redis board state.
       while (pokerBoard) {
         const board = await boardManager.getBoard(pokerBoard.iBoardId.toString());
         if (board) {
+          if (isBotOnlyStartedBoard(board)) {
+            await PokerBoard.updateOne({ iBoardId: pokerBoard.iBoardId }, { $pull: { aParticipants: req.user._id } }, session ? { session } : {});
+            aSkippedBoardIds.push(pokerBoard._id);
+            pokerBoard = await PokerBoard.findOneAndUpdate(getOpenBoardQuery(), update, options);
+            continue;
+          }
+
           if (board.eState === 'finished') {
             await Promise.all([
               PokerBoard.deleteOne({ iBoardId: pokerBoard.iBoardId }, session ? { session } : {}),
               User.updateMany({ aPokerBoard: pokerBoard.iBoardId }, { $pull: { aPokerBoard: pokerBoard.iBoardId } }, session ? { session } : {}),
             ]);
-            pokerBoard = await PokerBoard.findOneAndUpdate(query, update, options);
+            aSkippedBoardIds.push(pokerBoard._id);
+            pokerBoard = await PokerBoard.findOneAndUpdate(getOpenBoardQuery(), update, options);
             continue;
           }
 
@@ -204,7 +226,7 @@ middleware.joiningProcess = async (req, res, next) => {
           User.updateMany({ aPokerBoard: pokerBoard.iBoardId }, { $pull: { aPokerBoard: pokerBoard.iBoardId } }, session ? { session } : {}),
         ]);
 
-        pokerBoard = await PokerBoard.findOneAndUpdate(query, update, options);
+        pokerBoard = await PokerBoard.findOneAndUpdate(getOpenBoardQuery(), update, options);
       }
 
       const candidateBoards = await PokerBoard.find({ iProtoId: req.boardProto._id }).sort({ dUpdatedDate: -1 }).lean();
@@ -225,6 +247,8 @@ middleware.joiningProcess = async (req, res, next) => {
           ]);
           continue;
         }
+
+        if (isBotOnlyStartedBoard(board)) continue;
 
         if (board.aParticipant.length < req.boardProto.nMaxPlayer) {
           await evictExcessLiveBotsForIncomingHuman({ board, boardProto: req.boardProto, nIncomingHumans: 1 });

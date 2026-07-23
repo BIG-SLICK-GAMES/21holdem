@@ -186,7 +186,6 @@ controllers.listBoard = async (req, res) => {
     };
 
     const aProtoData = await BoardProtoType.find(query, project).sort({ nMinBet: 1 }).lean();
-    if (sBoardType === 'public') await ensureLiveLobbySeedBoards(aProtoData);
     const aProtoIds = aProtoData.map(proto => proto._id);
 
     const aLiveBoardStats = aProtoIds.length
