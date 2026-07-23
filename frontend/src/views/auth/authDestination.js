@@ -1,4 +1,4 @@
-const DEFAULT_BSG_HOME_URL = 'https://bigslickgames.com';
+const DEFAULT_BSG_HOME_URL = '/lobby';
 
 export function getBigSlickGamesUrl() {
     const configuredUrl = process.env.REACT_APP_BSG_HOME_URL;

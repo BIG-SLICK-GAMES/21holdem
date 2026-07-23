@@ -145,11 +145,19 @@ function getDefaultSeatCount(tables) {
 }
 
 function getDefaultBuyIn(tables, nSeatCount) {
-    return BUY_IN_OPTIONS.find(nBuyIn =>
+    const aBuyInOptions = getBuyInOptions(tables);
+    return aBuyInOptions.find(nBuyIn =>
         (tables || []).some(
             table => Number(table.nMaxPlayer) === nSeatCount && Number(table.nMinBuyIn) === nBuyIn
         )
-    ) || BUY_IN_OPTIONS[0];
+    ) || aBuyInOptions[0] || BUY_IN_OPTIONS[0];
+}
+
+function getBuyInOptions(tables) {
+    return Array.from(new Set([
+        ...BUY_IN_OPTIONS,
+        ...(tables || []).map(table => Number(table?.nMinBuyIn) || 0),
+    ].filter(Boolean))).sort((firstBuyIn, secondBuyIn) => firstBuyIn - secondBuyIn);
 }
 
 const Dashboard = () => {
@@ -330,6 +338,7 @@ const Dashboard = () => {
             .filter(Boolean)
             .sort(sortTablesByPriority)
     , [aFallbackTablesData, tablesData]);
+    const aBuyInOptions = useMemo(() => getBuyInOptions(aSortedTables), [aSortedTables]);
 
     useEffect(() => {
         let bIsMounted = true;
@@ -483,6 +492,7 @@ const Dashboard = () => {
             Number(table.nMinBuyIn) === nActiveBuyIn
         ))
     ), [aSortedTables, nActiveBuyIn]);
+    const aVisibleTables = aFilteredTables.length ? aFilteredTables : aSortedTables;
 
     const oBuyInPlayerCounts = useMemo(() => (
         aSortedTables.reduce((accumulator, table) => {
@@ -830,7 +840,7 @@ const Dashboard = () => {
 
     const handleBuyInChange = (nBuyIn) => {
         setHasAdjustedFilters(true);
-        setActiveBuyIn(Number(nBuyIn) || BUY_IN_OPTIONS[0]);
+        setActiveBuyIn(Number(nBuyIn) || aBuyInOptions[0] || BUY_IN_OPTIONS[0]);
     };
 
     const handlePrivateTablesClick = () => {
@@ -851,7 +861,7 @@ const Dashboard = () => {
             <div className='dashboard-hub__tab-body dashboard-hub__tab-body--live'>
                 <span className='dashboard-hub__live-label'>Buy-in</span>
                 <div className='dashboard-hub__buyin-grid' role='group' aria-label='Choose buy-in'>
-                    {BUY_IN_OPTIONS.map((nBuyInOption) => {
+                    {aBuyInOptions.map((nBuyInOption) => {
                         const oBuyInTable = aSortedTables.find((table) => (
                             Number(table.nMinBuyIn) === nBuyInOption
                         ));
@@ -874,9 +884,9 @@ const Dashboard = () => {
                     })}
                 </div>
 
-                {aFilteredTables.length ? (
+                {aVisibleTables.length ? (
                     <ul className='dashboard-hub__table-grid' aria-label='Available tables'>
-                        {aFilteredTables.map((table, index) => {
+                        {aVisibleTables.map((table, index) => {
                             const nOccupied = getActivePlayers(table);
                             const nTotalSeats = Number(table.nMaxPlayer) || 0;
                             const nOpenSeats = Math.max(0, nTotalSeats - nOccupied);
@@ -934,7 +944,7 @@ const Dashboard = () => {
                     </ul>
                 ) : null}
 
-                {!aFilteredTables.length ? (
+                {!aVisibleTables.length ? (
                     <div className='dashboard-hub__empty'>
                         <strong>{isDataTableLoading ? 'Loading tables...' : 'No tables at this buy-in yet'}</strong>
                         <span>Try another buy-in to find an open table.</span>
@@ -1108,7 +1118,7 @@ const Dashboard = () => {
     );
 
     const renderDesktopLiveCard = () => {
-        const oFeaturedTable = aFilteredTables[0] || aSortedTables[0] || null;
+        const oFeaturedTable = aVisibleTables[0] || aSortedTables[0] || null;
         const nAvailableTables = oFeaturedTable ? getAvailableTableCount(oFeaturedTable) : 0;
         const nFeaturedOccupied = oFeaturedTable ? getActivePlayers(oFeaturedTable) : 0;
         const aSeatMarkers = oFeaturedTable ? getTableSeatMarkers(oFeaturedTable) : [];
@@ -1131,7 +1141,7 @@ const Dashboard = () => {
                     <div className='dashboard-hub__desktop-filter-block'>
                         <span className='dashboard-hub__desktop-filter-label'>Buy-In</span>
                         <div className='dashboard-hub__desktop-buyin-grid' role='group' aria-label='Choose buy-in'>
-                            {BUY_IN_OPTIONS.map((nBuyInOption) => {
+                            {aBuyInOptions.map((nBuyInOption) => {
                                 const oBuyInTable = aSortedTables.find((table) => (
                                     Number(table.nMinBuyIn) === nBuyInOption
                                 ));

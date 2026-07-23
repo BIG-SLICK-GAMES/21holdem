@@ -5,7 +5,6 @@ import { useForm } from 'react-hook-form';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ReactToastify, setCookie } from 'shared/utils';
 import bigSlickGamesLogoImg from '../../../assets/images/bsg/big-slick-games.png';
-import { getBigSlickGamesUrl } from '../authDestination';
 
 const LOGIN_REMEMBER_ME_KEY = 'bsg:remember-me';
 const LOGIN_REMEMBERED_IDENTIFIER_KEY = 'bsg:remembered-login';
@@ -18,13 +17,8 @@ const Login = () => {
     const verificationStatus = searchParams.get('verificationStatus');
     const verifiedUserName = searchParams.get('sUserName');
 
-    const goToBigSlickGames = (opts = {}) => {
-        const destination = getBigSlickGamesUrl();
-        if (typeof window !== 'undefined') {
-            window.location.assign(destination);
-            return;
-        }
-        navigate('/', { replace: true, ...opts });
+    const goToLobby = (opts = {}) => {
+        navigate('/lobby', { replace: true, ...opts });
     };
     const [rememberMe, setRememberMe] = useState(() => {
         if (typeof window === 'undefined') return false;
@@ -37,7 +31,7 @@ const Login = () => {
         onSuccess: (data) => {
             if (data.status === 200) {
                 setCookie('sAuthToken', data.data.data.authorization, rememberMe ? 14 : undefined);
-                goToBigSlickGames();
+                goToLobby();
             } else {
                 ReactToastify(data.data.message, 'error', 'login');
             }
@@ -57,7 +51,7 @@ const Login = () => {
         onSuccess: (data) => {
             if (data.status === 200) {
                 setCookie('sAuthToken', data.data.data.authorization, 14);
-                goToBigSlickGames({ replace: true });
+                goToLobby({ replace: true });
             } else {
                 ReactToastify(data?.data?.message || 'Website handoff failed', 'error', 'handoff');
             }
@@ -77,7 +71,7 @@ const Login = () => {
             nextSearchParams.delete('hubToken');
             nextSearchParams.delete('from');
             setSearchParams(nextSearchParams, { replace: true });
-            goToBigSlickGames({ replace: true });
+            goToLobby({ replace: true });
         }
     }, [hubToken, searchParams, setSearchParams]);
 

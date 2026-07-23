@@ -26,6 +26,7 @@ temp
 .env.swp
 
 # Codex / local mailbox
+.codex-runtime/
 .codex-mailbox/
 **/.codex-mailbox/
 
