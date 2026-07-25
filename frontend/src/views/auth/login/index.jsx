@@ -1,5 +1,5 @@
 import { exchangeHandoff, login } from 'query/login.query';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useMutation } from 'react-query';
 import { useForm } from 'react-hook-form';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -17,9 +17,9 @@ const Login = () => {
     const verificationStatus = searchParams.get('verificationStatus');
     const verifiedUserName = searchParams.get('sUserName');
 
-    const goToGame = (opts = {}) => {
+    const goToGame = useCallback((opts = {}) => {
         navigate('/game', { replace: true, ...opts });
-    };
+    }, [navigate]);
     const [rememberMe, setRememberMe] = useState(() => {
         if (typeof window === 'undefined') return false;
         return window.localStorage.getItem(LOGIN_REMEMBER_ME_KEY) === 'true';
@@ -73,7 +73,7 @@ const Login = () => {
             setSearchParams(nextSearchParams, { replace: true });
             goToGame({ replace: true });
         }
-    }, [hubToken, searchParams, setSearchParams]);
+    }, [goToGame, hubToken, searchParams, setSearchParams]);
 
     useEffect(() => {
         if (handoffCode) {

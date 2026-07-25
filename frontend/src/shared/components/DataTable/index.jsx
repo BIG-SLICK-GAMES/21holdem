@@ -1,9 +1,7 @@
-import PropTypes from 'prop-types'
 import React, { Suspense, useState } from 'react'
-import { Button, Form, Spinner, Table } from 'react-bootstrap'
+import { Form, Spinner, Table } from 'react-bootstrap'
 import Select from 'react-select'
 import Search from '../Search/index'
-import { parseParams } from 'shared/utils'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowDownWideShort, faArrowUpShortWide } from '@fortawesome/free-solid-svg-icons'
 
@@ -34,8 +32,6 @@ function DataTable({
     dataLength,
     ...rest
 }) {
-    // eslint-disable-next-line no-restricted-globals
-    const params = parseParams(location.search)
     const [pageLimit, setPageLimit] = useState({ label: 10, value: 10 })
     return (
         <div className='data-table-content'>

@@ -2890,7 +2890,7 @@ setButtons() {
         } else {
             this.updatePotAmount(oData.nTableChips);
         }
-        player.iUserId == this.iUserId && this.setAmountIn(oData.nChips);
+        player.iUserId === this.iUserId && this.setAmountIn(oData.nChips);
         this.clearProfileSeatCards();
         if (oData.iUserId === this.iUserId) {
             this.oClientGameState = clientGameStateReducer(this.oClientGameState, {
@@ -2936,7 +2936,7 @@ setButtons() {
             player.nStandAtRound = Number(oData.nStandAtRound) || this.nTableRound || 1;
         }
         this.patchParticipantLiveBalance(oData.iUserId, oData);
-        player?.iUserId == this.iUserId && this.setMyPlayerData(oData);
+        player?.iUserId === this.iUserId && this.setMyPlayerData(oData);
         aParticipantAdjustments.forEach((participantData) => this.applyParticipantAdjustment(participantData));
         if (effectName) {
             this.oSoundManager.playSound(this.oSoundManager.chipsIn_sound, false);
@@ -3013,8 +3013,8 @@ setButtons() {
             this.emitPlayerSlotState();
         } else if (eState === 'leave') {
             player?.playerProfile.setLeave();
-            if (iUserId == this.iUserId) {
-                if (bShowMessage == true) {
+            if (iUserId === this.iUserId) {
+                if (bShowMessage === true) {
                     this.popup.open({
                         confirm: false, title: 'LEAVE TABLE', message: sReason, callback: () => {
                             this.exitGame();
@@ -3533,7 +3533,7 @@ setButtons() {
         const { sUserName, sAvatar, eUserType, eState, aCardHand, nChips, nCardScore } = player;
         if (eState === "leave") {
             player?.playerProfile?.setVisible(false);
-            iUserId == this.iUserId && this.exitGame();
+            iUserId === this.iUserId && this.exitGame();
             return;
         }
         await player?.playerProfile?.setProfile({ sUserName, sAvatar, eUserType });
@@ -3548,7 +3548,7 @@ setButtons() {
         }
         if (eState === "spectator") {
             player?.playerProfile?.setWaiting();
-            if (iUserId == this.iUserId) this.prompt.show('Please wait for the new game to start!');
+            if (iUserId === this.iUserId) this.prompt.show('Please wait for the new game to start!');
         } else {
             player?.playerProfile?.hideWaiting();
         }
@@ -3630,7 +3630,7 @@ setCollectBootAmount({ nTableChips, aParticipant }) {
             const player = this.players.get(participant.iUserId);
             const nBlindAmount = Math.max(Number(participant.nLastBidChips) || 0, 0);
             player?.playerProfile?.setAmountIn(participant.nChips);
-            player?.iUserId == this.iUserId && this.setMyPlayerData(participant);
+            player?.iUserId === this.iUserId && this.setMyPlayerData(participant);
             if (player?.playerProfile && nBlindAmount > 0) {
                 nRunningPot += nBlindAmount;
                 this.queuePotUpdate({

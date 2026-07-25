@@ -5,7 +5,7 @@ import { eTransactionStatusFilter, eTransactionTypeFilter } from 'shared/constan
 import ReactSelect from 'react-select'
 
 const TransactionFilter = ({ defaultValue, setRequestParams }) => {
-    const { control, reset } = useForm({})
+    const { control } = useForm({})
 
     return (
         <>

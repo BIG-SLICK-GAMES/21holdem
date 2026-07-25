@@ -81,7 +81,7 @@ export default class PlayerProfile extends Phaser.GameObjects.Container {
 
       const promptBg = scene.add
         .image(0, -150, categoryConfig[type].bg)
-        .setVisible(type == "winner");
+        .setVisible(type === "winner");
       container.add(promptBg);
 
       const text = scene.add
@@ -92,7 +92,7 @@ export default class PlayerProfile extends Phaser.GameObjects.Container {
         })
         .setAlpha(0.7)
         .setOrigin(0.5)
-        .setVisible(type == "winner");
+        .setVisible(type === "winner");
       container.add(text);
 
       return container;

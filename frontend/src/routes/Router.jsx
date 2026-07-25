@@ -1,5 +1,4 @@
 import { lazy } from 'react'
-import { route } from 'shared/constants/AllRoutes'
 
 const PublicRoute = lazy(() => import('routes/PublicRoutes'))
 const PrivateRoute = lazy(() => import('routes/PrivateRoutes'))

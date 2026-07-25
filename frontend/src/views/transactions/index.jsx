@@ -31,7 +31,7 @@ const Transactions = () => {
     const [data, setData] = useState(null)
 
     // List
-    const { isLoading, isFetching } = useQuery(['transactionList', requestParams], () => getTransactions(requestParams), {
+    useQuery(['transactionList', requestParams], () => getTransactions(requestParams), {
         select: (data) => data?.data?.data[0],
         onSuccess: (response) => {
             setData(response);
