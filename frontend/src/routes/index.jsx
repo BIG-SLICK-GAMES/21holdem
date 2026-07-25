@@ -11,11 +11,11 @@ function RootRedirect() {
 
     if (hubToken) {
         setCookie('sAuthToken', hubToken, 14)
-        return <Navigate to='/game' replace />
+        return <Navigate to='/lobby' replace />
     }
 
     const token = getCookie('sAuthToken')
-    return <Navigate to={token ? '/game' : '/login'} replace />
+    return <Navigate to={token ? '/lobby' : '/login'} replace />
 }
 
 function AllRoutes() {
