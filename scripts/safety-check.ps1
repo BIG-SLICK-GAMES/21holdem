@@ -121,9 +121,13 @@ function Get-TextScanFiles($targets) {
             continue
         }
 
-        $item = Get-Item -LiteralPath $targetPath
+        $item = Get-Item -LiteralPath $targetPath -ErrorAction SilentlyContinue
+        if (-not $item) {
+            continue
+        }
+
         $files = if ($item.PSIsContainer) {
-            Get-ChildItem -LiteralPath $item.FullName -Recurse -File
+            Get-ChildItem -LiteralPath $item.FullName -Recurse -File -ErrorAction SilentlyContinue
         } else {
             @($item)
         }
