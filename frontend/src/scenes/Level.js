@@ -1,4 +1,4 @@
-﻿import Phaser from 'phaser';
+import Phaser from 'phaser';
 import config from '../scripts/config';
 import assets from '../scripts/assets';
 import _ from '../scripts/helper';
@@ -24,7 +24,6 @@ import {
 } from '../scripts/playerHandSync';
 import {
     createHandResultToken,
-    getHandResultSideBetSeconds,
     HAND_RESULT_CLEAR_DELAY_MS,
     HAND_RESULT_REVEAL_DELAY_MS,
     isActiveHandResultToken,
@@ -36,7 +35,6 @@ import { buildParticipantUpdatePlan, findParticipantForClient, findPlayerInMap }
 import {
     normalizeBoardSnapshot,
     shouldCancelResultForBoardState,
-    shouldHideSideBetWindowForBoardState,
 } from '../scripts/boardSnapshot';
 import {
     CLIENT_GAME_STATE_ACTIONS,
@@ -61,6 +59,15 @@ import {
 import { actionLabelText, getPlayerActionLabel } from './level/actionControls';
 import gameTimingControls from './level/gameTimingControls';
 import GameInfo from 'prefabs/GameInfo';
+
+const BOT_INVITE_MIN_COUNT = 2;
+const BOT_INVITE_MAX_COUNT = 8;
+const TABLE_BACKGROUND_CONSOLE_HEIGHT = 90;
+const TABLE_BACKGROUND_CONSOLE_OVERLAP_Y = 28;
+const WIN_ANIMATION_SOUND_DELAY_MS = 150;
+const WIN_PAYOUT_FEEDBACK_DELAY_MS = 650;
+const SHOWDOWN_WIN_BADGE_CLEAR_DELAY_MS = HAND_RESULT_CLEAR_DELAY_MS + 400;
+
 /**
  * Level -- main Phaser game scene.
  * - create(): boots the scene, connects socket, builds UI.
@@ -85,6 +92,15 @@ export default class Level extends Phaser.Scene {
 
     getTableImageOffsetY() {
         return 100;
+    }
+
+    getTableBackgroundScaleY(tableY, fallbackScaleY, parentOffsetY = Number(this.container_body?.y) || 0) {
+        if (!this.table?.height) return fallbackScaleY;
+
+        const tableScreenCenterY = Number(tableY) + parentOffsetY;
+        const targetBottomY = config.height - TABLE_BACKGROUND_CONSOLE_HEIGHT + TABLE_BACKGROUND_CONSOLE_OVERLAP_Y;
+        const requiredScaleY = ((targetBottomY - tableScreenCenterY) * 2) / this.table.height;
+        return Math.max(fallbackScaleY, requiredScaleY);
     }
 
     initializeGameUILayout() {
@@ -115,6 +131,7 @@ export default class Level extends Phaser.Scene {
                 this.settings,
                 this.gameInfo,
                 this.popup,
+                this.botInviteModal,
             ].filter(Boolean).map(node => ({
                 node,
                 x: node.x || 0,
@@ -158,10 +175,16 @@ export default class Level extends Phaser.Scene {
         });
 
         if (this.table) {
-            this.table.setY(base.tableY + layout.tableOffsetY);
-            this.table.setScale(
-                base.tableScaleX * layout.tableScale,
+            const tableY = base.tableY + layout.tableOffsetY;
+            const tableScaleX = base.tableScaleX * layout.tableScale;
+            const tableScaleY = this.getTableBackgroundScaleY(
+                tableY,
                 base.tableScaleY * layout.tableScale
+            );
+            this.table.setY(tableY);
+            this.table.setScale(
+                tableScaleX,
+                tableScaleY
             );
         }
 
@@ -565,8 +588,36 @@ setGameActionButtonEnabled(button, enabled = true) {
     button.enabled = Boolean(enabled);
 }
 
+getSubmittedActionLabel(button) {
+    const sCommand = String(button?.command || '');
+    const sButtonLabel = String(button?.label || '').replace(/\s+/g, ' ').trim();
+
+    switch (sCommand) {
+        case 'fold':
+            return actionLabelText.fold;
+        case 'check':
+            return actionLabelText.check;
+        case 'doubleDown':
+            return actionLabelText.doubleDown;
+        case 'stand':
+            return button?.bCallStandMode ? actionLabelText.callStand : actionLabelText.stand;
+        case 'call':
+            if (button?.bAllInMode || /all in/i.test(sButtonLabel)) return '';
+            if (this.oTurnContext?.bAllInStandChoice && Number(this.oTurnContext?.toCallAmount) <= 0) return actionLabelText.check;
+            return sButtonLabel || actionLabelText.call;
+        case 'confirmRaise':
+            return this.oGameManager?.tempRaiseIsAllIn ? actionLabelText.allIn : actionLabelText.raise;
+        case 'standRaise':
+            return this.oGameManager?.tempRaiseIsAllIn ? `${actionLabelText.allIn}+Stand` : actionLabelText.raiseStand;
+        default:
+            return '';
+    }
+}
+
 getGameActionOverlayButton(button) {
     if (!button?.visible) return null;
+
+    const sActionLabel = this.getSubmittedActionLabel(button);
 
     return {
         key: button.command,
@@ -574,6 +625,8 @@ getGameActionOverlayButton(button) {
         variant: button.variant || 'secondary',
         disabled: button.enabled === false,
         amount: Number(button.nRaiseAmount) || 0,
+        submitsAction: Boolean(sActionLabel),
+        actionLabel: sActionLabel,
     };
 }
 
@@ -1922,6 +1975,47 @@ ensureGameUiTextures() {
         shadowAlpha: 0.24,
         simple: true,
     });
+    this.createGlassTexture('ui_bot_invite_panel', 920, 660, {
+        radius: 34,
+        top: 0x102f4d,
+        bottom: 0x061522,
+        border: 0xbde8ff,
+        innerBorder: 0x3f86b3,
+        shadow: 0x01070d,
+        shadowAlpha: 0.46,
+        showAura: true,
+        auraColor: 0x3abaff,
+    });
+    this.createGlassTexture('ui_bot_invite_count', 238, 136, {
+        radius: 28,
+        top: 0x143f5f,
+        bottom: 0x071929,
+        border: 0xffdf87,
+        innerBorder: 0x76cbff,
+        shadow: 0x01070d,
+        shadowAlpha: 0.32,
+        simple: true,
+    });
+    this.createGlassTexture('ui_bot_invite_stepper', 108, 84, {
+        radius: 26,
+        top: 0x275f8a,
+        bottom: 0x092038,
+        border: 0xbde8ff,
+        innerBorder: 0x5bb3dd,
+        shadow: 0x01070d,
+        shadowAlpha: 0.24,
+        simple: true,
+    });
+    this.createGlassTexture('ui_bot_invite_cta', 380, 84, {
+        radius: 30,
+        top: 0xffd974,
+        bottom: 0xe18f21,
+        border: 0xfff0b0,
+        innerBorder: 0xffba3d,
+        shadow: 0x1c1000,
+        shadowAlpha: 0.28,
+        simple: true,
+    });
     this.createIconChipTexture('ui_btn_icon_chip');
 }
 
@@ -2194,16 +2288,14 @@ setButtons() {
         this.gameInfo?.setDepth(310);
         this.settings?.setDepth(320);
         this.popup?.setDepth(config.popupDepth || 100000);
+        this.botInviteModal?.setDepth((config.popupDepth || 100000) + 10);
     }
     editorCreate() {
         const tableImageOffsetY = this.getTableImageOffsetY();
         const playfieldOffsetY = this.getPlayfieldOffsetY();
         const headerOffsetY = config.isDesktopLayout() ? playfieldOffsetY : 0;
         this.container_body = this.add.container(0, 0);
-        const bg = this.add.image(config.centerX, config.centerY, assets.game_bg);
-        bg.setDisplaySize(config.width, config.height);
-        this.backgroundImage = bg;
-        this.container_body.add(bg);
+        this.backgroundImage = null;
         this.table = this.add.image(config.centerX, config.centerY + 8 + tableImageOffsetY, assets.table);
         const tableCoverScale = Math.max(config.width / this.table.width, config.height / this.table.height) * 0.92;
         this.table.setScale(tableCoverScale);
@@ -2302,6 +2394,7 @@ setButtons() {
         this.settings?.setVisible?.(false);
         this.gameInfo?.close?.();
         this.popup?.close?.();
+        this.closeBotInviteModal();
         hideGameActionOverlay();
     }
 
@@ -2320,6 +2413,7 @@ setButtons() {
         this.iLastTurnId = '';
         this.nMySeat = 0;
         this.oBoard = {};
+        this.oBoardSnapshot = {};
         this.oClientGameState = createInitialClientGameState();
         this.iGameId = '';
         this.isMyTurn = false;
@@ -2327,6 +2421,8 @@ setButtons() {
         this.isOverlayReady = false;
         this.iSelecetdCardId = '';
         this.oTutorialState = null;
+        this.bInviteBotsPromptDismissed = false;
+        this.bInviteBotsRequestInFlight = false;
 
         this.cards = [];
         this.selectedCards = [];
@@ -2334,7 +2430,6 @@ setButtons() {
         this.oGameManager = new GameManager(this);
         this.oSoundManager = new SoundManager(this);
         this.oAnimations = new Animations(this);
-        this.makeSocketConnection();
         this.emitTutorialOverlay({ type: 'sceneReady' });
         this.oServices = new Services({ sRoot: getApiRoot(), authorization: this.sAuthToken });
 
@@ -2349,6 +2444,7 @@ setButtons() {
         window.FXOverlay?.setSoundEnabled?.(this.oSoundManager.isSoundOn);
         window.FXOverlay?.setMusicEnabled?.(this.oSoundManager.isMusicOn);
         this.dispatchSoundState?.();
+        this.makeSocketConnection();
         // Fetch player settings (sound/music) and apply to sound manager.
         this.oServices.profile().then(res => {
             const data = res.data.data;
@@ -2375,12 +2471,10 @@ setButtons() {
             if (document.visibilityState === 'hidden') this.exitGame();
         };
         this.popStateHandler = () => this.exitGame();
-        this.sideBetsChangeHandler = (event) => this.handleSideBetsChange(event?.detail);
         this.showdownCardRevealHandler = (event) => this.handleLocalShowdownCardRevealChange(event?.detail);
         // Exit game on tab hide or browser back â€” prevents desync and seat abuse.
         this.cleanupRegistry.addWindowListener(window, 'visibilitychange', this.visibilityChangeHandler);
         this.cleanupRegistry.addWindowListener(window, 'popstate', this.popStateHandler);
-        this.cleanupRegistry.addWindowListener(window, GAME_BROWSER_EVENTS.SIDE_BETS_CHANGE, this.sideBetsChangeHandler);
         this.cleanupRegistry.addWindowListener(window, GAME_BROWSER_EVENTS.SHOWDOWN_CARD_REVEAL_CHANGE, this.showdownCardRevealHandler);
         this.events.once('shutdown', this.cleanupGameBindings, this);
         this.events.once('destroy', this.cleanupGameBindings, this);
@@ -2391,8 +2485,6 @@ setButtons() {
             return {
                 hand: [],
                 community: [],
-                sideBetCommunity: [],
-                sideBetLive: true,
                 score: 0,
                 isFolded: false,
                 locked: false,
@@ -2404,8 +2496,6 @@ setButtons() {
             return {
                 hand: this.oLocalConsoleHandLock.hand,
                 community: this.oLocalConsoleHandLock.community,
-                sideBetCommunity: this.oLocalConsoleHandLock.sideBetCommunity,
-                sideBetLive: false,
                 score: this.oLocalConsoleHandLock.score,
                 isFolded: Boolean(this.oLocalConsoleHandLock.isFolded),
                 sShowdownRevealCardId: myPlayer?.sShowdownRevealCardId || '',
@@ -2414,15 +2504,9 @@ setButtons() {
         }
 
         const aCommunityCards = Array.isArray(this.oGameManager?.aCommunityCards) ? this.oGameManager.aCommunityCards : [];
-        const bSideBetLive = myPlayer?.eState === 'playing' && !myPlayer?.isDoubleDownLock;
-        const nStandAtRound = Math.max(1, Number(myPlayer?.nStandAtRound) || 1);
-        const nEligibleCommunityCards = bSideBetLive ? aCommunityCards.length : Math.max(0, nStandAtRound - 1);
-        const aVisibleCommunityCards = bSideBetLive ? aCommunityCards : aCommunityCards.slice(0, nEligibleCommunityCards);
         return {
             hand: Array.isArray(myPlayer?.aCardHand) ? myPlayer.aCardHand : [],
-            community: aVisibleCommunityCards,
-            sideBetCommunity: aCommunityCards.slice(0, nEligibleCommunityCards),
-            sideBetLive: bSideBetLive,
+            community: aCommunityCards,
             score: Number(myPlayer?.nCardScore) || 0,
             isFolded: String(myPlayer?.eState || '').toLowerCase() === 'fold',
             sShowdownRevealCardId: myPlayer?.sShowdownRevealCardId || '',
@@ -2491,7 +2575,6 @@ setButtons() {
             active: true,
             hand: [...consoleCards.hand],
             community: [...consoleCards.community],
-            sideBetCommunity: [...consoleCards.sideBetCommunity],
             score: consoleCards.score,
             isFolded: consoleCards.isFolded,
         };
@@ -2551,7 +2634,7 @@ setButtons() {
     }
     showPlayerActionLabel(iUserId, sLabel) {
         const player = this.players?.get?.(iUserId);
-        if (!player || !sLabel || iUserId === this.iUserId) return;
+        if (!player || !sLabel) return;
 
         const nActionLabelKey = Date.now();
         player.sActionLabel = sLabel;
@@ -2576,78 +2659,6 @@ setButtons() {
         });
 
         if (bChanged) this.emitPlayerSlotState();
-    }
-    handleSideBetsChange(detail = {}) {
-        if (!this.oSocketManager || !this.iUserId) return;
-        const bets = detail?.bets;
-        if (!bets || typeof bets !== 'object') return;
-        const sSerializedBets = JSON.stringify(bets);
-        if (sSerializedBets === this.sLastSideBetsSent) return;
-        this.sLastSideBetsSent = sSerializedBets;
-        this.oSocketManager.emit(SOCKET_REQUEST_EVENTS.SIDE_BETS, { bets });
-    }
-    handleSideBetsState(oData = {}) {
-        const oResult = oData?.results && !Array.isArray(oData.results) ? oData.results : null;
-        const aResultRows = Array.isArray(oData?.results)
-            ? oData.results
-            : (Array.isArray(oResult?.results) ? oResult.results : []);
-        const payouts = oData?.payouts || oData?.winnings || oData?.sideBetPayouts || aResultRows.reduce((accumulator, result) => {
-            const nCredit = Number(result?.creditAmount ?? result?.winAmount);
-            if (result?.type && Number.isFinite(nCredit) && nCredit > 0) accumulator[result.type] = nCredit;
-            return accumulator;
-        }, {});
-        const nWinningAmount = Number(
-            oData?.nWinningAmount
-            ?? oData?.nSideBetWinningAmount
-            ?? oData?.sideBetWinningAmount
-            ?? oResult?.creditAmount
-        );
-        if (typeof window !== 'undefined') {
-            window.dispatchEvent(new CustomEvent(GAME_BROWSER_EVENTS.SIDE_BETS_SERVER_STATE, {
-                detail: {
-                    bets: oData?.bets || {},
-                    total: Number(oData?.total) || 0,
-                    results: oData?.results || null,
-                    payouts,
-                    nWinningAmount: Number.isFinite(nWinningAmount) ? nWinningAmount : 0,
-                    nChips: Number.isFinite(Number(oData?.nChips)) ? Number(oData.nChips) : null,
-                    message: oData?.message || oData?.sMessage || '',
-                },
-            }));
-            if ((Number.isFinite(nWinningAmount) && nWinningAmount > 0) || (payouts && Object.keys(payouts).length > 0)) {
-                window.dispatchEvent(new CustomEvent(GAME_BROWSER_EVENTS.SIDE_BET_PAYOUT, {
-                    detail: {
-                        payouts,
-                        nWinningAmount: Number.isFinite(nWinningAmount) ? nWinningAmount : 0,
-                        nChips: Number.isFinite(Number(oData?.nChips)) ? Number(oData.nChips) : null,
-                        message: oData?.message || oData?.sMessage || '',
-                    },
-                }));
-            }
-        }
-        if (Number.isFinite(Number(oData?.nChips))) {
-            this.oGameManager.nMyPlayerChips = Number(oData.nChips);
-            this.setAmountIn(Number(oData.nChips));
-        }
-    }
-    emitSideBetConfig(detail = {}) {
-        if (typeof window === 'undefined') return;
-        const nSmallBlind = Number(detail.nMinBet || this.oGameManager?.oGameInfo?.nSmallBlindAmount || 0);
-        const nBigBlind = Number(detail.nBigBlindAmount || this.oGameManager?.oGameInfo?.nBigBlindAmount || (nSmallBlind * 2) || 0);
-        window.dispatchEvent(new CustomEvent(GAME_BROWSER_EVENTS.SIDE_BET_CONFIG, {
-            detail: {
-                bigBlind: nBigBlind > 0 ? nBigBlind : 100,
-            },
-        }));
-    }
-    emitSideBetWindow(visible, seconds = 0) {
-        if (typeof window === 'undefined') return;
-        window.dispatchEvent(new CustomEvent(GAME_BROWSER_EVENTS.SIDE_BET_WINDOW, {
-            detail: {
-                visible: Boolean(visible),
-                seconds: Math.max(0, Number(seconds) || 0),
-            },
-        }));
     }
     emitConsoleTurnTimer(active, remainingMs = 0, totalMs = 0) {
         if (typeof window === 'undefined') return;
@@ -2804,11 +2815,10 @@ setButtons() {
                     aParticipant: boardSnapshot.aParticipant,
                 },
             });
+            this.oBoardSnapshot = boardSnapshot;
             if (shouldCancelResultForBoardState(boardSnapshot.eState)) this.cancelHandResultCleanup();
             this.clearStagedBetPiles();
             this.oGameManager.oGameInfo = boardSnapshot.oGameInfo;
-            this.emitSideBetConfig({ nMinBet: boardSnapshot.nMinBet, nBigBlindAmount: boardSnapshot.oGameInfo?.nBigBlindAmount });
-            if (shouldHideSideBetWindowForBoardState(boardSnapshot.eState)) this.emitSideBetWindow(false);
             this.oGameManager.nMaxPlayer = boardSnapshot.nMaxPlayer;
             this.oGameManager.oSetting = boardSnapshot.oSetting;
             this.oTutorialState = boardSnapshot.oTutorial;
@@ -2824,6 +2834,7 @@ setButtons() {
             this.updatePotAmount(boardSnapshot.nTableChips);
             this.checkGameEState(boardSnapshot.eState);
             await this.setPlayersData(boardSnapshot.aParticipant);
+            this.maybePromptInviteBots(boardSnapshot);
             this.setCommunityCards(boardSnapshot.aCommunityCard);
             // Render the current player's cards if joining mid-hand (reconnect with hand in progress)
             const me = this.players.get(this.iUserId);
@@ -3157,6 +3168,312 @@ setButtons() {
         }
         this.emitPlayerSlotState();
     }
+    createBotInviteModalButton(parent, x, y, {
+        texture,
+        text,
+        scaleX = 1,
+        scaleY = 1,
+        fontSize = '34px',
+        color = '#ffffff',
+        stroke = '#001122',
+        strokeThickness = 2,
+        labelOffsetY = 0,
+    }, callback) {
+        const button = this.add.container(x, y);
+        parent.add(button);
+
+        const image = this.add.image(0, 0, texture).setScale(scaleX, scaleY);
+        image.setInteractive();
+        button.add(image);
+
+        const label = this.add.text(0, labelOffsetY, text, {
+            fontFamily: config.ButtonFont,
+            fontSize,
+            fontStyle: 'bold',
+            color,
+            align: 'center',
+            stroke,
+            strokeThickness,
+        }).setOrigin(0.5);
+        button.add(label);
+
+        const control = {
+            container: button,
+            image,
+            label,
+            enabled: true,
+            setText: (nextText) => label.setText(nextText),
+            setEnabled: (enabled = true) => {
+                control.enabled = Boolean(enabled);
+                button.setAlpha(control.enabled ? 1 : 0.45);
+            },
+        };
+
+        image.on('pointerover', () => {
+            if (control.enabled) this.input.setDefaultCursor('pointer');
+        });
+        image.on('pointerout', () => this.input.setDefaultCursor('default'));
+        image.on('pointerdown', () => {
+            if (!control.enabled) return;
+            this.input.setDefaultCursor('default');
+            this.tweens.add({
+                targets: button,
+                scaleX: 0.94,
+                scaleY: 0.94,
+                duration: 80,
+                yoyo: true,
+                onComplete: () => {
+                    callback?.();
+                    this.oSoundManager?.playSound?.(this.oSoundManager.click_sound, false);
+                },
+            });
+        });
+
+        return control;
+    }
+    createBotInviteModal() {
+        if (this.botInviteModal) return;
+
+        const modal = this.add.container(config.centerX, config.centerY)
+            .setVisible(false)
+            .setDepth((config.popupDepth || 100000) + 10);
+        this.botInviteModal = modal;
+
+        const overlay = this.add.rectangle(0, 0, config.width * 1.5, config.height * 1.5, 0x000000, 0.84)
+            .setInteractive();
+        modal.add(overlay);
+
+        const panel = this.add.image(0, 0, 'ui_bot_invite_panel');
+        modal.add(panel);
+
+        const titleRule = this.add.rectangle(0, -214, 760, 2, 0x3a9abf, 0.58);
+        modal.add(titleRule);
+
+        const title = this.add.text(0, -260, 'INVITE BOT PLAYERS', {
+            fontFamily: config.CommonFont,
+            fontSize: '46px',
+            fontStyle: 'bold',
+            color: '#8ed4ff',
+            align: 'center',
+            stroke: '#001122',
+            strokeThickness: 3,
+        }).setOrigin(0.5);
+        modal.add(title);
+
+        const message = this.add.text(0, -158, '', {
+            fontFamily: config.playerFont,
+            fontSize: '29px',
+            color: '#cde8f7',
+            align: 'center',
+            lineSpacing: 8,
+            wordWrap: { width: 760 },
+        }).setOrigin(0.5);
+        modal.add(message);
+
+        const rangeLabel = this.add.text(0, -78, '', {
+            fontFamily: config.playerFont,
+            fontSize: '24px',
+            color: '#8ed4ff',
+            align: 'center',
+            wordWrap: { width: 720 },
+        }).setOrigin(0.5);
+        modal.add(rangeLabel);
+
+        modal.add(this.add.image(0, 38, 'ui_bot_invite_count'));
+        const countText = this.add.text(0, 18, '2', {
+            fontFamily: config.CommonFont,
+            fontSize: '88px',
+            fontStyle: 'bold',
+            color: '#ffd76d',
+            align: 'center',
+            stroke: '#2a1600',
+            strokeThickness: 3,
+        }).setOrigin(0.5);
+        modal.add(countText);
+
+        const countLabel = this.add.text(0, 90, 'BOT PLAYERS', {
+            fontFamily: config.playerFont,
+            fontSize: '24px',
+            color: '#ffffff',
+            align: 'center',
+        }).setOrigin(0.5);
+        modal.add(countLabel);
+
+        const footer = this.add.text(0, 148, 'The hand starts after the bots take their seats.', {
+            fontFamily: config.playerFont,
+            fontSize: '22px',
+            color: '#a8d8ef',
+            align: 'center',
+        }).setOrigin(0.5);
+        modal.add(footer);
+
+        const minusButton = this.createBotInviteModalButton(modal, -230, 38, {
+            texture: 'ui_bot_invite_stepper',
+            text: '-',
+            fontSize: '72px',
+            labelOffsetY: -4,
+        }, () => this.setBotInviteCount(this.oBotInviteModal.count - 1));
+
+        const plusButton = this.createBotInviteModalButton(modal, 230, 38, {
+            texture: 'ui_bot_invite_stepper',
+            text: '+',
+            fontSize: '64px',
+            labelOffsetY: -4,
+        }, () => this.setBotInviteCount(this.oBotInviteModal.count + 1));
+
+        const inviteButton = this.createBotInviteModalButton(modal, -178, 246, {
+            texture: 'ui_bot_invite_cta',
+            text: 'Invite',
+            scaleX: 0.82,
+            scaleY: 0.82,
+            fontSize: '34px',
+            color: '#241400',
+            stroke: '#ffeab1',
+            strokeThickness: 1,
+        }, () => {
+            const nBotCount = this.oBotInviteModal.count;
+            this.closeBotInviteModal();
+            this.inviteBotPlayers(nBotCount);
+        });
+
+        const waitButton = this.createBotInviteModalButton(modal, 178, 246, {
+            texture: 'ui_btn_secondary',
+            text: 'Wait',
+            scaleX: 0.82,
+            scaleY: 0.82,
+            fontSize: '34px',
+        }, () => this.closeBotInviteModal());
+
+        this.oBotInviteModal = {
+            modal,
+            message,
+            rangeLabel,
+            countText,
+            minusButton,
+            plusButton,
+            inviteButton,
+            waitButton,
+            count: BOT_INVITE_MIN_COUNT,
+            min: BOT_INVITE_MIN_COUNT,
+            max: BOT_INVITE_MAX_COUNT,
+        };
+    }
+    setBotInviteCount(nextCount) {
+        if (!this.oBotInviteModal) return;
+
+        const nClampedCount = Phaser.Math.Clamp(
+            Math.round(Number(nextCount) || this.oBotInviteModal.min),
+            this.oBotInviteModal.min,
+            this.oBotInviteModal.max,
+        );
+        this.oBotInviteModal.count = nClampedCount;
+        this.oBotInviteModal.countText.setText(String(nClampedCount));
+        this.oBotInviteModal.inviteButton.setText(`Invite ${nClampedCount}`);
+        this.oBotInviteModal.minusButton.setEnabled(nClampedCount > this.oBotInviteModal.min);
+        this.oBotInviteModal.plusButton.setEnabled(nClampedCount < this.oBotInviteModal.max);
+    }
+    openBotInviteModal({ nMaxPlayer = 0, nInviteLimit = 0 } = {}) {
+        this.createBotInviteModal();
+
+        const nMaxSelectable = Math.min(BOT_INVITE_MAX_COUNT, Math.max(Number(nInviteLimit) || 0, 0));
+        if (nMaxSelectable < BOT_INVITE_MIN_COUNT) return;
+
+        this.popup?.close?.();
+        this.prompt?.hide?.();
+        this.oBotInviteModal.min = BOT_INVITE_MIN_COUNT;
+        this.oBotInviteModal.max = nMaxSelectable;
+        this.oBotInviteModal.message.setText(
+            'There are currently no active players online.\nChoose how many BOT players should join you.'
+        );
+        this.oBotInviteModal.rangeLabel.setText(
+            `Choose ${BOT_INVITE_MIN_COUNT}-${nMaxSelectable} bots. This table seats up to ${nMaxPlayer || nInviteLimit + 1}.`
+        );
+        this.setBotInviteCount(BOT_INVITE_MIN_COUNT);
+
+        this.botInviteModal.setPosition(config.centerX, config.centerY);
+        this.botInviteModal.setVisible(true);
+        this.botInviteModal.setAlpha(0);
+        this.botInviteModal.setScale(0.9);
+        this.children.bringToTop(this.botInviteModal);
+        this.tweens.killTweensOf(this.botInviteModal);
+        this.tweens.add({
+            targets: this.botInviteModal,
+            alpha: 1,
+            scaleX: 1,
+            scaleY: 1,
+            duration: 220,
+            ease: 'Back.easeOut',
+        });
+    }
+    closeBotInviteModal() {
+        if (!this.botInviteModal) return;
+        this.input.setDefaultCursor('default');
+        if (!this.botInviteModal.visible) return;
+        this.tweens.killTweensOf(this.botInviteModal);
+        this.tweens.add({
+            targets: this.botInviteModal,
+            alpha: 0,
+            scaleX: 0.94,
+            scaleY: 0.94,
+            duration: 140,
+            ease: 'Cubic.easeIn',
+            onComplete: () => {
+                this.botInviteModal.setVisible(false);
+                this.botInviteModal.setAlpha(1);
+                this.botInviteModal.setScale(1);
+            },
+        });
+    }
+    maybePromptInviteBots(boardSnapshot = {}) {
+        if (this.isGuestTutorial || this.bInviteBotsPromptDismissed || this.bInviteBotsRequestInFlight) return;
+        if (!['waiting', 'initialized'].includes(boardSnapshot.eState)) return;
+
+        const aActiveParticipants = (Array.isArray(boardSnapshot.aParticipant) ? boardSnapshot.aParticipant : [])
+            .filter(participant => participant?.eState !== 'leave');
+        const aHumanParticipants = aActiveParticipants.filter(participant => participant?.eUserType !== 'bot');
+        const nBotParticipantCount = aActiveParticipants.filter(participant => participant?.eUserType === 'bot').length;
+        const bOnlyLocalHuman = aHumanParticipants.length === 1 && String(aHumanParticipants[0]?.iUserId) === String(this.iUserId);
+        if (!bOnlyLocalHuman || nBotParticipantCount > 0) return;
+
+        const nMaxPlayer = Math.max(Number(boardSnapshot.nMaxPlayer) || Number(this.oGameManager?.nMaxPlayer) || 0, 0);
+        const nInviteLimit = Math.max(nMaxPlayer - aActiveParticipants.length, 0);
+        const nMaxSelectable = Math.min(BOT_INVITE_MAX_COUNT, nInviteLimit);
+        if (nMaxSelectable < BOT_INVITE_MIN_COUNT) return;
+
+        this.bInviteBotsPromptDismissed = true;
+        this.openBotInviteModal({ nMaxPlayer, nInviteLimit });
+    }
+    async inviteBotPlayers(nBotCount = 0) {
+        if (!this.oServices?.inviteLiveBots || this.bInviteBotsRequestInFlight) return;
+
+        this.bInviteBotsRequestInFlight = true;
+        this.prompt.show('Inviting BOT players to join you...');
+        try {
+            const response = await this.oServices.inviteLiveBots({
+                iBoardId: this.iBoardId,
+                nBotCount,
+            });
+            const data = response?.data?.data || {};
+            const nInvitedBots = Number(data.nInvitedBots) || 0;
+            if (!nInvitedBots) {
+                this.popup.open({
+                    confirm: false,
+                    title: 'BOT PLAYERS',
+                    message: 'No BOT players are available right now. Please wait for another player to join.',
+                });
+            }
+        } catch (error) {
+            console.error('inviteBotPlayers error:', error);
+            this.popup.open({
+                confirm: false,
+                title: 'BOT PLAYERS',
+                message: error?.response?.data?.message || 'Unable to invite BOT players right now. Please try again shortly.',
+            });
+        } finally {
+            this.bInviteBotsRequestInFlight = false;
+            this.prompt.hide();
+        }
+    }
     async mapPlayerData(iUserId, participant) {
         this.players.set(iUserId, participant);
         await this.setProfiles(iUserId);
@@ -3195,6 +3512,7 @@ setButtons() {
         window.dispatchEvent(new CustomEvent('bsg:game-player-slots', { detail: { players } }));
     }
     async setUserJoined(oData) {
+        if (!this.iUserId && oData?.sRootSocket === this.oSocketManager?.sRootSocket) this.iUserId = oData.iUserId;
         this.oClientGameState = clientGameStateReducer(this.oClientGameState, {
             type: CLIENT_GAME_STATE_ACTIONS.APPLY_PARTICIPANT_PATCH,
             payload: oData,
@@ -3203,6 +3521,12 @@ setButtons() {
             await this.mapPlayerData(oData.iUserId, { ...oData, playerProfile: this.aPlayerProfiles[oData.nSeat] });
         }
         this.emitPlayerSlotState();
+        this.maybePromptInviteBots({
+            ...this.oBoardSnapshot,
+            eState: this.oBoardSnapshot?.eState || oData?.eState || 'waiting',
+            nMaxPlayer: this.oBoardSnapshot?.nMaxPlayer || this.oGameManager?.nMaxPlayer,
+            aParticipant: [...this.players.values()],
+        });
     }
     async setProfiles(iUserId) {
         const player = await this.players.get(iUserId);
@@ -3256,11 +3580,10 @@ setButtons() {
                     aParticipant: boardSnapshot.aParticipant,
                 },
             });
+            this.oBoardSnapshot = boardSnapshot;
             if (shouldCancelResultForBoardState(boardSnapshot.eState)) this.cancelHandResultCleanup();
             this.clearStagedBetPiles();
             this.oTutorialState = boardSnapshot.oTutorial;
-            this.emitSideBetConfig({ nMinBet: boardSnapshot.nMinBet });
-            if (shouldHideSideBetWindowForBoardState(boardSnapshot.eState)) this.emitSideBetWindow(false);
             this.iDealerId = boardSnapshot.iDealerId;
             this.iBigBlindId = boardSnapshot.iBigBlindId;
             this.iSmallBlindId = boardSnapshot.iSmallBlindId;
@@ -3277,6 +3600,7 @@ setButtons() {
             }
             this.arrangeSeats(myPlayer.nSeat);
             await this.setPlayersData(boardSnapshot.aParticipant);
+            this.maybePromptInviteBots(boardSnapshot);
             // Render the current player's cards if joining mid-hand
             const me = this.players.get(this.iUserId);
             if (Array.isArray(me?.aCardHand) && me.aCardHand.length > 0) {
@@ -3350,7 +3674,6 @@ setCollectBootAmount({ nTableChips, aParticipant }) {
         return lastPlayer;
     }
     async setPlayerTurn({ iUserId, ttl, initialValue, nTotalTurnTime, aUserAction, nMinBet, nGraceTime, eTurnType, nRemainingInitializeTime, nRemainingRoundStartsIn, nTableChips, toCallAmount, bAllInStandChoice }) {
-        this.emitSideBetConfig({ nMinBet });
         if (nRemainingInitializeTime > 0 || nRemainingRoundStartsIn > 0) {
             this.resetCheckCommitments();
             this.clearStagedBetPiles();
@@ -3372,7 +3695,6 @@ setCollectBootAmount({ nTableChips, aParticipant }) {
             nRemainingRoundStartsIn > 0 && this.waitingForNextRoundStart(Math.round(nRemainingRoundStartsIn / 1000));
             return;
         }
-        this.emitSideBetWindow(false);
         // If player data isn't ready yet (join race condition), defer until setGameData finishes
         if (!this.players.get(iUserId) && iUserId === this.iUserId) {
             this.oPendingTurn = { iUserId, ttl, initialValue, nTotalTurnTime, aUserAction, nMinBet, nGraceTime, eTurnType, nRemainingInitializeTime, nRemainingRoundStartsIn, nTableChips, toCallAmount, bAllInStandChoice };
@@ -3616,9 +3938,7 @@ setDeclareResult({ nRoundStartsIn, aParticipant, bAllPlayerBust, bAllPlayersBust
     });
     this.clearLocalConsoleHand();
     this.prompt.hide();
-    const nSideBetSeconds = getHandResultSideBetSeconds(nRoundStartsIn);
-    if (nSideBetSeconds > 0) this.emitSideBetWindow(true, nSideBetSeconds);
-  }, HAND_RESULT_CLEAR_DELAY_MS); // Keep cards visible longer (was 7000, now cards show from 500ms to 6000ms)
+  }, HAND_RESULT_CLEAR_DELAY_MS);
   this.cleanupRegistry?.addTimeout(this.handResultClearTimeout);
 
   const allPlayersBust = bAllPlayerBust || bAllPlayersBust;
@@ -3631,45 +3951,45 @@ setDeclareResult({ nRoundStartsIn, aParticipant, bAllPlayerBust, bAllPlayersBust
   }
 
   this.resetTurnTimer();
-        this.flushStagedBetsToPot();
-    const aWinnerParticipants = (Array.isArray(aParticipant) ? aParticipant : []).filter(participant => participant?.eState === "winner");
-    const aShowdownWinnerIds = aWinnerParticipants.map(participant => participant.iUserId);
-    aParticipant?.forEach(participant => {
+  this.flushStagedBetsToPot();
+  const aWinnerParticipants = (Array.isArray(aParticipant) ? aParticipant : []).filter(participant => participant?.eState === 'winner');
+  const aShowdownWinnerIds = aWinnerParticipants.map(participant => participant.iUserId);
+  aParticipant?.forEach(participant => {
     if (!this.players.has(participant.iUserId)) return;
     const player = this.players.get(participant.iUserId);
+    const bLocalParticipant = String(participant.iUserId) === String(this.iUserId);
     player?.playerProfile?.setAlpha(1);
     const nParticipantChips = Math.max(0, Math.round(Number(participant?.nChips) || 0));
     player?.playerProfile?.setAmountIn(nParticipantChips);
-    participant.iUserId == this.iUserId && this.setAmountIn(nParticipantChips);
+    if (bLocalParticipant) this.setAmountIn(nParticipantChips);
     const aParticipantHand = Array.isArray(participant.aCardHand) ? participant.aCardHand : [];
     player.aCardHand = aParticipantHand;
     player.nCardScore = Number(participant.nCardScore) || player.nCardScore;
     player.sShowdownRevealCardId = participant.sShowdownRevealCardId || player.sShowdownRevealCardId || '';
-    player.bShowdownWinner = participant.eState === "winner";
+    player.bShowdownWinner = participant.eState === 'winner';
     player.nShowdownWinAmount = player.bShowdownWinner ? Math.max(0, Math.round(Number(participant.nWinningAmount) || 0)) : 0;
     this.syncPlayerScoreDisplay(player, participant.nCardScore, aParticipantHand, { forceReveal: true });
     player?.playerProfile?.lockScoreDisplay(participant.nCardScore);
-    if (participant.iUserId === this.iUserId) this.emitConsoleCards();
-    
-    if (participant.eState == "winner") {
-      this.cleanupRegistry?.addTimeout(setTimeout(() => {
-        participant.iUserId == this.iUserId && this.oSoundManager.playSound(this.oSoundManager.winAnimation_sound, false);
-        participant.nCardScore === 21 && this.callFXOverlay('blackjack');
-      }, 3000));
-      this.oGameManager.aWinnerPlayers.push(participant.iUserId);
-      
-      this.cleanupRegistry?.addTimeout(setTimeout(() => {
-        participant.iUserId == this.iUserId && this.oSoundManager.playSound(this.oSoundManager.winCoin_sound, false);
-                const nPayoutAmount = Math.max(0, Math.round(Number(participant.nWinningAmount) || 0));
-                if (participant.iUserId === this.iUserId) this.emitConsoleWin(nPayoutAmount);
-                this.queuePotPayout({
-                    amount: nPayoutAmount,
-                    targetAmount: 0,
-                    playerProfile: player?.playerProfile,
-                    track: false,
-                });
-      }, 6200));
+    if (bLocalParticipant) this.emitConsoleCards();
 
+    if (participant.eState === 'winner') {
+      this.cleanupRegistry?.addTimeout(setTimeout(() => {
+        if (bLocalParticipant) this.oSoundManager.playSound(this.oSoundManager.winAnimation_sound, false);
+        if (Number(participant.nCardScore) === 21) this.callFXOverlay('blackjack');
+      }, WIN_ANIMATION_SOUND_DELAY_MS));
+      this.oGameManager.aWinnerPlayers.push(participant.iUserId);
+
+      this.cleanupRegistry?.addTimeout(setTimeout(() => {
+        if (bLocalParticipant) this.oSoundManager.playSound(this.oSoundManager.winCoin_sound, false);
+        const nPayoutAmount = Math.max(0, Math.round(Number(participant.nWinningAmount) || 0));
+        if (bLocalParticipant) this.emitConsoleWin(nPayoutAmount);
+        this.queuePotPayout({
+          amount: nPayoutAmount,
+          targetAmount: 0,
+          playerProfile: player?.playerProfile,
+          track: false,
+        });
+      }, WIN_PAYOUT_FEEDBACK_DELAY_MS));
     }
   });
   this.emitPlayerSlotState();
@@ -3682,7 +4002,7 @@ setDeclareResult({ nRoundStartsIn, aParticipant, bAllPlayerBust, bAllPlayersBust
         winner.nShowdownWinAmount = 0;
       });
       this.emitPlayerSlotState();
-    }, 15600));
+    }, SHOWDOWN_WIN_BADGE_CLEAR_DELAY_MS));
   }
 }
     setRefundOnLongWait({ message, nMaxWaitingTime }) {
@@ -3717,7 +4037,7 @@ setDeclareResult({ nRoundStartsIn, aParticipant, bAllPlayerBust, bAllPlayersBust
         }
     }
     setPlayerLeft({ iUserId, eBehaviour, sReason }) {
-        if (iUserId == this.iUserId) {
+        if (String(iUserId) === String(this.iUserId)) {
             this.exitGame();
         } else {
             this.setFoldPlayer(iUserId, eBehaviour, sReason);
@@ -3751,6 +4071,7 @@ setDeclareResult({ nRoundStartsIn, aParticipant, bAllPlayerBust, bAllPlayersBust
         this.oSoundManager.stopAllManagedSounds();
         this.clearFXOverlayPotAnchor();
         hideGameActionOverlay();
+        this.closeBotInviteModal();
         this.oSocketManager?.destroy?.();
     }
     refreshGlobalProfileState() {

@@ -2,14 +2,14 @@ module.exports = Object.freeze({
   playerTurnHandoffPauseMs: 500,
   communityCardDealDelayMs: 1000,
   clientShowdownMs: 6600,
-  sideBetWindowMs: 10000,
+  postShowdownRestartDelayMs: 2000,
   automatedAllInStandChoiceDelayMs: Object.freeze({
-    min: 650,
-    max: 950,
+    min: 1200,
+    max: 4000,
   }),
   automatedTurnDelayMs: Object.freeze({
-    min: 1450,
-    max: 1900,
+    min: 1200,
+    max: 4000,
   }),
   tutorialTurnDelayMs: Object.freeze({
     min: 1400,

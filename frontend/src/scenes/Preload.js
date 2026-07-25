@@ -21,7 +21,6 @@
 
 import Phaser from 'phaser';
 import config from '../scripts/config';
-import background from '../assets/images/bg/background.png'
 // gameplay
 import portrait_table from '../assets/images/gameplay/portrate_table.png'
 import prompt_bg from '../assets/images/gameplay/prompt_bg.png'
@@ -128,7 +127,6 @@ export default class Preload extends Phaser.Scene {
         this.load.font('playerFontBold', playerFontBold);
         this.load.font('CardFont', CardFont);
 
-        this.load.image('background', background);
         // gameplay
         this.load.image('table', portrait_table);
         this.load.image('private_table', portrait_table);
@@ -227,15 +225,24 @@ export default class Preload extends Phaser.Scene {
     editorCreate() {
         this.cameras.main.setBackgroundColor('#000000');
 
-        const splash = this.add.image(config.centerX, config.centerY, 'preload_splash');
-        const splashScale = Math.min(config.width / splash.width, config.height / splash.height);
-        splash.setScale(splashScale);
-        this.tweens.add({
-            targets: splash,
-            scale: splashScale * 1.015,
-            duration: 5600,
-            ease: 'Sine.easeOut',
-        });
+        if (this.textures.exists('preload_splash')) {
+            const splash = this.add.image(config.centerX, config.centerY, 'preload_splash');
+            const splashScale = Math.min(config.width / splash.width, config.height / splash.height);
+            splash.setScale(splashScale);
+            this.tweens.add({
+                targets: splash,
+                scale: splashScale * 1.015,
+                duration: 5600,
+                ease: 'Sine.easeOut',
+            });
+            return;
+        }
+
+        this.add.text(config.centerX, config.centerY, 'Loading 21 Holdem...', {
+            fontFamily: 'Arial',
+            fontSize: '42px',
+            color: '#ffffff',
+        }).setOrigin(0.5);
     }
     init({ sAuthToken, iBoardId, sPrivateCode, fallbackPath, isGuestTutorial = false, tableOnlyMode = false }) {
         this.sAuthToken = sAuthToken;
@@ -258,30 +265,30 @@ export default class Preload extends Phaser.Scene {
         };
 
         let bLevelStarted = false;
-        const startLevel = (reason = 'complete') => {
+        const startLevel = () => {
             if (bLevelStarted) return;
             bLevelStarted = true;
+            clearTimeout(nPreloadTimeout);
             this.cameras.main.fadeOut(400);
             setTimeout(() => {
                 this.scene.start("Level", data);
             }, 400);
         };
-
-        this.load.on(Phaser.Loader.Events.LOAD_ERROR, (file) => {
-            console.error('Preload asset failed:', file?.key || '', file?.src || file?.url || '');
-        });
-        this.load.on(Phaser.Loader.Events.COMPLETE, () => startLevel('complete'));
-
-        this.editorPreload();
-
-        this.time.delayedCall(12000, () => {
+        const nPreloadTimeout = setTimeout(() => {
             if (bLevelStarted) return;
             const pending = this.load?.list?.getArray
                 ? this.load.list.getArray().map((file) => file?.key || file?.url || '').filter(Boolean)
                 : [];
             console.warn('Preload timeout; starting Level with pending assets:', pending);
-            startLevel('timeout');
+            startLevel();
+        }, 12000);
+
+        this.load.on(Phaser.Loader.Events.LOAD_ERROR, (file) => {
+            console.error('Preload asset failed:', file?.key || '', file?.src || file?.url || '');
         });
+        this.load.on(Phaser.Loader.Events.COMPLETE, () => startLevel());
+
+        this.editorPreload();
     }
 
 }

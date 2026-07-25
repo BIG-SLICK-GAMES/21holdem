@@ -19,7 +19,7 @@ class BoardManager {
       nMaxWaitingTime: 60000,
       nMaxTurnMissAllowed: 2,
       nTurnBuffer: 1000,
-      nRoundStartsIn: 6000,
+      nRoundStartsIn: 8600,
     };
     this.oTableClasses = {};
 
@@ -257,14 +257,14 @@ class BoardManager {
     return iBoardId in this.oTableClasses ? this.oTableClasses[iBoardId].updateClass(oTableData) : this.generateClass(oTableData);
   }
 
-  async addParticipant(oData) {
+  async addParticipant(oData, options = {}) {
     const board = await this.getBoard(oData.iBoardId);
     if (!board) return false;
     if (!board || board.aParticipant.length === board.nMaxPlayer) {
       const newBoard = await this.createBoard(oData.oProtoData);
-      return newBoard.addParticipant(oData.oUserData);
+      return newBoard.addParticipant(oData.oUserData, options);
     }
-    return board.addParticipant(oData.oUserData);
+    return board.addParticipant(oData.oUserData, options);
   }
 
   // - Called on server startup to flush boards stuck in an active state with no

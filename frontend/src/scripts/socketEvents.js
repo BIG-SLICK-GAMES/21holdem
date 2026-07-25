@@ -17,7 +17,6 @@ export const SOCKET_REQUEST_EVENTS = Object.freeze({
     CHECK: 'reqCheck',
     FORCE_PAIR: 'reqForcePair',
     REACTION: 'reqReaction',
-    SIDE_BETS: 'reqSideBets',
     SHOWDOWN_CARD_REVEAL: 'reqShowdownCardReveal',
     TOP_UP_TABLE: 'reqTopUpTable',
     DISCARD_CARD: 'reqDiscardCard',
@@ -45,7 +44,6 @@ export const SOCKET_RESPONSE_EVENTS = Object.freeze({
     STAND: 'resStand',
     DOUBLE_DOWN: 'resDoubledown',
     REACTION: 'resReaction',
-    SIDE_BETS: 'resSideBets',
     SHOWDOWN_CARD_REVEAL: 'resShowdownCardReveal',
     DISCONNECT: 'disconnect',
 });

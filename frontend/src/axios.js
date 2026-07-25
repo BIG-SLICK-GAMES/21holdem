@@ -29,6 +29,16 @@ function stripApiSuffix(url = "") {
     return String(url || "").replace(/\/api\/v1\/?$/i, "").replace(/\/api\/?$/i, "").replace(/\/$/, "");
 }
 
+function getDefaultLocalApiRoot() {
+    if (typeof window === "undefined") return "";
+    if (process.env.NODE_ENV !== "development") return "";
+
+    const browserHostname = getBrowserHostname();
+    if (!isLocalHostname(browserHostname)) return "";
+
+    return `${window.location.protocol}//${browserHostname}:4000`;
+}
+
 function isValidApiEndpoint(url) {
     if (typeof url !== "string" || !url.trim()) return false;
 
@@ -43,7 +53,7 @@ function isValidApiEndpoint(url) {
 export function getApiRoot(url = process.env.REACT_APP_API_ENDPOINT) {
     const configuredUrl = isValidApiEndpoint(url) ? url : "";
 
-    if (!configuredUrl) return "";
+    if (!configuredUrl) return getDefaultLocalApiRoot();
 
     const browserHostname = getBrowserHostname();
     try {

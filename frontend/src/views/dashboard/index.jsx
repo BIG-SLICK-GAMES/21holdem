@@ -23,8 +23,13 @@ import dailyRewardsLightsVideo from '../../assets/videos/daily_rewards_lights.mp
 import liveTablesImage from '../../assets/images/bg/live_tables.png';
 import privateTableImage from '../../assets/images/bg/private_table.png';
 import portraitTableImage from '../../assets/images/gameplay/portrate_table.png';
-import bigSlickGamesImage from '../../assets/images/bsg/big-slick-games.png';
 import bigSlickGamesIcon from '../../assets/images/bsg/big-slick-games-cutout.png';
+import twentyOneQuakeBanner from '../../assets/images/bsg-games/21-quake-banner.png';
+import twentyOneQuakePoster from '../../assets/images/bsg-games/21-quake-poster.png';
+import launch3001Banner from '../../assets/images/bsg-games/launch-3001-banner.png';
+import launch3001Poster from '../../assets/images/bsg-games/launch-3001-poster.png';
+import racingSuitsBanner from '../../assets/images/bsg-games/racing-suits-banner.png';
+import racingSuitsIcon from '../../assets/images/bsg-games/racing-suits-icon.png';
 
 function formatAmount(amount) {
     return _.formatCurrencyWithComa(Number(amount) || 0);
@@ -75,13 +80,36 @@ const PLAYER_OPTIONS = [4, 6, 9];
 const BUY_IN_OPTIONS = [1000, 5000, 15000, 20000];
 const LOBBY_TAB_IDS = ['lobby-live-tables', 'lobby-bsg-games', 'lobby-missions', 'lobby-private-table', 'lobby-player-profile', 'lobby-shop', 'lobby-settings'];
 const TABLE_SEAT_COLORS = ['#d4af6a', '#58c7ff', '#ff6b8a', '#7ee081', '#c38cff', '#ffb15c', '#5eead4', '#f7e36b', '#9bb6ff'];
+const LAUNCH_3001_URL = 'https://launch3001.netlify.app';
 const BSG_GAME_PLACEHOLDERS = [
-    { title: "21 Hold'em", status: 'In Dev', mark: '21H', theme: 'holdem' },
-    { title: "21 Stack'em", status: 'In Dev', mark: '21S', theme: 'stackem' },
-    { title: "21 Sink'em", status: 'In Dev', mark: '21K', theme: 'sinkem' },
-    { title: 'My Other Games', status: 'In Dev', mark: 'B1', theme: 'other-a' },
-    { title: 'My Other Games', status: 'In Dev', mark: 'B2', theme: 'other-b' },
-    { title: 'My Other Games', status: 'In Dev', mark: 'B3', theme: 'other-c' },
+    { title: '21 Quake', status: 'In Dev', mark: '21Q', theme: 'quake', imageSrc: twentyOneQuakePoster },
+    { title: 'Launch 3001', status: 'Beta', mark: '3001', theme: 'launch-3001', imageSrc: launch3001Poster, playUrl: LAUNCH_3001_URL },
+    { title: 'Racing Suits', status: 'In Dev', mark: 'RS', theme: 'racing-suits', imageSrc: racingSuitsIcon },
+];
+const BSG_FEATURED_GAMES = [
+    {
+        title: 'Racing Suits',
+        eyebrow: 'Featured Game',
+        subtitle: 'Card suits hit the racing line.',
+        theme: 'racing-suits',
+        bannerSrc: racingSuitsBanner,
+    },
+    {
+        title: '21 Quake',
+        eyebrow: 'Coming Soon',
+        subtitle: 'Stack tiles. Hit 21. Survive the quake.',
+        theme: 'quake',
+        bannerSrc: twentyOneQuakeBanner,
+    },
+    {
+        title: 'Launch 3001',
+        eyebrow: 'Beta Live',
+        subtitle: 'Play across mobile, PC, and VR.',
+        theme: 'launch-3001',
+        bannerSrc: launch3001Banner,
+        platforms: ['Mobile', 'PC', 'VR'],
+        playUrl: LAUNCH_3001_URL,
+    },
 ];
 const stripePromise = process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY
     ? loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY)
@@ -172,6 +200,7 @@ const Dashboard = () => {
     const [nActiveBuyIn, setActiveBuyIn] = useState(BUY_IN_OPTIONS[0]);
     const [bHasAdjustedFilters, setHasAdjustedFilters] = useState(false);
     const [nCarouselDragOffset, setCarouselDragOffset] = useState(0);
+    const [nBsgFeatureIndex, setBsgFeatureIndex] = useState(0);
     const [aFallbackTablesData, setFallbackTablesData] = useState([]);
     const [bIsJoiningTable, setIsJoiningTable] = useState(false);
 
@@ -339,6 +368,18 @@ const Dashboard = () => {
             .sort(sortTablesByPriority)
     , [aFallbackTablesData, tablesData]);
     const aBuyInOptions = useMemo(() => getBuyInOptions(aSortedTables), [aSortedTables]);
+    const nActiveBsgFeatureIndex = ((nBsgFeatureIndex % BSG_FEATURED_GAMES.length) + BSG_FEATURED_GAMES.length) % BSG_FEATURED_GAMES.length;
+    const oActiveBsgFeature = BSG_FEATURED_GAMES[nActiveBsgFeatureIndex] || BSG_FEATURED_GAMES[0];
+
+    useEffect(() => {
+        if (BSG_FEATURED_GAMES.length <= 1) return undefined;
+
+        const nTimerId = window.setInterval(() => {
+            setBsgFeatureIndex((nIndex) => (nIndex + 1) % BSG_FEATURED_GAMES.length);
+        }, 7000);
+
+        return () => window.clearInterval(nTimerId);
+    }, []);
 
     useEffect(() => {
         let bIsMounted = true;
@@ -972,23 +1013,112 @@ const Dashboard = () => {
 
     const renderBsgGamesGrid = (bCompact = false) => (
         <div className={`dashboard-hub__bsg-games-grid${bCompact ? ' dashboard-hub__bsg-games-grid--compact' : ''}`}>
-            {BSG_GAME_PLACEHOLDERS.map((game, index) => (
-                <article className='dashboard-hub__bsg-game-card' key={`${game.title}-${index}`}>
-                    <div className={`dashboard-hub__bsg-game-poster dashboard-hub__bsg-game-poster--${game.theme}`} aria-hidden='true'>
-                        <span className='dashboard-hub__bsg-game-poster-ribbon'>In Dev</span>
-                        <span className='dashboard-hub__bsg-game-poster-mark'>{game.mark}</span>
-                    </div>
-                    <div className='dashboard-hub__bsg-game-copy'>
-                        <strong>{game.title}</strong>
-                        <span>{game.status}</span>
-                    </div>
-                </article>
-            ))}
+            {BSG_GAME_PLACEHOLDERS.map((game, index) => {
+                const CardElement = game.playUrl ? 'a' : 'article';
+
+                return (
+                    <CardElement
+                        className={`dashboard-hub__bsg-game-card${game.playUrl ? ' is-playable' : ''}`}
+                        href={game.playUrl || undefined}
+                        target={game.playUrl ? '_blank' : undefined}
+                        rel={game.playUrl ? 'noreferrer' : undefined}
+                        aria-label={game.playUrl ? `Play ${game.title}` : undefined}
+                        key={`${game.title}-${index}`}
+                    >
+                        <div className={`dashboard-hub__bsg-game-poster dashboard-hub__bsg-game-poster--${game.theme}${game.imageSrc ? ' has-image' : ''}`} aria-hidden='true'>
+                            {game.imageSrc ? (
+                                <img className='dashboard-hub__bsg-game-poster-image' src={game.imageSrc} alt='' />
+                            ) : null}
+                            <span className='dashboard-hub__bsg-game-poster-ribbon'>{game.status}</span>
+                            {!game.imageSrc ? <span className='dashboard-hub__bsg-game-poster-mark'>{game.mark}</span> : null}
+                        </div>
+                        <div className='dashboard-hub__bsg-game-copy'>
+                            <strong>{game.title}</strong>
+                            <span>{game.status}</span>
+                            {game.playUrl ? <em>Play Beta</em> : null}
+                        </div>
+                    </CardElement>
+                );
+            })}
         </div>
+    );
+
+    const handleBsgFeatureStep = (nDirection) => {
+        setBsgFeatureIndex((nIndex) => (
+            (nIndex + nDirection + BSG_FEATURED_GAMES.length) % BSG_FEATURED_GAMES.length
+        ));
+    };
+
+    const renderBsgGamesCarousel = (bCompact = false) => (
+        <section
+            className={`dashboard-hub__bsg-carousel dashboard-hub__bsg-carousel--${oActiveBsgFeature.theme}${bCompact ? ' dashboard-hub__bsg-carousel--compact' : ''}`}
+            aria-label='Featured BSG games'
+        >
+            <div className='dashboard-hub__bsg-carousel-frame'>
+                <img
+                    className='dashboard-hub__bsg-carousel-image'
+                    src={oActiveBsgFeature.bannerSrc}
+                    alt={oActiveBsgFeature.title}
+                />
+                <div className='dashboard-hub__bsg-carousel-copy'>
+                    <span>{oActiveBsgFeature.eyebrow}</span>
+                    <strong>{oActiveBsgFeature.title}</strong>
+                    <em>{oActiveBsgFeature.subtitle}</em>
+                    {oActiveBsgFeature.platforms?.length ? (
+                        <div className='dashboard-hub__bsg-carousel-platforms' aria-label='Launch 3001 platforms'>
+                            {oActiveBsgFeature.platforms.map((platform) => (
+                                <span key={platform}>{platform}</span>
+                            ))}
+                        </div>
+                    ) : null}
+                    {oActiveBsgFeature.playUrl ? (
+                        <a
+                            className='dashboard-hub__bsg-carousel-cta'
+                            href={oActiveBsgFeature.playUrl}
+                            target='_blank'
+                            rel='noreferrer'
+                        >
+                            Play Beta
+                        </a>
+                    ) : null}
+                </div>
+            </div>
+
+            <button
+                type='button'
+                className='dashboard-hub__bsg-carousel-nav dashboard-hub__bsg-carousel-nav--prev'
+                aria-label='Previous BSG game'
+                onClick={() => handleBsgFeatureStep(-1)}
+            >
+                {'<'}
+            </button>
+            <button
+                type='button'
+                className='dashboard-hub__bsg-carousel-nav dashboard-hub__bsg-carousel-nav--next'
+                aria-label='Next BSG game'
+                onClick={() => handleBsgFeatureStep(1)}
+            >
+                {'>'}
+            </button>
+
+            <div className='dashboard-hub__bsg-carousel-dots' aria-label='Choose featured BSG game'>
+                {BSG_FEATURED_GAMES.map((game, index) => (
+                    <button
+                        key={game.title}
+                        type='button'
+                        className={`dashboard-hub__bsg-carousel-dot${index === nActiveBsgFeatureIndex ? ' is-active' : ''}`}
+                        aria-label={`Show ${game.title}`}
+                        aria-current={index === nActiveBsgFeatureIndex ? 'true' : undefined}
+                        onClick={() => setBsgFeatureIndex(index)}
+                    />
+                ))}
+            </div>
+        </section>
     );
 
     const renderBsgGamesPanel = () => (
         <div className='dashboard-hub__tab-body dashboard-hub__tab-body--bsg-games'>
+            {renderBsgGamesCarousel()}
             {renderBsgGamesGrid()}
         </div>
     );
@@ -1282,7 +1412,7 @@ const Dashboard = () => {
             </header>
 
             <div className='dashboard-hub__desktop-card-media dashboard-hub__desktop-card-media--bsg-games'>
-                <img src={bigSlickGamesImage} alt='Big Slick Games' />
+                {renderBsgGamesCarousel(true)}
             </div>
 
             <div className='dashboard-hub__desktop-card-body dashboard-hub__desktop-card-body--bsg-games'>
@@ -1404,7 +1534,7 @@ const Dashboard = () => {
         const aAdvancedSettings = [
             { label: 'Transactions', description: 'Review chip purchases and account activity.', path: '/transactions' },
             { label: 'How To Play', description: 'Gameplay guide and table flow.', path: '/how-to-play' },
-            { label: 'Rules', description: '21 Holdem rules and side bet details.', path: '/game-rule' },
+            { label: 'Rules', description: '21 Holdem rules and table flow.', path: '/game-rule' },
             { label: 'Report Issue', description: 'Send feedback or flag a game problem.', path: '/contact' },
         ];
         const handleSettingsItemClick = (item) => {

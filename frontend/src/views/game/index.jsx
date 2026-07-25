@@ -4,10 +4,10 @@ import Phaser from "phaser";
 import Preload from "../../scenes/Preload";
 import Level from "../../scenes/Level";
 import config from "../../scripts/config";
+import installPhaserAudioContextGuard from "../../scripts/phaserAudioContextGuard";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useQuery } from "react-query";
-import game_bg from '../../assets/images/bg/game_bg.png';
-import loadingSplash from '../../assets/images/splash/21holdem-sidebets-loading.png';
+import loadingSplash from '../../assets/images/splash/21holdem-loading.png';
 import cardBackImage from '../../assets/images/card/card_back.png';
 import cardFrontImage from '../../assets/images/card/card_front.png';
 import clubImage from '../../assets/images/card/club.png';
@@ -22,7 +22,10 @@ import { getAvatarImageSrc } from "../../shared/constants/builtInAvatars";
 import gameElementControls from "./gameElementControls.json";
 import profileLayoutControls from "./profileLayoutControls.json";
 import { getProfile } from "../../query/profile.query";
-import { getCookie } from "../../shared/utils";
+import { getTables, joinTable } from "../../query/gameTable.query";
+import { getCookie, ReactToastify } from "../../shared/utils";
+
+installPhaserAudioContextGuard(Phaser);
 
 const TABLE_EDGE_SEATS = [4, 5, 3, 6, 2, 7, 1, 8];
 const DEFAULT_SEAT_POSITIONS = {
@@ -131,7 +134,8 @@ function PlayerRailSlot({ nSeat, player, style }) {
     const nScore = Number(player?.nCardScore);
     const bShowScore = Boolean(player?.bShowScore);
     const sBlindRole = String(player?.sBlindRole || '').trim();
-    const sActionLabel = !player?.bLocalPlayer ? String(player?.sActionLabel || '').trim() : '';
+    const bLocalPlayer = Boolean(player?.bLocalPlayer);
+    const sActionLabel = String(player?.sActionLabel || '').trim();
     const bShowdownEligible = bShowScore && !isInactiveHand;
     const aShowdownCards = bShowdownEligible && Array.isArray(player?.aCardHand) ? player.aCardHand.slice(0, 2) : [];
     const bShowdownWinner = Boolean(player?.bShowdownWinner);
@@ -142,7 +146,7 @@ function PlayerRailSlot({ nSeat, player, style }) {
 
     return (
         <span
-            className={`game-table-page__seat-slot game-table-page__seat-slot--seat-${nSeat} is-occupied${isFolded ? ' is-folded' : ''}${isBusted ? ' is-busted' : ''}${isInactiveHand ? ' is-inactive-hand' : ''}${player?.bActiveTurn ? ' is-active-turn' : ''}`}
+            className={`game-table-page__seat-slot game-table-page__seat-slot--seat-${nSeat} is-occupied${bLocalPlayer ? ' is-local-player' : ''}${isFolded ? ' is-folded' : ''}${isBusted ? ' is-busted' : ''}${isInactiveHand ? ' is-inactive-hand' : ''}${player?.bActiveTurn ? ' is-active-turn' : ''}`}
             style={{
                 ...style,
                 '--seat-turn-ms': `${nTurnMs}ms`,
@@ -230,15 +234,15 @@ class Boot extends Phaser.Scene {
         const startPreload = () => {
             if (bPreloadStarted) return;
             bPreloadStarted = true;
+            clearTimeout(nBootTimeout);
             this.scene.start("Preload", data);
         };
+        const nBootTimeout = setTimeout(() => startPreload(), 8000);
         this.load.on(Phaser.Loader.Events.LOAD_ERROR, (file) => {
             console.error('Boot asset failed:', file?.key || '', file?.src || file?.url || '');
         });
         this.load.on(Phaser.Loader.Events.COMPLETE, () => startPreload());
-        this.load.image('game_bg', game_bg);
         this.load.image('preload_splash', loadingSplash);
-        this.time.delayedCall(8000, () => startPreload());
     }
 }
 function Game({ isPausedExternally = false }) {
@@ -256,9 +260,12 @@ function Game({ isPausedExternally = false }) {
         staleTime: 5000,
     });
     const activeProfileBoardId = profileResp?.data?.data?.aPokerBoard?.[0];
-    const resolvedBoardId = iBoardId || activeProfileBoardId;
+    const [joinedBoardId, setJoinedBoardId] = useState(null);
+    const [isAutoJoining, setIsAutoJoining] = useState(false);
+    const resolvedBoardId = iBoardId || joinedBoardId || activeProfileBoardId;
     const gameRef = useRef(null);
     const phaserGameRef = useRef(null);
+    const autoJoinAttemptedRef = useRef(false);
     const [playerSlots, setPlayerSlots] = useState([]);
     const layoutMode = 'mobile';
     const tableOnlyMode = false;
@@ -316,13 +323,69 @@ function Game({ isPausedExternally = false }) {
     useEffect(() => {
         if (!resolvedAuthToken) {
             navigate(fallbackPath);
-            return;
         }
 
-        if (!resolvedBoardId) {
-            if (!isProfileLoading && !isProfileFetching && isProfileFetched) navigate(fallbackPath);
-            return;
-        }
+    }, [fallbackPath, navigate, resolvedAuthToken]);
+
+    useEffect(() => {
+        if (!resolvedAuthToken || resolvedBoardId || autoJoinAttemptedRef.current) return undefined;
+        if (isProfileLoading || isProfileFetching || !isProfileFetched) return undefined;
+
+        let bCancelled = false;
+        autoJoinAttemptedRef.current = true;
+        setIsAutoJoining(true);
+
+        const joinFirstPublicTable = async () => {
+            try {
+                const tablesResp = await getTables('public');
+                const aTables = Array.isArray(tablesResp?.data?.data) ? tablesResp.data.data : [];
+                const oTable = aTables.find((table) => table?._id || table?.id);
+                const iProtoId = oTable?._id || oTable?.id;
+
+                if (!iProtoId) {
+                    ReactToastify('No public 21 Holdem tables are available yet.', 'error');
+                    navigate(fallbackPath);
+                    return;
+                }
+
+                const joinResp = await joinTable(iProtoId);
+                const iNextBoardId = joinResp?.data?.data?.iBoardId;
+                if (!iNextBoardId) throw new Error(joinResp?.data?.message || 'Unable to join table');
+                if (!bCancelled) setJoinedBoardId(iNextBoardId);
+            } catch (error) {
+                if (bCancelled) return;
+
+                const sResponseMessage = error?.response?.data?.message || '';
+                if (/maximum limit of joining boards/i.test(sResponseMessage)) {
+                    try {
+                        const profileResponse = await getProfile();
+                        const iActiveBoardId = profileResponse?.data?.data?.aPokerBoard?.[0];
+                        if (iActiveBoardId && !bCancelled) {
+                            setJoinedBoardId(iActiveBoardId);
+                            return;
+                        }
+                    } catch (profileError) {
+                        console.log(profileError);
+                    }
+                }
+
+                console.log(error);
+                ReactToastify(sResponseMessage || 'Unable to open a 21 Holdem table.', 'error');
+                navigate(fallbackPath);
+            } finally {
+                if (!bCancelled) setIsAutoJoining(false);
+            }
+        };
+
+        joinFirstPublicTable();
+
+        return () => {
+            bCancelled = true;
+        };
+    }, [fallbackPath, isProfileFetched, isProfileFetching, isProfileLoading, navigate, resolvedAuthToken, resolvedBoardId]);
+
+    useEffect(() => {
+        if (!resolvedAuthToken || !resolvedBoardId || isAutoJoining) return undefined;
 
         config.setLayout('mobile');
         const gameConfig = {
@@ -362,7 +425,7 @@ function Game({ isPausedExternally = false }) {
             game.destroy(true);
         };
 
-    }, [fallbackPath, isGuestTutorial, isProfileFetched, isProfileFetching, isProfileLoading, navigate, resolvedAuthToken, resolvedBoardId, sPrivateCode, tableOnlyMode]);
+    }, [fallbackPath, isAutoJoining, isGuestTutorial, resolvedAuthToken, resolvedBoardId, sPrivateCode, tableOnlyMode]);
 
     useEffect(() => {
         const game = phaserGameRef.current;

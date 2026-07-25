@@ -20,6 +20,7 @@ export default class SocketManager {
         this.sRoot = process.env.REACT_APP_SOCKET_URL || getApiRoot();
         this.sAuthToken = sAuthToken;
         this.iBoardId = iBoardId;
+        this.bHasJoinedBoard = false;
         this.receiveQueue = Promise.resolve();
         this.cleanupRegistry = new CleanupRegistry();
         this.socket = io(this.sRoot, {
@@ -32,6 +33,7 @@ export default class SocketManager {
 
         this.socket.on(SOCKET_TRANSPORT_EVENTS.CONNECT, () => {
             this.sRootSocket = this.socket.id;
+            this.reqJoinBoard();
         });
         this.socket.on(SOCKET_TRANSPORT_EVENTS.DISCONNECT, () => {});
         this.socket.on(SOCKET_TRANSPORT_EVENTS.RECONNECT, () => {});
@@ -46,13 +48,6 @@ export default class SocketManager {
             }
         });
 
-        this.socket.emit(SOCKET_REQUEST_EVENTS.JOIN_BOARD, { iBoardId: this.iBoardId }, (data) => {
-            if (data.error && data.error.code == 404) {
-                this.oScene.exitGame();
-            } else {
-                this.onReqJoinBoard(data.oData);
-            }
-        });
         this.reqPingCheck();
         this.pingInterval = setInterval(() => this.reqPingCheck(), 1000);
         this.cleanupRegistry.addInterval(this.pingInterval);
@@ -68,7 +63,22 @@ export default class SocketManager {
             if (typeof callback === 'function') callback(error, response);
         });
     };
+    reqJoinBoard() {
+        this.socket.emit(SOCKET_REQUEST_EVENTS.JOIN_BOARD, {
+            iBoardId: this.iBoardId,
+            isReconnect: this.bHasJoinedBoard,
+        }, (data) => {
+            if (data?.error && data.error.code === 404) {
+                this.oScene.exitGame();
+                return;
+            }
+
+            this.bHasJoinedBoard = true;
+            this.onReqJoinBoard(data?.oData);
+        });
+    }
     onReqJoinBoard(callback) {
+        if (!callback) return;
         if (callback.bGameIsFinished) {
             this.oScene.kickOut({ title: 'LEAVE TABLE', message: callback.messages });
             return;

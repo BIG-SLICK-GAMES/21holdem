@@ -23,7 +23,9 @@ function MongoClient() {
 MongoClient.prototype._getRuntimePaths = function () {
   const runtimeRoot = path.resolve(__dirname, '../../../../.codex-runtime/mongo');
   const downloadDir = path.join(runtimeRoot, 'binaries');
-  const dbPath = path.join(runtimeRoot, 'data');
+  const dbPath = process.env.LOCAL_DEV_MONGO_DB_PATH
+    ? path.resolve(process.env.LOCAL_DEV_MONGO_DB_PATH)
+    : path.join(runtimeRoot, 'data');
 
   fs.mkdirSync(downloadDir, { recursive: true });
   fs.mkdirSync(dbPath, { recursive: true });
@@ -63,6 +65,7 @@ MongoClient.prototype._startMemoryMongo = async function () {
       dbName,
       dbPath,
       ip: '127.0.0.1',
+      launchTimeout: Number(process.env.LOCAL_DEV_MONGO_LAUNCH_TIMEOUT_MS || 60000),
       port,
     },
   });

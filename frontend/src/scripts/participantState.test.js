@@ -36,6 +36,15 @@ describe('participantState', () => {
         })).toEqual({ iUserId: 123, sRootSocket: 'other' });
     });
 
+    test('falls back to the only human participant before socket id is known', () => {
+        const participants = [
+            { iUserId: 'human', eUserType: 'user' },
+            { iUserId: 'bot', eUserType: 'bot' },
+        ];
+
+        expect(findParticipantForClient(participants)).toEqual({ iUserId: 'human', eUserType: 'user' });
+    });
+
     test('finds player in map by key or player id value', () => {
         const direct = { iUserId: 'direct' };
         const nested = { iUserId: 'nested' };

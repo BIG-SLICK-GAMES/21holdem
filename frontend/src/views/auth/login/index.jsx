@@ -17,8 +17,8 @@ const Login = () => {
     const verificationStatus = searchParams.get('verificationStatus');
     const verifiedUserName = searchParams.get('sUserName');
 
-    const goToLobby = (opts = {}) => {
-        navigate('/lobby', { replace: true, ...opts });
+    const goToGame = (opts = {}) => {
+        navigate('/game', { replace: true, ...opts });
     };
     const [rememberMe, setRememberMe] = useState(() => {
         if (typeof window === 'undefined') return false;
@@ -31,7 +31,7 @@ const Login = () => {
         onSuccess: (data) => {
             if (data.status === 200) {
                 setCookie('sAuthToken', data.data.data.authorization, rememberMe ? 14 : undefined);
-                goToLobby();
+                goToGame();
             } else {
                 ReactToastify(data.data.message, 'error', 'login');
             }
@@ -51,7 +51,7 @@ const Login = () => {
         onSuccess: (data) => {
             if (data.status === 200) {
                 setCookie('sAuthToken', data.data.data.authorization, 14);
-                goToLobby({ replace: true });
+                goToGame({ replace: true });
             } else {
                 ReactToastify(data?.data?.message || 'Website handoff failed', 'error', 'handoff');
             }
@@ -71,7 +71,7 @@ const Login = () => {
             nextSearchParams.delete('hubToken');
             nextSearchParams.delete('from');
             setSearchParams(nextSearchParams, { replace: true });
-            goToLobby({ replace: true });
+            goToGame({ replace: true });
         }
     }, [hubToken, searchParams, setSearchParams]);
 

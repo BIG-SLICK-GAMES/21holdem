@@ -24,7 +24,3 @@ export function normalizeBoardSnapshot(payload = {}, previousSnapshot = {}) {
 export function shouldCancelResultForBoardState(eState) {
     return eState === 'playing';
 }
-
-export function shouldHideSideBetWindowForBoardState(eState) {
-    return eState === 'playing';
-}

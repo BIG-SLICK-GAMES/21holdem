@@ -37,16 +37,6 @@ describe('socketCallbackRouter', () => {
         expect(scene.handleActionError).toHaveBeenCalledWith(SOCKET_REQUEST_EVENTS.DOUBLE_DOWN, 'DD failed');
     });
 
-    test('routes side bet error only when error text exists', () => {
-        const scene = createScene();
-
-        expect(routeSocketCallbackToScene(scene, SOCKET_REQUEST_EVENTS.SIDE_BETS, null, {})).toBe(true);
-        expect(scene.handleActionError).not.toHaveBeenCalled();
-
-        routeSocketCallbackToScene(scene, SOCKET_REQUEST_EVENTS.SIDE_BETS, null, { error: 'Side bet failed' });
-        expect(scene.handleActionError).toHaveBeenCalledWith(SOCKET_REQUEST_EVENTS.SIDE_BETS, 'Side bet failed');
-    });
-
     test('returns false for unknown events or missing scene', () => {
         expect(routeSocketCallbackToScene(createScene(), 'unknown', null, {})).toBe(false);
         expect(routeSocketCallbackToScene(null, SOCKET_REQUEST_EVENTS.CALL, null, {})).toBe(false);

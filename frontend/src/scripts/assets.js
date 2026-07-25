@@ -1,7 +1,5 @@
 const assets = {
     logo: 'logo',
-    background: 'background',
-    game_bg: 'game_bg',
     // gameplay
     table: 'table',
     private_table: 'private_table',

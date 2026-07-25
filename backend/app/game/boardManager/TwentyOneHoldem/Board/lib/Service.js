@@ -4,12 +4,13 @@ const { redis, deck } = require('../../../../../utils');
 const Participant = require('../../Participant');
 
 const TUTORIAL_TABLE_MODE = 'guest_tutorial';
+const LIVE_BOT_INVITE_WAITING_TIME = 30 * 60 * 1000;
 const DEFAULT_BOARD_SETTING = {
   nInitializeTimer: 10000,
   nMaxWaitingTime: 60000,
   nMaxTurnMissAllowed: 2,
   nTurnBuffer: 1000,
-  nRoundStartsIn: 6000,
+  nRoundStartsIn: 8600,
   nTurnTime: 20000,
 };
 
@@ -268,9 +269,10 @@ class Service {
     }
   }
 
-  async addParticipant(oUserData) {
+  async addParticipant(oUserData, options = {}) {
     log.green('Add Participant in TwentyOneHoldem Game: ');
     try {
+      const bDeferStart = options.bDeferStart === true;
       const _userData = {
         ...oUserData,
         nChips: oUserData.nMinBuyIn,
@@ -288,10 +290,12 @@ class Service {
       if (this.sPrivateCode) {
         this.oSetting.nMaxWaitingTime = 30 * 60 * 1000;
         await User.updateOne({ _id: oUserData._id }, { $set: { sPrivateCode: this.sPrivateCode } });
+      } else if (this.eTableMode === 'live') {
+        this.oSetting.nMaxWaitingTime = Math.max(Number(this.oSetting.nMaxWaitingTime) || 0, LIVE_BOT_INVITE_WAITING_TIME);
       }
       if (this.aParticipant.length === 1) this.setSchedular('refundOnLongWait', '', this.oSetting.nMaxWaitingTime);
 
-      if (this.aParticipant.length === 3) {
+      if (!bDeferStart && this.aParticipant.length === 3) {
         await this.deleteScheduler('refundOnLongWait', '');
         this.eState = 'initialized';
         this.aParticipant.map(p => (p.eState = 'playing'));
@@ -302,7 +306,7 @@ class Service {
         if (!bInitializeTimer && !bResetTable) await this.setSchedular('initializeGame', null, this.oSetting.nInitializeTimer);
       }
 
-      if (this.aParticipant.length > 3) {
+      if (!bDeferStart && this.aParticipant.length > 3) {
         oParticipant.eState = 'spectator';
 
         const nRemainingInitializeTime = await this.getScheduler('initializeGame');

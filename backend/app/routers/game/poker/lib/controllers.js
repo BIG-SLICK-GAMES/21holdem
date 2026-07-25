@@ -7,6 +7,8 @@ const controllers = {};
 const LOBBY_SEED_BUY_INS = [1000, 5000];
 const LOBBY_SEED_SEAT_COUNTS = [4, 6, 9];
 const LOBBY_SEED_TARGET_PARTICIPANTS = 3;
+const LIVE_BOT_INVITE_MIN_COUNT = 2;
+const LIVE_BOT_INVITE_MAX_COUNT = 8;
 
 async function seedGuestBots({ board, boardProto, count }) {
   if (!count) return;
@@ -26,8 +28,8 @@ async function seedGuestBots({ board, boardProto, count }) {
   }
 }
 
-async function seedLiveBots({ board, boardProto, count }) {
-  if (!count) return;
+async function seedLiveBots({ board, boardProto, count, bDeferStart = false }) {
+  if (!count) return [];
 
   const bots = await middleware.acquireLiveBotUsers({
     count,
@@ -35,18 +37,22 @@ async function seedLiveBots({ board, boardProto, count }) {
     excludeUserIds: board.aParticipant.map(participant => participant.iUserId || participant._id),
   });
 
+  const aJoinedBots = [];
   for (const bot of bots) {
     await PokerBoard.updateOne({ iBoardId: board._id }, { $addToSet: { aParticipants: bot._id } });
     await User.updateOne({ _id: bot._id }, { $addToSet: { aPokerBoard: board._id } });
-    await boardManager.addParticipant({
+    const response = await boardManager.addParticipant({
       iBoardId: board._id,
       oProtoData: boardProto,
       oUserData: {
         ...bot.toObject(),
         nMinBuyIn: boardProto.nMinBuyIn,
       },
-    });
+    }, { bDeferStart });
+    if (response) aJoinedBots.push(bot);
   }
+
+  return aJoinedBots;
 }
 
 async function ensureGuestBoardCanStart(board) {
@@ -80,6 +86,15 @@ async function ensureLiveBoardCanStart(board) {
     refreshedBoard.getScheduler('initializeGame'),
     refreshedBoard.getScheduler('resetTable'),
   ]);
+
+  if (refreshedBoard.eState === 'waiting') {
+    refreshedBoard.eState = 'initialized';
+    refreshedBoard.aParticipant = refreshedBoard.aParticipant.map(participant => {
+      if (participant.eState !== 'leave') participant.eState = 'playing';
+      return participant;
+    });
+    await refreshedBoard.update({ eState: refreshedBoard.eState, aParticipant: refreshedBoard.aParticipant.map(participant => participant.toJSON()) });
+  }
 
   if (!nRemainingInitializeTime && !nRemainingResetTime) {
     await refreshedBoard.deleteScheduler('refundOnLongWait', '');
@@ -257,18 +272,6 @@ controllers.joinBoard = async (req, res) => {
     await User.updateOne({ _id: req.user._id }, { $addToSet: { aPokerBoard: req.board._id } });
 
     req.board = await boardManager.getBoard(req.board._id.toString());
-    const nMissingLiveBotCount = middleware.getMissingLiveBotCount({
-      board: req.board,
-      boardProto: req.boardProto,
-    });
-    if (nMissingLiveBotCount > 0) {
-      await seedLiveBots({
-        board: req.board,
-        boardProto: req.boardProto,
-        count: nMissingLiveBotCount,
-      });
-    }
-
     const refreshedBoard = await ensureLiveBoardCanStart(req.board);
     if (refreshedBoard) {
       response.eState = refreshedBoard.eState;
@@ -279,6 +282,80 @@ controllers.joinBoard = async (req, res) => {
   } catch (error) {
     console.log('🚀 :: controllers.joinTable= :: error:', error);
     return res.reply(messages.server_error('joinBoard'), error.toString());
+  }
+};
+
+controllers.inviteLiveBots = async (req, res) => {
+  try {
+    const { iBoardId, nBotCount } = _.pick(req.body, ['iBoardId', 'nBotCount']);
+    const sBoardId = _.toString(iBoardId || req.user?.aPokerBoard?.[0]);
+    if (!sBoardId) return res.reply(messages.required_field('board id'));
+
+    const board = await boardManager.getBoard(sBoardId);
+    if (!board) return res.reply(messages.custom.table_not_found);
+    if (board.eTableMode !== 'live') return res.reply(messages.invalidRequestCM('Bots can only be invited to live tables.'));
+    if (board.eState === 'playing') return res.reply(messages.invalidRequestCM('Bots cannot be invited after the hand has started.'));
+
+    const participant = board.getParticipant(req.user._id.toString());
+    if (!participant || participant.eState === 'leave') return res.reply(messages.unauthorized());
+
+    await board.deleteScheduler('refundOnLongWait', '');
+
+    const aActiveParticipants = board.aParticipant.filter(activeParticipant => activeParticipant.eState !== 'leave');
+    const nOpenSeats = Math.max((Number(board.nMaxPlayer) || 0) - aActiveParticipants.length, 0);
+    if (!nOpenSeats) {
+      return res.reply(messages.success(), {
+        iBoardId: board._id,
+        nInvitedBots: 0,
+        nMaxPlayer: board.nMaxPlayer,
+        nTotalParticipant: aActiveParticipants.length,
+        eState: board.eState,
+      });
+    }
+
+    const nRequestedBotCount = Number(nBotCount);
+    const nRequestedOrDefault =
+      Number.isFinite(nRequestedBotCount) && nRequestedBotCount > 0
+        ? Math.floor(nRequestedBotCount)
+        : nOpenSeats;
+    const nBoundedRequest = Math.min(
+      LIVE_BOT_INVITE_MAX_COUNT,
+      Math.max(LIVE_BOT_INVITE_MIN_COUNT, nRequestedOrDefault)
+    );
+    const nSafeBotCount = Math.min(nOpenSeats, nBoundedRequest);
+    const boardProto = await BoardProtoType.findOne({ _id: board.iProtoId }).lean();
+    const oBoardProto = boardProto || {
+      _id: board.iProtoId,
+      nMinBuyIn: board.nMinBuyIn,
+      nMaxPlayer: board.nMaxPlayer,
+      nMinBet: board.nMinBet,
+      ePokerType: board.ePokerType,
+    };
+
+    const aJoinedBots = await seedLiveBots({
+      board,
+      boardProto: oBoardProto,
+      count: nSafeBotCount,
+      bDeferStart: true,
+    });
+
+    const refreshedBoard = await ensureLiveBoardCanStart(board);
+    if (refreshedBoard) {
+      await refreshedBoard.emit('resBoardState', refreshedBoard.toJSON());
+      const nRemainingInitializeTime = await refreshedBoard.getScheduler('initializeGame');
+      if (nRemainingInitializeTime) await refreshedBoard.emit('initializeGame', { nInitializeTimer: nRemainingInitializeTime });
+    }
+
+    return res.reply(messages.success(), {
+      iBoardId: refreshedBoard?._id || board._id,
+      nInvitedBots: aJoinedBots.length,
+      nMaxPlayer: refreshedBoard?.nMaxPlayer || board.nMaxPlayer,
+      nTotalParticipant: refreshedBoard?.aParticipant?.length || board.aParticipant.length,
+      eState: refreshedBoard?.eState || board.eState,
+    });
+  } catch (error) {
+    console.log('inviteLiveBots error:', error);
+    return res.reply(messages.server_error('inviteLiveBots'), error.toString());
   }
 };
 

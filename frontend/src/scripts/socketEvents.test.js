@@ -8,7 +8,6 @@ describe('socketEvents', () => {
         expect(SOCKET_REQUEST_EVENTS.CALL).toBe('reqCall');
         expect(SOCKET_REQUEST_EVENTS.RAISE).toBe('reqRaise');
         expect(SOCKET_REQUEST_EVENTS.DOUBLE_DOWN).toBe('reqDoubleDown');
-        expect(SOCKET_REQUEST_EVENTS.SIDE_BETS).toBe('reqSideBets');
         expect(SOCKET_REQUEST_EVENTS.SHOWDOWN_CARD_REVEAL).toBe('reqShowdownCardReveal');
         expect(SOCKET_REQUEST_EVENTS.DISCARD_CARD).toBe('reqDiscardCard');
         expect(SOCKET_REQUEST_EVENTS.FINISH).toBe('reqFinish');
@@ -18,7 +17,6 @@ describe('socketEvents', () => {
         expect(SOCKET_RESPONSE_EVENTS.INITIALIZE_GAME).toBe('initializeGame');
         expect(SOCKET_RESPONSE_EVENTS.PLAYER_TURN).toBe('resPlayerTurn');
         expect(SOCKET_RESPONSE_EVENTS.DOUBLE_DOWN).toBe('resDoubledown');
-        expect(SOCKET_RESPONSE_EVENTS.SIDE_BETS).toBe('resSideBets');
         expect(SOCKET_RESPONSE_EVENTS.SHOWDOWN_CARD_REVEAL).toBe('resShowdownCardReveal');
     });
 
@@ -32,7 +30,6 @@ describe('socketEvents', () => {
         expect(emitter.reqCall).toBe(SOCKET_REQUEST_EVENTS.CALL);
         expect(emitter.reqRaise).toBe(SOCKET_REQUEST_EVENTS.RAISE);
         expect(emitter.reqDoubleDown).toBe(SOCKET_REQUEST_EVENTS.DOUBLE_DOWN);
-        expect(emitter.reqSideBets).toBe(SOCKET_REQUEST_EVENTS.SIDE_BETS);
         expect(emitter.reqShowdownCardReveal).toBe(SOCKET_REQUEST_EVENTS.SHOWDOWN_CARD_REVEAL);
         expect(emitter.reqDiscardCard).toBe(SOCKET_REQUEST_EVENTS.DISCARD_CARD);
         expect(emitter.reqFinish).toBe(SOCKET_REQUEST_EVENTS.FINISH);

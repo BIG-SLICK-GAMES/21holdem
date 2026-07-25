@@ -4059,34 +4059,6 @@
         }
     }
 
-    &__side-bets {
-        position: relative;
-        z-index: 2;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
-        width: 100%;
-        margin-bottom: 22px;
-
-        img {
-            width: 86px;
-            max-width: 28%;
-            aspect-ratio: 1;
-            object-fit: cover;
-            border-radius: 999px;
-            filter: drop-shadow(0 12px 18px rgba(0, 0, 0, 0.38));
-            animation: loginSideBetPulse 2.8s ease-in-out infinite;
-
-            &:nth-child(2) {
-                animation-delay: 0.25s;
-            }
-
-            &:nth-child(3) {
-                animation-delay: 0.5s;
-            }
-        }
-    }
 
     &__dots {
         display: flex;
@@ -4131,14 +4103,6 @@
     }
 }
 
-@keyframes loginSideBetPulse {
-    0%, 100% {
-        transform: translateY(0) scale(1);
-    }
-    50% {
-        transform: translateY(-5px) scale(1.04);
-    }
-}
 
 @media (min-width: 768px) {
     .login-background-only {
@@ -4299,14 +4263,6 @@
         }
     }
 
-    &__side-bets {
-        gap: 7px;
-        margin-bottom: 17px;
-
-        img {
-            width: 72px;
-        }
-    }
 }
 
 @media (max-height: 700px) {
@@ -4938,15 +4894,6 @@
         }
     }
 
-    &__side-bets {
-        gap: 8px !important;
-        margin-bottom: 18px !important;
-
-        img {
-            width: 76px !important;
-            max-width: 29% !important;
-        }
-    }
 
     &__dots {
         min-height: 8px !important;
@@ -5135,29 +5082,6 @@
         }
     }
 
-    &__side-bets {
-        div {
-            display: grid;
-            justify-items: center;
-            gap: 4px;
-            min-width: 0;
-        }
-
-        span {
-            display: inline-grid;
-            place-items: center;
-            min-width: 36px;
-            min-height: 18px;
-            padding: 2px 7px 1px;
-            border: 1px solid rgba(255, 216, 116, 0.58);
-            border-radius: 999px;
-            background: rgba(5, 17, 28, 0.82);
-            color: #ffe071;
-            font-size: 10px;
-            font-weight: 1000;
-            line-height: 1;
-        }
-    }
 
     &__copy {
         background: rgba(3, 15, 28, 0.88) !important;

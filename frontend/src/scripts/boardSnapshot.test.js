@@ -2,7 +2,6 @@
 import {
     normalizeBoardSnapshot,
     shouldCancelResultForBoardState,
-    shouldHideSideBetWindowForBoardState,
 } from './boardSnapshot';
 
 describe('boardSnapshot', () => {
@@ -67,7 +66,5 @@ describe('boardSnapshot', () => {
     test('keeps existing playing-state lifecycle decisions explicit', () => {
         expect(shouldCancelResultForBoardState('playing')).toBe(true);
         expect(shouldCancelResultForBoardState('waiting')).toBe(false);
-        expect(shouldHideSideBetWindowForBoardState('playing')).toBe(true);
-        expect(shouldHideSideBetWindowForBoardState('finished')).toBe(false);
     });
 });

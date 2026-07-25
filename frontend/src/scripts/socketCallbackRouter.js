@@ -21,9 +21,6 @@ export function routeSocketCallbackToScene(oScene, sEventName, response, error) 
         case SOCKET_REQUEST_EVENTS.DOUBLE_DOWN:
             oScene.handleActionError?.(SOCKET_REQUEST_EVENTS.DOUBLE_DOWN, error.error);
             return true;
-        case SOCKET_REQUEST_EVENTS.SIDE_BETS:
-            if (error?.error) oScene.handleActionError?.(SOCKET_REQUEST_EVENTS.SIDE_BETS, error.error);
-            return true;
         default:
             return false;
     }

@@ -63,9 +63,6 @@ export function routeSocketEventToScene(oScene, data = {}) {
         case SOCKET_RESPONSE_EVENTS.REACTION:
             oScene.handleResReaction?.(data.oData);
             return true;
-        case SOCKET_RESPONSE_EVENTS.SIDE_BETS:
-            oScene.handleSideBetsState?.(data.oData);
-            return true;
         case SOCKET_RESPONSE_EVENTS.SHOWDOWN_CARD_REVEAL:
             oScene.handleShowdownCardReveal?.(data.oData);
             return true;
@@ -139,9 +136,6 @@ export async function routeSocketEventToSceneAsync(oScene, data = {}) {
             return true;
         case SOCKET_RESPONSE_EVENTS.REACTION:
             await oScene.handleResReaction?.(data.oData);
-            return true;
-        case SOCKET_RESPONSE_EVENTS.SIDE_BETS:
-            await oScene.handleSideBetsState?.(data.oData);
             return true;
         case SOCKET_RESPONSE_EVENTS.SHOWDOWN_CARD_REVEAL:
             await oScene.handleShowdownCardReveal?.(data.oData);

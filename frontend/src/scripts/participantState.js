@@ -14,6 +14,10 @@ export function findParticipantForClient(aParticipant = [], { sRootSocket = '', 
         return participants.find((participant) => String(participant?.iUserId) === String(iUserId));
     }
 
+    const humanParticipants = participants.filter((participant) => participant?.eUserType !== 'bot');
+    if (humanParticipants.length === 1) return humanParticipants[0];
+    if (participants.length === 1) return participants[0];
+
     return undefined;
 }
 

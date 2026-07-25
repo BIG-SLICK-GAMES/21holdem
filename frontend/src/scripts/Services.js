@@ -23,4 +23,8 @@ export default class Services {
     async resumeGuestBoard() {
         return await axios.post(`${this.sRoot}/api/v1/poker/guest/board/resume`, {}, { headers: { authorization: this.authorization } });
     }
+
+    async inviteLiveBots({ iBoardId, nBotCount }) {
+        return await axios.post(`${this.sRoot}/api/v1/poker/board/invite-bots`, { iBoardId, nBotCount }, { headers: { authorization: this.authorization } });
+    }
 }

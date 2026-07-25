@@ -1,7 +1,6 @@
 /* global describe, test, expect */
 import {
     createHandResultToken,
-    getHandResultSideBetSeconds,
     HAND_RESULT_CLEAR_DELAY_MS,
     HAND_RESULT_REVEAL_DELAY_MS,
     isActiveHandResultToken,
@@ -24,15 +23,9 @@ describe('handResultLifecycle', () => {
         expect(isActiveHandResultToken(10, 10, false)).toBe(false);
     });
 
-    test('calculates side bet reopen seconds after result clear delay', () => {
-        expect(getHandResultSideBetSeconds(16600)).toBe(10);
-        expect(getHandResultSideBetSeconds(6600)).toBe(0);
-        expect(getHandResultSideBetSeconds(10000)).toBe(0);
-        expect(getHandResultSideBetSeconds(undefined)).toBe(0);
-    });
-
-    test('preserves existing next-round countdown exception', () => {
+    test('only shows the countdown for longer result windows', () => {
+        expect(shouldShowNextRoundCountdown(6600)).toBe(false);
         expect(shouldShowNextRoundCountdown(4000)).toBe(false);
-        expect(shouldShowNextRoundCountdown(10000)).toBe(true);
+        expect(shouldShowNextRoundCountdown(8600)).toBe(true);
     });
 });

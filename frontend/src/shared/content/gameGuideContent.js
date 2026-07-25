@@ -76,17 +76,6 @@ export const RULES_SECTIONS = [
         ],
     },
     {
-        title: 'Side Bets',
-        bullets: [
-            'Side bets are optional and are selected before the hand begins.',
-            'Twenty-One pays when your final evaluated hand totals exactly 21.',
-            'Flush pays when your private card and available community cards make at least three cards of the same suit.',
-            'Straight pays when your private card and available community cards make at least three running ranks.',
-            'Straight Flush pays the straight-flush bonus when a qualifying straight is also the same suit.',
-            'The side-bet popup can be hidden with the "Don\'t show again" option.',
-        ],
-    },
-    {
         title: 'Showdown',
         bullets: [
             'Showdown happens after final betting is complete or when the hand state forces the remaining players to compare totals.',
@@ -150,15 +139,7 @@ export const HOW_TO_PLAY_SECTIONS = [
         ],
     },
     {
-        title: '6. Understand side bets',
-        bullets: [
-            'Side bets are optional pre-hand wagers.',
-            'Twenty-One, Flush, Straight and Straight Flush resolve from your final evaluated cards.',
-            'Use the side-bet popup checkbox if you do not want the selector to appear automatically.',
-        ],
-    },
-    {
-        title: '7. Read showdown',
+        title: '6. Read showdown',
         bullets: [
             'At showdown, every active player still in the hand reveals their cards.',
             'The best total of 21 or less wins the pot.',
@@ -167,7 +148,7 @@ export const HOW_TO_PLAY_SECTIONS = [
         ],
     },
     {
-        title: '8. Show your hole card',
+        title: '7. Show your hole card',
         bullets: [
             'Use the eye icon on your hole card when you want that card marked for reveal this hand.',
             'The selection resets after the hand.',

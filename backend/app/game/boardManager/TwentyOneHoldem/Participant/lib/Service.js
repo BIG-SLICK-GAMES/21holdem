@@ -36,10 +36,6 @@ class Service {
     this.nTotalBidChips = oParticipantData.nTotalBidChips ?? 0;
     this.nStandAtRound = oParticipantData.nStandAtRound;
     this.nWinningAmount = oParticipantData.nWinningAmount ?? 0;
-    this.oSideBets = oParticipantData.oSideBets ?? {};
-    this.oCommittedSideBets = oParticipantData.oCommittedSideBets ?? {};
-    this.oSideBetResult = oParticipantData.oSideBetResult ?? null;
-    this.bSideBetsQueuedForNextHand = oParticipantData.bSideBetsQueuedForNextHand ?? false;
     this.sShowdownRevealCardId = oParticipantData.sShowdownRevealCardId ?? '';
     this.nPlayerTurnCount = oParticipantData.nPlayerTurnCount ?? 0;
     this.dGameStartedAt = oParticipantData.dGameStartedAt ?? Date.now();
@@ -62,8 +58,6 @@ class Service {
     this.nLastBidChips = 0;
     this.nTotalBidChips = 0;
     this.nWinningAmount = 0;
-    this.oCommittedSideBets = {};
-    this.oSideBetResult = null;
     this.sShowdownRevealCardId = '';
     this.nPlayerTurnCount = 0;
     this.bHasSplit = false;
@@ -276,35 +270,6 @@ class Service {
     return await Transaction.create(transactionData);
   }
 
-  sanitizeSideBets(oBets = {}) {
-    const allowedKeys = ['straight', 'flush', 'twenty-one'];
-    return allowedKeys.reduce((accumulator, key) => {
-      const nAmount = Math.max(0, Math.min(5000, Math.floor(Number(oBets[key]) || 0)));
-      accumulator[key] = nAmount;
-      return accumulator;
-    }, {});
-  }
-
-  getSideBetTotal(oBets = this.oSideBets) {
-    return Object.values(oBets || {}).reduce((sum, amount) => sum + Math.max(0, Number(amount) || 0), 0);
-  }
-
-  async setSideBets(oBets = {}) {
-    const bets = this.sanitizeSideBets(oBets);
-    const total = this.getSideBetTotal(bets);
-    const nAvailableChips = Math.max(0, Number(this.nChips) || 0);
-
-    if (total > nAvailableChips) throw new Error('Insufficient chips for side bets');
-    this.oSideBets = bets;
-    this.bSideBetsQueuedForNextHand = this.oBoard?.eState === 'playing' && Array.isArray(this.aCardHand) && this.aCardHand.length > 0;
-    await this.oBoard.update({ aParticipant: [this.toJSON()] });
-    await this.emit('resSideBets', {
-      bets: this.oSideBets,
-      total,
-      nChips: this.nChips,
-    });
-  }
-
   async setShowdownCardReveal(oData = {}) {
     const sRequestedCardId = _.toString(oData?.sCardId || oData?.cardId || '');
     const aCardIds = (Array.isArray(this.aCardHand) ? this.aCardHand : [])
@@ -402,10 +367,6 @@ class Service {
       'nTotalBidChips',
       'nStandAtRound',
       'nWinningAmount',
-      'oSideBets',
-      'oCommittedSideBets',
-      'oSideBetResult',
-      'bSideBetsQueuedForNextHand',
       'sShowdownRevealCardId',
       'nPlayerTurnCount',
       'dGameStartedAt',

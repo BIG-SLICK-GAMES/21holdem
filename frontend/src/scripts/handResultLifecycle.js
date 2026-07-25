@@ -9,12 +9,7 @@ export function isActiveHandResultToken(currentToken, expectedToken, bShowingHan
     return currentToken === expectedToken && bShowingHandResult === true;
 }
 
-export function getHandResultSideBetSeconds(nRoundStartsIn, clearDelayMs = HAND_RESULT_CLEAR_DELAY_MS) {
-    const remainingMs = Math.max(0, Number(nRoundStartsIn) || 0);
-    const delayMs = Math.max(0, Number(clearDelayMs) || 0);
-    return Math.floor(Math.max(0, remainingMs - delayMs) / 1000);
-}
-
 export function shouldShowNextRoundCountdown(nRoundStartsIn) {
-    return Number(nRoundStartsIn) !== 4000;
+    const nRoundDelay = Number(nRoundStartsIn);
+    return nRoundDelay > HAND_RESULT_CLEAR_DELAY_MS && nRoundDelay !== 4000;
 }

@@ -31,7 +31,7 @@ export default class GameManager {
             "nMaxTurnMissAllowed": 3,
             "nMaxBot": 1,
             "nPrivateTableWaitingTimeOut": 600000, // 10 min private table wait
-            "nRoundStartsIn": 10000,
+            "nRoundStartsIn": 8600,
             "oTax": {
                 "nDeduction": 30,
                 "nOffset": 1
