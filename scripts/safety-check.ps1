@@ -81,9 +81,37 @@ $scanTargets = @(
 )
 
 $rgCommand = Get-Command rg -ErrorAction SilentlyContinue
+$textScanExtensions = @(
+    ".css",
+    ".env",
+    ".example",
+    ".html",
+    ".js",
+    ".json",
+    ".jsx",
+    ".md",
+    ".ps1",
+    ".scss",
+    ".sh",
+    ".ts",
+    ".tsx",
+    ".txt",
+    ".yaml",
+    ".yml"
+)
+$textScanFileNames = @(
+    ".gitignore",
+    "Dockerfile",
+    "README"
+)
 
 function Get-RelativeRepoPath($path) {
-    [System.IO.Path]::GetRelativePath($repoRoot, $path).Replace('\', '/')
+    $basePath = [System.IO.Path]::GetFullPath($repoRoot).TrimEnd([char]'\', [char]'/')
+    $fullPath = [System.IO.Path]::GetFullPath($path)
+    if ($fullPath.StartsWith($basePath, [System.StringComparison]::OrdinalIgnoreCase)) {
+        return $fullPath.Substring($basePath.Length).TrimStart([char]'\', [char]'/').Replace('\', '/')
+    }
+    $fullPath.Replace('\', '/')
 }
 
 function Get-TextScanFiles($targets) {
@@ -115,6 +143,11 @@ function Get-TextScanFiles($targets) {
                 continue
             }
 
+            $extension = [System.IO.Path]::GetExtension($file.Name).ToLowerInvariant()
+            if (($textScanExtensions -notcontains $extension) -and ($textScanFileNames -notcontains $file.Name)) {
+                continue
+            }
+
             $file.FullName
         }
     }
@@ -132,12 +165,12 @@ function Find-ForbiddenMatches($pattern, $targets) {
         throw "rg exited with code $LASTEXITCODE"
     }
 
-    $files = @(Get-TextScanFiles $targets)
+    $files = @(Get-TextScanFiles $targets | Where-Object { Test-Path -LiteralPath $_ })
     if (-not $files) {
         return @()
     }
 
-    Select-String -Path $files -Pattern $pattern -ErrorAction Stop |
+    Select-String -LiteralPath $files -Pattern $pattern -ErrorAction Stop |
         ForEach-Object { "$(Get-RelativeRepoPath $_.Path):$($_.LineNumber):$($_.Line)" }
 }
 
