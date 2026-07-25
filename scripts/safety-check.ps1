@@ -80,6 +80,67 @@ $scanTargets = @(
     ".gitignore"
 )
 
+$rgCommand = Get-Command rg -ErrorAction SilentlyContinue
+
+function Get-RelativeRepoPath($path) {
+    [System.IO.Path]::GetRelativePath($repoRoot, $path).Replace('\', '/')
+}
+
+function Get-TextScanFiles($targets) {
+    foreach ($target in $targets) {
+        $targetPath = Join-Path $repoRoot $target
+        if (-not (Test-Path -LiteralPath $targetPath)) {
+            continue
+        }
+
+        $item = Get-Item -LiteralPath $targetPath
+        $files = if ($item.PSIsContainer) {
+            Get-ChildItem -LiteralPath $item.FullName -Recurse -File
+        } else {
+            @($item)
+        }
+
+        foreach ($file in $files) {
+            $relative = Get-RelativeRepoPath $file.FullName
+            if (
+                $relative -eq "scripts/safety-check.ps1" -or
+                $relative -like "docs/backups/*" -or
+                $relative -like "*/node_modules/*" -or
+                $relative -like "*/build/*" -or
+                $relative -like "*/dist/*" -or
+                $relative -like "*/logs/*" -or
+                $relative -like "*/package-lock.json" -or
+                $relative -eq "package-lock.json"
+            ) {
+                continue
+            }
+
+            $file.FullName
+        }
+    }
+}
+
+function Find-ForbiddenMatches($pattern, $targets) {
+    if ($rgCommand) {
+        $matches = & $rgCommand.Source --glob '!docs/backups/**' --glob '!scripts/safety-check.ps1' --glob '!**/node_modules/**' --glob '!**/build/**' --glob '!**/dist/**' --glob '!**/logs/**' --glob '!**/package-lock.json' -n -- $pattern @targets 2>$null
+        if ($LASTEXITCODE -eq 0 -and $matches) {
+            return $matches
+        }
+        if ($LASTEXITCODE -le 1) {
+            return @()
+        }
+        throw "rg exited with code $LASTEXITCODE"
+    }
+
+    $files = @(Get-TextScanFiles $targets)
+    if (-not $files) {
+        return @()
+    }
+
+    Select-String -Path $files -Pattern $pattern -ErrorAction Stop |
+        ForEach-Object { "$(Get-RelativeRepoPath $_.Path):$($_.LineNumber):$($_.Line)" }
+}
+
 $forbiddenPatterns = @(
     ("River" + "Shift2026"),
     "http://52\.90\.29\.30",
@@ -95,13 +156,17 @@ $forbiddenPatterns = @(
 )
 
 foreach ($pattern in $forbiddenPatterns) {
-    $matches = & rg --glob '!docs/backups/**' --glob '!scripts/safety-check.ps1' --glob '!**/node_modules/**' --glob '!**/build/**' --glob '!**/dist/**' --glob '!**/logs/**' --glob '!**/package-lock.json' -n -- $pattern @scanTargets 2>$null
-    if ($LASTEXITCODE -eq 0 -and $matches) {
+    try {
+        $matches = @(Find-ForbiddenMatches $pattern $scanTargets)
+    } catch {
+        Fail "scan failed for pattern $pattern`: $($_.Exception.Message)"
+        continue
+    }
+
+    if ($matches) {
         $matches | ForEach-Object { Fail "Forbidden pattern match: $_" }
-    } elseif ($LASTEXITCODE -le 1) {
-        Pass "no matches for $pattern"
     } else {
-        Fail "scan failed for pattern $pattern"
+        Pass "no matches for $pattern"
     }
 }
 
