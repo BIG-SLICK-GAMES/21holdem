@@ -170,8 +170,23 @@ function Find-ForbiddenMatches($pattern, $targets) {
         return @()
     }
 
-    Select-String -LiteralPath $files -Pattern $pattern -ErrorAction Stop |
-        ForEach-Object { "$(Get-RelativeRepoPath $_.Path):$($_.LineNumber):$($_.Line)" }
+    $matches = @()
+    foreach ($file in $files) {
+        $content = Get-Content -LiteralPath $file -Raw -ErrorAction SilentlyContinue
+        if ($null -eq $content) {
+            continue
+        }
+
+        $lineNumber = 0
+        foreach ($line in ($content -split "\r?\n")) {
+            $lineNumber += 1
+            if ([regex]::IsMatch($line, $pattern)) {
+                $matches += "$(Get-RelativeRepoPath $file):${lineNumber}:$line"
+            }
+        }
+    }
+
+    $matches
 }
 
 $forbiddenPatterns = @(
