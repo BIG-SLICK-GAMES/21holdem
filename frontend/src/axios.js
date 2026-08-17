@@ -103,11 +103,10 @@ Axios.interceptors.response.use(
     },
     (err) => {
         const currentPath = typeof window !== 'undefined' ? window.location?.pathname || '' : '';
-        const isGuestRoute = currentPath.startsWith('/guest');
         const isAuthRoute = currentPath === '/login' || currentPath === '/register';
         if (err?.code?.includes?.("ERR_NETWORK")) {
             ReactToastify("Network Error", "error");
-            if (!isGuestRoute && !isAuthRoute) {
+            if (!isAuthRoute) {
                 removeToken();
                 setTimeout(() => {
                     window.location.href = "/login";
@@ -116,7 +115,7 @@ Axios.interceptors.response.use(
             return Promise.reject(err);
         }
         if (err?.response?.status === 401) {
-            if (!isGuestRoute && !isAuthRoute) {
+            if (!isAuthRoute) {
                 removeToken();
                 window.location.href = "/login";
             }
