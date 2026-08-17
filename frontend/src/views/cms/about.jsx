@@ -85,14 +85,14 @@ const About = () => {
                         </button>
                     </div>
                     <div className="about-cta-card">
-                        <div className="about-cta-label">No account needed to look around</div>
-                        <h3>Use Guest Mode first</h3>
+                        <div className="about-cta-label">BSG account access</div>
+                        <h3>Sign in to play</h3>
                         <p>
-                            If you want to understand the table before registering, Guest Mode opens a demo table immediately and lets you see the pace of play.
+                            Create an account or sign in with the unified BSG login before joining the table.
                         </p>
                         <div className="about-actions">
-                            <Link to="/guest" className="about-action primary">Play as Guest</Link>
-                            <Link to="/login" className="about-action secondary">Sign In</Link>
+                            <Link to="/login" className="about-action primary">Sign In</Link>
+                            <Link to="/register" className="about-action secondary">Create Account</Link>
                         </div>
                     </div>
                 </div>

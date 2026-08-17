@@ -1,85 +1,135 @@
-import { exchangeHandoff, login } from 'query/login.query';
-import React, { useCallback, useEffect, useState } from 'react';
+import { exchangeHandoff, login, register as registerAccount } from 'query/login.query';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useMutation } from 'react-query';
 import { useForm } from 'react-hook-form';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { ReactToastify, setCookie } from 'shared/utils';
 import bigSlickGamesLogoImg from '../../../assets/images/bsg/big-slick-games.png';
 
 const LOGIN_REMEMBER_ME_KEY = 'bsg:remember-me';
 const LOGIN_REMEMBERED_IDENTIFIER_KEY = 'bsg:remembered-login';
 
-const Login = () => {
-    const navigate = useNavigate();
-    const [searchParams, setSearchParams] = useSearchParams();
-    const handoffCode = searchParams.get('handoffCode');
-    const hubToken = searchParams.get('hubToken');
-    const verificationStatus = searchParams.get('verificationStatus');
-    const verifiedUserName = searchParams.get('sUserName');
+function getInitialMode(pathname) {
+    return pathname === '/register' ? 'create' : 'login';
+}
 
-    const goToLobby = useCallback((opts = {}) => {
-        navigate('/lobby', { replace: true, ...opts });
-    }, [navigate]);
+const AuthScreen = () => {
+    const navigate = useNavigate();
+    const location = useLocation();
+    const [searchParams, setSearchParams] = useSearchParams();
+    const [mode, setMode] = useState(() => getInitialMode(location.pathname));
     const [rememberMe, setRememberMe] = useState(() => {
         if (typeof window === 'undefined') return false;
         return window.localStorage.getItem(LOGIN_REMEMBER_ME_KEY) === 'true';
     });
 
-    const { register, handleSubmit, formState: { errors }, reset, setValue } = useForm({ mode: 'onSubmit' });
+    const handoffCode = searchParams.get('handoffCode');
+    const hubToken = searchParams.get('hubToken');
+    const verificationStatus = searchParams.get('verificationStatus');
+    const verifiedUserName = searchParams.get('sUserName');
 
-    const { mutate, isLoading } = useMutation(login, {
-        onSuccess: (data) => {
-            if (data.status === 200) {
-                setCookie('sAuthToken', data.data.data.authorization, rememberMe ? 14 : undefined);
+    const isCreateMode = mode === 'create';
+    const formTitle = isCreateMode ? 'Create your BSG account' : 'Sign in to Big Slick Games';
+
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+        reset,
+        setValue,
+    } = useForm({ mode: 'onSubmit' });
+
+    const goToLobby = useCallback((opts = {}) => {
+        navigate('/lobby', { replace: true, ...opts });
+    }, [navigate]);
+
+    const cleanSearchParams = useCallback((keys) => {
+        const nextSearchParams = new URLSearchParams(searchParams);
+        keys.forEach((key) => nextSearchParams.delete(key));
+        setSearchParams(nextSearchParams, { replace: true });
+    }, [searchParams, setSearchParams]);
+
+    const saveToken = useCallback((token, days) => {
+        const cleanToken = String(token || '').trim().replace(/^Bearer\s+/i, '');
+        if (!cleanToken) return false;
+        setCookie('sAuthToken', cleanToken, days);
+        return true;
+    }, []);
+
+    const { mutate: signIn, isLoading: isSignInLoading } = useMutation(login, {
+        onSuccess: (response) => {
+            const token = response?.data?.data?.authorization || response?.headers?.authorization || response?.headers?.Authorization;
+            if (response.status === 200 && saveToken(token, rememberMe ? 14 : undefined)) {
                 goToLobby();
-            } else {
-                ReactToastify(data.data.message, 'error', 'login');
+                return;
             }
+
+            ReactToastify(response?.data?.message || 'Sign in failed', 'error', 'login');
         },
         onError: (error) => {
-            console.log(error);
             const devVerificationLink = error?.response?.data?.data?.oDevMailPreview?.sLink;
             if (devVerificationLink) {
                 window.location.assign(devVerificationLink);
                 return;
             }
-            ReactToastify(error.response.data.message, 'error', 'login');
+
+            ReactToastify(error?.response?.data?.message || 'Sign in failed', 'error', 'login');
         },
     });
 
-    const { mutate: exchangeHandoffMutate, isLoading: isHandoffLoading } = useMutation(exchangeHandoff, {
-        onSuccess: (data) => {
-            if (data.status === 200) {
-                setCookie('sAuthToken', data.data.data.authorization, 14);
-                goToLobby({ replace: true });
-            } else {
-                ReactToastify(data?.data?.message || 'Website handoff failed', 'error', 'handoff');
+    const { mutate: createAccount, isLoading: isCreateLoading } = useMutation(registerAccount, {
+        onSuccess: (response) => {
+            const devVerificationLink = response?.data?.data?.oDevMailPreview?.sLink;
+            if (devVerificationLink) {
+                window.location.assign(devVerificationLink);
+                return;
             }
+
+            ReactToastify('Account created. Check your email to verify, then sign in.', 'success', 'register');
+            setMode('login');
+            navigate('/login', { replace: true });
+            reset({ email: '', username: '', password: '', terms: false });
         },
         onError: (error) => {
-            console.log(error);
-            ReactToastify(error?.response?.data?.message || error?.response?.data?.detail || 'Website handoff failed', 'error', 'handoff');
-            navigate('/login', { replace: true });
+            ReactToastify(error?.response?.data?.message || 'Registration failed', 'error', 'register');
         },
     });
 
-    useEffect(() => {
-        if (hubToken) {
-            setCookie('sAuthToken', hubToken, 14);
+    const { mutate: exchangeHandoffCode, isLoading: isHandoffLoading } = useMutation(exchangeHandoff, {
+        onSuccess: (response) => {
+            const token = response?.data?.data?.authorization || response?.headers?.authorization || response?.headers?.Authorization;
+            if (response.status === 200 && saveToken(token, 14)) {
+                cleanSearchParams(['handoffCode']);
+                goToLobby({ replace: true });
+                return;
+            }
 
-            const nextSearchParams = new URLSearchParams(searchParams);
-            nextSearchParams.delete('hubToken');
-            nextSearchParams.delete('from');
-            setSearchParams(nextSearchParams, { replace: true });
+            ReactToastify(response?.data?.message || 'Website handoff failed', 'error', 'handoff');
+        },
+        onError: (error) => {
+            cleanSearchParams(['handoffCode']);
+            ReactToastify(error?.response?.data?.message || error?.response?.data?.detail || 'Website handoff failed', 'error', 'handoff');
+        },
+    });
+
+    const isSubmitting = isSignInLoading || isCreateLoading || isHandoffLoading;
+
+    useEffect(() => {
+        setMode(getInitialMode(location.pathname));
+    }, [location.pathname]);
+
+    useEffect(() => {
+        if (!hubToken) return;
+
+        if (saveToken(hubToken, 14)) {
+            cleanSearchParams(['hubToken', 'from']);
             goToLobby({ replace: true });
         }
-    }, [goToLobby, hubToken, searchParams, setSearchParams]);
+    }, [cleanSearchParams, goToLobby, hubToken, saveToken]);
 
     useEffect(() => {
-        if (handoffCode) {
-            exchangeHandoffMutate({ handoffCode });
-        }
-    }, [exchangeHandoffMutate, handoffCode]);
+        if (handoffCode) exchangeHandoffCode({ handoffCode });
+    }, [exchangeHandoffCode, handoffCode]);
 
     useEffect(() => {
         if (!verificationStatus) return;
@@ -92,22 +142,44 @@ const Login = () => {
             ReactToastify('Verification link expired. Sign in to request a new one.', 'error', 'verification');
         }
 
-        const nextSearchParams = new URLSearchParams(searchParams);
-        nextSearchParams.delete('verificationStatus');
-        nextSearchParams.delete('sUserName');
-        setSearchParams(nextSearchParams, { replace: true });
-    }, [searchParams, setSearchParams, verificationStatus, verifiedUserName]);
+        cleanSearchParams(['verificationStatus', 'sUserName']);
+    }, [cleanSearchParams, verificationStatus, verifiedUserName]);
 
     useEffect(() => {
         if (typeof window === 'undefined') return;
 
         const rememberedIdentifier = window.localStorage.getItem(LOGIN_REMEMBERED_IDENTIFIER_KEY);
-        if (rememberedIdentifier) {
-            setValue('email', rememberedIdentifier);
-        }
+        if (rememberedIdentifier) setValue('email', rememberedIdentifier);
     }, [setValue]);
 
-    function onLogin(data) {
+    const passwordRules = useMemo(() => ({
+        required: 'Password is required',
+        minLength: {
+            value: 8,
+            message: 'Password must be at least 8 characters',
+        },
+        maxLength: {
+            value: 16,
+            message: 'Password must be less than 16 characters',
+        },
+    }), []);
+
+    function switchMode(nextMode) {
+        setMode(nextMode);
+        navigate(nextMode === 'create' ? '/register' : '/login', { replace: true });
+        reset({ email: '', username: '', password: '', terms: false });
+    }
+
+    function onSubmit(data) {
+        if (isCreateMode) {
+            createAccount({
+                sEmail: data.email,
+                sPassword: data.password,
+                sUserName: data.username,
+            });
+            return;
+        }
+
         if (typeof window !== 'undefined') {
             if (rememberMe) {
                 window.localStorage.setItem(LOGIN_REMEMBER_ME_KEY, 'true');
@@ -118,96 +190,122 @@ const Login = () => {
             }
         }
 
-        mutate({
+        signIn({
             sEmail: data.email,
             sPassword: data.password,
         });
-        reset();
     }
 
     return (
-        <>
-            <main className='auth-modern auth-modern--login'>
-                <section className='auth-modern__product auth-modern__product--simple' aria-label='Big Slick Games'>
-                    <div className='auth-modern__brand-lockup'>
-                        <img src={bigSlickGamesLogoImg} alt='Big Slick Games' className='auth-modern__logo auth-modern__logo--bsg' />
-                        <p className='auth-modern__signup-line'>
-                            Sign in to Big Slick Games to access your profile, wallet, hub, and games.
-                        </p>
-                    </div>
-                </section>
+        <main className='bsg-auth' aria-label='Big Slick Games authentication'>
+            <section className='bsg-auth__panel' aria-label={formTitle}>
+                <div className='bsg-auth__mobile-brand'>
+                    <img src={bigSlickGamesLogoImg} alt='Big Slick Games' />
+                </div>
 
-                <section className='auth-modern__panel' aria-label='Sign in form'>
-                    <form autoComplete='off' onSubmit={handleSubmit(onLogin)} className='auth-modern__form'>
-                        <label className='auth-modern__field'>
-                            <span>Email or username</span>
+                <div className='bsg-auth__mode' role='tablist' aria-label='Authentication mode'>
+                    <button type='button' className={!isCreateMode ? 'is-active' : ''} onClick={() => switchMode('login')} role='tab' aria-selected={!isCreateMode}>
+                        Sign in
+                    </button>
+                    <button type='button' className={isCreateMode ? 'is-active' : ''} onClick={() => switchMode('create')} role='tab' aria-selected={isCreateMode}>
+                        Create account
+                    </button>
+                </div>
+
+                <div className='bsg-auth__heading'>
+                    <h2>{formTitle}</h2>
+                </div>
+
+                <form className='bsg-auth__form' onSubmit={handleSubmit(onSubmit)} noValidate>
+                    <label className='bsg-auth__field'>
+                        <span>{isCreateMode ? 'Email' : 'Email or username'}</span>
+                        <input
+                            type={isCreateMode ? 'email' : 'text'}
+                            autoComplete={isCreateMode ? 'email' : 'username'}
+                            placeholder={isCreateMode ? 'you@example.com' : 'you@example.com'}
+                            className={errors.email ? 'is-error' : ''}
+                            {...register('email', {
+                                required: isCreateMode ? 'Email is required' : 'Email or username is required',
+                                validate: (value) => {
+                                    const emailPattern = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
+                                    const usernamePattern = /^[a-zA-Z0-9_]+$/;
+                                    if (isCreateMode) return emailPattern.test(value) || 'Enter a valid email address';
+                                    return emailPattern.test(value) || usernamePattern.test(value) || 'Enter a valid email or username';
+                                },
+                            })}
+                        />
+                        {errors.email?.message && <small>{errors.email.message}</small>}
+                    </label>
+
+                    {isCreateMode && (
+                        <label className='bsg-auth__field'>
+                            <span>Username</span>
                             <input
                                 type='text'
-                                placeholder='you@example.com'
-                                className={errors.email ? 'is-error' : ''}
-                                {...register('email', {
-                                    required: 'Email or Username is Required',
-                                    validate: (value) => {
-                                        const emailPattern = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
-                                        const usernamePattern = /^[a-zA-Z0-9_]+$/;
-                                        if (emailPattern.test(value) || usernamePattern.test(value)) return true;
-                                        return 'Please enter a valid email or username';
-                                    },
-                                })}
-                            />
-                        </label>
-                        <label className='auth-modern__field'>
-                            <span>Password</span>
-                            <input
-                                type='password'
-                                placeholder='Enter your password'
-                                className={errors.password ? 'is-error' : ''}
-                                {...register('password', {
-                                    required: 'Password is required',
+                                autoComplete='username'
+                                placeholder='Choose a table name'
+                                className={errors.username ? 'is-error' : ''}
+                                {...register('username', {
+                                    required: 'Username is required',
                                     minLength: {
-                                        value: 8,
-                                        message: 'Password must be at least 8 characters',
-                                    },
-                                    maxLength: {
-                                        value: 16,
-                                        message: 'Password must be less than 16 characters',
+                                        value: 4,
+                                        message: 'Username must be at least 4 characters',
                                     },
                                 })}
                             />
+                            {errors.username?.message && <small>{errors.username.message}</small>}
                         </label>
-                        <div className='auth-modern__row'>
-                            <label className='auth-modern__check'>
+                    )}
+
+                    <label className='bsg-auth__field'>
+                        <span>Password</span>
+                        <input
+                            type='password'
+                            autoComplete={isCreateMode ? 'new-password' : 'current-password'}
+                            placeholder={isCreateMode ? '8-16 chars, mixed case, number, symbol' : 'Enter your password'}
+                            className={errors.password ? 'is-error' : ''}
+                            {...register('password', isCreateMode ? {
+                                ...passwordRules,
+                                validate: (value) => /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,16}$/.test(value)
+                                    || 'Use 8-16 characters with mixed case, number, and symbol',
+                            } : passwordRules)}
+                        />
+                        {errors.password?.message && <small>{errors.password.message}</small>}
+                    </label>
+
+                    <div className='bsg-auth__options'>
+                        {!isCreateMode ? (
+                            <label className='bsg-auth__check'>
                                 <input
                                     type='checkbox'
                                     checked={rememberMe}
-                                    onChange={(e) => {
-                                        const checked = e.target.checked;
-                                        setRememberMe(checked);
-                                        if (typeof window !== 'undefined') {
-                                            if (checked) {
-                                                window.localStorage.setItem(LOGIN_REMEMBER_ME_KEY, 'true');
-                                            } else {
-                                                window.localStorage.removeItem(LOGIN_REMEMBER_ME_KEY);
-                                            }
-                                        }
-                                    }}
+                                    onChange={(event) => setRememberMe(event.target.checked)}
                                 />
-                                <span>Remember me</span>
+                                <span>Remember this device</span>
                             </label>
-                        </div>
-                        <button type='submit' className='auth-modern__submit' disabled={isLoading || isHandoffLoading}>
-                            {isLoading || isHandoffLoading ? 'Signing in...' : 'Sign in'}
-                        </button>
-                    </form>
-
-                    <div className='auth-modern__switch'>
-                        <span>Need an account?</span>
-                        <button type='button' onClick={() => navigate('/register')}>Sign up</button>
+                        ) : (
+                            <label className='bsg-auth__check'>
+                                <input
+                                    type='checkbox'
+                                    className={errors.terms ? 'is-error' : ''}
+                                    {...register('terms', { required: 'Accept the Terms and Privacy Policy to continue' })}
+                                />
+                                <span>
+                                    I agree to the <a href='/terms-conditions' target='_blank' rel='noreferrer'>Terms</a>
+                                    {' '}and <a href='/privacy-policy' target='_blank' rel='noreferrer'>Privacy Policy</a>.
+                                </span>
+                            </label>
+                        )}
                     </div>
-                </section>
-            </main>
-        </>
+                    {errors.terms?.message && <small className='bsg-auth__form-error'>{errors.terms.message}</small>}
+
+                    <button type='submit' className='bsg-auth__submit' disabled={isSubmitting}>
+                        {isSubmitting ? 'Working...' : isCreateMode ? 'Create BSG account' : 'Sign in securely'}
+                    </button>
+                </form>
+            </section>
+        </main>
     );
 };
 
-export default Login;
+export default AuthScreen;
