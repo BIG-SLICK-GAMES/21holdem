@@ -302,6 +302,10 @@ const AuthScreen = () => {
                     <button type='submit' className='bsg-auth__submit' disabled={isSubmitting}>
                         {isSubmitting ? 'Working...' : isCreateMode ? 'Create BSG account' : 'Sign in securely'}
                     </button>
+
+                    <a className='bsg-auth__direct-game' href='/lobby'>
+                        Take me directly to 21 Hold&apos;em
+                    </a>
                 </form>
             </section>
         </main>
