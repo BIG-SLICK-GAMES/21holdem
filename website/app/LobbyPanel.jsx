@@ -38,29 +38,29 @@ function TableSeatPreview({ maxPlayers, activePlayers }) {
   const takenCount = Math.max(Math.min(Number(activePlayers) || 0, seatCount), 0);
   const seatLayouts = {
     4: [
-      [50, 10],
-      [14, 48],
-      [86, 48],
-      [50, 91]
+      [28, 17],
+      [72, 17],
+      [14, 53],
+      [86, 53]
     ],
     6: [
-      [50, 9],
-      [19, 28],
-      [81, 28],
-      [14, 70],
-      [86, 70],
-      [50, 92]
+      [28, 17],
+      [72, 17],
+      [14, 44],
+      [86, 44],
+      [23, 78],
+      [77, 78]
     ],
     9: [
-      [50, 8],
-      [25, 18],
-      [75, 18],
-      [11, 43],
-      [89, 43],
-      [15, 72],
-      [85, 72],
-      [36, 91],
-      [64, 91]
+      [28, 15],
+      [72, 15],
+      [11, 39],
+      [89, 39],
+      [11, 61],
+      [89, 61],
+      [20, 83],
+      [80, 83],
+      [50, 91]
     ]
   };
   const layout = seatLayouts[seatCount] || Array.from({ length: seatCount }, (_, index) => {
