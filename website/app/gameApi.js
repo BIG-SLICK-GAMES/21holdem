@@ -40,7 +40,7 @@ export function getGameApiRoot() {
 }
 
 export function getGameClientUrl() {
-  return process.env.NEXT_PUBLIC_GAME_CLIENT_URL || "/game";
+  return process.env.NEXT_PUBLIC_GAME_CLIENT_URL || "/play";
 }
 
 export function getActivePlayers(table) {
