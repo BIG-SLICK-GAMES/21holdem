@@ -15,7 +15,6 @@ export default function ChipReveal() {
   const [rewardPrize, setRewardPrize] = useState(null);
   const [isRewardSpinning, setIsRewardSpinning] = useState(false);
   const [hasSpunToday, setHasSpunToday] = useState(false);
-  const [rewardReelOffset, setRewardReelOffset] = useState(0);
   const [profile, setProfile] = useState(null);
   const [isProfileChecked, setIsProfileChecked] = useState(false);
   const cardRefs = useRef([]);
@@ -157,9 +156,6 @@ export default function ChipReveal() {
     { label: "100 chips", segmentLabel: "100", className: "rewardPrize-chips", color: "green" },
     { label: "200 chips", segmentLabel: "200", className: "rewardPrize-chips", color: "red" }
   ];
-  const rewardReelItems = Array.from({ length: 8 }, (_, reelIndex) => (
-    rewardPrizes.map((prize, prizeIndex) => ({ ...prize, key: `${reelIndex}-${prizeIndex}` }))
-  )).flat();
   const getRewardSpinStorageKey = (profileId) => `21holdem.rewardSpinDate.${profileId || "guest"}`;
   const getRewardSpinDateKey = () => {
     const now = new Date();
@@ -318,23 +314,15 @@ export default function ChipReveal() {
     if (!profile || isRewardSpinning || hasSpunToday) return;
 
     const prizeIndex = Math.floor(Math.random() * rewardPrizes.length);
-    const reelItemHeight = 58;
-    const targetIndex = rewardPrizes.length * 6 + prizeIndex;
 
     setRewardPrize(null);
     setIsRewardSpinning(true);
     setHasSpunToday(true);
     window.localStorage.setItem(getRewardSpinStorageKey(profile.id), getRewardSpinDateKey());
-    setRewardReelOffset(0);
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        setRewardReelOffset(targetIndex * reelItemHeight);
-      });
-    });
     window.setTimeout(() => {
       setRewardPrize(rewardPrizes[prizeIndex]);
       setIsRewardSpinning(false);
-    }, 1450);
+    }, 1250);
   };
 
   const activeMessage = messageSteps[messageStep];
@@ -638,39 +626,33 @@ export default function ChipReveal() {
           hidden={activeMenuSlot !== "rewards"}
         >
           {isProfileChecked && isSignedIn ? (
-          <div className="rewardReelStage">
-            <button
-              className={`rewardReelButton ${isRewardSpinning ? "isSpinning" : ""} ${hasSpunToday && !isRewardSpinning ? "isLocked" : ""}`}
-              type="button"
-              onClick={handleRewardOpen}
-              disabled={isRewardSpinning || hasSpunToday}
-              aria-label={hasSpunToday ? "Daily reward spin already used" : "Spin reward reel"}
-            >
-              <span
-                className="rewardReelTrack"
-                style={{ "--reel-offset": `${rewardReelOffset}px` }}
-                aria-hidden="true"
+          <div className="rewardChipLayout">
+            <div className={`rewardChipStage ${isRewardSpinning ? "isSpinning" : ""} ${rewardPrize ? "hasPrize" : ""}`}>
+              <button
+                className={`rewardChipButton ${hasSpunToday && !isRewardSpinning ? "isLocked" : ""}`}
+                type="button"
+                onClick={handleRewardOpen}
+                disabled={isRewardSpinning || hasSpunToday}
+                aria-label={hasSpunToday ? "Daily reward already claimed" : "Turn chip for daily reward"}
               >
-                {rewardReelItems.map((prize) => (
-                  <span className={`rewardReelItem rewardReelItem-${prize.color}`} key={prize.key}>
-                    {prize.segmentLabel}
+                <img src="/images/optimized/chip.webp" alt="" />
+                <span>{isRewardSpinning ? "Turning" : hasSpunToday ? "Claimed" : "Turn Chip"}</span>
+              </button>
+              <span className="rewardFlash" aria-hidden="true" />
+              {rewardPrize ? (
+                <strong className={`rewardPrize ${rewardPrize.className}`}>{rewardPrize.label}</strong>
+              ) : null}
+            </div>
+            <div className="availablePrizePanel" aria-label="Available daily reward prizes">
+              <p className="sectionKicker">Available Prizes</p>
+              <div className="availablePrizeGrid">
+                {[...new Map(rewardPrizes.map((prize) => [prize.label, prize])).values()].map((prize) => (
+                  <span className={`availablePrize availablePrize-${prize.color}`} key={prize.label}>
+                    {prize.label}
                   </span>
                 ))}
-              </span>
-              <span className="rewardReelPointer" aria-hidden="true" />
-            </button>
-            <button
-              className={`rewardSpinButton ${hasSpunToday && !isRewardSpinning ? "isLocked" : ""}`}
-              type="button"
-              onClick={handleRewardOpen}
-              disabled={isRewardSpinning || hasSpunToday}
-            >
-              <img src="/images/optimized/chip.webp" alt="" />
-              <span>{isRewardSpinning ? "Spinning" : hasSpunToday ? "Daily Spin Claimed" : "Spin"}</span>
-            </button>
-            {rewardPrize ? (
-              <strong className={`rewardPrize ${rewardPrize.className}`}>{rewardPrize.label}</strong>
-            ) : null}
+              </div>
+            </div>
           </div>
           ) : (
             <LoginRequiredPanel label="Daily Rewards are locked" />

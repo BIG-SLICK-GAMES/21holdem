@@ -14,7 +14,7 @@ function Pass($message) {
 
 $envScanRoots = @(
     $repoRoot,
-    (Join-Path $repoRoot "frontend"),
+    (Join-Path $repoRoot "website"),
     (Join-Path $repoRoot "backend"),
     (Join-Path $repoRoot "env-templates")
 )
@@ -71,7 +71,8 @@ $scanTargets = @(
     "backend/.env.local.example",
     "backend/.env.production.example",
     "backend/.env.docker.example",
-    "frontend/src",
+    "website/app",
+    "website/legacy-game/src",
     "docs",
     "env-templates",
     "deployment-notes",

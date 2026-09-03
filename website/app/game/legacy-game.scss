@@ -1,0 +1,21 @@
+@import "../../legacy-game/src/assets/scss/helper/variables";
+@import "../../legacy-game/src/assets/scss/helper/media-queries";
+@import "../../legacy-game/src/assets/scss/components/fonts";
+@import "../../legacy-game/src/assets/scss/components/network-status";
+@import "../../legacy-game/src/assets/scss/views/game/game";
+@import "../../legacy-game/src/assets/scss/views/dailyRewards/dailyRewards";
+
+.gameRuntimePage {
+  min-height: 100dvh;
+  background: #000;
+}
+
+.gameRuntimePage,
+.gameRuntimePage * {
+  box-sizing: border-box;
+}
+
+.gameRuntimePage .game-table-page {
+  min-height: 100dvh;
+  margin-inline: auto;
+}

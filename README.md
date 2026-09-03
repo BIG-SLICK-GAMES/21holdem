@@ -4,7 +4,7 @@ Clean repo-ready workspace for the 21 Hold'em frontend and backend.
 
 ## Structure
 
-- `frontend/` - React player frontend.
+- `website/` - Next player frontend, lobby, auth, and Phaser table shell.
 - `backend/` - Node/Express game API and Socket.IO backend.
 - `docs/` - local development, deployment, environment, and hotfix notes.
 - `scripts/` - local-only PowerShell helpers.

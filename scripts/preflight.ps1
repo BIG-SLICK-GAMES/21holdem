@@ -8,7 +8,7 @@ $repoRoot = Split-Path -Parent $PSScriptRoot
 Set-Location (Join-Path $repoRoot "backend")
 npm test
 
-Set-Location (Join-Path $repoRoot "frontend")
+Set-Location (Join-Path $repoRoot "website")
 npm run build
 
 Write-Host "Preflight completed"

@@ -1,35 +1,50 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useSearchParams } from "next/navigation";
+import { useMemo, useState } from "react";
+import { MemoryRouter } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "react-query";
+import { getCookie } from "../profileApi";
+
+const LegacyGame = dynamic(() => import("../../legacy-game/src/views/game"), {
+  ssr: false,
+  loading: () => (
+    <main className="gameHandoffPage" aria-label="Loading 21 Hold'em table">
+      <section className="gameHandoffShell">
+        <img className="gameHandoffTable" src="/images/optimized/table-hole.webp" alt="" />
+      </section>
+    </main>
+  )
+});
 
 export default function GameClient() {
   const searchParams = useSearchParams();
+  const [queryClient] = useState(() => new QueryClient());
   const boardId = searchParams.get("boardId") || "";
+  const privateCode = searchParams.get("privateCode") || "";
+  const token = getCookie("sAuthToken") || "";
+
+  const initialEntries = useMemo(() => ([
+    {
+      pathname: "/game",
+      search: typeof window !== "undefined" ? window.location.search : "",
+      state: {
+        sAuthToken: token,
+        iBoardId: boardId,
+        sPrivateCode: privateCode,
+        fallbackPath: "/lobby"
+      }
+    }
+  ]), [boardId, privateCode, token]);
 
   return (
-    <main className="gameHandoffPage" aria-labelledby="game-handoff-title">
-      <div className="gameHandoffTopBar">
-        <a className="profileBrand" href="/lobby" aria-label="Back to 21 Hold'em lobby">
-          <img src="/images/optimized/chip.webp" alt="" />
-        </a>
-        <a className="gameHandoffExit" href="/lobby">Lobby</a>
-      </div>
-
-      <section className="gameHandoffShell">
-        <img className="gameHandoffTable" src="/images/optimized/table-hole.webp" alt="" />
-        <div className="gameHandoffCard">
-          <p className="sectionKicker">Table Joined</p>
-          <h1 id="game-handoff-title">Game Table Loading</h1>
-          <p>
-            The live board has been created through the backend. The Phaser table runtime is the next piece to port into this new frontend shell.
-          </p>
-          {boardId ? (
-            <code>Board ID: {boardId}</code>
-          ) : (
-            <code>No board id was supplied.</code>
-          )}
-        </div>
-      </section>
+    <main className="gameRuntimePage">
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter initialEntries={initialEntries}>
+          <LegacyGame />
+        </MemoryRouter>
+      </QueryClientProvider>
     </main>
   );
 }

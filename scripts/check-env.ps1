@@ -2,7 +2,7 @@ $ErrorActionPreference = "Stop"
 
 $repoRoot = Split-Path -Parent $PSScriptRoot
 $required = @(
-    "frontend\.env",
+    "website\.env",
     "backend\.env"
 )
 
