@@ -33,6 +33,32 @@ function getTableId(table) {
   return table?._id || table?.id || "";
 }
 
+function TableSeatPreview({ maxPlayers, activePlayers }) {
+  const seatCount = Math.max(Number(maxPlayers) || 0, 0);
+  const takenCount = Math.max(Math.min(Number(activePlayers) || 0, seatCount), 0);
+  const seats = Array.from({ length: seatCount }, (_, index) => ({
+    id: index,
+    isTaken: index < takenCount,
+    angle: -155 + ((310 / Math.max(seatCount - 1, 1)) * index)
+  }));
+
+  return (
+    <div className="liveTableThumb liveTableSeatPreview" aria-hidden="true">
+      <span className="tableSeatCount">{seatCount} seats</span>
+      <div className="perspectiveTable">
+        <span className="tableFelt" />
+        {seats.map((seat) => (
+          <span
+            className={`tableSeatDot ${seat.isTaken ? "isTaken" : "isOpen"}`}
+            style={{ "--seat-angle": `${seat.angle}deg` }}
+            key={seat.id}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function LobbyPanel({ embedded = false }) {
   const [tables, setTables] = useState([]);
   const [activeSeatCount, setActiveSeatCount] = useState(PLAYER_OPTIONS[0]);
@@ -177,9 +203,7 @@ export default function LobbyPanel({ embedded = false }) {
 
               return (
                 <article className="liveTableRow" style={{ "--row-delay": `${index * 55}ms` }} key={tableId || index}>
-                  <div className="liveTableThumb" aria-hidden="true">
-                    <img src="/images/lobby/poker-table.png" alt="" />
-                  </div>
+                  <TableSeatPreview maxPlayers={maxPlayers} activePlayers={activePlayers} />
                   <div className="liveTableMain">
                     <h2>{table?.sName || `${formatShortAmount(table?.nMinBuyIn)} Table`}</h2>
                     <div className="liveTablePills">
