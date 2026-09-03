@@ -36,10 +36,45 @@ function getTableId(table) {
 function TableSeatPreview({ maxPlayers, activePlayers }) {
   const seatCount = Math.max(Number(maxPlayers) || 0, 0);
   const takenCount = Math.max(Math.min(Number(activePlayers) || 0, seatCount), 0);
-  const seats = Array.from({ length: seatCount }, (_, index) => ({
+  const seatLayouts = {
+    4: [
+      [50, 10],
+      [14, 48],
+      [86, 48],
+      [50, 91]
+    ],
+    6: [
+      [50, 9],
+      [19, 28],
+      [81, 28],
+      [14, 70],
+      [86, 70],
+      [50, 92]
+    ],
+    9: [
+      [50, 8],
+      [25, 18],
+      [75, 18],
+      [11, 43],
+      [89, 43],
+      [15, 72],
+      [85, 72],
+      [36, 91],
+      [64, 91]
+    ]
+  };
+  const layout = seatLayouts[seatCount] || Array.from({ length: seatCount }, (_, index) => {
+    const angle = (-90 + ((360 / seatCount) * index)) * (Math.PI / 180);
+    return [
+      50 + (Math.cos(angle) * 39),
+      51 + (Math.sin(angle) * 43)
+    ];
+  });
+  const seats = layout.map(([x, y], index) => ({
     id: index,
     isTaken: index < takenCount,
-    angle: -155 + ((310 / Math.max(seatCount - 1, 1)) * index)
+    x,
+    y
   }));
 
   return (
@@ -50,7 +85,7 @@ function TableSeatPreview({ maxPlayers, activePlayers }) {
         {seats.map((seat) => (
           <span
             className={`tableSeatDot ${seat.isTaken ? "isTaken" : "isOpen"}`}
-            style={{ "--seat-angle": `${seat.angle}deg` }}
+            style={{ "--seat-x": `${seat.x}%`, "--seat-y": `${seat.y}%` }}
             key={seat.id}
           />
         ))}

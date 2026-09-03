@@ -2192,18 +2192,16 @@ a {
 
 .perspectiveTable {
   position: relative;
-  width: 74%;
-  aspect-ratio: 0.68;
+  width: 76%;
+  aspect-ratio: 0.7;
   margin-top: 14px;
-  transform: perspective(180px) rotateX(18deg);
-  transform-style: preserve-3d;
 }
 
 .tableFelt {
   position: absolute;
-  inset: 8% 6% 4%;
+  inset: 8% 11% 6%;
   border: 3px solid #d7a64b;
-  border-radius: 36% 36% 44% 44% / 28% 28% 52% 52%;
+  border-radius: 42% 42% 48% 48% / 30% 30% 55% 55%;
   background:
     radial-gradient(ellipse at 50% 30%, rgba(125, 166, 255, 0.4), transparent 62%),
     linear-gradient(180deg, #9fbaff, #667fc6 52%, #263a86);
@@ -2224,15 +2222,13 @@ a {
 
 .tableSeatDot {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 12px;
+  top: var(--seat-y);
+  left: var(--seat-x);
+  z-index: 3;
+  width: 13px;
   aspect-ratio: 1;
   border-radius: 50%;
-  transform:
-    rotate(var(--seat-angle))
-    translateY(-47px)
-    rotate(calc(var(--seat-angle) * -1));
+  transform: translate(-50%, -50%);
   box-shadow:
     0 0 0 2px rgba(255, 255, 255, 0.16),
     0 0 12px currentColor;
@@ -5644,11 +5640,7 @@ a {
   }
 
   .tableSeatDot {
-    width: 8px;
-    transform:
-      rotate(var(--seat-angle))
-      translateY(-27px)
-      rotate(calc(var(--seat-angle) * -1));
+    width: 9px;
   }
 
   .liveTableMain {
