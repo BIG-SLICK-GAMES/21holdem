@@ -11,7 +11,7 @@ export default function ChipReveal() {
   const [visibleCards, setVisibleCards] = useState([]);
   const [whatIsVisible, setWhatIsVisible] = useState(false);
   const [messageStep, setMessageStep] = useState(0);
-  const [activeMenuSlot, setActiveMenuSlot] = useState("play-now");
+  const [activeMenuSlot, setActiveMenuSlot] = useState("how-to-play");
   const [rewardPrize, setRewardPrize] = useState(null);
   const [isRewardSpinning, setIsRewardSpinning] = useState(false);
   const [hasSpunToday, setHasSpunToday] = useState(false);
