@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { createTestProfile, storeTestProfile, TEST_AUTH_TOKEN } from "./profileApi";
+import { createTestProfile, normalizeProfile, storeTestProfile } from "./profileApi";
 
 const REMEMBER_KEY = "bsg:website-remember-login";
 const EMAIL_KEY = "bsg:website-remember-email";
@@ -96,7 +96,7 @@ export default function LoginPanel({ mode = "login", gameUrl = "/lobby" }) {
   const apiRoot = useMemo(() => getApiRoot(), []);
   const title = isSignup ? "Create your player account" : "Enter the table";
   const submitLabel = isSignup ? "Create Account" : "Sign In";
-  const endpoint = isSignup ? "/api/v1/auth/signup" : "/api/v1/auth/login";
+  const endpoint = isSignup ? "/api/v1/auth/register" : "/api/v1/auth/login";
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -134,8 +134,7 @@ export default function LoginPanel({ mode = "login", gameUrl = "/lobby" }) {
         body: JSON.stringify({
           sEmail: identifier.trim(),
           sPassword: password,
-          sDisplayName: displayName.trim(),
-          bAutoVerify: isSignup
+          sUserName: displayName.trim()
         })
       });
 
@@ -148,6 +147,11 @@ export default function LoginPanel({ mode = "login", gameUrl = "/lobby" }) {
       }
 
       const token = extractToken(payload, response);
+
+      if (isSignup && response.ok && !token) {
+        setStatus(payload?.message || "Account created. Check your email to verify it, then sign in.");
+        return;
+      }
 
       if (!response.ok || !token) {
         setError(payload?.message || `${submitLabel} failed.`);
@@ -164,7 +168,7 @@ export default function LoginPanel({ mode = "login", gameUrl = "/lobby" }) {
         window.localStorage.removeItem(EMAIL_KEY);
       }
 
-      setStatus(isSignup ? "Account created. Opening the lobby..." : "Signed in. Opening the lobby...");
+      setStatus("Signed in. Opening the lobby...");
       window.location.assign(gameUrl);
     } catch {
       setError("Auth service is unavailable.");
@@ -193,21 +197,50 @@ export default function LoginPanel({ mode = "login", gameUrl = "/lobby" }) {
     window.location.assign(googleUrl.toString());
   }
 
-  function handleTestLogin() {
+  async function handleTestLogin() {
     setError("");
-    setStatus("Test account loaded. Opening the lobby...");
-    storeTestProfile(createTestProfile());
-    storeAuthToken(TEST_AUTH_TOKEN, rememberSession);
+    setStatus("");
 
-    if (rememberSession) {
-      window.localStorage.setItem(REMEMBER_KEY, "true");
-      window.localStorage.setItem(EMAIL_KEY, "test@21holdem.local");
-    } else {
-      window.localStorage.setItem(REMEMBER_KEY, "false");
-      window.localStorage.removeItem(EMAIL_KEY);
+    if (!apiRoot) {
+      setError("Auth service is not configured.");
+      return;
     }
 
-    window.location.assign(gameUrl);
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch(`${apiRoot}/api/v1/auth/test-login`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json"
+        }
+      });
+      const payload = await response.json().catch(() => ({}));
+      const token = extractToken(payload, response);
+
+      if (!response.ok || !token) {
+        setError(payload?.message || "Test login failed.");
+        return;
+      }
+
+      storeTestProfile({ ...createTestProfile(), ...normalizeProfile(payload), isTestProfile: true });
+      storeAuthToken(token, rememberSession);
+
+      if (rememberSession) {
+        window.localStorage.setItem(REMEMBER_KEY, "true");
+        window.localStorage.setItem(EMAIL_KEY, payload?.data?.sEmail || "test@21holdem.local");
+      } else {
+        window.localStorage.setItem(REMEMBER_KEY, "false");
+        window.localStorage.removeItem(EMAIL_KEY);
+      }
+
+      setStatus("Test account loaded. Opening the lobby...");
+      window.location.assign(gameUrl);
+    } catch {
+      setError("Test login service is unavailable.");
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (

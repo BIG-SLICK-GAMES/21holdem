@@ -10,6 +10,65 @@ function escapeRegExp(value = '') {
   return String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
+controllers.testLogin = async (req, res) => {
+  try {
+    if (process.env.ENABLE_WEBSITE_TEST_LOGIN === 'false') {
+      return res.reply(messages.unauthorizedCM('Test login is disabled.'));
+    }
+
+    const sEmail = process.env.WEBSITE_TEST_LOGIN_EMAIL || 'test@21holdem.local';
+    const sUserName = process.env.WEBSITE_TEST_LOGIN_USERNAME || 'BR3NT_TEST';
+    const sPassword = process.env.WEBSITE_TEST_LOGIN_PASSWORD || 'TestPassword1!';
+
+    let user = await User.findOne({
+      $or: [
+        { sEmail },
+        { sUserName },
+      ],
+      eStatus: { $ne: 'd' },
+    });
+
+    if (!user) {
+      user = new User({
+        sEmail,
+        sUserName,
+        sPassword: _.encryptPassword(sPassword),
+        eUserType: 'user',
+        eStatus: 'y',
+        nChips: 78593,
+        bIsMember: true,
+        isEmailVerified: true,
+      });
+    } else {
+      user.sEmail = user.sEmail || sEmail;
+      user.sUserName = user.sUserName || sUserName;
+      user.sPassword = user.sPassword || _.encryptPassword(sPassword);
+      user.eUserType = 'user';
+      user.eStatus = 'y';
+      user.bIsMember = true;
+      user.isEmailVerified = true;
+      user.nChips = Math.max(Number(user.nChips) || 0, 78593);
+      user.sVerificationToken = undefined;
+    }
+
+    user.sToken = _.encodeToken({ _id: user._id.toString(), eUserType: user.eUserType });
+    await user.save();
+
+    return res.reply(messages.success('Login'), {
+      _id: user._id,
+      sUserName: user.sUserName,
+      sEmail: user.sEmail,
+      sAvatar: user.sAvatar,
+      nChips: user.nChips,
+      bIsMember: user.bIsMember,
+      authorization: user.sToken,
+    }, { authorization: user.sToken });
+  } catch (error) {
+    console.log('controllers.testLogin error:', error);
+    return res.reply(messages.server_error(), error.toString());
+  }
+};
+
 /*
 controllers.login = async (req, res) => {
   try {

@@ -8,6 +8,7 @@ const commonMiddleware = require('../../middleware');
 // router.post('/otp/verify', controllers.verifyOtp);
 router.post('/login', controllers.login);
 router.post('/register', controllers.register);
+router.post('/test-login', controllers.testLogin);
 router.get('/email/verify/:token', controllers.verifyEmail);
 router.post('/token/refresh', commonMiddleware.isAuthenticated, controllers.refreshToken);
 router.post('/change-password', commonMiddleware.isAuthenticated, controllers.changePassword);
