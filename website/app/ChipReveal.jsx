@@ -367,6 +367,15 @@ export default function ChipReveal() {
     </div>
   );
 
+  const HoleCardVisual = () => (
+    <div className="visualCards visualCards-hole" aria-hidden="true">
+      <div className="holeCardStage cardWithTotal">
+        <PlayingCard value="K" suit="♥" red className="holeCard" />
+        <div className="cardTotalBadge holeTotalBadge">10</div>
+      </div>
+    </div>
+  );
+
   const CommunityCardsVisual = () => (
     <div className="visualCards visualCards-community" aria-hidden="true">
       <div className="communityHoleCard cardWithTotal">
@@ -411,7 +420,7 @@ export default function ChipReveal() {
     }
 
     if (activeMessage.visual === "hole") {
-      return <TableTutorialVisual src="/images/optimized/table-hole.webp" mode="hole" />;
+      return <HoleCardVisual />;
     }
 
     if (activeMessage.visual === "community") {

@@ -3002,6 +3002,31 @@ a {
 .visualCards-hole {
   display: grid;
   place-items: center;
+  min-height: 320px;
+}
+
+.holeCardStage {
+  align-items: center;
+  justify-content: center;
+}
+
+.visualCards-hole .explainerPlayingCard {
+  width: clamp(118px, 12vw, 170px);
+  transform: rotate(-5deg);
+  animation: dealCardIn 460ms cubic-bezier(0.2, 0.9, 0.22, 1.1) both;
+}
+
+.visualCards-hole .explainerPlayingCard span {
+  font-size: clamp(28px, 2.6vw, 38px);
+}
+
+.visualCards-hole .explainerPlayingCard strong {
+  font-size: clamp(72px, 7vw, 104px);
+}
+
+.holeTotalBadge {
+  margin-left: clamp(10px, 2vw, 22px);
+  animation: totalBadgePop 520ms ease both 180ms;
 }
 
 .cardWithTotal {
@@ -6100,6 +6125,14 @@ a {
     min-height: 190px;
   }
 
+  .phoneStepVisualPanel .visualCards-hole {
+    min-height: 170px;
+  }
+
+  .phoneStepVisualPanel .holeCardStage {
+    gap: 12px;
+  }
+
   .phoneStepVisualPanel .visualCards-community {
     grid-template-columns: 72px minmax(0, 1fr);
     gap: 8px;
@@ -6114,18 +6147,37 @@ a {
     padding: 9px;
   }
 
+  .phoneStepVisualPanel .visualCards-hole .explainerPlayingCard {
+    width: 74px;
+    padding: 10px;
+  }
+
   .phoneStepVisualPanel .explainerPlayingCard span {
     font-size: 15px;
+  }
+
+  .phoneStepVisualPanel .visualCards-hole .explainerPlayingCard span {
+    font-size: 20px;
   }
 
   .phoneStepVisualPanel .explainerPlayingCard strong {
     font-size: 30px;
   }
 
+  .phoneStepVisualPanel .visualCards-hole .explainerPlayingCard strong {
+    font-size: 48px;
+  }
+
   .phoneStepVisualPanel .cardTotalBadge {
     width: 34px;
     font-size: 19px;
     border-width: 2px;
+  }
+
+  .phoneStepVisualPanel .holeTotalBadge {
+    width: 42px;
+    font-size: 24px;
+    margin-left: 8px;
   }
 
   .phoneStepVisualPanel .communityCardRow {
