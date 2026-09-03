@@ -56,15 +56,19 @@ services:
 
   game-frontend:
     build:
-      context: ./frontend
+      context: ./website
       args:
-        REACT_APP_BSG_HOME_URL: ${REACT_APP_BSG_HOME_URL:-https://bigslickgames.com}
+        BACKEND_INTERNAL_URL: http://game-backend:4000
+        NEXT_PUBLIC_AUTH_API_BASE_URL: ""
+        NEXT_PUBLIC_GAME_API_BASE_URL: ""
+        NEXT_PUBLIC_API_BASE_URL: ""
+        NEXT_PUBLIC_GAME_CLIENT_URL: /game
     container_name: holdem-game-frontend
     restart: unless-stopped
     depends_on:
       - game-backend
     ports:
-      - "3100:80"
+      - "3100:3000"
 
   project-launcher:
     image: nginx:1.27-alpine
