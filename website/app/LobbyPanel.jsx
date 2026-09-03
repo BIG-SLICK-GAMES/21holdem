@@ -177,6 +177,9 @@ export default function LobbyPanel({ embedded = false }) {
 
               return (
                 <article className="liveTableRow" style={{ "--row-delay": `${index * 55}ms` }} key={tableId || index}>
+                  <div className="liveTableThumb" aria-hidden="true">
+                    <img src="/images/lobby/poker-table.png" alt="" />
+                  </div>
                   <div className="liveTableMain">
                     <h2>{table?.sName || `${formatShortAmount(table?.nMinBuyIn)} Table`}</h2>
                     <div className="liveTablePills">

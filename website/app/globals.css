@@ -2142,7 +2142,7 @@ a {
 
 .liveTableRow {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: clamp(72px, 12vw, 118px) minmax(0, 1fr) auto;
   align-items: center;
   gap: 18px;
   padding: 18px;
@@ -2154,6 +2154,28 @@ a {
   opacity: 0;
   transform: translateY(14px);
   animation: appPanelCardIn 380ms ease var(--row-delay) forwards;
+}
+
+.liveTableThumb {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1.12;
+  overflow: hidden;
+  border: 1px solid rgba(77, 161, 255, 0.32);
+  border-radius: 8px;
+  background:
+    radial-gradient(circle at 50% 42%, rgba(77, 161, 255, 0.2), transparent 60%),
+    rgba(3, 13, 30, 0.72);
+  box-shadow: inset 0 0 18px rgba(77, 161, 255, 0.12);
+}
+
+.liveTableThumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 45%;
+  transform: scale(1.16);
+  filter: saturate(1.08) contrast(1.04);
 }
 
 .liveTableMain {
@@ -5528,13 +5550,37 @@ a {
   }
 
   .liveTableRow {
-    grid-template-columns: 1fr;
-    gap: 14px;
-    padding: 14px;
+    grid-template-columns: 58px minmax(0, 1fr);
+    gap: 10px;
+    padding: 10px;
+  }
+
+  .liveTableThumb {
+    align-self: start;
+  }
+
+  .liveTableMain {
+    gap: 8px;
+  }
+
+  .liveTableMain h2 {
+    font-size: 18px;
+  }
+
+  .liveTablePills {
+    gap: 5px;
+  }
+
+  .liveTablePills span {
+    min-height: 24px;
+    padding: 0 8px;
+    font-size: 10px;
   }
 
   .liveTableJoin {
+    grid-column: 1 / -1;
     width: 100%;
+    min-height: 40px;
   }
 
   .topBar {
