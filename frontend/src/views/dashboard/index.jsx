@@ -190,8 +190,6 @@ function getBuyInOptions(tables) {
 
 const Dashboard = () => {
     const dashboardRef = useRef(null);
-    const carouselPointerRef = useRef({ x: 0, y: 0, active: false });
-    const carouselSuppressClickRef = useRef(false);
     const navigate = useNavigate();
     const location = useLocation();
     const queryClient = useQueryClient();
@@ -199,7 +197,6 @@ const Dashboard = () => {
     const [, setActiveSeatCount] = useState(PLAYER_OPTIONS[0]);
     const [nActiveBuyIn, setActiveBuyIn] = useState(BUY_IN_OPTIONS[0]);
     const [bHasAdjustedFilters, setHasAdjustedFilters] = useState(false);
-    const [nCarouselDragOffset, setCarouselDragOffset] = useState(0);
     const [nBsgFeatureIndex, setBsgFeatureIndex] = useState(0);
     const [aFallbackTablesData, setFallbackTablesData] = useState([]);
     const [bIsJoiningTable, setIsJoiningTable] = useState(false);
@@ -665,19 +662,18 @@ const Dashboard = () => {
         },
     ]), []);
 
-    const nActiveCarouselIndex = Math.max(0, aQuickNavItems.findIndex((item) => item.id === sActiveTab));
-    const oActiveCarouselItem = aQuickNavItems[nActiveCarouselIndex] || aQuickNavItems[0];
+    const oActiveNavItem = aQuickNavItems.find((item) => item.id === sActiveTab) || aQuickNavItems[0];
 
     const getLobbyIconBackgroundStyle = (sItemId) => {
         const oItem = aQuickNavItems.find((item) => item.id === sItemId);
         return oItem?.iconSrc ? { '--dashboard-page-icon': `url("${oItem.iconSrc}")` } : undefined;
     };
 
-    const oActiveLobbyIconBackgroundStyle = oActiveCarouselItem?.iconSrc
+    const oActiveLobbyIconBackgroundStyle = oActiveNavItem?.iconSrc
         ? {
-            '--dashboard-page-icon': `url("${oActiveCarouselItem.iconSrc}")`,
+            '--dashboard-page-icon': `url("${oActiveNavItem.iconSrc}")`,
             '--dashboard-live-tables-image': `url("${liveTablesImage}")`,
-            ...(oActiveCarouselItem.theme || {}),
+            ...(oActiveNavItem.theme || {}),
         }
         : undefined;
     const sActiveSceneName = (sActiveTab || '').replace(/^lobby-/, '').replace(/[^a-z0-9]+/g, '-');
@@ -687,7 +683,7 @@ const Dashboard = () => {
         if (typeof document === 'undefined') return undefined;
 
         const rootStyle = document.documentElement.style;
-        const theme = oActiveCarouselItem?.theme || {};
+        const theme = oActiveNavItem?.theme || {};
         Object.entries(theme).forEach(([key, value]) => {
             rootStyle.setProperty(key, value);
         });
@@ -695,7 +691,7 @@ const Dashboard = () => {
         return () => {
             Object.keys(theme).forEach((key) => rootStyle.removeProperty(key));
         };
-    }, [oActiveCarouselItem]);
+    }, [oActiveNavItem]);
 
     const oBestValueShopItem = useMemo(() => (
         aSafeShopItems.reduce((oBestItem, item) => {
@@ -717,6 +713,9 @@ const Dashboard = () => {
         }
 
         setActiveTab(item.id);
+        const oParams = new URLSearchParams(location.search);
+        oParams.set('tab', item.id);
+        navigate(`/lobby?${oParams.toString()}`, { replace: true });
         if (!bScrollDesktop || typeof document === 'undefined') return;
 
         const oPanel = document.getElementById(`${item.id}-desktop-card`);
@@ -727,156 +726,6 @@ const Dashboard = () => {
 
     const handleReturnToHub = () => {
         window.location.assign(getBigSlickGamesUrl());
-    };
-
-    const handleCarouselStep = (nDirection) => {
-        if (!aQuickNavItems.length) return;
-        const nNextIndex = (nActiveCarouselIndex + nDirection + aQuickNavItems.length) % aQuickNavItems.length;
-        handleQuickNavSelect(aQuickNavItems[nNextIndex]);
-    };
-
-    const startCarouselDrag = (x, y, width, left = 0) => {
-        carouselPointerRef.current = {
-            active: true,
-            dragged: false,
-            x,
-            y,
-            width: width || 320,
-            left,
-        };
-    };
-
-    const updateCarouselDrag = (x, y) => {
-        const oPointer = carouselPointerRef.current;
-        if (!oPointer.active) return;
-
-        const nDragDistance = Math.max(90, Math.min(180, (oPointer.width || 320) * 0.2));
-        const nDeltaX = x - oPointer.x;
-        const nDeltaY = y - oPointer.y;
-        if (Math.abs(nDeltaX) > 6 && Math.abs(nDeltaX) > Math.abs(nDeltaY)) {
-            carouselPointerRef.current.dragged = true;
-        }
-        const nNextDragOffset = Math.max(-1.35, Math.min(1.35, -nDeltaX / nDragDistance));
-        setCarouselDragOffset(nNextDragOffset);
-    };
-
-    const finishCarouselDrag = (x, y) => {
-        const oPointer = carouselPointerRef.current;
-        if (!oPointer.active) return;
-
-        const bWasDragged = Boolean(oPointer.dragged);
-        carouselPointerRef.current = { x: 0, y: 0, active: false };
-        setCarouselDragOffset(0);
-
-        const nDeltaX = x - oPointer.x;
-        const nDeltaY = y - oPointer.y;
-        const nDragDistance = Math.max(90, Math.min(180, (oPointer.width || 320) * 0.2));
-        const nStartOffsetFromCenter = oPointer.x - ((oPointer.left || 0) + ((oPointer.width || 320) / 2));
-        const nClickZoneThreshold = Math.max(54, Math.min(104, (oPointer.width || 320) * 0.16));
-
-        if (!bWasDragged && Math.abs(nDeltaX) < 8 && Math.abs(nDeltaY) < 8 && Math.abs(nStartOffsetFromCenter) > nClickZoneThreshold) {
-            carouselSuppressClickRef.current = true;
-            window.setTimeout(() => {
-                carouselSuppressClickRef.current = false;
-            }, 120);
-            handleCarouselStep(nStartOffsetFromCenter > 0 ? 1 : -1);
-            return;
-        }
-
-        if (bWasDragged) {
-            carouselSuppressClickRef.current = true;
-            window.setTimeout(() => {
-                carouselSuppressClickRef.current = false;
-            }, 220);
-        }
-
-        if (Math.abs(nDeltaX) < 28 || Math.abs(nDeltaX) < Math.abs(nDeltaY) * 1.15) return;
-        if (Math.abs(nDeltaX / nDragDistance) < 0.18) return;
-
-        handleCarouselStep(nDeltaX < 0 ? 1 : -1);
-    };
-
-    const cancelCarouselDrag = () => {
-        carouselPointerRef.current = { x: 0, y: 0, active: false };
-        setCarouselDragOffset(0);
-    };
-
-    const handleCarouselPointerDown = (event) => {
-        if (event.pointerType === 'touch') return;
-        event.currentTarget.setPointerCapture?.(event.pointerId);
-        const { width, left } = event.currentTarget.getBoundingClientRect();
-        startCarouselDrag(event.clientX, event.clientY, width, left);
-    };
-
-    const handleCarouselPointerMove = (event) => {
-        if (event.pointerType === 'touch') return;
-        updateCarouselDrag(event.clientX, event.clientY);
-    };
-
-    const handleCarouselPointerEnd = (event) => {
-        if (event.pointerType === 'touch') return;
-        finishCarouselDrag(event.clientX, event.clientY);
-    };
-
-    const handleCarouselTouchStart = (event) => {
-        const touch = event.touches?.[0];
-        if (!touch) return;
-        const { width, left } = event.currentTarget.getBoundingClientRect();
-        startCarouselDrag(touch.clientX, touch.clientY, width, left);
-    };
-
-    const handleCarouselTouchMove = (event) => {
-        const touch = event.touches?.[0];
-        if (!touch) return;
-        updateCarouselDrag(touch.clientX, touch.clientY);
-        if (carouselPointerRef.current?.dragged) event.preventDefault();
-    };
-
-    const handleCarouselTouchEnd = (event) => {
-        const touch = event.changedTouches?.[0];
-        if (!touch) {
-            cancelCarouselDrag();
-            return;
-        }
-        finishCarouselDrag(touch.clientX, touch.clientY);
-    };
-
-    const handleCarouselItemClick = (event, item) => {
-        if (carouselSuppressClickRef.current) {
-            event.preventDefault();
-            event.stopPropagation();
-            return;
-        }
-        handleQuickNavSelect(item);
-    };
-
-    const getCarouselOffset = (nItemIndex) => {
-        const nTotalItems = aQuickNavItems.length;
-        const nRawOffset = nItemIndex - nActiveCarouselIndex;
-        const nHalfItems = Math.floor(nTotalItems / 2);
-
-        if (nRawOffset > nHalfItems) return nRawOffset - nTotalItems;
-        if (nRawOffset < -nHalfItems) return nRawOffset + nTotalItems;
-        return nRawOffset;
-    };
-
-    const getCarouselItemStyle = (nItemIndex) => {
-        const nVisualOffset = getCarouselOffset(nItemIndex) - nCarouselDragOffset;
-        const nViewportWidth = typeof window === 'undefined' ? 420 : window.innerWidth;
-        const nSide = Math.max(-1, Math.min(1, nVisualOffset));
-        const nFocus = Math.max(0, Math.min(1, 1 - Math.abs(nVisualOffset)));
-        const nScale = 0.5 + (nFocus * 0.5);
-        const nOpacity = 0.5 + (nFocus * 0.5);
-        const nRadius = Math.max(61, Math.min(141, nViewportWidth * 0.192));
-
-        return {
-            '--carousel-x': `${Math.round(nSide * nRadius)}px`,
-            '--carousel-y': `${Math.round(Math.abs(nVisualOffset) * 18)}px`,
-            '--carousel-scale': nScale.toFixed(3),
-            '--carousel-opacity': nOpacity.toFixed(3),
-            '--carousel-brightness': (0.72 + (nFocus * 0.36)).toFixed(3),
-            zIndex: Math.round(80 + (nFocus * 80)),
-        };
     };
 
     const handleBuyInChange = (nBuyIn) => {
@@ -1613,50 +1462,27 @@ const Dashboard = () => {
                         <button type='button' className='dashboard-hub__hub-link dashboard-hub__hub-link--mobile' onClick={handleReturnToHub}>
                             BSG Hub
                         </button>
-                        <div className={`dashboard-hub__icon-carousel${Math.abs(nCarouselDragOffset) > 0.02 ? ' is-dragging' : ''}`} aria-label='Lobby pages'>
-                            <div className='dashboard-hub__carousel-label' aria-live='polite'>
-                                {oActiveCarouselItem?.label}
-                            </div>
+                        <nav className='dashboard-hub__tab-menu' aria-label='Lobby pages'>
+                            {aQuickNavItems.map((item) => {
+                                const bIsActive = sActiveTab === item.id;
 
-                            <div
-                                className='dashboard-hub__carousel-track'
-                                onPointerDown={handleCarouselPointerDown}
-                                onPointerMove={handleCarouselPointerMove}
-                                onPointerUp={handleCarouselPointerEnd}
-                                onPointerCancel={cancelCarouselDrag}
-                                onPointerLeave={handleCarouselPointerEnd}
-                                onTouchStart={handleCarouselTouchStart}
-                                onTouchMove={handleCarouselTouchMove}
-                                onTouchEnd={handleCarouselTouchEnd}
-                                onTouchCancel={cancelCarouselDrag}
-                            >
-                                {aQuickNavItems.map((item, nItemIndex) => {
-                                    const nOffset = getCarouselOffset(nItemIndex);
-                                    if (Math.abs(nOffset) > 1) return null;
-
-                                    const bIsActive = sActiveTab === item.id;
-                                    const nAbsOffset = Math.abs(nOffset);
-                                    const sDepthClass = nAbsOffset === 0 ? ' is-active' : ' is-near';
-
-                                    return (
-                                        <button
-                                            key={item.id}
-                                            type='button'
-                                            aria-label={item.label}
-                                            aria-pressed={bIsActive}
-                                            className={`dashboard-hub__carousel-item${sDepthClass}`}
-                                            style={getCarouselItemStyle(nItemIndex)}
-                                            onClick={(event) => handleCarouselItemClick(event, item)}
-                                            title={item.label}
-                                        >
-                                            <span className='dashboard-hub__carousel-icon'>
-                                                <img src={item.iconSrc} alt='' aria-hidden='true' />
-                                            </span>
-                                        </button>
-                                    );
-                                })}
-                            </div>
-                        </div>
+                                return (
+                                    <button
+                                        key={item.id}
+                                        type='button'
+                                        className={`dashboard-hub__tab-menu-button${bIsActive ? ' is-active' : ''}`}
+                                        onClick={() => handleQuickNavSelect(item)}
+                                        aria-controls={`${item.id}-panel`}
+                                        aria-pressed={bIsActive}
+                                    >
+                                        <span className='dashboard-hub__tab-menu-icon'>
+                                            <img src={item.iconSrc} alt='' aria-hidden='true' />
+                                        </span>
+                                        <span className='dashboard-hub__tab-menu-label'>{item.label}</span>
+                                    </button>
+                                );
+                            })}
+                        </nav>
                     </header>
 
                     <div className='dashboard-hub__desktop-stage'>
