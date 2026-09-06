@@ -7,13 +7,13 @@
     "moveRightPx and moveDownPx are fine tuning nudges for one seat."
   ],
   "seats": {
-    "1": { "xPercent": 15, "yPercent": 60, "moveRightPx": 0, "moveDownPx": 0 },
-    "2": { "xPercent": 15, "yPercent": 45, "moveRightPx": 0, "moveDownPx": 0 },
-    "3": { "xPercent": 15, "yPercent": 28, "moveRightPx": 0, "moveDownPx": 0 },
-    "4": { "xPercent": 28, "yPercent": 12, "moveRightPx": 0, "moveDownPx": 0 },
-    "5": { "xPercent": 72, "yPercent": 12, "moveRightPx": 0, "moveDownPx": 0 },
-    "6": { "xPercent": 85, "yPercent": 28, "moveRightPx": 0, "moveDownPx": 0 },
-    "7": { "xPercent": 85, "yPercent": 45, "moveRightPx": 0, "moveDownPx": 0 },
-    "8": { "xPercent": 85, "yPercent": 60, "moveRightPx": 0, "moveDownPx": 0 }
+    "1": { "xPercent": 18, "yPercent": 78, "moveRightPx": 0, "moveDownPx": 0 },
+    "2": { "xPercent": 16, "yPercent": 62, "moveRightPx": 0, "moveDownPx": 0 },
+    "3": { "xPercent": 25, "yPercent": 38, "moveRightPx": 0, "moveDownPx": 0 },
+    "4": { "xPercent": 38, "yPercent": 20, "moveRightPx": 0, "moveDownPx": 0 },
+    "5": { "xPercent": 62, "yPercent": 20, "moveRightPx": 0, "moveDownPx": 0 },
+    "6": { "xPercent": 75, "yPercent": 38, "moveRightPx": 0, "moveDownPx": 0 },
+    "7": { "xPercent": 84, "yPercent": 62, "moveRightPx": 0, "moveDownPx": 0 },
+    "8": { "xPercent": 82, "yPercent": 78, "moveRightPx": 0, "moveDownPx": 0 }
   }
 }
