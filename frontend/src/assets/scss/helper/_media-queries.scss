@@ -1,7 +1,5 @@
-// The app is currently presented as a fixed mobile-width experience.
-// Force local SCSS breakpoints to compile the mobile branches even when the
-// browser viewport is wider than the app frame.
-$force-mobile-layout: true !default;
+// Let the app respond to the actual browser viewport.
+$force-mobile-layout: false !default;
 
 @mixin media-max($breakpoint) {
   @if $force-mobile-layout {
