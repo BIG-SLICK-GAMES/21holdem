@@ -65,13 +65,13 @@ body {
 
 #root {
     position: relative;
-    width: var(--app-mobile-frame-width);
-    max-width: var(--app-mobile-frame-width);
+    width: 100%;
+    max-width: 100%;
     min-height: 100dvh;
-    margin-inline: auto;
+    margin-inline: 0;
     background: #020915;
     overflow-x: clip;
-    box-shadow: 0 0 0 1px rgba(135, 205, 255, 0.08), 0 0 60px rgba(0, 0, 0, 0.55);
+    box-shadow: none;
 }
 
 .loading {
@@ -160,11 +160,11 @@ body {
 .login-background-only,
 .modal,
 .modal-backdrop {
-    left: 50%;
-    right: auto;
-    width: var(--app-mobile-frame-width);
-    max-width: var(--app-mobile-max-width);
-    transform: translateX(-50%);
+    left: 0;
+    right: 0;
+    width: 100%;
+    max-width: 100%;
+    transform: none;
 }
 
 .main-layout .main-layout-background,
@@ -241,58 +241,59 @@ body {
     max-width: 100%;
 }
 
-#root .navbar-expand-xl,
-#root .navbar-expand-lg {
-    flex-wrap: wrap;
-}
+@media (max-width: 767px) {
+    #root .navbar-expand-xl,
+    #root .navbar-expand-lg {
+        flex-wrap: wrap;
+    }
 
-#root .navbar-expand-xl .navbar-toggler,
-#root .navbar-expand-lg .navbar-toggler {
-    display: block;
-}
+    #root .navbar-expand-xl .navbar-toggler,
+    #root .navbar-expand-lg .navbar-toggler {
+        display: block;
+    }
 
-#root .navbar-expand-xl .navbar-collapse,
-#root .navbar-expand-lg .navbar-collapse {
-    flex-basis: 100%;
-    flex-grow: 1;
-}
+    #root .navbar-expand-xl .navbar-collapse,
+    #root .navbar-expand-lg .navbar-collapse {
+        flex-basis: 100%;
+        flex-grow: 1;
+    }
 
-#root .navbar-expand-xl .navbar-collapse.collapse:not(.show),
-#root .navbar-expand-lg .navbar-collapse.collapse:not(.show) {
-    display: none !important;
-}
+    #root .navbar-expand-xl .navbar-collapse.collapse:not(.show),
+    #root .navbar-expand-lg .navbar-collapse.collapse:not(.show) {
+        display: none !important;
+    }
 
-#root .navbar-expand-xl .navbar-nav,
-#root .navbar-expand-lg .navbar-nav {
-    flex-direction: column;
-}
+    #root .navbar-expand-xl .navbar-nav,
+    #root .navbar-expand-lg .navbar-nav {
+        flex-direction: column;
+    }
 
+    .modal-dialog,
+    .modal-content,
+    .Toastify__toast-container,
+    .position-fixed.w-100,
+    #root .auth-login-layout,
+    #root .auth-form-container {
+        max-width: calc(var(--app-mobile-frame-width) - 20px) !important;
+    }
 
-.modal-dialog,
-.modal-content,
-.Toastify__toast-container,
-.position-fixed.w-100,
-#root .auth-login-layout,
-#root .auth-form-container {
-    max-width: calc(var(--app-mobile-frame-width) - 20px) !important;
-}
+    .modal-dialog,
+    .Toastify__toast-container,
+    .position-fixed.w-100 {
+        left: 50% !important;
+        right: auto !important;
+        width: calc(var(--app-mobile-frame-width) - 20px) !important;
+        transform: translateX(-50%) !important;
+    }
 
-.modal-dialog,
-.Toastify__toast-container,
-.position-fixed.w-100 {
-    left: 50% !important;
-    right: auto !important;
-    width: calc(var(--app-mobile-frame-width) - 20px) !important;
-    transform: translateX(-50%) !important;
-}
+    .modal-dialog {
+        margin-inline: 0 !important;
+    }
 
-.modal-dialog {
-    margin-inline: 0 !important;
-}
-
-#root .auth-login-layout,
-#root .auth-form-container {
-    width: min(100%, calc(var(--app-mobile-frame-width) - 20px)) !important;
+    #root .auth-login-layout,
+    #root .auth-form-container {
+        width: min(100%, calc(var(--app-mobile-frame-width) - 20px)) !important;
+    }
 }
 
 h1,

@@ -1435,7 +1435,7 @@ const Dashboard = () => {
 
     return (
         <div className='dashboard-container'>
-            <section className={`dashboard-hub dashboard-hub--force-mobile${sDashboardSceneClass}`} ref={dashboardRef} style={oActiveLobbyIconBackgroundStyle}>
+            <section className={`dashboard-hub${sDashboardSceneClass}`} ref={dashboardRef} style={oActiveLobbyIconBackgroundStyle}>
                 <div className='dashboard-hub__backdrop' aria-hidden='true' />
                 <div className='dashboard-hub__ambient-grid' aria-hidden='true' />
                 <div className='dashboard-hub__stage-lights' aria-hidden='true'>
