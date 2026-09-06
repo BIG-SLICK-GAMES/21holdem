@@ -39,11 +39,6 @@ const DEFAULT_SEAT_POSITIONS = {
     8: { xPercent: 82, yPercent: 90 },
 };
 
-function getResponsiveLayoutMode() {
-    if (typeof window === 'undefined') return 'mobile';
-    return window.innerWidth >= 900 && window.innerWidth > window.innerHeight ? 'desktop' : 'mobile';
-}
-
 function clampNumber(value, fallback, min = -Infinity, max = Infinity) {
     const numericValue = Number(value);
     if (!Number.isFinite(numericValue)) return fallback;
@@ -271,10 +266,8 @@ function Game({ isPausedExternally = false }) {
     const gameRef = useRef(null);
     const phaserGameRef = useRef(null);
     const autoJoinAttemptedRef = useRef(false);
-    const lastViewportHeightRef = useRef(0);
-    const viewportRafRef = useRef(0);
     const [playerSlots, setPlayerSlots] = useState([]);
-    const [layoutMode, setLayoutMode] = useState(() => getResponsiveLayoutMode());
+    const layoutMode = 'mobile';
     const tableOnlyMode = false;
     const profileSeatStyles = useMemo(() => TABLE_EDGE_SEATS.reduce((nextStyles, nSeat) => {
         nextStyles[nSeat] = buildSeatAnchorStyle(nSeat);
@@ -292,49 +285,20 @@ function Game({ isPausedExternally = false }) {
 
         const setVisibleViewportHeight = () => {
             const viewportHeight = window.visualViewport?.height || window.innerHeight;
-            if (Math.abs(viewportHeight - lastViewportHeightRef.current) < 2) return;
-            lastViewportHeightRef.current = viewportHeight;
             document.documentElement.style.setProperty('--vh', `${viewportHeight * 0.01}px`);
-        };
-        const queueVisibleViewportHeight = () => {
-            window.cancelAnimationFrame(viewportRafRef.current);
-            viewportRafRef.current = window.requestAnimationFrame(setVisibleViewportHeight);
         };
 
         setVisibleViewportHeight();
-        window.addEventListener('resize', queueVisibleViewportHeight);
-        window.addEventListener('orientationchange', queueVisibleViewportHeight);
-        window.visualViewport?.addEventListener('resize', queueVisibleViewportHeight);
+        window.addEventListener('resize', setVisibleViewportHeight);
+        window.addEventListener('orientationchange', setVisibleViewportHeight);
+        window.visualViewport?.addEventListener('resize', setVisibleViewportHeight);
+        window.visualViewport?.addEventListener('scroll', setVisibleViewportHeight);
 
         return () => {
-            window.cancelAnimationFrame(viewportRafRef.current);
-            window.removeEventListener('resize', queueVisibleViewportHeight);
-            window.removeEventListener('orientationchange', queueVisibleViewportHeight);
-            window.visualViewport?.removeEventListener('resize', queueVisibleViewportHeight);
-        };
-    }, []);
-
-    useEffect(() => {
-        if (typeof window === 'undefined') return undefined;
-
-        let nLayoutRaf = 0;
-        const updateLayoutMode = () => {
-            window.cancelAnimationFrame(nLayoutRaf);
-            nLayoutRaf = window.requestAnimationFrame(() => {
-                setLayoutMode((currentMode) => {
-                    const nextMode = getResponsiveLayoutMode();
-                    return nextMode === currentMode ? currentMode : nextMode;
-                });
-            });
-        };
-
-        window.addEventListener('resize', updateLayoutMode);
-        window.addEventListener('orientationchange', updateLayoutMode);
-
-        return () => {
-            window.cancelAnimationFrame(nLayoutRaf);
-            window.removeEventListener('resize', updateLayoutMode);
-            window.removeEventListener('orientationchange', updateLayoutMode);
+            window.removeEventListener('resize', setVisibleViewportHeight);
+            window.removeEventListener('orientationchange', setVisibleViewportHeight);
+            window.visualViewport?.removeEventListener('resize', setVisibleViewportHeight);
+            window.visualViewport?.removeEventListener('scroll', setVisibleViewportHeight);
         };
     }, []);
 
@@ -423,7 +387,7 @@ function Game({ isPausedExternally = false }) {
     useEffect(() => {
         if (!resolvedAuthToken || !resolvedBoardId || isAutoJoining) return undefined;
 
-        config.setLayout(layoutMode);
+        config.setLayout('mobile');
         const gameConfig = {
             type: Phaser.AUTO,
             width: config.width,
@@ -461,7 +425,7 @@ function Game({ isPausedExternally = false }) {
             game.destroy(true);
         };
 
-    }, [fallbackPath, isAutoJoining, isGuestTutorial, layoutMode, resolvedAuthToken, resolvedBoardId, sPrivateCode, tableOnlyMode]);
+    }, [fallbackPath, isAutoJoining, isGuestTutorial, resolvedAuthToken, resolvedBoardId, sPrivateCode, tableOnlyMode]);
 
     useEffect(() => {
         const game = phaserGameRef.current;
