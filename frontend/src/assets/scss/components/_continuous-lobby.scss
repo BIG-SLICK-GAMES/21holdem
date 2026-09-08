@@ -122,3 +122,7 @@ body .dashboard-hub__tab-menu .dashboard-hub__tab-list {
     box-shadow: none;
     background: transparent;
 }
+
+body .dashboard-hub__tab-menu.ui-button-row > .dashboard-hub__tab-menu-button--hub {
+    border-left: 1px solid rgba(var(--ui-gold-rgb), 0.3) !important;
+}
