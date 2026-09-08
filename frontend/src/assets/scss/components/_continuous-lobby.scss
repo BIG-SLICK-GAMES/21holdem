@@ -91,7 +91,7 @@ body .dashboard-hub .dashboard-hub__table-card-cta {
 }
 
 // Top-bar shortcuts sit directly on the glass instead of inside individual boxes.
-body .lobby-topbar.lobby-topbar--glass :is(.lobby-topbar__bankroll, .lobby-topbar__icon-action),
+body .lobby-topbar :is(.lobby-topbar__bankroll, .lobby-topbar__icon-action),
 body .dashboard-hub .dashboard-hub__hub-link,
 body .profile-back-pill {
     border: 0 !important;
@@ -100,3 +100,18 @@ body .profile-back-pill {
     &:hover { color: var(--ui-gold) !important; }
     &:focus-visible { outline: 2px solid var(--ui-focus); outline-offset: 2px; }
 }
+
+// Flat finish: solid surfaces, no glass blur or reflective lighting.
+body .lobby-topbar {
+    background: #050504;
+    box-shadow: none;
+    border-top: 0;
+    border-bottom: 1px solid rgba(var(--ui-gold-rgb), 0.18);
+}
+body .lobby-topbar::before, body .lobby-topbar::after { display: none; }
+body :is(.lobby-topbar, .lobby-topbar *, .dashboard-hub, .dashboard-hub *,
+    .settings-detail, .settings-detail *, .bsg-auth__panel, .modal-content) {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+}
+body .dashboard-hub--themed-scene::before { display: none; }
