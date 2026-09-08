@@ -600,7 +600,7 @@ const Dashboard = () => {
             Number(table.nMinBuyIn) === nActiveBuyIn
         ))
     ), [aSortedTables, nActiveBuyIn]);
-    const aVisibleTables = aFilteredTables.length ? aFilteredTables : aSortedTables;
+    const aVisibleTables = aFilteredTables;
 
     const oBuyInPlayerCounts = useMemo(() => (
         aSortedTables.reduce((accumulator, table) => {
@@ -873,35 +873,27 @@ const Dashboard = () => {
         mutateBuyChips({ nPrice: item.nPrice });
     };
 
+    const renderBuyInSelect = (id) => (
+        <div className='dashboard-hub__buyin-field'>
+            <label htmlFor={id}>Select your Buy-in amount</label>
+            <select id={id} value={nActiveBuyIn} onChange={(event) => handleBuyInChange(event.target.value)}>
+                {aBuyInOptions.map((amount) => (
+                    <option key={amount} value={amount}>
+                        {formatAmount(amount)} chips ({getBuyInPlayerCount(amount)} players)
+                    </option>
+                ))}
+            </select>
+            <span className='dashboard-hub__buyin-result' role='status'>
+                {aVisibleTables.length} {aVisibleTables.length === 1 ? 'table' : 'tables'} available
+            </span>
+        </div>
+    );
+
     const renderLiveTablesPanel = () => (
         <>
             <div className='dashboard-hub__tab-body dashboard-hub__tab-body--live'>
 
-                <span className='dashboard-hub__live-label'>Buy-in</span>
-                <div className='dashboard-hub__buyin-grid ui-button-row' role='group' aria-label='Choose buy-in'>
-                    {aBuyInOptions.map((nBuyInOption) => {
-                        const oBuyInTable = aSortedTables.find((table) => (
-                            Number(table.nMinBuyIn) === nBuyInOption
-                        ));
-                        const nBuyInPlayers = getBuyInPlayerCount(nBuyInOption);
-
-                        return (
-                            <button
-                                key={nBuyInOption}
-                                type='button'
-                                className={`dashboard-hub__buyin-tile${nBuyInOption === nActiveBuyIn ? ' is-active' : ''}`}
-                                onClick={() => handleBuyInChange(nBuyInOption)}
-                                aria-pressed={nBuyInOption === nActiveBuyIn}
-                                aria-label={`${formatAmount(nBuyInOption)} buy-in, ${nBuyInPlayers} ${nBuyInPlayers === 1 ? 'player' : 'players'} active`}
-                            >
-                                <span className='dashboard-hub__buyin-copy'>
-                                    <strong>{formatAmount(nBuyInOption)}</strong>
-                                    <span>{oBuyInTable ? getBlindLabel(oBuyInTable.nMinBet) : ''}</span>
-                                </span>
-                            </button>
-                        );
-                    })}
-                </div>
+                {renderBuyInSelect('lobby-buyin')}
 
                 {aVisibleTables.length ? (
                     <ul className='dashboard-hub__table-grid' aria-label='Available tables'>
@@ -1355,7 +1347,7 @@ const Dashboard = () => {
     );
 
     const renderDesktopLiveCard = () => {
-        const oFeaturedTable = aVisibleTables[0] || aSortedTables[0] || null;
+        const oFeaturedTable = aVisibleTables[0] || null;
         const nAvailableTables = oFeaturedTable ? getAvailableTableCount(oFeaturedTable) : 0;
         const nFeaturedOccupied = oFeaturedTable ? getActivePlayers(oFeaturedTable) : 0;
         const aSeatMarkers = oFeaturedTable ? getTableSeatMarkers(oFeaturedTable) : [];
@@ -1376,37 +1368,7 @@ const Dashboard = () => {
 
                 <div className='dashboard-hub__desktop-card-body dashboard-hub__desktop-card-body--live'>
 
-                    <div className='dashboard-hub__desktop-filter-block'>
-                        <span className='dashboard-hub__desktop-filter-label'>Buy-In</span>
-                        <div className='dashboard-hub__desktop-buyin-grid ui-button-row' role='group' aria-label='Choose buy-in'>
-                            {aBuyInOptions.map((nBuyInOption) => {
-                                const oBuyInTable = aSortedTables.find((table) => (
-                                    Number(table.nMinBuyIn) === nBuyInOption
-                                ));
-                                const nBuyInPlayers = getBuyInPlayerCount(nBuyInOption);
-
-                                return (
-                                    <button
-                                        key={`desktop-buyin-${nBuyInOption}`}
-                                        type='button'
-                                        className={`dashboard-hub__desktop-buyin-chip${nBuyInOption === nActiveBuyIn ? ' is-active' : ''}`}
-                                        onClick={() => handleBuyInChange(nBuyInOption)}
-                                aria-pressed={nBuyInOption === nActiveBuyIn}
-                                        aria-label={`${formatAmount(nBuyInOption)} buy-in, ${nBuyInPlayers} ${nBuyInPlayers === 1 ? 'player' : 'players'} active`}
-                                    >
-                                        <span className='dashboard-hub__desktop-buyin-chip-head'>
-                                            <span className='dashboard-hub__desktop-buyin-art' aria-hidden='true'>
-                                                <img src={liveTablesImage} alt='' />
-                                                <span className='dashboard-hub__desktop-buyin-art-badge'>{nBuyInPlayers}</span>
-                                            </span>
-                                            <strong>{formatAmount(nBuyInOption)}</strong>
-                                        </span>
-                                        <span>{oBuyInTable ? getBlindLabel(oBuyInTable.nMinBet) : ''}</span>
-                                    </button>
-                                );
-                            })}
-                        </div>
-                    </div>
+                    {renderBuyInSelect('desktop-buyin')}
 
                     <div className='dashboard-hub__desktop-live-summary'>
                         <div className='dashboard-hub__desktop-live-summary-top'>

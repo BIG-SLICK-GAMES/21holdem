@@ -64,3 +64,18 @@ body .dashboard-hub__tab-menu > button { border-right-color: rgba(var(--ui-gold-
 body .settings-detail__content {
     border: 0 !important; background: transparent !important; box-shadow: none !important;
 }
+
+body .dashboard-hub__buyin-field {
+    display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px;
+    padding: 14px 12px;
+    border-bottom: 1px solid var(--ui-divider);
+    label { color: var(--ui-text); font-weight: 600; }
+    select {
+        width: 100%; min-width: 0; min-height: 44px; padding: 10px 12px;
+        color: var(--ui-gold); background: #100d08;
+        border: 0; border-bottom: 1px solid var(--ui-border);
+        border-radius: 0; font: inherit; color-scheme: dark;
+        &:focus-visible { outline: 2px solid var(--ui-focus); outline-offset: 2px; }
+    }
+    .dashboard-hub__buyin-result { color: var(--ui-text-muted); font-size: 13px; }
+}
