@@ -1731,7 +1731,7 @@ const Dashboard = () => {
                             );
                         })}
                         </div>
-                        <button type='button' className='dashboard-hub__tab-menu-button' onClick={handleReturnToHub}>
+                        <button type='button' className='dashboard-hub__tab-menu-button dashboard-hub__tab-menu-button--hub' onClick={handleReturnToHub}>
                             BSG Hub
                         </button>
                     </nav>
