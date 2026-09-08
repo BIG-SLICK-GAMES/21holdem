@@ -115,3 +115,10 @@ body :is(.lobby-topbar, .lobby-topbar *, .dashboard-hub, .dashboard-hub *,
     backdrop-filter: none !important;
 }
 body .dashboard-hub--themed-scene::before { display: none; }
+
+body .dashboard-hub__tab-menu .dashboard-hub__tab-list {
+    flex: 4 0 auto;
+    border: 0;
+    box-shadow: none;
+    background: transparent;
+}
