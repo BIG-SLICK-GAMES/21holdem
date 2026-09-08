@@ -30,3 +30,7 @@ variants for readability. All lobby tabs use a black backdrop with animated gold
 Current theme takes its finish from `lobby_daily_bonus.png`: champagne highlights,
 ribbon-gold gradients, amber edge reflections, warm ivory text and smoked black glass.
 Theme changes must not alter markup, layout, spacing, sizes, fonts or corner geometry.
+
+Lobby composition uses one continuous surface: no outer card frames or gaps between
+sections. Preserve internal content padding, with faint gold dividers for lists and data.
+Selected controls and keyboard focus remain distinct.
