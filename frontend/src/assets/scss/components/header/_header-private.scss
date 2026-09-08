@@ -8,7 +8,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 10px 20px;
-    background: linear-gradient(to bottom, var(--primary-color), #bac6d0);
+    background: linear-gradient(to bottom, var(--primary-color), #c4c4c2);
     font-family: var(--ui-font);
     font-weight: 400;
 
@@ -90,7 +90,7 @@
         }
 
         .header-private__menu-meta-link {
-            color: rgba(5, 31, 52, 0.82);
+            color: rgba(27, 27, 25, 0.82);
             font-size: 14px;
             font-weight: 600;
             line-height: 1.2;
@@ -107,7 +107,7 @@
             // gap: 30px;
             align-items: center;
             justify-content: space-between;
-            background-color: #154D73;
+            background-color: #444442;
             padding: 5px 5px;
             border-radius: var(--ui-radius);
             width: 130px;
@@ -118,7 +118,7 @@
                 top: 45px;
                 right: 50%;
                 transform: translateX(50%);
-                background-color: #154D73;
+                background-color: #444442;
                 color: var(--white-color);
                 padding: 2px 15px;
                 border-radius: var(--ui-radius);
@@ -134,7 +134,7 @@
                     right: 50%;
                     transform: translateX(50%);
                     border: 5px solid transparent;
-                    border-bottom-color: #154D73;
+                    border-bottom-color: #444442;
                 }
             }
 
@@ -166,7 +166,7 @@
             // gap: 5px;
             align-items: center;
             justify-content: space-between;
-            background-color: #051F34;
+            background-color: #1b1b19;
             padding: 5px 5px;
             border-radius: var(--ui-radius);
             width: 130px;
@@ -201,7 +201,7 @@
             z-index: 1000;
             background-color: #fff;
             border-radius: var(--ui-radius);
-            background: linear-gradient(to top, #4c7baa, #b8d1e6);
+            background: linear-gradient(to top, #747472, #cdcdcb);
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             min-width: 190px;
 
@@ -228,7 +228,7 @@
                         font-weight: 500;
 
                         &:hover {
-                            background-color: rgba(5, 31, 52, 0.2);
+                            background-color: rgba(27, 27, 25, 0.2);
                         }
                     }
                 }

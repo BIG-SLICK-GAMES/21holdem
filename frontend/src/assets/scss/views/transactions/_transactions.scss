@@ -5,7 +5,7 @@
     color: var(--white-color);
 
     .transactions-container {
-        background: linear-gradient(rgba(12, 38, 59, 0.8), rgba(12, 38, 59, 0.8)),
+        background: linear-gradient(rgba(34, 34, 32, 0.8), rgba(34, 34, 32, 0.8)),
             url("../../../images/ui/table_selection_bg.png") repeat-y top center / 100% auto;
         border-radius: var(--ui-radius);
         border: 1px solid rgba(255, 255, 255, 0.1);
@@ -16,7 +16,7 @@
             text-align: center;
             padding: 1.5rem;
             font-size: 32px;
-            color: #AADDFF;
+            color: #d5d5d3;
             text-transform: uppercase;
             background: var(--table-selection-color);
             border-radius: var(--ui-radius) var(--ui-radius) 0 0;

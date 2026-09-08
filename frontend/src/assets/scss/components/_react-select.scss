@@ -6,7 +6,7 @@
 
     .react-select__control {
         border-color: transparent;
-        background-color: #163c57;
+        background-color: #363634;
         box-shadow: none !important;
 
         &:hover {
@@ -32,7 +32,7 @@
 
     .react-select__menu {
         z-index: 1000;
-        background-color: #163c57;
+        background-color: #363634;
 
         .react-select__menu-list {
             max-height: 250px;
@@ -44,7 +44,7 @@
 
                 &.react-select__option--is-focused,
                 &.react-select__option--is-selected {
-                    background-color: #061f34;
+                    background-color: #1b1b19;
                     color: white;
                     cursor: pointer;
                 }

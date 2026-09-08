@@ -1,6 +1,6 @@
 .cms-page {
     margin: 100px 50px;
-    border: 2px solid #163C57;
+    border: 2px solid #363634;
     border-radius: var(--ui-radius);
     overflow: hidden;
 
@@ -8,10 +8,10 @@
         text-align: center;
         padding: 20px 10px;
         font-size: 32px;
-        color: #AADDFF;
+        color: #d5d5d3;
         text-transform: uppercase;
         letter-spacing: 1px;
-        background-color: #0C263B;
+        background-color: #222220;
     }
 
     .cms-content {
@@ -58,7 +58,7 @@
 
         .about-cta-card,
         .about-highlight-card {
-            border: 1px solid rgba(137, 213, 255, 0.2);
+            border: 1px solid rgba(200, 200, 198, 0.2);
             border-radius: var(--ui-radius);
             background: rgba(0, 0, 0, 0.26);
             box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
@@ -69,9 +69,9 @@
             align-items: center;
             gap: 12px;
             margin-top: 16px;
-            border: 1px solid rgba(137, 213, 255, 0.34);
+            border: 1px solid rgba(200, 200, 198, 0.34);
             border-radius: var(--ui-radius);
-            background: linear-gradient(180deg, rgba(20, 47, 70, 0.96) 0%, rgba(7, 22, 35, 0.98) 100%);
+            background: linear-gradient(180deg, rgba(43, 43, 41, 0.96) 0%, rgba(20, 20, 18, 0.98) 100%);
             box-shadow: 0 12px 24px rgba(0, 0, 0, 0.26), inset 0 1px 0 rgba(255, 255, 255, 0.08);
             color: #ffffff;
             cursor: pointer;
@@ -85,7 +85,7 @@
 
             &:hover {
                 transform: translateY(-2px);
-                box-shadow: 0 16px 32px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(137, 213, 255, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+                box-shadow: 0 16px 32px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(200, 200, 198, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.08);
             }
 
             &.is-playing {
@@ -94,7 +94,7 @@
 
                 .about-audio-icon {
                     background: linear-gradient(180deg, #8dfcb3 0%, #42d985 100%);
-                    color: #062032;
+                    color: #1c1c1a;
                 }
             }
 
@@ -105,9 +105,9 @@
                 width: 38px;
                 height: 38px;
                 border-radius: 50%;
-                background: linear-gradient(180deg, #89d5ff 0%, #3da4e6 100%);
+                background: linear-gradient(180deg, #c8c8c6 0%, #939391 100%);
                 box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28);
-                color: #082033;
+                color: #1c1c1a;
                 font-size: 16px;
                 line-height: 1;
             }
@@ -123,7 +123,7 @@
 
             .about-cta-label {
                 margin-bottom: 10px;
-                color: #89d5ff;
+                color: #c8c8c6;
                 font-size: 13px;
                 font-weight: 600;
                 letter-spacing: 0.18em;
@@ -166,11 +166,11 @@
 
                 &.primary {
                     background: linear-gradient(180deg, #8dfcb3 0%, #42d985 100%);
-                    color: #052132;
+                    color: #1c1c1a;
                 }
 
                 &.secondary {
-                    border: 1px solid rgba(137, 213, 255, 0.35);
+                    border: 1px solid rgba(200, 200, 198, 0.35);
                     background: rgba(255, 255, 255, 0.05);
                     color: #ffffff;
                 }
@@ -205,7 +205,7 @@
 .cms-page.contact-page {
     .cms-content {
         a {
-            color: #89d5ff;
+            color: #c8c8c6;
             text-decoration: underline;
         }
     }

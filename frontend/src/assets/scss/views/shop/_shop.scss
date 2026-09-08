@@ -1,6 +1,6 @@
 .shop-chip-page {
     margin: 100px 50px;
-    border: 2px solid #163c57;
+    border: 2px solid #363634;
     border-radius: var(--ui-radius);
     overflow: hidden;
 
@@ -8,10 +8,10 @@
         text-align: center;
         padding: 20px 10px;
         font-size: 32px;
-        color: #aaddff;
+        color: #d5d5d3;
         text-transform: uppercase;
         letter-spacing: 1px;
-        background-color: #0c263b;
+        background-color: #222220;
     }
 
     .shop-chip-content {
@@ -51,7 +51,7 @@
                     left: -35px;
                     transform: rotate(-30deg);
                     transform-origin: center center;
-                    background: linear-gradient(0deg, rgba(57, 121, 188, 1) 0%, rgba(170, 221, 255, 1) 100%);
+                    background: linear-gradient(0deg, rgba(112, 112, 110, 1) 0%, rgba(213, 213, 211, 1) 100%);
                     font-size: 16px;
                     padding: 5px 40px;
                     min-width: 180px;
@@ -87,7 +87,7 @@
                     background: #51FF89;
                     border: none;
                     border-radius: var(--ui-radius);
-                    color: #03162A;
+                    color: #131311;
                     font-size: 20px;
                     font-weight: 600;
                     cursor: pointer;

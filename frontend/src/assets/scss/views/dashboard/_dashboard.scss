@@ -78,7 +78,7 @@ $nav-button-font:   13px;
             padding: 80px 50px;
 
             .dashboard-container__content-table-selection-menu {
-                background: linear-gradient(to top, var(--primary-color), #bac6d0);
+                background: linear-gradient(to top, var(--primary-color), #c4c4c2);
                 padding: 0.5rem;
                 border-radius: var(--ui-radius);
                 width: 42%;
@@ -119,7 +119,7 @@ $nav-button-font:   13px;
 
                         &.active {
                             a {
-                                background: #03162A;
+                                background: #131311;
                                 color: white;
                             }
                         }
@@ -134,7 +134,7 @@ $nav-button-font:   13px;
                 border-radius: var(--ui-radius);
                 // padding: 70px 0 0px;
                 position: relative;
-                background-color: #051F34;
+                background-color: #1b1b19;
 
 
                 .sub-dashboard-container__content {
@@ -155,7 +155,7 @@ $nav-button-font:   13px;
 
                     .title {
                         font-size: 32px;
-                        color: #AADDFF;
+                        color: #d5d5d3;
                         text-transform: uppercase;
                         font-weight: 500;
                         position: absolute;
@@ -166,7 +166,7 @@ $nav-button-font:   13px;
 
                     a {
                         background: var(--table-selection-color);
-                        border: 1.5px solid rgba(63, 103, 140, 1);
+                        border: 1.5px solid rgba(97, 97, 95, 1);
                         border-radius: var(--ui-radius);
                         color: var(--white-color);
                         padding: 15px 25px 12px;
@@ -184,7 +184,7 @@ $nav-button-font:   13px;
                         }
 
                         &:hover {
-                            background: rgba(3, 22, 42, 0.8);
+                            background: rgba(19, 19, 17, 0.8);
                         }
                     }
 
@@ -192,7 +192,7 @@ $nav-button-font:   13px;
                         margin-left: auto;
                         border: 1px solid rgba(144, 245, 188, 0.4);
                         border-radius: var(--ui-radius);
-                        background: linear-gradient(180deg, rgba(141, 252, 179, 0.28) 0%, rgba(74, 185, 255, 0.16) 100%);
+                        background: linear-gradient(180deg, rgba(141, 252, 179, 0.28) 0%, rgba(166, 166, 164, 0.16) 100%);
                         color: #e9fffa;
                         font-family: var(--ui-font);
                         font-size: 15px;
@@ -200,15 +200,15 @@ $nav-button-font:   13px;
                         letter-spacing: 0.04em;
                         text-transform: uppercase;
                         padding: 10px 14px 8px;
-                        box-shadow: 0 0 0 1px rgba(129, 226, 255, 0.14), 0 10px 20px rgba(5, 37, 57, 0.5);
+                        box-shadow: 0 0 0 1px rgba(207, 207, 205, 0.14), 0 10px 20px rgba(32, 32, 30, 0.5);
                         animation: lobbyPulse 2.4s ease-in-out infinite;
                     }
 
                     .join-button {
-                        background: #8BC3FF;
-                        border: 1.5px solid rgba(63, 103, 140, 1);
+                        background: #bbbbb9;
+                        border: 1.5px solid rgba(97, 97, 95, 1);
                         border-radius: var(--ui-radius);
-                        color: #03162A;
+                        color: #131311;
                         padding: 12px 15px 10px;
                         min-width: 180px;
                         cursor: pointer;
@@ -297,15 +297,15 @@ $nav-button-font:   13px;
     &__promo-bar,
     &__quick-link,
     &__exit {
-        border: 1px solid rgba(145, 202, 255, 0.34);
+        border: 1px solid rgba(194, 194, 192, 0.34);
         background:
-            linear-gradient(180deg, rgba(22, 52, 82, 0.3) 0%, rgba(10, 24, 40, 0) 26%),
-            linear-gradient(180deg, rgba(12, 27, 44, 0.97) 0%, rgba(6, 15, 26, 0.995) 100%);
+            linear-gradient(180deg, rgba(48, 48, 46, 0.3) 0%, rgba(22, 22, 20, 0) 26%),
+            linear-gradient(180deg, rgba(25, 25, 23, 0.97) 0%, rgba(14, 14, 12, 0.995) 100%);
         box-shadow:
-            inset 0 1px 0 rgba(233, 246, 255, 0.14),
-            inset 0 0 0 1px rgba(78, 148, 230, 0.08),
+            inset 0 1px 0 rgba(244, 244, 242, 0.14),
+            inset 0 0 0 1px rgba(139, 139, 137, 0.08),
             0 18px 34px rgba(0, 0, 0, 0.26),
-            0 0 20px rgba(73, 151, 228, 0.08);
+            0 0 20px rgba(140, 140, 138, 0.08);
         backdrop-filter: blur(18px) saturate(165%);
     }
 
@@ -319,12 +319,12 @@ $nav-button-font:   13px;
         &:hover,
         &:focus {
             transform: translateY(-1px);
-            border-color: rgba(183, 227, 255, 0.54);
+            border-color: rgba(220, 220, 218, 0.54);
             box-shadow:
-                inset 0 1px 0 rgba(239, 249, 255, 0.2),
-                inset 0 0 0 1px rgba(96, 171, 255, 0.12),
+                inset 0 1px 0 rgba(247, 247, 245, 0.2),
+                inset 0 0 0 1px rgba(161, 161, 159, 0.12),
                 0 22px 36px rgba(0, 0, 0, 0.28),
-                0 0 24px rgba(88, 184, 255, 0.14);
+                0 0 24px rgba(169, 169, 167, 0.14);
         }
     }
 
@@ -339,7 +339,7 @@ $nav-button-font:   13px;
         align-items: center;
         justify-content: flex-start;
         padding: 8px 12px;
-        color: #f5fbff;
+        color: #fafaf8;
         text-decoration: none;
     }
 
@@ -361,7 +361,7 @@ $nav-button-font:   13px;
         gap: 12px;
         padding: 0 12px;
         border-radius: var(--ui-radius);
-        color: #f5fbff;
+        color: #fafaf8;
         text-align: left;
         margin-top: 0;
     }
@@ -371,8 +371,8 @@ $nav-button-font:   13px;
         height: 34px;
         border-radius: var(--ui-radius);
         padding: 3px;
-        border: 1px solid rgba(180, 219, 255, 0.16);
-        background: linear-gradient(180deg, rgba(63, 129, 191, 0.28) 0%, rgba(23, 58, 94, 0.34) 100%);
+        border: 1px solid rgba(213, 213, 211, 0.16);
+        background: linear-gradient(180deg, rgba(119, 119, 117, 0.28) 0%, rgba(53, 53, 51, 0.34) 100%);
         flex: 0 0 auto;
 
         img {
@@ -405,7 +405,7 @@ $nav-button-font:   13px;
     }
 
     &__player-chip-balance-label {
-        color: rgba(176, 225, 255, 0.78);
+        color: rgba(217, 217, 215, 0.78);
         font-size: 11px;
         font-weight: 700;
         letter-spacing: 0.18em;
@@ -431,12 +431,12 @@ $nav-button-font:   13px;
         padding: 12px 14px;
         border-radius: var(--ui-radius);
         text-align: left;
-        color: #f6fbff;
+        color: #fafaf8;
 
         svg {
             margin-left: auto;
             font-size: 16px;
-            color: rgba(208, 235, 255, 0.86);
+            color: rgba(231, 231, 229, 0.86);
         }
     }
 
@@ -466,7 +466,7 @@ $nav-button-font:   13px;
         }
 
         span {
-            color: rgba(210, 234, 255, 0.74);
+            color: rgba(230, 230, 228, 0.74);
             font-size: 12px;
             line-height: 1.35;
         }
@@ -485,7 +485,7 @@ $nav-button-font:   13px;
         min-height: 76px;
         padding: 12px 8px;
         border-radius: var(--ui-radius);
-        color: #dff1ff;
+        color: #eeeeec;
 
         svg {
             font-size: 20px;
@@ -511,7 +511,7 @@ $nav-button-font:   13px;
     }
 
     &__card--live {
-        background: linear-gradient(180deg, rgba(8, 27, 43, 0.98) 0%, rgba(4, 17, 28, 0.99) 100%);
+        background: linear-gradient(180deg, rgba(24, 24, 22, 0.98) 0%, rgba(15, 15, 13, 0.99) 100%);
     }
 
     &__card--live &__accordion-trigger {
@@ -547,7 +547,7 @@ $nav-button-font:   13px;
     &__card--live &__accordion-subtitle {
         display: block;
         max-width: 30rem;
-        color: rgba(221, 240, 255, 0.76);
+        color: rgba(237, 237, 235, 0.76);
         font-size: 13px;
         line-height: 1.4;
     }
@@ -555,7 +555,7 @@ $nav-button-font:   13px;
     &__card--rewards,
     &__card--private,
     &__card--profile {
-        background: linear-gradient(180deg, rgba(10, 31, 51, 0.96) 0%, rgba(5, 20, 35, 0.98) 100%);
+        background: linear-gradient(180deg, rgba(28, 28, 26, 0.96) 0%, rgba(18, 18, 16, 0.98) 100%);
     }
 
     &__accordion-trigger {
@@ -564,7 +564,7 @@ $nav-button-font:   13px;
     }
 
     &__accordion-subtitle {
-        color: rgba(226, 243, 255, 0.72);
+        color: rgba(240, 240, 238, 0.72);
     }
 
     &__feature-stage {
@@ -578,7 +578,7 @@ $nav-button-font:   13px;
         overflow: hidden;
         background:
             radial-gradient(circle at 50% 16%, rgba(var(--ui-gold-rgb), 0.18) 0%, rgba(var(--ui-gold-rgb), 0) 34%),
-            linear-gradient(180deg, rgba(7, 24, 39, 0.3) 0%, rgba(4, 14, 24, 0.66) 100%);
+            linear-gradient(180deg, rgba(21, 21, 19, 0.3) 0%, rgba(13, 13, 11, 0.66) 100%);
 
         &::after {
             content: '';
@@ -586,7 +586,7 @@ $nav-button-font:   13px;
             inset: 0;
             background:
                 linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0) 18%),
-                linear-gradient(180deg, rgba(4, 14, 24, 0) 48%, rgba(4, 14, 24, 0.58) 100%);
+                linear-gradient(180deg, rgba(13, 13, 11, 0) 48%, rgba(13, 13, 11, 0.58) 100%);
             pointer-events: none;
         }
     }
@@ -599,9 +599,9 @@ $nav-button-font:   13px;
         min-height: 34px;
         padding: 8px 12px 6px;
         border-radius: var(--ui-radius);
-        background: rgba(9, 25, 39, 0.82);
-        border: 1px solid rgba(160, 207, 255, 0.18);
-        color: #f4fbff;
+        background: rgba(23, 23, 21, 0.82);
+        border: 1px solid rgba(200, 200, 198, 0.18);
+        color: #fafaf8;
         font-size: 11px;
         font-weight: 700;
         letter-spacing: 0.1em;
@@ -625,8 +625,8 @@ $nav-button-font:   13px;
 
     &__spotlight {
         border-radius: var(--ui-radius);
-        background: linear-gradient(180deg, rgba(20, 41, 62, 0.74) 0%, rgba(10, 25, 40, 0.9) 100%);
-        border-color: rgba(136, 194, 245, 0.16);
+        background: linear-gradient(180deg, rgba(38, 38, 36, 0.74) 0%, rgba(23, 23, 21, 0.9) 100%);
+        border-color: rgba(185, 185, 183, 0.16);
     }
 
     &__table-list {
@@ -636,7 +636,7 @@ $nav-button-font:   13px;
     &__table-row {
         padding: 16px;
         border-radius: var(--ui-radius);
-        background: linear-gradient(180deg, rgba(13, 33, 52, 0.92) 0%, rgba(8, 23, 37, 0.98) 100%);
+        background: linear-gradient(180deg, rgba(30, 30, 28, 0.92) 0%, rgba(21, 21, 19, 0.98) 100%);
     }
 
     &__table-row-main strong {
@@ -644,16 +644,16 @@ $nav-button-font:   13px;
     }
 
     &__table-row-action {
-        background: rgba(94, 165, 255, 0.14);
-        color: #dff1ff;
+        background: rgba(156, 156, 154, 0.14);
+        color: #eeeeec;
     }
 
     &__reward-hero,
     &__profile-hero {
         gap: 16px;
         border-radius: var(--ui-radius);
-        background: linear-gradient(180deg, rgba(14, 38, 58, 0.66) 0%, rgba(8, 24, 38, 0.74) 100%);
-        border: 1px solid rgba(146, 204, 255, 0.14);
+        background: linear-gradient(180deg, rgba(34, 34, 32, 0.66) 0%, rgba(22, 22, 20, 0.74) 100%);
+        border: 1px solid rgba(195, 195, 193, 0.14);
         padding: 14px;
     }
 
@@ -663,7 +663,7 @@ $nav-button-font:   13px;
 
     &__profile-stat,
     &__private-item {
-        background: linear-gradient(180deg, rgba(13, 33, 52, 0.9) 0%, rgba(8, 23, 37, 0.96) 100%);
+        background: linear-gradient(180deg, rgba(30, 30, 28, 0.9) 0%, rgba(21, 21, 19, 0.96) 100%);
         border-radius: var(--ui-radius);
     }
 
@@ -744,9 +744,9 @@ $nav-button-font:   13px;
     padding: 84px 14px 28px;
     isolation: isolate;
     background:
-        radial-gradient(circle at 50% -8%, rgba(120, 176, 235, 0.26) 0%, rgba(120, 176, 235, 0) 28%),
-        radial-gradient(circle at 10% 24%, rgba(70, 130, 196, 0.14) 0%, rgba(70, 130, 196, 0) 24%),
-        linear-gradient(180deg, rgba(2, 17, 33, 0.96) 0%, rgba(4, 20, 39, 0.98) 100%),
+        radial-gradient(circle at 50% -8%, rgba(168, 168, 166, 0.26) 0%, rgba(168, 168, 166, 0) 28%),
+        radial-gradient(circle at 10% 24%, rgba(122, 122, 120, 0.14) 0%, rgba(122, 122, 120, 0) 24%),
+        linear-gradient(180deg, rgba(15, 15, 13, 0.96) 0%, rgba(18, 18, 16, 0.98) 100%),
         url("../../../images/ui/table_selection_bg.png") repeat top center / 420px auto;
     overflow: clip;
 
@@ -761,7 +761,7 @@ $nav-button-font:   13px;
 
     &::before {
         background:
-            radial-gradient(circle at 18% 30%, rgba(92, 151, 255, 0.22) 0%, rgba(92, 151, 255, 0) 28%),
+            radial-gradient(circle at 18% 30%, rgba(146, 146, 144, 0.22) 0%, rgba(146, 146, 144, 0) 28%),
             radial-gradient(circle at 78% 18%, rgba(92, 255, 187, 0.14) 0%, rgba(92, 255, 187, 0) 22%),
             radial-gradient(circle at 58% 78%, rgba(var(--ui-gold-rgb), 0.12) 0%, rgba(var(--ui-gold-rgb), 0) 24%);
         filter: blur(14px);
@@ -770,8 +770,8 @@ $nav-button-font:   13px;
 
     &::after {
         background-image:
-            linear-gradient(rgba(154, 210, 255, 0.05) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(154, 210, 255, 0.05) 1px, transparent 1px);
+            linear-gradient(rgba(201, 201, 199, 0.05) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(201, 201, 199, 0.05) 1px, transparent 1px);
         background-size: 160px 160px;
         opacity: 0.28;
         mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.8) 0%, transparent 100%);
@@ -782,8 +782,8 @@ $nav-button-font:   13px;
         position: absolute;
         inset: 0;
         background:
-            linear-gradient(180deg, rgba(162, 202, 240, 0.12) 0%, rgba(162, 202, 240, 0) 14%),
-            radial-gradient(circle at 50% 110%, rgba(30, 97, 169, 0.32) 0%, rgba(30, 97, 169, 0) 42%);
+            linear-gradient(180deg, rgba(196, 196, 194, 0.12) 0%, rgba(196, 196, 194, 0) 14%),
+            radial-gradient(circle at 50% 110%, rgba(88, 88, 86, 0.32) 0%, rgba(88, 88, 86, 0) 42%);
         pointer-events: none;
         overflow: hidden;
 
@@ -797,7 +797,7 @@ $nav-button-font:   13px;
         &::before {
             inset: auto -12% 8% -12%;
             height: 34%;
-            background: radial-gradient(circle at 50% 50%, rgba(72, 141, 255, 0.28) 0%, rgba(72, 141, 255, 0) 70%);
+            background: radial-gradient(circle at 50% 50%, rgba(135, 135, 133, 0.28) 0%, rgba(135, 135, 133, 0) 70%);
             filter: blur(22px);
             animation: dashboardHubGlowSweep 15s ease-in-out infinite;
         }
@@ -819,10 +819,10 @@ $nav-button-font:   13px;
         background:
             repeating-linear-gradient(
                 135deg,
-                rgba(170, 224, 255, 0.02) 0px,
-                rgba(170, 224, 255, 0.02) 10px,
-                rgba(170, 224, 255, 0) 10px,
-                rgba(170, 224, 255, 0) 22px
+                rgba(215, 215, 213, 0.02) 0px,
+                rgba(215, 215, 213, 0.02) 10px,
+                rgba(215, 215, 213, 0) 10px,
+                rgba(215, 215, 213, 0) 22px
             );
         animation: guest-grid-drift 18s linear infinite;
     }
@@ -848,7 +848,7 @@ $nav-button-font:   13px;
             height: 420px;
             top: 2%;
             left: 50%;
-            background: linear-gradient(120deg, rgba(99, 190, 255, 0.36) 0%, rgba(117, 255, 208, 0.18) 42%, rgba(99, 190, 255, 0) 100%);
+            background: linear-gradient(120deg, rgba(175, 175, 173, 0.36) 0%, rgba(117, 255, 208, 0.18) 42%, rgba(175, 175, 173, 0) 100%);
             transform: translateX(-50%) rotate(-6deg);
             animation: guest-aurora-sway 18s ease-in-out infinite;
         }
@@ -880,7 +880,7 @@ $nav-button-font:   13px;
         height: 360px;
         top: 8%;
         left: -6%;
-        background: radial-gradient(circle, rgba(93, 184, 255, 0.34) 0%, rgba(93, 184, 255, 0.08) 44%, rgba(93, 184, 255, 0) 76%);
+        background: radial-gradient(circle, rgba(170, 170, 168, 0.34) 0%, rgba(170, 170, 168, 0.08) 44%, rgba(170, 170, 168, 0) 76%);
         animation: guest-orb-drift-one 12s ease-in-out infinite;
     }
 
@@ -910,11 +910,11 @@ $nav-button-font:   13px;
         background:
             conic-gradient(
                 from 140deg at 50% 50%,
-                rgba(98, 188, 255, 0) 0deg,
-                rgba(98, 188, 255, 0.16) 58deg,
+                rgba(174, 174, 172, 0) 0deg,
+                rgba(174, 174, 172, 0.16) 58deg,
                 rgba(122, 255, 209, 0.22) 122deg,
                 rgba(var(--ui-gold-rgb), 0.16) 176deg,
-                rgba(98, 188, 255, 0) 244deg
+                rgba(174, 174, 172, 0) 244deg
             );
         transform: translateX(-50%);
         opacity: 0.34;
@@ -950,7 +950,7 @@ $nav-button-font:   13px;
         border-radius: 0;
         border: 0;
         background:
-            radial-gradient(ellipse at 50% 44%, rgba(64, 82, 104, 0.24) 0%, rgba(22, 31, 46, 0.14) 34%, rgba(22, 31, 46, 0) 68%),
+            radial-gradient(ellipse at 50% 44%, rgba(80, 80, 78, 0.24) 0%, rgba(30, 30, 28, 0.14) 34%, rgba(30, 30, 28, 0) 68%),
             radial-gradient(ellipse at 50% 82%, rgba(0, 0, 0, 0.82) 0%, rgba(0, 0, 0, 0.48) 36%, rgba(0, 0, 0, 0) 72%);
         box-shadow: none;
         overflow: visible;
@@ -963,8 +963,8 @@ $nav-button-font:   13px;
             position: absolute;
             inset: -18px -10px -24px;
             background:
-                radial-gradient(ellipse at 50% 48%, rgba(120, 146, 174, 0.12) 0%, rgba(55, 70, 92, 0.1) 24%, rgba(12, 18, 30, 0.3) 48%, rgba(0, 0, 0, 0) 74%),
-                linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(12, 18, 30, 0.34) 52%, rgba(0, 0, 0, 0.58) 100%);
+                radial-gradient(ellipse at 50% 48%, rgba(142, 142, 140, 0.12) 0%, rgba(68, 68, 66, 0.1) 24%, rgba(18, 18, 16, 0.3) 48%, rgba(0, 0, 0, 0) 74%),
+                linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(18, 18, 16, 0.34) 52%, rgba(0, 0, 0, 0.58) 100%);
             pointer-events: none;
         }
     }
@@ -989,7 +989,7 @@ $nav-button-font:   13px;
     &__profile-label,
     &__stat-label,
     &__stat-meta {
-        color: rgba(197, 228, 255, 0.76);
+        color: rgba(223, 223, 221, 0.76);
         font-size: 10px;
         font-weight: 700;
         letter-spacing: 0.1em;
@@ -1007,7 +1007,7 @@ $nav-button-font:   13px;
 
         h1 {
             margin: 0;
-            color: #f6fbff;
+            color: #fafaf8;
             font-family: var(--ui-font);
             font-size: clamp(34px, 10vw, 56px);
             font-weight: 700;
@@ -1018,7 +1018,7 @@ $nav-button-font:   13px;
         p {
             margin: 0;
             max-width: 34rem;
-            color: rgba(223, 241, 255, 0.82);
+            color: rgba(238, 238, 236, 0.82);
             font-size: 15px;
             line-height: 1.5;
         }
@@ -1045,21 +1045,21 @@ $nav-button-font:   13px;
         gap: 10px;
         min-height: 52px;
         border-radius: var(--ui-radius);
-        border: 1px solid rgba(104, 160, 217, 0.34);
-        background: linear-gradient(180deg, rgba(13, 48, 79, 0.94) 0%, rgba(7, 28, 48, 0.98) 100%);
-        color: #edf6ff;
+        border: 1px solid rgba(152, 152, 150, 0.34);
+        background: linear-gradient(180deg, rgba(43, 43, 41, 0.94) 0%, rgba(25, 25, 23, 0.98) 100%);
+        color: #f5f5f3;
         font-family: var(--ui-font);
         font-size: 13px;
         font-weight: 700;
         letter-spacing: 0.03em;
         text-transform: uppercase;
-        box-shadow: inset 0 1px 0 rgba(213, 236, 255, 0.12), 0 16px 30px rgba(0, 0, 0, 0.2);
+        box-shadow: inset 0 1px 0 rgba(232, 232, 230, 0.12), 0 16px 30px rgba(0, 0, 0, 0.2);
         transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
 
         &:hover,
         &:focus {
             transform: translateY(-1px);
-            border-color: rgba(146, 210, 255, 0.56);
+            border-color: rgba(200, 200, 198, 0.56);
             color: #ffffff;
         }
     }
@@ -1085,9 +1085,9 @@ $nav-button-font:   13px;
     &__card,
     &__table-row,
     &__private-item {
-        border: 1px solid rgba(120, 174, 228, 0.22);
-        background: linear-gradient(180deg, rgba(11, 35, 57, 0.88) 0%, rgba(6, 23, 39, 0.94) 100%);
-        box-shadow: inset 0 1px 0 rgba(221, 240, 255, 0.08), 0 18px 34px rgba(0, 0, 0, 0.2);
+        border: 1px solid rgba(166, 166, 164, 0.22);
+        background: linear-gradient(180deg, rgba(31, 31, 29, 0.88) 0%, rgba(21, 21, 19, 0.94) 100%);
+        box-shadow: inset 0 1px 0 rgba(237, 237, 235, 0.08), 0 18px 34px rgba(0, 0, 0, 0.2);
     }
 
     &__stat-card {
@@ -1126,7 +1126,7 @@ $nav-button-font:   13px;
         padding: 8px 12px 6px;
         border-radius: var(--ui-radius);
         background: rgba(255, 255, 255, 0.08);
-        color: #f5fbff;
+        color: #fafaf8;
         font-size: 11px;
         font-weight: 700;
         letter-spacing: 0.1em;
@@ -1150,7 +1150,7 @@ $nav-button-font:   13px;
 
     &__hero-highlight p {
         margin: 0;
-        color: rgba(224, 241, 255, 0.82);
+        color: rgba(238, 238, 236, 0.82);
         font-size: 15px;
         line-height: 1.45;
     }
@@ -1168,10 +1168,10 @@ $nav-button-font:   13px;
         padding: 12px;
         border-radius: var(--ui-radius);
         background: rgba(255, 255, 255, 0.04);
-        border: 1px solid rgba(171, 215, 255, 0.12);
+        border: 1px solid rgba(209, 209, 207, 0.12);
 
         span {
-            color: rgba(209, 233, 255, 0.74);
+            color: rgba(229, 229, 227, 0.74);
             font-size: 11px;
             font-weight: 700;
             letter-spacing: 0.14em;
@@ -1190,8 +1190,8 @@ $nav-button-font:   13px;
     }
 
     &__card {
-        --accordion-accent: rgba(123, 203, 255, 0.18);
-        --accordion-accent-border: rgba(123, 203, 255, 0.36);
+        --accordion-accent: rgba(190, 190, 188, 0.18);
+        --accordion-accent-border: rgba(190, 190, 188, 0.36);
         --accordion-banner-image: url("../../../images/bg/live_tables_lobby.webp");
         position: relative;
         display: flex;
@@ -1211,7 +1211,7 @@ $nav-button-font:   13px;
             inset: 0;
             background:
                 linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0) 26%),
-                radial-gradient(circle at 50% 0%, rgba(125, 194, 255, 0.12) 0%, rgba(125, 194, 255, 0) 40%);
+                radial-gradient(circle at 50% 0%, rgba(184, 184, 182, 0.12) 0%, rgba(184, 184, 182, 0) 40%);
             pointer-events: none;
         }
     }
@@ -1234,7 +1234,7 @@ $nav-button-font:   13px;
 
     &__card--rewards {
         --accordion-banner-image: url("../../../images/daily-rewards/daily-rewards-base.png");
-        background: linear-gradient(180deg, rgba(7, 41, 50, 0.96) 0%, rgba(3, 22, 32, 0.98) 100%);
+        background: linear-gradient(180deg, rgba(34, 34, 32, 0.96) 0%, rgba(19, 19, 17, 0.98) 100%);
     }
 
     &__card--private {
@@ -1242,7 +1242,7 @@ $nav-button-font:   13px;
     }
 
     &__card--profile {
-        background: linear-gradient(180deg, rgba(9, 34, 58, 0.96) 0%, rgba(4, 20, 39, 0.98) 100%);
+        background: linear-gradient(180deg, rgba(30, 30, 28, 0.96) 0%, rgba(18, 18, 16, 0.98) 100%);
     }
 
     &__accordion-trigger {
@@ -1255,10 +1255,10 @@ $nav-button-font:   13px;
         width: 100%;
         min-height: 74px;
         padding: 12px;
-        border: 1px solid rgba(238, 245, 255, 0.12);
+        border: 1px solid rgba(244, 244, 242, 0.12);
         border-radius: var(--ui-radius);
         background:
-            linear-gradient(180deg, rgba(5, 17, 28, 0.14) 0%, rgba(5, 17, 28, 0.24) 100%),
+            linear-gradient(180deg, rgba(15, 15, 13, 0.14) 0%, rgba(15, 15, 13, 0.24) 100%),
             var(--accordion-banner-image) center center / cover no-repeat;
         box-shadow:
             inset 0 1px 0 rgba(255, 255, 255, 0.08),
@@ -1273,7 +1273,7 @@ $nav-button-font:   13px;
             position: absolute;
             inset: 0;
             background:
-                linear-gradient(180deg, rgba(5, 14, 25, 0.16) 0%, rgba(5, 14, 25, 0.52) 100%),
+                linear-gradient(180deg, rgba(13, 13, 11, 0.16) 0%, rgba(13, 13, 11, 0.52) 100%),
                 linear-gradient(100deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0) 28%);
             pointer-events: none;
         }
@@ -1296,9 +1296,9 @@ $nav-button-font:   13px;
         width: 42px;
         height: 42px;
         border-radius: var(--ui-radius);
-        background: linear-gradient(180deg, rgba(99, 160, 255, 0.28) 0%, rgba(53, 105, 193, 0.2) 100%);
-        border: 1px solid rgba(188, 221, 255, 0.18);
-        color: #f5fbff;
+        background: linear-gradient(180deg, rgba(154, 154, 152, 0.28) 0%, rgba(100, 100, 98, 0.2) 100%);
+        border: 1px solid rgba(216, 216, 214, 0.18);
+        color: #fafaf8;
         flex: 0 0 auto;
     }
 
@@ -1315,7 +1315,7 @@ $nav-button-font:   13px;
     }
 
     &__accordion-subtitle {
-        color: rgba(226, 243, 255, 0.78);
+        color: rgba(240, 240, 238, 0.78);
         font-size: 12px;
         line-height: 1.35;
     }
@@ -1387,8 +1387,8 @@ $nav-button-font:   13px;
     &__card-media {
         overflow: hidden;
         border-radius: var(--ui-radius);
-        border: 1px solid rgba(124, 180, 230, 0.22);
-        background: rgba(7, 18, 31, 0.86);
+        border: 1px solid rgba(172, 172, 170, 0.22);
+        background: rgba(17, 17, 15, 0.86);
         height: clamp(190px, 28dvh, 260px);
 
         img {
@@ -1420,10 +1420,10 @@ $nav-button-font:   13px;
         min-height: 24px;
         padding: 3px 8px 2px;
         border-radius: var(--ui-radius);
-        border: 1px solid rgba(151, 208, 255, 0.28);
-        background: linear-gradient(180deg, rgba(31, 72, 109, 0.42) 0%, rgba(12, 29, 48, 0.78) 100%);
-        color: #edf8ff;
-        box-shadow: inset 0 1px 0 rgba(243, 251, 255, 0.1), 0 10px 18px rgba(0, 0, 0, 0.14);
+        border: 1px solid rgba(199, 199, 197, 0.28);
+        background: linear-gradient(180deg, rgba(66, 66, 64, 0.42) 0%, rgba(27, 27, 25, 0.78) 100%);
+        color: #f6f6f4;
+        box-shadow: inset 0 1px 0 rgba(250, 250, 248, 0.1), 0 10px 18px rgba(0, 0, 0, 0.14);
         font-size: 12px;
         font-weight: 700;
         letter-spacing: 0.05em;
@@ -1437,11 +1437,11 @@ $nav-button-font:   13px;
     &__empty {
         padding: 14px;
         border-radius: var(--ui-radius);
-        border: 1px solid rgba(147, 206, 255, 0.24);
+        border: 1px solid rgba(197, 197, 195, 0.24);
         background:
-            linear-gradient(180deg, rgba(30, 69, 105, 0.22) 0%, rgba(10, 24, 39, 0.88) 100%);
+            linear-gradient(180deg, rgba(63, 63, 61, 0.22) 0%, rgba(22, 22, 20, 0.88) 100%);
         box-shadow:
-            inset 0 1px 0 rgba(238, 248, 255, 0.08),
+            inset 0 1px 0 rgba(246, 246, 244, 0.08),
             0 16px 28px rgba(0, 0, 0, 0.18);
     }
 
@@ -1458,7 +1458,7 @@ $nav-button-font:   13px;
         }
 
         span {
-            color: rgba(230, 244, 255, 0.82);
+            color: rgba(242, 242, 240, 0.82);
             font-size: 13px;
             line-height: 1.4;
         }
@@ -1476,11 +1476,11 @@ $nav-button-font:   13px;
         width: 100%;
         padding: 14px;
         border-radius: var(--ui-radius);
-        border: 1px solid rgba(145, 202, 255, 0.22);
+        border: 1px solid rgba(194, 194, 192, 0.22);
         background:
-            linear-gradient(180deg, rgba(29, 67, 103, 0.18) 0%, rgba(10, 23, 38, 0.9) 100%);
+            linear-gradient(180deg, rgba(62, 62, 60, 0.18) 0%, rgba(21, 21, 19, 0.9) 100%);
         box-shadow:
-            inset 0 1px 0 rgba(240, 250, 255, 0.06),
+            inset 0 1px 0 rgba(248, 248, 246, 0.06),
             0 16px 30px rgba(0, 0, 0, 0.18);
         text-align: left;
         color: inherit;
@@ -1489,8 +1489,8 @@ $nav-button-font:   13px;
         &:hover,
         &:focus {
             transform: translateY(-1px);
-            border-color: rgba(153, 210, 255, 0.42);
-            box-shadow: inset 0 1px 0 rgba(221, 240, 255, 0.12), 0 20px 38px rgba(0, 0, 0, 0.22);
+            border-color: rgba(201, 201, 199, 0.42);
+            box-shadow: inset 0 1px 0 rgba(237, 237, 235, 0.12), 0 20px 38px rgba(0, 0, 0, 0.22);
         }
 
         &:disabled {
@@ -1504,7 +1504,7 @@ $nav-button-font:   13px;
         gap: 4px;
 
         strong {
-            color: #f7fbff;
+            color: #fafaf8;
             font-size: 18px;
             font-weight: 700;
             letter-spacing: 0.02em;
@@ -1512,7 +1512,7 @@ $nav-button-font:   13px;
         }
 
         span {
-            color: rgba(221, 240, 255, 0.78);
+            color: rgba(237, 237, 235, 0.78);
             font-size: 13px;
             line-height: 1.35;
         }
@@ -1535,7 +1535,7 @@ $nav-button-font:   13px;
         display: flex;
         flex-wrap: wrap;
         gap: 8px 12px;
-        color: rgba(204, 231, 255, 0.78);
+        color: rgba(227, 227, 225, 0.78);
         font-size: 12px;
         font-weight: 700;
         letter-spacing: 0.05em;
@@ -1551,7 +1551,7 @@ $nav-button-font:   13px;
         padding: 11px 16px 9px;
         border-radius: var(--ui-radius);
         background: rgba(255, 255, 255, 0.08);
-        color: #f5fbff;
+        color: #fafaf8;
         font-size: 13px;
         font-weight: 700;
         letter-spacing: 0.08em;
@@ -1615,7 +1615,7 @@ $nav-button-font:   13px;
     &__mission-item {
         display: grid;
         gap: 10px;
-        background: linear-gradient(180deg, rgba(46, 108, 93, 0.42) 0%, rgba(16, 55, 49, 0.52) 100%);
+        background: linear-gradient(180deg, rgba(46, 108, 93, 0.42) 0%, rgba(46, 46, 44, 0.52) 100%);
     }
 
     &__mission-text {
@@ -1690,8 +1690,8 @@ $nav-button-font:   13px;
     }
 
     &__progress-bar--blue {
-        background: linear-gradient(90deg, #76d4ff 0%, #2b7fe4 100%);
-        box-shadow: 0 0 18px rgba(118, 212, 255, 0.24);
+        background: linear-gradient(90deg, #c3c3c1 0%, #747472 100%);
+        box-shadow: 0 0 18px rgba(195, 195, 193, 0.24);
     }
 
     &__private-list {
@@ -1706,7 +1706,7 @@ $nav-button-font:   13px;
 
         strong {
             display: block;
-            color: #f4fbff;
+            color: #fafaf8;
             font-size: 16px;
             text-transform: uppercase;
             letter-spacing: 0.04em;
@@ -1715,7 +1715,7 @@ $nav-button-font:   13px;
         span {
             display: block;
             margin-top: 4px;
-            color: rgba(227, 242, 255, 0.78);
+            color: rgba(240, 240, 238, 0.78);
             font-size: 13px;
             line-height: 1.4;
         }
@@ -1733,8 +1733,8 @@ $nav-button-font:   13px;
         height: 88px;
         padding: 6px;
         border-radius: var(--ui-radius);
-        border: 1px solid rgba(138, 196, 245, 0.28);
-        background: linear-gradient(180deg, rgba(14, 48, 79, 0.88) 0%, rgba(8, 25, 42, 0.96) 100%);
+        border: 1px solid rgba(187, 187, 185, 0.28);
+        background: linear-gradient(180deg, rgba(43, 43, 41, 0.88) 0%, rgba(23, 23, 21, 0.96) 100%);
 
         img {
             width: 100%;
@@ -1757,7 +1757,7 @@ $nav-button-font:   13px;
     }
 
     &__profile-balance {
-        color: rgba(223, 241, 255, 0.82);
+        color: rgba(238, 238, 236, 0.82);
         font-size: 14px;
         font-weight: 700;
         letter-spacing: 0.04em;
@@ -1784,7 +1784,7 @@ $nav-button-font:   13px;
         align-content: center;
 
         span {
-            color: rgba(221, 240, 255, 0.72);
+            color: rgba(237, 237, 235, 0.72);
             font-size: 11px;
             font-weight: 700;
             letter-spacing: 0.12em;
@@ -1811,7 +1811,7 @@ $nav-button-font:   13px;
         gap: 16px;
 
         span {
-            color: rgba(221, 240, 255, 0.72);
+            color: rgba(237, 237, 235, 0.72);
             font-size: 12px;
             font-weight: 700;
             letter-spacing: 0.08em;
@@ -1831,7 +1831,7 @@ $nav-button-font:   13px;
         }
 
         span {
-            color: rgba(221, 240, 255, 0.78);
+            color: rgba(237, 237, 235, 0.78);
             font-size: 13px;
             line-height: 1.45;
         }
@@ -1863,14 +1863,14 @@ $nav-button-font:   13px;
     }
 
     &__cta {
-        color: #f5fcff;
-        border-color: rgba(180, 231, 255, 0.42);
+        color: #fbfbf9;
+        border-color: rgba(222, 222, 220, 0.42);
         background:
-            linear-gradient(180deg, rgba(170, 240, 255, 0.98) 0%, rgba(82, 180, 255, 0.96) 48%, rgba(31, 101, 214, 1) 100%);
+            linear-gradient(180deg, rgba(226, 226, 224, 0.98) 0%, rgba(165, 165, 163, 0.96) 48%, rgba(94, 94, 92, 1) 100%);
         box-shadow:
-            inset 0 1px 0 rgba(248, 253, 255, 0.34),
-            0 16px 28px rgba(18, 71, 143, 0.34),
-            0 0 28px rgba(84, 182, 255, 0.2);
+            inset 0 1px 0 rgba(252, 252, 250, 0.34),
+            0 16px 28px rgba(65, 65, 63, 0.34),
+            0 0 28px rgba(166, 166, 164, 0.2);
 
         &:disabled {
             opacity: 0.6;
@@ -1879,13 +1879,13 @@ $nav-button-font:   13px;
     }
 
     &__secondary-cta {
-        color: #e8f4ff;
-        background: linear-gradient(180deg, rgba(23, 62, 112, 0.96) 0%, rgba(15, 39, 75, 0.98) 100%);
-        border-color: rgba(151, 204, 255, 0.34);
+        color: #f2f2f0;
+        background: linear-gradient(180deg, rgba(57, 57, 55, 0.96) 0%, rgba(36, 36, 34, 0.98) 100%);
+        border-color: rgba(196, 196, 194, 0.34);
         box-shadow:
-            inset 0 1px 0 rgba(228, 243, 255, 0.14),
+            inset 0 1px 0 rgba(241, 241, 239, 0.14),
             0 14px 24px rgba(0, 0, 0, 0.22),
-            0 0 18px rgba(74, 154, 255, 0.08);
+            0 0 18px rgba(144, 144, 142, 0.08);
     }
 
     &__secondary-cta--accent {
@@ -2005,9 +2005,9 @@ $nav-button-font:   13px;
     padding: 88px 14px 20px;
     isolation: isolate;
     background:
-        radial-gradient(circle at 50% -8%, rgba(120, 176, 235, 0.26) 0%, rgba(120, 176, 235, 0) 28%),
-        radial-gradient(circle at 10% 24%, rgba(70, 130, 196, 0.14) 0%, rgba(70, 130, 196, 0) 24%),
-        linear-gradient(180deg, rgba(2, 17, 33, 0.96) 0%, rgba(4, 20, 39, 0.98) 100%),
+        radial-gradient(circle at 50% -8%, rgba(168, 168, 166, 0.26) 0%, rgba(168, 168, 166, 0) 28%),
+        radial-gradient(circle at 10% 24%, rgba(122, 122, 120, 0.14) 0%, rgba(122, 122, 120, 0) 24%),
+        linear-gradient(180deg, rgba(15, 15, 13, 0.96) 0%, rgba(18, 18, 16, 0.98) 100%),
         url("../../../images/ui/table_selection_bg.png") repeat top center / 420px auto;
     overflow: clip;
 
@@ -2022,7 +2022,7 @@ $nav-button-font:   13px;
 
     &::before {
         background:
-            radial-gradient(circle at 18% 30%, rgba(92, 151, 255, 0.22) 0%, rgba(92, 151, 255, 0) 28%),
+            radial-gradient(circle at 18% 30%, rgba(146, 146, 144, 0.22) 0%, rgba(146, 146, 144, 0) 28%),
             radial-gradient(circle at 78% 18%, rgba(92, 255, 187, 0.14) 0%, rgba(92, 255, 187, 0) 22%),
             radial-gradient(circle at 58% 78%, rgba(var(--ui-gold-rgb), 0.12) 0%, rgba(var(--ui-gold-rgb), 0) 24%);
         filter: blur(14px);
@@ -2031,8 +2031,8 @@ $nav-button-font:   13px;
 
     &::after {
         background-image:
-            linear-gradient(rgba(154, 210, 255, 0.05) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(154, 210, 255, 0.05) 1px, transparent 1px);
+            linear-gradient(rgba(201, 201, 199, 0.05) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(201, 201, 199, 0.05) 1px, transparent 1px);
         background-size: 160px 160px;
         opacity: 0.28;
         mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.8) 0%, transparent 100%);
@@ -2043,8 +2043,8 @@ $nav-button-font:   13px;
         position: absolute;
         inset: 0;
         background:
-            linear-gradient(180deg, rgba(162, 202, 240, 0.12) 0%, rgba(162, 202, 240, 0) 14%),
-            radial-gradient(circle at 50% 110%, rgba(30, 97, 169, 0.32) 0%, rgba(30, 97, 169, 0) 42%);
+            linear-gradient(180deg, rgba(196, 196, 194, 0.12) 0%, rgba(196, 196, 194, 0) 14%),
+            radial-gradient(circle at 50% 110%, rgba(88, 88, 86, 0.32) 0%, rgba(88, 88, 86, 0) 42%);
         pointer-events: none;
         overflow: hidden;
 
@@ -2058,7 +2058,7 @@ $nav-button-font:   13px;
         &::before {
             inset: auto -12% 8% -12%;
             height: 34%;
-            background: radial-gradient(circle at 50% 50%, rgba(72, 141, 255, 0.28) 0%, rgba(72, 141, 255, 0) 70%);
+            background: radial-gradient(circle at 50% 50%, rgba(135, 135, 133, 0.28) 0%, rgba(135, 135, 133, 0) 70%);
             filter: blur(22px);
             animation: dashboardHubGlowSweep 15s ease-in-out infinite;
         }
@@ -2081,10 +2081,10 @@ $nav-button-font:   13px;
         background:
             repeating-linear-gradient(
                 135deg,
-                rgba(170, 224, 255, 0.02) 0px,
-                rgba(170, 224, 255, 0.02) 10px,
-                rgba(170, 224, 255, 0) 10px,
-                rgba(170, 224, 255, 0) 22px
+                rgba(215, 215, 213, 0.02) 0px,
+                rgba(215, 215, 213, 0.02) 10px,
+                rgba(215, 215, 213, 0) 10px,
+                rgba(215, 215, 213, 0) 22px
             );
         opacity: 1;
         animation: guest-grid-drift 18s linear infinite;
@@ -2112,7 +2112,7 @@ $nav-button-font:   13px;
             height: 420px;
             top: 2%;
             left: 50%;
-            background: linear-gradient(120deg, rgba(99, 190, 255, 0.36) 0%, rgba(117, 255, 208, 0.18) 42%, rgba(99, 190, 255, 0) 100%);
+            background: linear-gradient(120deg, rgba(175, 175, 173, 0.36) 0%, rgba(117, 255, 208, 0.18) 42%, rgba(175, 175, 173, 0) 100%);
             transform: translateX(-50%) rotate(-6deg);
             animation: guest-aurora-sway 18s ease-in-out infinite;
         }
@@ -2144,7 +2144,7 @@ $nav-button-font:   13px;
         height: 360px;
         top: 8%;
         left: -6%;
-        background: radial-gradient(circle, rgba(93, 184, 255, 0.34) 0%, rgba(93, 184, 255, 0.08) 44%, rgba(93, 184, 255, 0) 76%);
+        background: radial-gradient(circle, rgba(170, 170, 168, 0.34) 0%, rgba(170, 170, 168, 0.08) 44%, rgba(170, 170, 168, 0) 76%);
         animation: guest-orb-drift-one 12s ease-in-out infinite;
     }
 
@@ -2174,11 +2174,11 @@ $nav-button-font:   13px;
         background:
             conic-gradient(
                 from 140deg at 50% 50%,
-                rgba(98, 188, 255, 0) 0deg,
-                rgba(98, 188, 255, 0.16) 58deg,
+                rgba(174, 174, 172, 0) 0deg,
+                rgba(174, 174, 172, 0.16) 58deg,
                 rgba(122, 255, 209, 0.22) 122deg,
                 rgba(var(--ui-gold-rgb), 0.16) 176deg,
-                rgba(98, 188, 255, 0) 244deg
+                rgba(174, 174, 172, 0) 244deg
             );
         transform: translateX(-50%);
         opacity: 0.34;
@@ -2235,15 +2235,15 @@ $nav-button-font:   13px;
         gap: 10px;
         min-height: 52px;
         border-radius: var(--ui-radius);
-        border: 1px solid rgba(104, 160, 217, 0.34);
-        background: linear-gradient(180deg, rgba(13, 48, 79, 0.94) 0%, rgba(7, 28, 48, 0.98) 100%);
-        color: #edf6ff;
+        border: 1px solid rgba(152, 152, 150, 0.34);
+        background: linear-gradient(180deg, rgba(43, 43, 41, 0.94) 0%, rgba(25, 25, 23, 0.98) 100%);
+        color: #f5f5f3;
         font-family: var(--ui-font);
         font-size: 14px;
         font-weight: 700;
         letter-spacing: 0.02em;
         text-transform: uppercase;
-        box-shadow: inset 0 1px 0 rgba(213, 236, 255, 0.12), 0 16px 30px rgba(0, 0, 0, 0.2);
+        box-shadow: inset 0 1px 0 rgba(232, 232, 230, 0.12), 0 16px 30px rgba(0, 0, 0, 0.2);
         transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
 
         svg {
@@ -2253,7 +2253,7 @@ $nav-button-font:   13px;
         &:hover,
         &:focus {
             transform: translateY(-1px);
-            border-color: rgba(146, 210, 255, 0.56);
+            border-color: rgba(200, 200, 198, 0.56);
             color: #ffffff;
         }
     }
@@ -2283,9 +2283,9 @@ $nav-button-font:   13px;
     }
 
     &__card {
-        --accordion-accent: rgba(123, 203, 255, 0.18);
-        --accordion-accent-border: rgba(123, 203, 255, 0.36);
-        --accordion-accent-strong: #8fdcff;
+        --accordion-accent: rgba(190, 190, 188, 0.18);
+        --accordion-accent-border: rgba(190, 190, 188, 0.36);
+        --accordion-accent-strong: #cececc;
         --accordion-banner-image: url("../../../images/bg/live_tables_lobby.webp");
         position: relative;
         display: flex;
@@ -2293,11 +2293,11 @@ $nav-button-font:   13px;
         gap: 0;
         min-width: 0;
         padding: 12px 14px;
-        border: 1px solid rgba(111, 158, 206, 0.28);
+        border: 1px solid rgba(151, 151, 149, 0.28);
         border-radius: var(--ui-radius);
         background:
-            linear-gradient(180deg, rgba(10, 31, 51, 0.96) 0%, rgba(5, 20, 35, 0.98) 100%);
-        box-shadow: inset 0 1px 0 rgba(217, 238, 255, 0.08), 0 22px 44px rgba(0, 0, 0, 0.28);
+            linear-gradient(180deg, rgba(28, 28, 26, 0.96) 0%, rgba(18, 18, 16, 0.98) 100%);
+        box-shadow: inset 0 1px 0 rgba(235, 235, 233, 0.08), 0 22px 44px rgba(0, 0, 0, 0.28);
         overflow: hidden;
         opacity: 0;
         transform: translateY(28px) scale(0.98);
@@ -2309,7 +2309,7 @@ $nav-button-font:   13px;
             inset: 0;
             background:
                 linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0) 26%),
-                radial-gradient(circle at 50% 0%, rgba(125, 194, 255, 0.12) 0%, rgba(125, 194, 255, 0) 40%);
+                radial-gradient(circle at 50% 0%, rgba(184, 184, 182, 0.12) 0%, rgba(184, 184, 182, 0) 40%);
             pointer-events: none;
         }
     }
@@ -2331,8 +2331,8 @@ $nav-button-font:   13px;
     }
 
     &__card.is-open {
-        border-color: rgba(141, 204, 255, 0.38);
-        box-shadow: inset 0 1px 0 rgba(217, 238, 255, 0.1), 0 24px 48px rgba(0, 0, 0, 0.32);
+        border-color: rgba(194, 194, 192, 0.38);
+        box-shadow: inset 0 1px 0 rgba(235, 235, 233, 0.1), 0 24px 48px rgba(0, 0, 0, 0.32);
     }
 
     &__card--rewards {
@@ -2341,23 +2341,23 @@ $nav-button-font:   13px;
         --accordion-accent-strong: #8ef6b4;
         --accordion-banner-image: url("../../../images/daily-rewards/daily-rewards-base.png");
         background:
-            linear-gradient(180deg, rgba(8, 42, 53, 0.96) 0%, rgba(3, 22, 32, 0.98) 100%);
+            linear-gradient(180deg, rgba(36, 36, 34, 0.96) 0%, rgba(19, 19, 17, 0.98) 100%);
     }
 
     &__card--private {
-        --accordion-accent: rgba(119, 194, 255, 0.18);
-        --accordion-accent-border: rgba(119, 194, 255, 0.32);
-        --accordion-accent-strong: #88d2ff;
+        --accordion-accent: rgba(182, 182, 180, 0.18);
+        --accordion-accent-border: rgba(182, 182, 180, 0.32);
+        --accordion-accent-strong: #c6c6c4;
         --accordion-banner-image: url("../../../images/bg/private_table.webp");
     }
 
     &__card--profile {
-        --accordion-accent: rgba(140, 199, 255, 0.18);
-        --accordion-accent-border: rgba(140, 199, 255, 0.32);
-        --accordion-accent-strong: #c8e6ff;
-        --accordion-banner-image: linear-gradient(135deg, rgba(200, 230, 255, 0.28) 0%, rgba(77, 139, 199, 0.06) 100%);
+        --accordion-accent: rgba(190, 190, 188, 0.18);
+        --accordion-accent-border: rgba(190, 190, 188, 0.32);
+        --accordion-accent-strong: #e1e1df;
+        --accordion-banner-image: linear-gradient(135deg, rgba(225, 225, 223, 0.28) 0%, rgba(130, 130, 128, 0.06) 100%);
         background:
-            linear-gradient(180deg, rgba(9, 34, 58, 0.96) 0%, rgba(4, 20, 39, 0.98) 100%);
+            linear-gradient(180deg, rgba(30, 30, 28, 0.96) 0%, rgba(18, 18, 16, 0.98) 100%);
     }
 
     &__accordion-trigger {
@@ -2370,10 +2370,10 @@ $nav-button-font:   13px;
         width: 100%;
         min-height: 68px;
         padding: 0;
-        border: 1px solid rgba(238, 245, 255, 0.12);
+        border: 1px solid rgba(244, 244, 242, 0.12);
         border-radius: var(--ui-radius);
         background:
-            linear-gradient(180deg, rgba(5, 17, 28, 0.1) 0%, rgba(5, 17, 28, 0.1) 100%),
+            linear-gradient(180deg, rgba(15, 15, 13, 0.1) 0%, rgba(15, 15, 13, 0.1) 100%),
             var(--accordion-banner-image) center center / cover no-repeat;
         box-shadow:
             inset 0 1px 0 rgba(255, 255, 255, 0.08),
@@ -2388,7 +2388,7 @@ $nav-button-font:   13px;
             position: absolute;
             inset: 0;
             background:
-                linear-gradient(180deg, rgba(5, 14, 25, 0.08) 0%, rgba(5, 14, 25, 0.42) 100%),
+                linear-gradient(180deg, rgba(13, 13, 11, 0.08) 0%, rgba(13, 13, 11, 0.42) 100%),
                 linear-gradient(100deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0) 28%);
             pointer-events: none;
         }
@@ -2402,8 +2402,8 @@ $nav-button-font:   13px;
             right: 56px;
             clip-path: polygon(0 0, 57% 0, 39% 100%, 0 100%);
             background:
-                linear-gradient(135deg, rgba(110, 177, 255, 0.94) 0%, rgba(68, 127, 255, 0.72) 62%, rgba(68, 127, 255, 0.08) 100%);
-            filter: drop-shadow(0 10px 18px rgba(35, 84, 183, 0.24));
+                linear-gradient(135deg, rgba(168, 168, 166, 0.94) 0%, rgba(124, 124, 122, 0.72) 62%, rgba(124, 124, 122, 0.08) 100%);
+            filter: drop-shadow(0 10px 18px rgba(81, 81, 79, 0.24));
             pointer-events: none;
         }
     }
@@ -2430,7 +2430,7 @@ $nav-button-font:   13px;
     }
 
     &__accordion-title {
-        color: #f4fbff;
+        color: #fafaf8;
         font-family: var(--ui-font);
         font-size: clamp(22px, 6vw, 28px);
         font-weight: 700;
@@ -2507,7 +2507,7 @@ $nav-button-font:   13px;
     &__card.is-open &__accordion-trigger {
         border-color: rgba(255, 255, 255, 0.24);
         background:
-            linear-gradient(180deg, rgba(6, 18, 30, 0.08) 0%, rgba(6, 18, 30, 0.08) 100%),
+            linear-gradient(180deg, rgba(16, 16, 14, 0.08) 0%, rgba(16, 16, 14, 0.08) 100%),
             var(--accordion-banner-image) center center / cover no-repeat;
         box-shadow:
             inset 0 1px 0 rgba(255, 255, 255, 0.12),
@@ -2539,7 +2539,7 @@ $nav-button-font:   13px;
 
         h2 {
             margin: 0;
-            color: #f4fbff;
+            color: #fafaf8;
             font-family: var(--ui-font);
             font-size: 28px;
             font-weight: 700;
@@ -2555,8 +2555,8 @@ $nav-button-font:   13px;
         z-index: 1;
         overflow: hidden;
         border-radius: var(--ui-radius);
-        border: 1px solid rgba(124, 180, 230, 0.22);
-        background: rgba(7, 18, 31, 0.86);
+        border: 1px solid rgba(172, 172, 170, 0.22);
+        background: rgba(17, 17, 15, 0.86);
         height: clamp(180px, 29dvh, 236px);
         min-height: 0;
         flex: 0 0 auto;
@@ -2595,9 +2595,9 @@ $nav-button-font:   13px;
         min-height: 32px;
         padding: 6px 12px 4px;
         border-radius: var(--ui-radius);
-        border: 1px solid rgba(133, 191, 239, 0.18);
+        border: 1px solid rgba(182, 182, 180, 0.18);
         background: rgba(255, 255, 255, 0.05);
-        color: #d8eeff;
+        color: #ebebe9;
         font-size: 12px;
         font-weight: 700;
         letter-spacing: 0.05em;
@@ -2613,9 +2613,9 @@ $nav-button-font:   13px;
         border: 1px solid rgba(var(--dashboard-theme-accent-rgb), 0.34);
         background:
             radial-gradient(circle at 18% 0%, rgba(var(--dashboard-theme-accent-rgb), 0.2) 0%, rgba(var(--dashboard-theme-accent-rgb), 0) 42%),
-            linear-gradient(180deg, rgba(var(--dashboard-theme-rgb), 0.34) 0%, rgba(7, 21, 35, 0.92) 100%);
+            linear-gradient(180deg, rgba(var(--dashboard-theme-rgb), 0.34) 0%, rgba(19, 19, 17, 0.92) 100%);
         box-shadow:
-            inset 0 1px 0 rgba(244, 251, 255, 0.12),
+            inset 0 1px 0 rgba(250, 250, 248, 0.12),
             0 18px 30px rgba(0, 0, 0, 0.22),
             0 0 24px rgba(var(--dashboard-theme-rgb), 0.18);
 
@@ -2628,7 +2628,7 @@ $nav-button-font:   13px;
         }
 
         span {
-            color: rgba(230, 244, 255, 0.82);
+            color: rgba(242, 242, 240, 0.82);
             font-size: 13px;
             line-height: 1.35;
         }
@@ -2645,7 +2645,7 @@ $nav-button-font:   13px;
         padding: 12px;
         border-radius: var(--ui-radius);
         border: 1px solid rgba(122, 216, 185, 0.18);
-        background: linear-gradient(180deg, rgba(46, 108, 93, 0.42) 0%, rgba(16, 55, 49, 0.52) 100%);
+        background: linear-gradient(180deg, rgba(46, 108, 93, 0.42) 0%, rgba(46, 46, 44, 0.52) 100%);
         box-shadow: inset 0 1px 0 rgba(231, 255, 248, 0.06);
     }
 
@@ -2721,8 +2721,8 @@ $nav-button-font:   13px;
     }
 
     &__progress-bar--blue {
-        background: linear-gradient(90deg, #76d4ff 0%, #2b7fe4 100%);
-        box-shadow: 0 0 18px rgba(118, 212, 255, 0.24);
+        background: linear-gradient(90deg, #c3c3c1 0%, #747472 100%);
+        box-shadow: 0 0 18px rgba(195, 195, 193, 0.24);
     }
 
     &__cta,
@@ -2767,9 +2767,9 @@ $nav-button-font:   13px;
         margin: 0 auto;
         padding: 8px;
         border-radius: var(--ui-radius);
-        border: 1px solid rgba(138, 196, 245, 0.28);
-        background: linear-gradient(180deg, rgba(14, 48, 79, 0.88) 0%, rgba(8, 25, 42, 0.96) 100%);
-        box-shadow: inset 0 1px 0 rgba(215, 237, 255, 0.12);
+        border: 1px solid rgba(187, 187, 185, 0.28);
+        background: linear-gradient(180deg, rgba(43, 43, 41, 0.88) 0%, rgba(23, 23, 21, 0.96) 100%);
+        box-shadow: inset 0 1px 0 rgba(234, 234, 232, 0.12);
 
         img {
             width: 100%;
@@ -2784,7 +2784,7 @@ $nav-button-font:   13px;
         position: relative;
         z-index: 1;
         text-align: center;
-        color: #f5fbff;
+        color: #fafaf8;
         font-family: var(--ui-font);
         font-size: 24px;
         font-weight: 700;
@@ -2807,7 +2807,7 @@ $nav-button-font:   13px;
         gap: 16px;
 
         span {
-            color: rgba(221, 240, 255, 0.72);
+            color: rgba(237, 237, 235, 0.72);
             font-size: 13px;
             font-weight: 700;
             letter-spacing: 0.08em;
@@ -2842,15 +2842,15 @@ $nav-button-font:   13px;
         z-index: 1;
         padding: 14px;
         border-radius: var(--ui-radius);
-        border: 1px solid rgba(147, 206, 255, 0.2);
-        background: linear-gradient(180deg, rgba(17, 45, 72, 0.68) 0%, rgba(7, 21, 36, 0.92) 100%);
-        box-shadow: inset 0 1px 0 rgba(239, 249, 255, 0.08), 0 18px 28px rgba(0, 0, 0, 0.16);
+        border: 1px solid rgba(197, 197, 195, 0.2);
+        background: linear-gradient(180deg, rgba(41, 41, 39, 0.68) 0%, rgba(19, 19, 17, 0.92) 100%);
+        box-shadow: inset 0 1px 0 rgba(247, 247, 245, 0.08), 0 18px 28px rgba(0, 0, 0, 0.16);
     }
 
     &__settings-copy {
         p {
             margin: 0;
-            color: rgba(220, 239, 255, 0.78);
+            color: rgba(236, 236, 234, 0.78);
             font-size: 13px;
             line-height: 1.45;
         }
@@ -2865,13 +2865,13 @@ $nav-button-font:   13px;
         gap: 4px;
         padding: 12px 14px;
         border-radius: var(--ui-radius);
-        border: 1px solid rgba(145, 202, 255, 0.2);
-        background: linear-gradient(180deg, rgba(31, 72, 109, 0.34) 0%, rgba(10, 24, 39, 0.82) 100%);
+        border: 1px solid rgba(194, 194, 192, 0.2);
+        background: linear-gradient(180deg, rgba(66, 66, 64, 0.34) 0%, rgba(22, 22, 20, 0.82) 100%);
         text-align: left;
         transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
 
         strong {
-            color: #f7fbff;
+            color: #fafaf8;
             font-size: 14px;
             font-weight: 700;
             letter-spacing: 0.05em;
@@ -2880,7 +2880,7 @@ $nav-button-font:   13px;
         }
 
         span {
-            color: rgba(214, 234, 251, 0.76);
+            color: rgba(231, 231, 229, 0.76);
             font-size: 12px;
             line-height: 1.4;
         }
@@ -2888,11 +2888,11 @@ $nav-button-font:   13px;
         &:hover,
         &:focus {
             transform: translateY(-1px);
-            border-color: rgba(194, 234, 255, 0.42);
+            border-color: rgba(227, 227, 225, 0.42);
             box-shadow:
-                inset 0 1px 0 rgba(248, 253, 255, 0.12),
+                inset 0 1px 0 rgba(252, 252, 250, 0.12),
                 0 16px 24px rgba(0, 0, 0, 0.18),
-                0 0 18px rgba(88, 184, 255, 0.12);
+                0 0 18px rgba(169, 169, 167, 0.12);
         }
 
         &.is-danger {
@@ -2929,10 +2929,10 @@ $nav-button-font:   13px;
     }
 
     &__secondary-cta {
-        color: #e8f4ff;
-        background: linear-gradient(180deg, rgba(23, 62, 112, 0.96) 0%, rgba(15, 39, 75, 0.98) 100%);
-        border: 1px solid rgba(116, 159, 228, 0.34);
-        box-shadow: inset 0 1px 0 rgba(214, 235, 255, 0.12), 0 14px 24px rgba(0, 0, 0, 0.18);
+        color: #f2f2f0;
+        background: linear-gradient(180deg, rgba(57, 57, 55, 0.96) 0%, rgba(36, 36, 34, 0.98) 100%);
+        border: 1px solid rgba(155, 155, 153, 0.34);
+        box-shadow: inset 0 1px 0 rgba(232, 232, 230, 0.12), 0 14px 24px rgba(0, 0, 0, 0.18);
     }
 
     &__secondary-cta--accent {
@@ -3398,7 +3398,7 @@ $nav-button-font:   13px;
     position: absolute;
     inset: 0;
     border: 0;
-    background: linear-gradient(180deg, rgba(2, 13, 24, 0.6) 0%, rgba(2, 13, 24, 0.82) 100%);
+    background: linear-gradient(180deg, rgba(11, 11, 9, 0.6) 0%, rgba(11, 11, 9, 0.82) 100%);
 }
 
 .lobby-preview-overlay__panel {
@@ -3408,11 +3408,11 @@ $nav-button-font:   13px;
     bottom: 10px;
     left: 10px;
     border-radius: var(--ui-radius);
-    border: 1px solid rgba(166, 226, 255, 0.22);
+    border: 1px solid rgba(215, 215, 213, 0.22);
     background:
-        linear-gradient(180deg, rgba(7, 26, 41, 0.9) 0%, rgba(5, 17, 27, 0.94) 100%),
+        linear-gradient(180deg, rgba(23, 23, 21, 0.9) 0%, rgba(15, 15, 13, 0.94) 100%),
         url("../../../images/ui/table_selection_bg.png") repeat-y top center / 100% auto;
-    box-shadow: inset 0 1px 0 rgba(195, 236, 255, 0.12), 0 28px 60px rgba(0, 0, 0, 0.38);
+    box-shadow: inset 0 1px 0 rgba(229, 229, 227, 0.12), 0 28px 60px rgba(0, 0, 0, 0.38);
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -3439,7 +3439,7 @@ $nav-button-font:   13px;
     height: 280px;
     top: -60px;
     left: -80px;
-    background: radial-gradient(circle, rgba(114, 201, 255, 0.7) 0%, rgba(114, 201, 255, 0) 66%);
+    background: radial-gradient(circle, rgba(186, 186, 184, 0.7) 0%, rgba(186, 186, 184, 0) 66%);
 }
 
 .lobby-preview-overlay__fx-orb--b {
@@ -3456,7 +3456,7 @@ $nav-button-font:   13px;
     height: 340px;
     bottom: -120px;
     left: 45%;
-    background: radial-gradient(circle, rgba(78, 146, 255, 0.48) 0%, rgba(78, 146, 255, 0) 70%);
+    background: radial-gradient(circle, rgba(139, 139, 137, 0.48) 0%, rgba(139, 139, 137, 0) 70%);
     animation-delay: -7s;
 }
 
@@ -3467,7 +3467,7 @@ $nav-button-font:   13px;
     align-items: stretch;
     gap: 14px;
     padding: 14px;
-    border-bottom: 1px solid rgba(166, 226, 255, 0.16);
+    border-bottom: 1px solid rgba(215, 215, 213, 0.16);
     position: relative;
     z-index: 1;
 
@@ -3477,11 +3477,11 @@ $nav-button-font:   13px;
         line-height: 0.98;
         text-transform: uppercase;
         letter-spacing: 0.04em;
-        text-shadow: 0 0 18px rgba(102, 194, 255, 0.2);
+        text-shadow: 0 0 18px rgba(179, 179, 177, 0.2);
     }
 
     p {
-        color: rgba(224, 242, 255, 0.82);
+        color: rgba(239, 239, 237, 0.82);
         margin-top: 8px;
         font-size: 14px;
         max-width: none;
@@ -3495,13 +3495,13 @@ $nav-button-font:   13px;
     margin-top: 12px;
 
     span {
-        border: 1px solid rgba(166, 226, 255, 0.2);
+        border: 1px solid rgba(215, 215, 213, 0.2);
         border-radius: var(--ui-radius);
         font-size: 12px;
-        color: #dbf2ff;
+        color: #eeeeec;
         letter-spacing: 0.02em;
         padding: 6px 10px 4px;
-        background: rgba(4, 29, 45, 0.62);
+        background: rgba(25, 25, 23, 0.62);
     }
 }
 
@@ -3516,7 +3516,7 @@ $nav-button-font:   13px;
 }
 
 .lobby-preview-overlay__eyebrow {
-    color: #9ad8ff;
+    color: #cececc;
     text-transform: uppercase;
     letter-spacing: 0.18em;
     font-size: 12px;
@@ -3527,7 +3527,7 @@ $nav-button-font:   13px;
     border: 0;
     border-radius: var(--ui-radius);
     background: rgba(255, 255, 255, 0.08);
-    color: #f7fdff;
+    color: #fcfcfa;
     font-weight: 700;
     padding: 10px 15px 8px;
     text-transform: uppercase;
@@ -3538,13 +3538,13 @@ $nav-button-font:   13px;
     border: 0;
     border-radius: var(--ui-radius);
     background: linear-gradient(180deg, #8dfcb3 0%, #5ceaa0 100%);
-    color: #0b2a3f;
+    color: #252523;
     font-size: 13px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.04em;
     padding: 10px 14px 8px;
-    box-shadow: 0 0 0 1px rgba(134, 245, 201, 0.4), 0 10px 20px rgba(6, 39, 58, 0.5);
+    box-shadow: 0 0 0 1px rgba(134, 245, 201, 0.4), 0 10px 20px rgba(33, 33, 31, 0.5);
 }
 
 .lobby-preview-overlay__quick-join:disabled {
@@ -3558,15 +3558,15 @@ $nav-button-font:   13px;
     display: grid;
     grid-template-columns: 1fr;
     gap: 14px;
-    border-bottom: 1px solid rgba(166, 226, 255, 0.08);
+    border-bottom: 1px solid rgba(215, 215, 213, 0.08);
 }
 
 .lobby-preview-overlay__control-card {
-    border: 1px solid rgba(166, 226, 255, 0.16);
+    border: 1px solid rgba(215, 215, 213, 0.16);
     border-radius: var(--ui-radius);
     padding: 16px 16px 14px;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, rgba(7, 25, 39, 0.58) 100%);
-    box-shadow: inset 0 1px 0 rgba(187, 233, 255, 0.08);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, rgba(22, 22, 20, 0.58) 100%);
+    box-shadow: inset 0 1px 0 rgba(225, 225, 223, 0.08);
 }
 
 .lobby-preview-overlay__control-top {
@@ -3578,7 +3578,7 @@ $nav-button-font:   13px;
 }
 
 .lobby-preview-overlay__control-label {
-    color: #9ad8ff;
+    color: #cececc;
     font-size: 12px;
     text-transform: uppercase;
     letter-spacing: 0.12em;
@@ -3602,7 +3602,7 @@ $nav-button-font:   13px;
     &::-webkit-slider-runnable-track {
         height: 8px;
         border-radius: 999px;
-        background: linear-gradient(90deg, rgba(114, 201, 255, 0.6) 0%, rgba(141, 252, 179, 0.82) 100%);
+        background: linear-gradient(90deg, rgba(186, 186, 184, 0.6) 0%, rgba(141, 252, 179, 0.82) 100%);
     }
 
     &::-webkit-slider-thumb {
@@ -3613,7 +3613,7 @@ $nav-button-font:   13px;
         border-radius: 50%;
         border: 2px solid rgba(255, 255, 255, 0.96);
         background: linear-gradient(180deg, #ffffff 0%, #8dfcb3 100%);
-        box-shadow: 0 8px 18px rgba(8, 32, 49, 0.5);
+        box-shadow: 0 8px 18px rgba(28, 28, 26, 0.5);
         cursor: pointer;
     }
 
@@ -3621,7 +3621,7 @@ $nav-button-font:   13px;
         height: 8px;
         border: 0;
         border-radius: 999px;
-        background: linear-gradient(90deg, rgba(114, 201, 255, 0.6) 0%, rgba(141, 252, 179, 0.82) 100%);
+        background: linear-gradient(90deg, rgba(186, 186, 184, 0.6) 0%, rgba(141, 252, 179, 0.82) 100%);
     }
 
     &::-moz-range-thumb {
@@ -3630,7 +3630,7 @@ $nav-button-font:   13px;
         border: 2px solid rgba(255, 255, 255, 0.96);
         border-radius: 50%;
         background: linear-gradient(180deg, #ffffff 0%, #8dfcb3 100%);
-        box-shadow: 0 8px 18px rgba(8, 32, 49, 0.5);
+        box-shadow: 0 8px 18px rgba(28, 28, 26, 0.5);
         cursor: pointer;
     }
 }
@@ -3643,25 +3643,25 @@ $nav-button-font:   13px;
 }
 
 .lobby-preview-overlay__control-stop {
-    border: 1px solid rgba(166, 226, 255, 0.22);
+    border: 1px solid rgba(215, 215, 213, 0.22);
     border-radius: var(--ui-radius);
     background: rgba(255, 255, 255, 0.04);
-    color: rgba(222, 241, 255, 0.9);
+    color: rgba(238, 238, 236, 0.9);
     font-size: 13px;
     font-weight: 700;
     padding: 10px 8px 8px;
 
     &.is-active {
         border-color: rgba(141, 252, 179, 0.66);
-        background: linear-gradient(180deg, rgba(141, 252, 179, 0.24) 0%, rgba(74, 150, 214, 0.2) 100%);
+        background: linear-gradient(180deg, rgba(141, 252, 179, 0.24) 0%, rgba(138, 138, 136, 0.2) 100%);
         color: #ffffff;
-        box-shadow: 0 10px 18px rgba(6, 39, 58, 0.32);
+        box-shadow: 0 10px 18px rgba(33, 33, 31, 0.32);
     }
 }
 
 .lobby-preview-overlay__control-hint {
     margin: 12px 0 0;
-    color: rgba(222, 241, 255, 0.76);
+    color: rgba(238, 238, 236, 0.76);
     font-size: 13px;
     line-height: 1.35;
 }
@@ -3671,15 +3671,15 @@ $nav-button-font:   13px;
     flex-wrap: wrap;
     gap: 8px;
     padding: 14px 20px;
-    border-bottom: 1px solid rgba(166, 226, 255, 0.1);
+    border-bottom: 1px solid rgba(215, 215, 213, 0.1);
     position: relative;
     z-index: 1;
 
     button {
-        border: 1px solid rgba(166, 226, 255, 0.24);
+        border: 1px solid rgba(215, 215, 213, 0.24);
         border-radius: var(--ui-radius);
         background: rgba(255, 255, 255, 0.04);
-        color: #def1ff;
+        color: #eeeeec;
         padding: 9px 13px 7px;
         font-size: 14px;
         font-weight: 700;
@@ -3687,9 +3687,9 @@ $nav-button-font:   13px;
 
         &.is-active {
             border-color: rgba(141, 252, 179, 0.66);
-            background: linear-gradient(180deg, rgba(141, 252, 179, 0.28) 0%, rgba(84, 181, 255, 0.14) 100%);
+            background: linear-gradient(180deg, rgba(141, 252, 179, 0.28) 0%, rgba(166, 166, 164, 0.14) 100%);
             color: #ffffff;
-            box-shadow: 0 0 0 1px rgba(141, 252, 179, 0.18), 0 8px 20px rgba(40, 108, 146, 0.26);
+            box-shadow: 0 0 0 1px rgba(141, 252, 179, 0.18), 0 8px 20px rgba(96, 96, 94, 0.26);
         }
     }
 }
@@ -3700,29 +3700,29 @@ $nav-button-font:   13px;
     align-items: center;
     gap: 8px;
     padding: 10px 20px 12px;
-    border-bottom: 1px solid rgba(166, 226, 255, 0.08);
+    border-bottom: 1px solid rgba(215, 215, 213, 0.08);
     position: relative;
     z-index: 1;
 
     button {
-        border: 1px solid rgba(166, 226, 255, 0.2);
+        border: 1px solid rgba(215, 215, 213, 0.2);
         border-radius: var(--ui-radius);
         background: rgba(255, 255, 255, 0.03);
-        color: rgba(222, 241, 255, 0.9);
+        color: rgba(238, 238, 236, 0.9);
         padding: 8px 10px 6px;
         font-size: 13px;
         font-weight: 700;
 
         &.is-active {
-            border-color: rgba(114, 201, 255, 0.66);
-            background: linear-gradient(180deg, rgba(114, 201, 255, 0.27) 0%, rgba(59, 135, 201, 0.2) 100%);
+            border-color: rgba(186, 186, 184, 0.66);
+            background: linear-gradient(180deg, rgba(186, 186, 184, 0.27) 0%, rgba(124, 124, 122, 0.2) 100%);
             color: #ffffff;
-            box-shadow: 0 8px 20px rgba(37, 95, 153, 0.24);
+            box-shadow: 0 8px 20px rgba(87, 87, 85, 0.24);
         }
     }
 
     span {
-        color: rgba(222, 241, 255, 0.72);
+        color: rgba(238, 238, 236, 0.72);
         font-size: 13px;
     }
 }
@@ -3753,18 +3753,18 @@ $nav-button-font:   13px;
 
     p {
         margin: 8px 0 0;
-        color: rgba(222, 241, 255, 0.78);
+        color: rgba(238, 238, 236, 0.78);
         font-size: 14px;
         text-transform: uppercase;
         letter-spacing: 0.03em;
     }
 
     span {
-        border: 1px solid rgba(166, 226, 255, 0.22);
+        border: 1px solid rgba(215, 215, 213, 0.22);
         border-radius: var(--ui-radius);
         padding: 7px 11px 5px;
-        color: #dbf2ff;
-        background: rgba(4, 29, 45, 0.62);
+        color: #eeeeec;
+        background: rgba(25, 25, 23, 0.62);
         font-size: 12px;
         font-weight: 700;
         text-transform: uppercase;
@@ -3783,7 +3783,7 @@ $nav-button-font:   13px;
 
     p {
         margin: 0;
-        color: rgba(227, 242, 255, 0.88);
+        color: rgba(240, 240, 238, 0.88);
         text-transform: uppercase;
         letter-spacing: 0.05em;
         font-size: 13px;
@@ -3794,7 +3794,7 @@ $nav-button-font:   13px;
     width: 48px;
     height: 48px;
     border-radius: 999px;
-    border: 3px solid rgba(114, 201, 255, 0.2);
+    border: 3px solid rgba(186, 186, 184, 0.2);
     border-top-color: rgba(141, 252, 179, 0.9);
     animation: lobbySpin 0.9s linear infinite;
 }
@@ -3809,11 +3809,11 @@ $nav-button-font:   13px;
     grid-template-columns: 1fr;
     gap: 16px;
     align-items: center;
-    border: 1px solid rgba(166, 226, 255, 0.16);
+    border: 1px solid rgba(215, 215, 213, 0.16);
     border-radius: var(--ui-radius);
-    background: linear-gradient(180deg, rgba(8, 32, 49, 0.9) 0%, rgba(4, 20, 33, 0.96) 100%);
+    background: linear-gradient(180deg, rgba(28, 28, 26, 0.9) 0%, rgba(18, 18, 16, 0.96) 100%);
     padding: 16px;
-    box-shadow: inset 0 1px 0 rgba(182, 231, 255, 0.08);
+    box-shadow: inset 0 1px 0 rgba(222, 222, 220, 0.08);
     animation: lobbyCardRise 420ms ease both;
 }
 
@@ -3826,7 +3826,7 @@ $nav-button-font:   13px;
 }
 
 .lobby-preview-overlay__table-row-title {
-    color: #f4fbff;
+    color: #fafaf8;
     font-size: 18px;
     font-weight: 700;
     line-height: 1;
@@ -3836,7 +3836,7 @@ $nav-button-font:   13px;
 
 .lobby-preview-overlay__table-row-subtitle {
     margin-top: 8px;
-    color: rgba(222, 241, 255, 0.84);
+    color: rgba(238, 238, 236, 0.84);
     font-size: 15px;
     font-weight: 600;
 }
@@ -3849,11 +3849,11 @@ $nav-button-font:   13px;
 }
 
 .lobby-preview-overlay__table-pill {
-    border: 1px solid rgba(166, 226, 255, 0.16);
+    border: 1px solid rgba(215, 215, 213, 0.16);
     border-radius: var(--ui-radius);
     padding: 6px 10px 4px;
     font-size: 12px;
-    color: #d8ebfa;
+    color: #e8e8e6;
     background: rgba(255, 255, 255, 0.04);
     text-transform: uppercase;
     letter-spacing: 0.04em;
@@ -3866,9 +3866,9 @@ $nav-button-font:   13px;
 }
 
 .lobby-preview-overlay__buyin-row {
-    border: 1px solid rgba(166, 226, 255, 0.16);
+    border: 1px solid rgba(215, 215, 213, 0.16);
     border-radius: var(--ui-radius);
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(9, 30, 47, 0.54) 100%);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(27, 27, 25, 0.54) 100%);
     padding: 14px;
     margin-bottom: 12px;
 }
@@ -3886,7 +3886,7 @@ $nav-button-font:   13px;
     }
 
     span {
-        color: rgba(222, 241, 255, 0.78);
+        color: rgba(238, 238, 236, 0.78);
         font-size: 13px;
         text-transform: uppercase;
         letter-spacing: 0.04em;
@@ -3901,18 +3901,18 @@ $nav-button-font:   13px;
 
 .lobby-preview-overlay__table-card {
     position: relative;
-    border: 1px solid rgba(166, 226, 255, 0.18);
+    border: 1px solid rgba(215, 215, 213, 0.18);
     border-radius: var(--ui-radius);
-    background: linear-gradient(180deg, rgba(5, 28, 44, 0.86) 0%, rgba(2, 18, 31, 0.94) 100%);
+    background: linear-gradient(180deg, rgba(24, 24, 22, 0.86) 0%, rgba(16, 16, 14, 0.94) 100%);
     padding: 14px;
     overflow: hidden;
     animation: lobbyCardRise 420ms ease both;
-    box-shadow: inset 0 1px 0 rgba(182, 231, 255, 0.08);
+    box-shadow: inset 0 1px 0 rgba(222, 222, 220, 0.08);
 
     &:hover {
         transform: translateY(-2px);
         border-color: rgba(161, 243, 211, 0.46);
-        box-shadow: inset 0 1px 0 rgba(190, 245, 255, 0.18), 0 16px 30px rgba(0, 0, 0, 0.34);
+        box-shadow: inset 0 1px 0 rgba(234, 234, 232, 0.18), 0 16px 30px rgba(0, 0, 0, 0.34);
     }
 }
 
@@ -3922,7 +3922,7 @@ $nav-button-font:   13px;
     right: 14px;
     top: -24px;
     height: 60px;
-    background: radial-gradient(circle at center, rgba(114, 201, 255, 0.45) 0%, rgba(114, 201, 255, 0) 72%);
+    background: radial-gradient(circle at center, rgba(186, 186, 184, 0.45) 0%, rgba(186, 186, 184, 0) 72%);
     pointer-events: none;
 }
 
@@ -3938,17 +3938,17 @@ $nav-button-font:   13px;
 .lobby-preview-overlay__table-name {
     font-size: 17px;
     font-weight: 700;
-    color: #f4fbff;
+    color: #fafaf8;
     line-height: 1;
     text-transform: uppercase;
 }
 
 .lobby-preview-overlay__table-seats {
-    border: 1px solid rgba(166, 226, 255, 0.18);
+    border: 1px solid rgba(215, 215, 213, 0.18);
     border-radius: var(--ui-radius);
     padding: 5px 8px 3px;
     font-size: 11px;
-    color: rgba(227, 242, 255, 0.82);
+    color: rgba(240, 240, 238, 0.82);
     background: rgba(255, 255, 255, 0.04);
     text-transform: uppercase;
     letter-spacing: 0.04em;
@@ -3961,10 +3961,10 @@ $nav-button-font:   13px;
     margin-bottom: 10px;
 
     span {
-        border: 1px solid rgba(166, 226, 255, 0.16);
+        border: 1px solid rgba(215, 215, 213, 0.16);
         border-radius: var(--ui-radius);
         font-size: 12px;
-        color: #d8ebfa;
+        color: #e8e8e6;
         padding: 5px 8px 3px;
 
         &.is-hot {
@@ -3982,10 +3982,10 @@ $nav-button-font:   13px;
 }
 
 .lobby-preview-overlay__inspect {
-    border: 1px solid rgba(166, 226, 255, 0.22);
+    border: 1px solid rgba(215, 215, 213, 0.22);
     border-radius: var(--ui-radius);
     background: rgba(255, 255, 255, 0.04);
-    color: #e3f4ff;
+    color: #f1f1ef;
     font-weight: 700;
     text-transform: uppercase;
     font-size: 12px;
@@ -3996,13 +3996,13 @@ $nav-button-font:   13px;
     border: 0;
     border-radius: var(--ui-radius);
     background: linear-gradient(180deg, #8dfcb3 0%, #5ceaa0 100%);
-    color: #072133;
+    color: #1d1d1b;
     font-weight: 700;
     padding: 12px 18px 10px;
     text-transform: uppercase;
     font-size: 12px;
     letter-spacing: 0.05em;
-    box-shadow: 0 12px 22px rgba(8, 32, 49, 0.28);
+    box-shadow: 0 12px 22px rgba(28, 28, 26, 0.28);
     white-space: nowrap;
     width: 100%;
 }
@@ -4012,10 +4012,10 @@ $nav-button-font:   13px;
 }
 
 .lobby-preview-overlay__empty {
-    border: 1px dashed rgba(166, 226, 255, 0.34);
+    border: 1px dashed rgba(215, 215, 213, 0.34);
     border-radius: var(--ui-radius);
     padding: 24px;
-    color: rgba(227, 242, 255, 0.85);
+    color: rgba(240, 240, 238, 0.85);
     text-align: center;
     font-size: 15px;
     background: rgba(255, 255, 255, 0.03);
@@ -4034,7 +4034,7 @@ $nav-button-font:   13px;
     position: absolute;
     inset: 0;
     border: 0;
-    background: rgba(1, 9, 16, 0.74);
+    background: rgba(8, 8, 6, 0.74);
     backdrop-filter: blur(4px);
 }
 
@@ -4042,8 +4042,8 @@ $nav-button-font:   13px;
     position: relative;
     width: min(460px, calc(100% - 36px));
     border-radius: var(--ui-radius);
-    border: 1px solid rgba(166, 226, 255, 0.24);
-    background: linear-gradient(180deg, rgba(12, 37, 56, 0.96) 0%, rgba(7, 23, 36, 0.97) 100%);
+    border: 1px solid rgba(215, 215, 213, 0.24);
+    background: linear-gradient(180deg, rgba(33, 33, 31, 0.96) 0%, rgba(21, 21, 19, 0.97) 100%);
     padding: 18px;
     box-shadow: 0 18px 40px rgba(0, 0, 0, 0.44);
 }
@@ -4055,7 +4055,7 @@ $nav-button-font:   13px;
     border: 0;
     border-radius: var(--ui-radius);
     background: rgba(255, 255, 255, 0.1);
-    color: #f5fcff;
+    color: #fbfbf9;
     font-size: 11px;
     text-transform: uppercase;
     font-weight: 700;
@@ -4064,7 +4064,7 @@ $nav-button-font:   13px;
 }
 
 .lobby-preview-overlay__modal-eyebrow {
-    color: #9ad8ff;
+    color: #cececc;
     text-transform: uppercase;
     letter-spacing: 0.16em;
     font-size: 11px;
@@ -4084,7 +4084,7 @@ $nav-button-font:   13px;
     gap: 8px;
 
     div {
-        border: 1px solid rgba(166, 226, 255, 0.18);
+        border: 1px solid rgba(215, 215, 213, 0.18);
         border-radius: var(--ui-radius);
         padding: 10px;
         background: rgba(255, 255, 255, 0.04);
@@ -4092,7 +4092,7 @@ $nav-button-font:   13px;
 
     span {
         display: block;
-        color: rgba(227, 242, 255, 0.78);
+        color: rgba(240, 240, 238, 0.78);
         font-size: 11px;
         text-transform: uppercase;
         letter-spacing: 0.04em;
@@ -4101,7 +4101,7 @@ $nav-button-font:   13px;
     strong {
         display: block;
         margin-top: 2px;
-        color: #f4fbff;
+        color: #fafaf8;
         font-size: 16px;
         line-height: 1.15;
     }
@@ -4122,15 +4122,15 @@ $nav-button-font:   13px;
     }
 
     .secondary {
-        border: 1px solid rgba(166, 226, 255, 0.3);
+        border: 1px solid rgba(215, 215, 213, 0.3);
         background: rgba(255, 255, 255, 0.04);
-        color: #deeeff;
+        color: #ececea;
     }
 
     .primary {
         border: 0;
         background: linear-gradient(180deg, #8dfcb3 0%, #4ce391 100%);
-        color: #072133;
+        color: #1d1d1b;
     }
 }
 
@@ -4152,11 +4152,11 @@ $nav-button-font:   13px;
                 .title {
                     width: 100%;
                     padding: 15px 10px;
-                    background: linear-gradient(0deg, #4777A7 0%, #BAD8ED 100%);
+                    background: linear-gradient(0deg, #70706e 0%, #d3d3d1 100%);
                     text-align: center;
                     font-weight: 600;
                     font-size: 26px;
-                    color: #03162A;
+                    color: #131311;
                 }
 
                 .content {
@@ -4170,7 +4170,7 @@ $nav-button-font:   13px;
                     }
 
                     input {
-                        background-color: #03162A;
+                        background-color: #131311;
                         color: white;
                         border: none;
                         padding: 12px 20px;
@@ -4209,7 +4209,7 @@ $nav-button-font:   13px;
 
                         &.join {
                             background: #51FF89;
-                            color: #03162A;
+                            color: #131311;
                             border-radius: var(--ui-radius);
                         }
                     }
@@ -4232,11 +4232,11 @@ $nav-button-font:   13px;
 @keyframes lobbyPulse {
     0%,
     100% {
-        box-shadow: 0 0 0 1px rgba(129, 226, 255, 0.14), 0 10px 20px rgba(5, 37, 57, 0.5);
+        box-shadow: 0 0 0 1px rgba(207, 207, 205, 0.14), 0 10px 20px rgba(32, 32, 30, 0.5);
     }
 
     50% {
-        box-shadow: 0 0 0 1px rgba(153, 250, 205, 0.34), 0 14px 28px rgba(12, 61, 89, 0.54);
+        box-shadow: 0 0 0 1px rgba(153, 250, 205, 0.34), 0 14px 28px rgba(53, 53, 51, 0.54);
     }
 }
 
@@ -4833,7 +4833,7 @@ $nav-button-font:   13px;
         height: 13px;
         border-radius: 50% 50% 7px 7px;
         background:
-            radial-gradient(circle at 50% 12%, rgba(var(--dashboard-theme-accent-rgb), 1) 0%, rgba(var(--dashboard-theme-rgb), 0.72) 34%, rgba(10, 15, 24, 0.96) 70%);
+            radial-gradient(circle at 50% 12%, rgba(var(--dashboard-theme-accent-rgb), 1) 0%, rgba(var(--dashboard-theme-rgb), 0.72) 34%, rgba(15, 15, 13, 0.96) 70%);
         box-shadow:
             0 0 12px rgba(var(--dashboard-theme-rgb), 0.78),
             0 8px 16px rgba(0, 0, 0, 0.48);
@@ -4873,7 +4873,7 @@ $nav-button-font:   13px;
         position: absolute;
         inset: 0;
         border: 0;
-        background: rgba(2, 9, 16, 0.82);
+        background: rgba(8, 8, 6, 0.82);
         backdrop-filter: blur(10px);
     }
 
@@ -4884,15 +4884,15 @@ $nav-button-font:   13px;
         overflow: auto;
         padding: 20px;
         border-radius: var(--ui-radius);
-        border: 1px solid rgba(156, 214, 255, 0.3);
+        border: 1px solid rgba(205, 205, 203, 0.3);
         background:
-            linear-gradient(180deg, rgba(19, 55, 88, 0.28) 0%, rgba(6, 21, 38, 0.98) 100%),
-            linear-gradient(120deg, rgba(105, 212, 255, 0.16) 0%, rgba(105, 212, 255, 0) 36%),
+            linear-gradient(180deg, rgba(50, 50, 48, 0.28) 0%, rgba(19, 19, 17, 0.98) 100%),
+            linear-gradient(120deg, rgba(192, 192, 190, 0.16) 0%, rgba(192, 192, 190, 0) 36%),
             radial-gradient(circle at 100% 0%, rgba(var(--ui-gold-rgb), 0.18) 0%, rgba(var(--ui-gold-rgb), 0) 34%);
         box-shadow:
-            inset 0 1px 0 rgba(241, 250, 255, 0.14),
+            inset 0 1px 0 rgba(248, 248, 246, 0.14),
             0 34px 60px rgba(0, 0, 0, 0.48),
-            0 0 40px rgba(84, 182, 255, 0.14);
+            0 0 40px rgba(166, 166, 164, 0.14);
     }
 
     &__welcome-modal-close {
@@ -4903,9 +4903,9 @@ $nav-button-font:   13px;
         min-height: 36px;
         padding: 8px 12px 6px;
         border-radius: var(--ui-radius);
-        border: 1px solid rgba(179, 225, 255, 0.26);
+        border: 1px solid rgba(217, 217, 215, 0.26);
         background: rgba(255, 255, 255, 0.08);
-        color: #effbff;
+        color: #f9f9f7;
         font-size: 11px;
         font-weight: 700;
         letter-spacing: 0.14em;
@@ -4925,18 +4925,18 @@ $nav-button-font:   13px;
         min-height: 220px;
         border-radius: var(--ui-radius);
         overflow: hidden;
-        border: 1px solid rgba(156, 214, 255, 0.18);
+        border: 1px solid rgba(205, 205, 203, 0.18);
         background:
-            linear-gradient(180deg, rgba(12, 29, 49, 0.14) 0%, rgba(12, 29, 49, 0.78) 100%),
-            radial-gradient(circle at 50% 0%, rgba(152, 232, 255, 0.18) 0%, rgba(152, 232, 255, 0) 42%);
+            linear-gradient(180deg, rgba(27, 27, 25, 0.14) 0%, rgba(27, 27, 25, 0.78) 100%),
+            radial-gradient(circle at 50% 0%, rgba(217, 217, 215, 0.18) 0%, rgba(217, 217, 215, 0) 42%);
 
         &::after {
             content: '';
             position: absolute;
             inset: 0;
             background:
-                linear-gradient(112deg, rgba(111, 221, 255, 0.36) 0%, rgba(98, 170, 255, 0.14) 26%, rgba(98, 170, 255, 0) 56%),
-                linear-gradient(180deg, rgba(6, 18, 31, 0) 0%, rgba(6, 18, 31, 0.58) 100%);
+                linear-gradient(112deg, rgba(200, 200, 198, 0.36) 0%, rgba(161, 161, 159, 0.14) 26%, rgba(161, 161, 159, 0) 56%),
+                linear-gradient(180deg, rgba(16, 16, 14, 0) 0%, rgba(16, 16, 14, 0.58) 100%);
             pointer-events: none;
         }
 
@@ -4953,8 +4953,8 @@ $nav-button-font:   13px;
         min-height: 240px;
         padding: 18px 18px 0;
         background:
-            radial-gradient(circle at 50% 12%, rgba(160, 236, 255, 0.24) 0%, rgba(160, 236, 255, 0) 42%),
-            linear-gradient(180deg, rgba(12, 29, 49, 0.08) 0%, rgba(12, 29, 49, 0.74) 100%);
+            radial-gradient(circle at 50% 12%, rgba(221, 221, 219, 0.24) 0%, rgba(221, 221, 219, 0) 42%),
+            linear-gradient(180deg, rgba(27, 27, 25, 0.08) 0%, rgba(27, 27, 25, 0.74) 100%);
     }
 
     &__welcome-modal-media-actions {
@@ -4967,7 +4967,7 @@ $nav-button-font:   13px;
 
         h2 {
             margin: 0;
-            color: #f8fcff;
+            color: #fbfbf9;
             font-family: var(--ui-font);
             font-size: clamp(34px, 9vw, 60px);
             font-weight: 700;
@@ -4977,7 +4977,7 @@ $nav-button-font:   13px;
 
         p {
             margin: 0;
-            color: rgba(231, 245, 255, 0.88);
+            color: rgba(243, 243, 241, 0.88);
             font-size: 14px;
             line-height: 1.58;
         }
@@ -4988,12 +4988,12 @@ $nav-button-font:   13px;
         gap: 6px;
         padding: 14px;
         border-radius: var(--ui-radius);
-        border: 1px solid rgba(156, 214, 255, 0.18);
+        border: 1px solid rgba(205, 205, 203, 0.18);
         background:
-            linear-gradient(180deg, rgba(22, 58, 90, 0.34) 0%, rgba(7, 21, 37, 0.9) 100%);
+            linear-gradient(180deg, rgba(53, 53, 51, 0.34) 0%, rgba(19, 19, 17, 0.9) 100%);
 
         strong {
-            color: #f7fbff;
+            color: #fafaf8;
             font-size: 15px;
             font-weight: 700;
             letter-spacing: 0.02em;
@@ -5001,7 +5001,7 @@ $nav-button-font:   13px;
         }
 
         span {
-            color: rgba(220, 239, 255, 0.78);
+            color: rgba(236, 236, 234, 0.78);
             font-size: 13px;
             line-height: 1.45;
         }
@@ -5012,7 +5012,7 @@ $nav-button-font:   13px;
         align-items: center;
         gap: 10px;
         width: fit-content;
-        color: rgba(232, 245, 255, 0.9);
+        color: rgba(243, 243, 241, 0.9);
         font-size: 13px;
         font-weight: 600;
         letter-spacing: 0.02em;
@@ -5021,7 +5021,7 @@ $nav-button-font:   13px;
         input {
             width: 18px;
             height: 18px;
-            accent-color: #66d7ff;
+            accent-color: #c2c2c0;
         }
     }
 
@@ -5085,12 +5085,12 @@ $nav-button-font:   13px;
         border: 1px solid rgba(var(--dashboard-theme-accent-rgb), 0.42);
         border-radius: var(--ui-radius);
         background:
-            radial-gradient(circle at 88% 16%, rgba(95, 122, 156, 0.22) 0%, rgba(95, 122, 156, 0.08) 25%, rgba(95, 122, 156, 0) 44%),
-            radial-gradient(circle at 12% 100%, rgba(120, 146, 174, 0.16) 0%, rgba(120, 146, 174, 0.06) 26%, rgba(120, 146, 174, 0) 44%),
-            linear-gradient(180deg, rgba(24, 42, 62, 0.42) 0%, rgba(8, 21, 36, 0.8) 44%),
-            linear-gradient(180deg, rgba(8, 27, 43, 0.985) 0%, rgba(4, 16, 28, 0.995) 100%);
+            radial-gradient(circle at 88% 16%, rgba(119, 119, 117, 0.22) 0%, rgba(119, 119, 117, 0.08) 25%, rgba(119, 119, 117, 0) 44%),
+            radial-gradient(circle at 12% 100%, rgba(142, 142, 140, 0.16) 0%, rgba(142, 142, 140, 0.06) 26%, rgba(142, 142, 140, 0) 44%),
+            linear-gradient(180deg, rgba(40, 40, 38, 0.42) 0%, rgba(19, 19, 17, 0.8) 44%),
+            linear-gradient(180deg, rgba(24, 24, 22, 0.985) 0%, rgba(14, 14, 12, 0.995) 100%);
         box-shadow:
-            inset 0 1px 0 rgba(233, 246, 255, 0.16),
+            inset 0 1px 0 rgba(244, 244, 242, 0.16),
             inset 0 0 28px rgba(var(--dashboard-theme-rgb), 0.18),
             0 30px 58px rgba(0, 0, 0, 0.34),
             0 0 34px rgba(var(--dashboard-theme-rgb), 0.2);
@@ -5101,8 +5101,8 @@ $nav-button-font:   13px;
             position: absolute;
             inset: 0;
             background:
-                linear-gradient(135deg, rgba(116, 146, 180, 0.1) 0%, rgba(116, 146, 180, 0) 32%),
-                radial-gradient(circle at 100% 0%, rgba(210, 225, 244, 0.06) 0%, rgba(210, 225, 244, 0) 32%);
+                linear-gradient(135deg, rgba(142, 142, 140, 0.1) 0%, rgba(142, 142, 140, 0) 32%),
+                radial-gradient(circle at 100% 0%, rgba(223, 223, 221, 0.06) 0%, rgba(223, 223, 221, 0) 32%);
             pointer-events: none;
         }
 
@@ -5147,7 +5147,7 @@ $nav-button-font:   13px;
             aspect-ratio: 1;
             border-radius: 50%;
             background:
-                radial-gradient(circle, rgba(82, 102, 130, 0.32) 0%, rgba(82, 102, 130, 0.16) 30%, rgba(82, 102, 130, 0) 70%);
+                radial-gradient(circle, rgba(100, 100, 98, 0.32) 0%, rgba(100, 100, 98, 0.16) 30%, rgba(100, 100, 98, 0) 70%);
             filter: blur(12px);
             pointer-events: none;
             transform: translateY(-50%);
@@ -5196,7 +5196,7 @@ $nav-button-font:   13px;
 
     &__tab-copy h2 {
         margin: 0;
-        color: #f7fbff;
+        color: #fafaf8;
         font-family: var(--ui-font);
         font-size: clamp(30px, 8vw, 56px);
         font-weight: 700;
@@ -5207,13 +5207,13 @@ $nav-button-font:   13px;
     &__tab-copy p {
         margin: 0;
         max-width: 52rem;
-        color: rgba(232, 245, 255, 0.88);
+        color: rgba(243, 243, 241, 0.88);
         font-size: 13px;
         line-height: 1.35;
     }
 
     &__tab-footnote {
-        color: rgba(218, 238, 255, 0.8);
+        color: rgba(235, 235, 233, 0.8);
         font-size: 11px;
         line-height: 1.3;
     }
@@ -5233,7 +5233,7 @@ $nav-button-font:   13px;
 
         h2 {
             margin: 0;
-            color: #f7fbff;
+            color: #fafaf8;
             font-family: var(--ui-font);
             font-size: clamp(28px, 8vw, 48px);
             font-weight: 700;
@@ -5244,7 +5244,7 @@ $nav-button-font:   13px;
     }
 
     &__live-label {
-        color: rgba(200, 228, 255, 0.6);
+        color: rgba(224, 224, 222, 0.6);
         font-size: 10px;
         font-weight: 700;
         letter-spacing: 0.16em;
@@ -5261,13 +5261,13 @@ $nav-button-font:   13px;
         border: 1px solid rgba(var(--ui-gold-rgb), 0.44);
         border-radius: var(--ui-radius);
         background:
-            linear-gradient(180deg, rgba(20, 39, 76, 0.9), rgba(8, 18, 36, 0.94));
+            linear-gradient(180deg, rgba(38, 38, 36, 0.9), rgba(17, 17, 15, 0.94));
         box-shadow:
             inset 0 1px 0 rgba(255, 255, 255, 0.12),
             0 12px 22px rgba(0, 0, 0, 0.24);
 
         span {
-            color: #f5fbff;
+            color: #fafaf8;
             font-size: 13px;
             font-weight: 700;
             line-height: 1.25;
@@ -5280,7 +5280,7 @@ $nav-button-font:   13px;
             border: 1px solid rgba(var(--ui-gold-rgb), 0.72);
             border-radius: var(--ui-radius);
             background: linear-gradient(180deg, var(--ui-gold), var(--ui-gold) 58%, var(--ui-gold));
-            color: #061936;
+            color: #171715;
             font-size: 12px;
             font-weight: 1000;
             letter-spacing: 0;
@@ -5391,7 +5391,7 @@ $nav-button-font:   13px;
         }
 
         em {
-            color: rgba(240, 246, 255, 0.82);
+            color: rgba(245, 245, 243, 0.82);
             font-size: 10px;
             font-style: normal;
             font-weight: 700;
@@ -5411,10 +5411,10 @@ $nav-button-font:   13px;
             justify-content: center;
             min-height: 18px;
             padding: 0 7px;
-            border: 1px solid rgba(91, 239, 255, 0.52);
+            border: 1px solid rgba(209, 209, 207, 0.52);
             border-radius: var(--ui-radius);
-            background: rgba(3, 24, 34, 0.72);
-            color: #c9fbff;
+            background: rgba(20, 20, 18, 0.72);
+            color: #f1f1ef;
             font-size: 8px;
             font-weight: 1000;
             letter-spacing: 0;
@@ -5422,7 +5422,7 @@ $nav-button-font:   13px;
             text-transform: uppercase;
             box-shadow:
                 inset 0 1px 0 rgba(255, 255, 255, 0.18),
-                0 0 13px rgba(47, 231, 255, 0.26);
+                0 0 13px rgba(194, 194, 192, 0.26);
         }
     }
 
@@ -5482,7 +5482,7 @@ $nav-button-font:   13px;
         }
 
         &:focus-visible {
-            outline: 2px solid rgba(117, 238, 255, 0.82);
+            outline: 2px solid rgba(214, 214, 212, 0.82);
             outline-offset: 2px;
         }
     }
@@ -5519,9 +5519,9 @@ $nav-button-font:   13px;
 
         &.is-active {
             width: 22px;
-            background: linear-gradient(90deg, #49efff 0%, var(--ui-gold) 100%);
+            background: linear-gradient(90deg, #cdcdcb 0%, var(--ui-gold) 100%);
             box-shadow:
-                0 0 10px rgba(75, 240, 255, 0.38),
+                0 0 10px rgba(206, 206, 204, 0.38),
                 0 0 10px rgba(255, 126, 35, 0.32);
         }
     }
@@ -5549,11 +5549,11 @@ $nav-button-font:   13px;
 
         &.is-playable {
             cursor: pointer;
-            border-color: rgba(91, 239, 255, 0.38);
+            border-color: rgba(209, 209, 207, 0.38);
             box-shadow:
                 inset 0 1px 0 rgba(255, 236, 218, 0.1),
                 0 10px 18px rgba(0, 0, 0, 0.22),
-                0 0 18px rgba(61, 232, 255, 0.14);
+                0 0 18px rgba(197, 197, 195, 0.14);
         }
 
         &.is-playable:hover {
@@ -5720,7 +5720,7 @@ $nav-button-font:   13px;
         }
 
         em {
-            color: #b8fbff;
+            color: #ededeb;
             font-size: 8px;
             font-style: normal;
             font-weight: 1000;
@@ -5742,18 +5742,18 @@ $nav-button-font:   13px;
         border-radius: var(--ui-radius);
         overflow: hidden;
         isolation: isolate;
-        border: 1px solid rgba(149, 207, 255, 0.3);
-        background: linear-gradient(180deg, rgba(40, 92, 140, 0.34) 0%, rgba(10, 25, 42, 0.86) 100%);
-        color: rgba(235, 246, 255, 0.9);
+        border: 1px solid rgba(198, 198, 196, 0.3);
+        background: linear-gradient(180deg, rgba(84, 84, 82, 0.34) 0%, rgba(23, 23, 21, 0.86) 100%);
+        color: rgba(244, 244, 242, 0.9);
         font-size: 12px;
         font-weight: 700;
         letter-spacing: 0.08em;
         text-transform: uppercase;
         backdrop-filter: blur(16px) saturate(145%);
         box-shadow:
-            inset 0 1px 0 rgba(238, 248, 255, 0.1),
+            inset 0 1px 0 rgba(246, 246, 244, 0.1),
             0 12px 22px rgba(0, 0, 0, 0.14),
-            0 0 0 1px rgba(88, 162, 255, 0.06);
+            0 0 0 1px rgba(153, 153, 151, 0.06);
         transition:
             transform 0.2s ease,
             border-color 0.2s ease,
@@ -5762,11 +5762,11 @@ $nav-button-font:   13px;
             box-shadow 0.2s ease;
 
         &.is-active {
-            border-color: rgba(194, 234, 255, 0.72);
+            border-color: rgba(227, 227, 225, 0.72);
             background:
-                radial-gradient(circle at var(--dashboard-tilt-glow-x) var(--dashboard-tilt-glow-y), rgba(188, 246, 255, 0.46) 0%, rgba(94, 190, 255, 0.24) 20%, rgba(94, 190, 255, 0) 46%),
-                conic-gradient(from var(--dashboard-tilt-rotate) at 50% 50%, rgba(151, 242, 255, 0.36) 0deg, rgba(38, 103, 211, 0.16) 120deg, rgba(var(--ui-gold-rgb), 0.2) 228deg, rgba(151, 242, 255, 0.32) 360deg),
-                linear-gradient(180deg, rgba(166, 241, 255, 0.46) 0%, rgba(98, 190, 255, 0.4) 48%, rgba(28, 87, 182, 0.48) 100%);
+                radial-gradient(circle at var(--dashboard-tilt-glow-x) var(--dashboard-tilt-glow-y), rgba(234, 234, 232, 0.46) 0%, rgba(174, 174, 172, 0.24) 20%, rgba(174, 174, 172, 0) 46%),
+                conic-gradient(from var(--dashboard-tilt-rotate) at 50% 50%, rgba(224, 224, 222, 0.36) 0deg, rgba(97, 97, 95, 0.16) 120deg, rgba(var(--ui-gold-rgb), 0.2) 228deg, rgba(224, 224, 222, 0.32) 360deg),
+                linear-gradient(180deg, rgba(226, 226, 224, 0.46) 0%, rgba(175, 175, 173, 0.4) 48%, rgba(81, 81, 79, 0.48) 100%);
             background-repeat: no-repeat, no-repeat, no-repeat;
             background-size: 160% 210%, 180% 180%, 100% 100%;
             background-position:
@@ -5775,10 +5775,10 @@ $nav-button-font:   13px;
                 center;
             color: #ffffff;
             box-shadow:
-                inset 0 1px 0 rgba(248, 253, 255, 0.22),
+                inset 0 1px 0 rgba(252, 252, 250, 0.22),
                 0 16px 26px rgba(0, 0, 0, 0.22),
-                0 0 18px rgba(76, 169, 255, 0.26),
-                0 0 36px rgba(92, 187, 255, 0.42);
+                0 0 18px rgba(155, 155, 153, 0.26),
+                0 0 36px rgba(172, 172, 170, 0.42);
             animation: dashboardHubLiquidGlow 2.6s ease-in-out infinite;
         }
     }
@@ -5796,15 +5796,15 @@ $nav-button-font:   13px;
         padding: 6px 7px 8px;
         border-radius: var(--ui-radius);
         overflow: hidden;
-        border: 1px solid rgba(149, 207, 255, 0.3);
+        border: 1px solid rgba(198, 198, 196, 0.3);
         background:
-            linear-gradient(180deg, rgba(22, 52, 82, 0.26) 0%, rgba(10, 24, 40, 0.06) 20%),
-            linear-gradient(180deg, rgba(27, 63, 97, 0.9) 0%, rgba(7, 21, 36, 0.98) 100%);
+            linear-gradient(180deg, rgba(48, 48, 46, 0.26) 0%, rgba(22, 22, 20, 0.06) 20%),
+            linear-gradient(180deg, rgba(58, 58, 56, 0.9) 0%, rgba(19, 19, 17, 0.98) 100%);
         backdrop-filter: blur(18px) saturate(150%);
         box-shadow:
-            inset 0 1px 0 rgba(239, 249, 255, 0.14),
+            inset 0 1px 0 rgba(247, 247, 245, 0.14),
             0 20px 34px rgba(0, 0, 0, 0.22),
-            0 0 24px rgba(73, 151, 228, 0.08);
+            0 0 24px rgba(140, 140, 138, 0.08);
         transition:
             transform 0.2s ease,
             border-color 0.2s ease,
@@ -5813,12 +5813,12 @@ $nav-button-font:   13px;
             box-shadow 0.2s ease;
 
         &.is-active {
-            border-color: rgba(194, 234, 255, 0.76);
+            border-color: rgba(227, 227, 225, 0.76);
             transform: translateY(-1px);
             background:
-                radial-gradient(circle at var(--dashboard-tilt-glow-x) 0%, rgba(190, 246, 255, 0.2) 0%, rgba(88, 184, 255, 0.12) 24%, rgba(88, 184, 255, 0) 52%),
-                conic-gradient(from var(--dashboard-tilt-rotate) at 50% 50%, rgba(148, 241, 255, 0.34) 0deg, rgba(44, 108, 214, 0.14) 118deg, rgba(var(--ui-gold-rgb), 0.22) 220deg, rgba(148, 241, 255, 0.32) 360deg),
-                linear-gradient(180deg, rgba(58, 128, 198, 0.94) 0%, rgba(10, 29, 47, 0.99) 100%);
+                radial-gradient(circle at var(--dashboard-tilt-glow-x) 0%, rgba(235, 235, 233, 0.2) 0%, rgba(169, 169, 167, 0.12) 24%, rgba(169, 169, 167, 0) 52%),
+                conic-gradient(from var(--dashboard-tilt-rotate) at 50% 50%, rgba(222, 222, 220, 0.34) 0deg, rgba(102, 102, 100, 0.14) 118deg, rgba(var(--ui-gold-rgb), 0.22) 220deg, rgba(222, 222, 220, 0.32) 360deg),
+                linear-gradient(180deg, rgba(118, 118, 116, 0.94) 0%, rgba(26, 26, 24, 0.99) 100%);
             background-repeat: no-repeat, no-repeat, no-repeat;
             background-size: 156% 156%, 188% 188%, 100% 100%;
             background-position:
@@ -5826,10 +5826,10 @@ $nav-button-font:   13px;
                 calc(50% - var(--dashboard-tilt-shift-x)) calc(50% - var(--dashboard-tilt-shift-y)),
                 center;
             box-shadow:
-                inset 0 1px 0 rgba(248, 253, 255, 0.22),
+                inset 0 1px 0 rgba(252, 252, 250, 0.22),
                 0 24px 36px rgba(0, 0, 0, 0.24),
-                0 0 18px rgba(76, 169, 255, 0.24),
-                0 0 40px rgba(85, 184, 255, 0.42);
+                0 0 18px rgba(155, 155, 153, 0.24),
+                0 0 40px rgba(168, 168, 166, 0.42);
             animation: dashboardHubLiquidGlow 2.6s ease-in-out infinite;
         }
     }
@@ -5856,7 +5856,7 @@ $nav-button-font:   13px;
         flex: 0 0 auto;
 
         &.is-occupied {
-            background: rgba(220, 238, 255, 0.7);
+            background: rgba(235, 235, 233, 0.7);
         }
 
         &.is-open {
@@ -5879,7 +5879,7 @@ $nav-button-font:   13px;
         }
 
         span {
-            color: rgba(233, 245, 255, 0.86);
+            color: rgba(243, 243, 241, 0.86);
             font-size: 9px;
             font-weight: 700;
             line-height: 1.15;
@@ -5900,7 +5900,7 @@ $nav-button-font:   13px;
 
     &__buyin-players {
         flex: 0 0 auto;
-        color: rgba(189, 231, 255, 0.88);
+        color: rgba(224, 224, 222, 0.88);
         font-size: 8px;
         font-weight: 700;
         letter-spacing: 0.08em;
@@ -5964,11 +5964,11 @@ $nav-button-font:   13px;
         border: 1px solid rgba(var(--ui-gold-rgb), 0.34);
         border-radius: var(--ui-radius);
         overflow: hidden;
-        background: rgba(4, 14, 28, 0.78);
+        background: rgba(13, 13, 11, 0.78);
         box-shadow:
             inset 0 1px 0 rgba(255, 255, 255, 0.12),
             0 14px 26px rgba(0, 0, 0, 0.28),
-            0 0 20px rgba(46, 138, 255, 0.18);
+            0 0 20px rgba(127, 127, 125, 0.18);
 
         img {
             display: block;
@@ -6000,7 +6000,7 @@ $nav-button-font:   13px;
         border-radius: var(--ui-radius);
         border: 1px solid rgba(var(--ui-gold-rgb), 0.32);
         aspect-ratio: 16 / 7;
-        background: rgba(4, 14, 28, 0.84);
+        background: rgba(13, 13, 11, 0.84);
         box-shadow:
             inset 0 1px 0 rgba(255, 255, 255, 0.12),
             0 22px 42px rgba(0, 0, 0, 0.32);
@@ -6022,20 +6022,20 @@ $nav-button-font:   13px;
         h2 {
             max-width: 860px;
             margin: 0;
-            color: #f8fbff;
+            color: #fbfbf9;
             font-family: var(--ui-font);
             font-size: clamp(34px, 7vw, 72px);
             font-weight: 700;
             letter-spacing: 0;
             line-height: 0.92;
             text-transform: uppercase;
-            text-shadow: 0 0 28px rgba(45, 149, 255, 0.28);
+            text-shadow: 0 0 28px rgba(135, 135, 133, 0.28);
         }
 
         p {
             max-width: 640px;
             margin: 0;
-            color: rgba(225, 241, 255, 0.84);
+            color: rgba(239, 239, 237, 0.84);
             font-size: clamp(14px, 2vw, 17px);
             font-weight: 700;
             line-height: 1.42;
@@ -6057,11 +6057,11 @@ $nav-button-font:   13px;
         gap: 6px;
         min-width: 0;
         padding: 10px 8px;
-        border: 1px solid rgba(127, 198, 255, 0.22);
+        border: 1px solid rgba(187, 187, 185, 0.22);
         border-radius: var(--ui-radius);
         background:
-            linear-gradient(180deg, rgba(22, 54, 90, 0.72), rgba(5, 18, 34, 0.9));
-        color: #edf8ff;
+            linear-gradient(180deg, rgba(50, 50, 48, 0.72), rgba(16, 16, 14, 0.9));
+        color: #f6f6f4;
         box-shadow:
             inset 0 1px 0 rgba(255, 255, 255, 0.1),
             0 14px 26px rgba(0, 0, 0, 0.24);
@@ -6073,7 +6073,7 @@ $nav-button-font:   13px;
             width: 24px;
             height: 24px;
             border-radius: 50%;
-            color: #071632;
+            color: #151513;
             background: linear-gradient(180deg, var(--ui-gold), var(--ui-gold));
             font-size: 12px;
             font-weight: 700;
@@ -6087,7 +6087,7 @@ $nav-button-font:   13px;
         }
 
         strong {
-            color: #f8fbff;
+            color: #fbfbf9;
             font-size: 12px;
             font-weight: 700;
             letter-spacing: 0;
@@ -6119,7 +6119,7 @@ $nav-button-font:   13px;
         border-radius: var(--ui-radius);
         background:
             radial-gradient(circle at 16% 20%, rgba(var(--dashboard-theme-accent-rgb), 0.18) 0%, rgba(var(--dashboard-theme-accent-rgb), 0) 32%),
-            linear-gradient(135deg, rgba(7, 22, 48, 0.9), rgba(3, 8, 19, 0.96));
+            linear-gradient(135deg, rgba(21, 21, 19, 0.9), rgba(8, 8, 6, 0.96));
         box-shadow:
             inset 0 1px 0 rgba(255, 255, 255, 0.1),
             0 18px 34px rgba(0, 0, 0, 0.28);
@@ -6138,7 +6138,7 @@ $nav-button-font:   13px;
             width: min(78%, 320px);
             aspect-ratio: 1;
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(61, 180, 255, 0.3), transparent 68%);
+            background: radial-gradient(circle, rgba(160, 160, 158, 0.3), transparent 68%);
             filter: blur(18px);
         }
     }
@@ -6148,11 +6148,11 @@ $nav-button-font:   13px;
         width: min(390px, 86vw);
         aspect-ratio: 9 / 18.5;
         padding: 14px;
-        border: 1px solid rgba(143, 202, 255, 0.54);
+        border: 1px solid rgba(193, 193, 191, 0.54);
         border-radius: var(--ui-radius);
         background:
             linear-gradient(145deg, rgba(255, 255, 255, 0.22), transparent 28%),
-            linear-gradient(180deg, #1e344f, #020814 68%, #01040a);
+            linear-gradient(180deg, #31312f, #080806 68%, #040402);
         box-shadow:
             0 30px 52px rgba(0, 0, 0, 0.34),
             inset 0 0 0 2px rgba(255, 255, 255, 0.06);
@@ -6167,7 +6167,7 @@ $nav-button-font:   13px;
         width: 70px;
         height: 6px;
         border-radius: var(--ui-radius);
-        background: rgba(195, 214, 238, 0.28);
+        background: rgba(212, 212, 210, 0.28);
         transform: translateX(-50%);
     }
 
@@ -6181,15 +6181,15 @@ $nav-button-font:   13px;
         padding: 28px 13px 14px;
         border-radius: var(--ui-radius);
         background:
-            radial-gradient(circle at 52% 8%, rgba(29, 141, 255, 0.36), transparent 24%),
-            linear-gradient(180deg, #071632, #030711);
+            radial-gradient(circle at 52% 8%, rgba(125, 125, 123, 0.36), transparent 24%),
+            linear-gradient(180deg, #151513, #070705);
     }
 
     &__phone-status {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        color: #d9e6f8;
+        color: #e5e5e3;
         font-size: 12px;
         font-weight: 700;
     }
@@ -6200,10 +6200,10 @@ $nav-button-font:   13px;
         width: 28px;
         height: 28px;
         padding: 0;
-        border: 1px solid rgba(124, 163, 207, 0.46);
+        border: 1px solid rgba(158, 158, 156, 0.46);
         border-radius: 50%;
-        color: #d9e6f8;
-        background: rgba(5, 18, 39, 0.72);
+        color: #e5e5e3;
+        background: rgba(17, 17, 15, 0.72);
         font-size: 13px;
         font-weight: 700;
         cursor: pointer;
@@ -6216,10 +6216,10 @@ $nav-button-font:   13px;
         align-items: center;
         margin-top: 12px;
         padding: 10px;
-        border: 1px solid rgba(124, 163, 207, 0.42);
+        border: 1px solid rgba(158, 158, 156, 0.42);
         border-radius: var(--ui-radius);
-        background: rgba(248, 251, 255, 0.92);
-        color: #071632;
+        background: rgba(251, 251, 249, 0.92);
+        color: #151513;
         box-shadow: 0 16px 30px rgba(0, 0, 0, 0.22);
 
         p {
@@ -6237,11 +6237,11 @@ $nav-button-font:   13px;
         aspect-ratio: 1;
         border-radius: 50%;
         color: var(--ui-gold);
-        background: radial-gradient(circle at 32% 24%, #4267ff 0%, #06173d 72%);
+        background: radial-gradient(circle at 32% 24%, #6a6a68 0%, #161614 72%);
         font-family: var(--ui-font);
         font-size: 17px;
         font-weight: 700;
-        box-shadow: 0 0 12px rgba(29, 141, 255, 0.42);
+        box-shadow: 0 0 12px rgba(125, 125, 123, 0.42);
     }
 
     &__phone-visual {
@@ -6262,8 +6262,8 @@ $nav-button-font:   13px;
         justify-self: start;
         padding: 10px 12px;
         border-radius: var(--ui-radius) var(--ui-radius) var(--ui-radius) var(--ui-radius);
-        color: #071632;
-        background: rgba(248, 251, 255, 0.94);
+        color: #151513;
+        background: rgba(251, 251, 249, 0.94);
         box-shadow: 0 10px 18px rgba(0, 0, 0, 0.22);
 
         p {
@@ -6281,7 +6281,7 @@ $nav-button-font:   13px;
         padding: 0 17px;
         border: 0;
         border-radius: var(--ui-radius);
-        color: #071632;
+        color: #151513;
         background: linear-gradient(180deg, var(--ui-gold), var(--ui-gold) 58%, var(--ui-gold));
         box-shadow: 0 12px 20px rgba(0, 0, 0, 0.24);
         font-size: 13px;
@@ -6301,7 +6301,7 @@ $nav-button-font:   13px;
         gap: 12px;
 
         > span {
-            color: rgba(118, 229, 255, 0.82);
+            color: rgba(207, 207, 205, 0.82);
             font-size: 11px;
             font-weight: 700;
             letter-spacing: 0.14em;
@@ -6310,14 +6310,14 @@ $nav-button-font:   13px;
 
         h2 {
             margin: 0;
-            color: #f8fbff;
+            color: #fbfbf9;
             font-family: var(--ui-font);
             font-size: clamp(30px, 5vw, 58px);
             font-weight: 700;
             letter-spacing: 0;
             line-height: 0.94;
             text-transform: uppercase;
-            text-shadow: 0 0 22px rgba(29, 141, 255, 0.28);
+            text-shadow: 0 0 22px rgba(125, 125, 123, 0.28);
         }
     }
 
@@ -6357,8 +6357,8 @@ $nav-button-font:   13px;
         aspect-ratio: 0.7;
         padding: 10px;
         border-radius: var(--ui-radius);
-        color: #0a0d13;
-        background: linear-gradient(145deg, #ffffff, #e5e7eb);
+        color: #0d0d0b;
+        background: linear-gradient(145deg, #ffffff, #e7e7e5);
         box-shadow: 0 16px 24px rgba(0, 0, 0, 0.26);
         transform: rotate(-5deg);
 
@@ -6386,7 +6386,7 @@ $nav-button-font:   13px;
         border: 3px solid var(--ui-gold);
         border-radius: 50%;
         color: var(--ui-gold);
-        background: rgba(3, 7, 17, 0.86);
+        background: rgba(7, 7, 5, 0.86);
         box-shadow: 0 0 18px rgba(var(--ui-gold-rgb), 0.34);
         font-family: var(--ui-font);
         font-size: clamp(27px, 4vw, 42px);
@@ -6400,7 +6400,7 @@ $nav-button-font:   13px;
         padding: 0 14px;
         border: 1px solid rgba(var(--ui-gold-rgb), 0.42);
         border-radius: var(--ui-radius);
-        color: #071632;
+        color: #151513;
         background: linear-gradient(180deg, var(--ui-gold), var(--ui-gold));
         font-size: 12px;
         font-weight: 700;
@@ -6420,7 +6420,7 @@ $nav-button-font:   13px;
         }
 
         span {
-            color: #f8fbff;
+            color: #fbfbf9;
             font-size: clamp(22px, 4vw, 46px);
             font-weight: 700;
             text-transform: uppercase;
@@ -6473,14 +6473,14 @@ $nav-button-font:   13px;
         border-radius: var(--ui-radius);
         background:
             radial-gradient(circle at 20% 0%, rgba(var(--dashboard-theme-accent-rgb), 0.16) 0%, rgba(var(--dashboard-theme-accent-rgb), 0) 44%),
-            linear-gradient(180deg, rgba(15, 44, 86, 0.66) 0%, rgba(5, 18, 33, 0.94) 100%);
+            linear-gradient(180deg, rgba(41, 41, 39, 0.66) 0%, rgba(16, 16, 14, 0.94) 100%);
         box-shadow:
             inset 0 1px 0 rgba(255, 255, 255, 0.1),
             0 12px 22px rgba(0, 0, 0, 0.24);
 
         h3 {
             margin: 0;
-            color: #f7fbff;
+            color: #fafaf8;
             font-family: var(--ui-font);
             font-size: 18px;
             font-weight: 700;
@@ -6491,7 +6491,7 @@ $nav-button-font:   13px;
 
         p,
         li {
-            color: rgba(225, 242, 255, 0.86);
+            color: rgba(239, 239, 237, 0.86);
             font-size: 12px;
             font-weight: 600;
             letter-spacing: 0;
@@ -6527,9 +6527,9 @@ $nav-button-font:   13px;
         border-radius: var(--ui-radius);
         background:
             radial-gradient(circle at 50% 0%, rgba(var(--dashboard-theme-accent-rgb), 0.18) 0%, rgba(var(--dashboard-theme-accent-rgb), 0) 44%),
-            linear-gradient(180deg, rgba(11, 35, 57, 0.82) 0%, rgba(5, 20, 35, 0.96) 100%);
+            linear-gradient(180deg, rgba(31, 31, 29, 0.82) 0%, rgba(18, 18, 16, 0.96) 100%);
         box-shadow:
-            inset 0 1px 0 rgba(233, 246, 255, 0.1),
+            inset 0 1px 0 rgba(244, 244, 242, 0.1),
             0 18px 34px rgba(0, 0, 0, 0.24);
         text-align: center;
 
@@ -6546,7 +6546,7 @@ $nav-button-font:   13px;
         p {
             max-width: 360px;
             margin: 0;
-            color: rgba(225, 242, 255, 0.82);
+            color: rgba(239, 239, 237, 0.82);
             font-size: 14px;
             font-weight: 700;
             line-height: 1.35;
@@ -6567,10 +6567,10 @@ $nav-button-font:   13px;
         min-height: 42px;
         min-width: 118px;
         padding: 0 18px;
-        border: 1px solid rgba(117, 214, 255, 0.34);
+        border: 1px solid rgba(196, 196, 194, 0.34);
         border-radius: var(--ui-radius);
-        background: rgba(8, 26, 44, 0.78);
-        color: #dff4ff;
+        background: rgba(23, 23, 21, 0.78);
+        color: #f0f0ee;
         font-size: 13px;
         font-weight: 700;
         letter-spacing: 0;
@@ -6581,7 +6581,7 @@ $nav-button-font:   13px;
     &__signin-button--primary {
         border-color: rgba(var(--ui-gold-rgb), 0.54);
         background: linear-gradient(180deg, var(--ui-gold), var(--ui-gold) 58%, var(--ui-gold));
-        color: #071632;
+        color: #151513;
     }
 
     &__store-grid--compact {
@@ -6598,9 +6598,9 @@ $nav-button-font:   13px;
         border: 1px solid rgba(var(--dashboard-theme-accent-rgb), 0.34);
         background:
             radial-gradient(circle at 50% 0%, rgba(var(--dashboard-theme-accent-rgb), 0.18) 0%, rgba(var(--dashboard-theme-accent-rgb), 0) 42%),
-            linear-gradient(180deg, rgba(var(--dashboard-theme-rgb), 0.34) 0%, rgba(9, 22, 37, 0.94) 100%);
+            linear-gradient(180deg, rgba(var(--dashboard-theme-rgb), 0.34) 0%, rgba(20, 20, 18, 0.94) 100%);
         box-shadow:
-            inset 0 1px 0 rgba(239, 249, 255, 0.14),
+            inset 0 1px 0 rgba(247, 247, 245, 0.14),
             0 18px 30px rgba(0, 0, 0, 0.24),
             0 0 24px rgba(var(--dashboard-theme-rgb), 0.2);
     }
@@ -6613,7 +6613,7 @@ $nav-button-font:   13px;
         padding: 3px 7px 2px;
         border-radius: var(--ui-radius);
         background: linear-gradient(180deg, rgba(var(--ui-gold-rgb), 0.96) 0%, rgba(var(--ui-gold-rgb), 0.96) 100%);
-        color: #10253a;
+        color: #222220;
         font-size: 9px;
         font-weight: 700;
         letter-spacing: 0.12em;
@@ -6627,8 +6627,8 @@ $nav-button-font:   13px;
         min-height: 110px;
         padding: 18px 14px 14px;
         border-radius: var(--ui-radius);
-        border: 1px solid rgba(173, 226, 255, 0.16);
-        background: linear-gradient(180deg, rgba(6, 20, 34, 0.68) 0%, rgba(6, 20, 34, 0.34) 100%);
+        border: 1px solid rgba(217, 217, 215, 0.16);
+        background: linear-gradient(180deg, rgba(18, 18, 16, 0.68) 0%, rgba(18, 18, 16, 0.34) 100%);
 
         img {
             width: auto;
@@ -6643,7 +6643,7 @@ $nav-button-font:   13px;
         gap: 4px;
 
         strong {
-            color: #f8fcff;
+            color: #fbfbf9;
             font-size: 18px;
             font-weight: 700;
             letter-spacing: 0.03em;
@@ -6652,7 +6652,7 @@ $nav-button-font:   13px;
         }
 
         span {
-            color: rgba(219, 239, 255, 0.8);
+            color: rgba(236, 236, 234, 0.8);
             font-size: 12px;
             font-weight: 600;
             line-height: 1.4;
@@ -6667,7 +6667,7 @@ $nav-button-font:   13px;
         border-radius: var(--ui-radius);
         border: 1px solid rgba(147, 237, 187, 0.26);
         background: linear-gradient(180deg, rgba(109, 241, 164, 0.96) 0%, rgba(70, 214, 129, 0.98) 100%);
-        color: #072137;
+        color: #1d1d1b;
         font-size: 16px;
         font-weight: 700;
         letter-spacing: 0.04em;
@@ -6716,9 +6716,9 @@ $nav-button-font:   13px;
         border: 1px solid rgba(var(--dashboard-theme-accent-rgb), 0.34);
         background:
             radial-gradient(circle at 12% 0%, rgba(var(--dashboard-theme-accent-rgb), 0.16) 0%, rgba(var(--dashboard-theme-accent-rgb), 0) 42%),
-            linear-gradient(180deg, rgba(var(--dashboard-theme-rgb), 0.28) 0%, rgba(10, 23, 38, 0.92) 100%);
+            linear-gradient(180deg, rgba(var(--dashboard-theme-rgb), 0.28) 0%, rgba(21, 21, 19, 0.92) 100%);
         box-shadow:
-            inset 0 1px 0 rgba(240, 250, 255, 0.12),
+            inset 0 1px 0 rgba(248, 248, 246, 0.12),
             0 16px 30px rgba(0, 0, 0, 0.24),
             0 0 24px rgba(var(--dashboard-theme-rgb), 0.16);
         text-align: left;
@@ -6728,11 +6728,11 @@ $nav-button-font:   13px;
         &:hover,
         &:focus {
             transform: translateY(-1px);
-            border-color: rgba(153, 210, 255, 0.42);
+            border-color: rgba(201, 201, 199, 0.42);
             box-shadow:
-                inset 0 1px 0 rgba(221, 240, 255, 0.12),
+                inset 0 1px 0 rgba(237, 237, 235, 0.12),
                 0 20px 38px rgba(0, 0, 0, 0.22),
-                0 0 28px rgba(84, 182, 255, 0.12);
+                0 0 28px rgba(166, 166, 164, 0.12);
         }
 
         &:disabled {
@@ -6747,7 +6747,7 @@ $nav-button-font:   13px;
         flex: 0 0 84px;
         border-radius: var(--ui-radius);
         overflow: hidden;
-        background: rgba(6, 18, 34, 0.55);
+        background: rgba(17, 17, 15, 0.55);
         align-self: stretch;
         min-height: 80px;
 
@@ -6773,7 +6773,7 @@ $nav-button-font:   13px;
         justify-content: space-between;
 
         strong {
-            color: #f7fbff;
+            color: #fafaf8;
             font-size: 18px;
             font-weight: 700;
             letter-spacing: 0.02em;
@@ -6795,10 +6795,10 @@ $nav-button-font:   13px;
         min-height: 24px;
         padding: 3px 8px 2px;
         border-radius: var(--ui-radius);
-        border: 1px solid rgba(178, 227, 255, 0.3);
+        border: 1px solid rgba(219, 219, 217, 0.3);
         background:
-            linear-gradient(180deg, rgba(133, 236, 255, 0.32) 0%, rgba(42, 112, 190, 0.28) 100%);
-        color: #eefbff;
+            linear-gradient(180deg, rgba(215, 215, 213, 0.32) 0%, rgba(103, 103, 101, 0.28) 100%);
+        color: #f9f9f7;
         font-size: 11px;
         font-weight: 700;
         letter-spacing: 0.1em;
@@ -6820,7 +6820,7 @@ $nav-button-font:   13px;
         margin-left: -4px;
         border-radius: 999px;
         overflow: hidden;
-        border: 2px solid rgba(6, 18, 31, 0.96);
+        border: 2px solid rgba(16, 16, 14, 0.96);
         box-shadow: 0 8px 16px rgba(0, 0, 0, 0.24);
 
         &:first-child {
@@ -6839,8 +6839,8 @@ $nav-button-font:   13px;
             place-items: center;
             background:
                 radial-gradient(circle at 34% 24%, rgba(255, 255, 255, 0.72) 0%, rgba(255, 255, 255, 0) 34%),
-                linear-gradient(145deg, var(--seat-color, #58c7ff) 0%, rgba(6, 18, 31, 0.78) 118%);
-            color: #06101c;
+                linear-gradient(145deg, var(--seat-color, #b3b3b1) 0%, rgba(16, 16, 14, 0.78) 118%);
+            color: #0f0f0d;
             font-size: 8px;
             font-weight: 700;
             letter-spacing: 0;
@@ -6857,7 +6857,7 @@ $nav-button-font:   13px;
     }
 
     &__table-card-caption {
-        color: rgba(220, 239, 255, 0.74);
+        color: rgba(236, 236, 234, 0.74);
         font-size: 11px;
         font-weight: 700;
         letter-spacing: 0.1em;
@@ -6865,13 +6865,13 @@ $nav-button-font:   13px;
     }
 
     &__table-row-action {
-        background: linear-gradient(180deg, rgba(150, 238, 255, 0.34) 0%, rgba(74, 150, 214, 0.28) 100%);
-        color: #f7fcff;
-        border: 1px solid rgba(194, 234, 255, 0.42);
+        background: linear-gradient(180deg, rgba(221, 221, 219, 0.34) 0%, rgba(138, 138, 136, 0.28) 100%);
+        color: #fbfbf9;
+        border: 1px solid rgba(227, 227, 225, 0.42);
         box-shadow:
-            inset 0 1px 0 rgba(248, 253, 255, 0.16),
-            0 14px 22px rgba(20, 83, 156, 0.2),
-            0 0 20px rgba(88, 184, 255, 0.08);
+            inset 0 1px 0 rgba(252, 252, 250, 0.16),
+            0 14px 22px rgba(75, 75, 73, 0.2),
+            0 0 20px rgba(169, 169, 167, 0.08);
         backdrop-filter: blur(16px) saturate(145%);
         min-height: 42px;
     }
@@ -6887,20 +6887,20 @@ $nav-button-font:   13px;
     }
 
     &__cta {
-        color: #edfaff;
-        border: 1px solid rgba(196, 235, 255, 0.38);
-        background: linear-gradient(180deg, rgba(128, 236, 255, 0.96) 0%, rgba(70, 166, 255, 0.94) 50%, rgba(38, 102, 210, 0.98) 100%);
+        color: #f8f8f6;
+        border: 1px solid rgba(228, 228, 226, 0.38);
+        background: linear-gradient(180deg, rgba(214, 214, 212, 0.96) 0%, rgba(152, 152, 150, 0.94) 50%, rgba(96, 96, 94, 0.98) 100%);
         box-shadow:
-            inset 0 1px 0 rgba(248, 253, 255, 0.32),
-            0 18px 30px rgba(22, 84, 163, 0.36),
-            0 0 30px rgba(84, 182, 255, 0.22);
+            inset 0 1px 0 rgba(252, 252, 250, 0.32),
+            0 18px 30px rgba(77, 77, 75, 0.36),
+            0 0 30px rgba(166, 166, 164, 0.22);
 
         &:hover,
         &:focus {
             box-shadow:
-                inset 0 1px 0 rgba(248, 253, 255, 0.36),
-                0 22px 34px rgba(22, 84, 163, 0.4),
-                0 0 34px rgba(84, 182, 255, 0.28);
+                inset 0 1px 0 rgba(252, 252, 250, 0.36),
+                0 22px 34px rgba(77, 77, 75, 0.4),
+                0 0 34px rgba(166, 166, 164, 0.28);
         }
     }
 
@@ -6920,23 +6920,23 @@ $nav-button-font:   13px;
 
     &__cta--welcome-secondary {
         width: 100%;
-        color: #f2fbff;
-        border: 1px solid rgba(186, 231, 255, 0.3);
-        background: linear-gradient(180deg, rgba(13, 45, 70, 0.94) 0%, rgba(7, 25, 41, 0.98) 100%);
+        color: #f9f9f7;
+        border: 1px solid rgba(223, 223, 221, 0.3);
+        background: linear-gradient(180deg, rgba(40, 40, 38, 0.94) 0%, rgba(22, 22, 20, 0.98) 100%);
         box-shadow:
-            inset 0 1px 0 rgba(245, 252, 255, 0.08),
+            inset 0 1px 0 rgba(251, 251, 249, 0.08),
             0 16px 28px rgba(0, 0, 0, 0.28),
-            0 0 24px rgba(66, 161, 226, 0.1);
+            0 0 24px rgba(145, 145, 143, 0.1);
 
         &:hover,
         &:focus {
             color: #ffffff;
-            border-color: rgba(206, 240, 255, 0.42);
-            background: linear-gradient(180deg, rgba(17, 57, 88, 0.96) 0%, rgba(9, 31, 50, 0.99) 100%);
+            border-color: rgba(234, 234, 232, 0.42);
+            background: linear-gradient(180deg, rgba(51, 51, 49, 0.96) 0%, rgba(28, 28, 26, 0.99) 100%);
             box-shadow:
-                inset 0 1px 0 rgba(245, 252, 255, 0.12),
+                inset 0 1px 0 rgba(251, 251, 249, 0.12),
                 0 18px 30px rgba(0, 0, 0, 0.3),
-                0 0 28px rgba(84, 182, 255, 0.14);
+                0 0 28px rgba(166, 166, 164, 0.14);
         }
     }
 
@@ -6956,7 +6956,7 @@ $nav-button-font:   13px;
                 content: '';
                 position: absolute;
                 inset: 0;
-                background: linear-gradient(180deg, rgba(5, 12, 20, 0.18) 0%, rgba(5, 12, 20, 0.64) 100%);
+                background: linear-gradient(180deg, rgba(11, 11, 9, 0.18) 0%, rgba(11, 11, 9, 0.64) 100%);
                 pointer-events: none;
             }
         }
@@ -7030,15 +7030,15 @@ $nav-button-font:   13px;
         border: 1px solid rgba(var(--dashboard-theme-accent-rgb), 0.32);
         background:
             radial-gradient(circle at 18% 0%, rgba(var(--dashboard-theme-accent-rgb), 0.2) 0%, rgba(var(--dashboard-theme-accent-rgb), 0) 44%),
-            linear-gradient(180deg, rgba(var(--dashboard-theme-rgb), 0.36) 0%, rgba(7, 22, 38, 0.94) 100%);
+            linear-gradient(180deg, rgba(var(--dashboard-theme-rgb), 0.36) 0%, rgba(20, 20, 18, 0.94) 100%);
         box-shadow:
-            inset 0 1px 0 rgba(241, 250, 255, 0.12),
+            inset 0 1px 0 rgba(248, 248, 246, 0.12),
             0 18px 30px rgba(0, 0, 0, 0.24),
             0 0 24px rgba(var(--dashboard-theme-rgb), 0.18);
     }
 
     &__live-control-label {
-        color: rgba(201, 230, 255, 0.74);
+        color: rgba(226, 226, 224, 0.74);
         font-size: 11px;
         font-weight: 700;
         letter-spacing: 0.16em;
@@ -7077,17 +7077,17 @@ $nav-button-font:   13px;
         min-height: 72px;
         padding: 0;
         border-radius: var(--ui-radius);
-        border: 1px solid rgba(154, 212, 255, 0.34);
+        border: 1px solid rgba(203, 203, 201, 0.34);
         background:
-            linear-gradient(180deg, rgba(18, 50, 80, 0.82) 0%, rgba(7, 22, 37, 0.94) 100%);
-        color: #f3fbff;
+            linear-gradient(180deg, rgba(45, 45, 43, 0.82) 0%, rgba(20, 20, 18, 0.94) 100%);
+        color: #fafaf8;
         font-family: var(--ui-font);
         font-size: 15px;
         font-weight: 700;
         letter-spacing: 0.03em;
         text-transform: uppercase;
         box-shadow:
-            inset 0 1px 0 rgba(239, 249, 255, 0.16),
+            inset 0 1px 0 rgba(247, 247, 245, 0.16),
             0 16px 28px rgba(0, 0, 0, 0.24);
         transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
     }
@@ -7098,11 +7098,11 @@ $nav-button-font:   13px;
     &__desktop-exit:focus,
     &__desktop-nav-button.is-active {
         transform: translateY(-1px);
-        border-color: rgba(194, 234, 255, 0.76);
+        border-color: rgba(227, 227, 225, 0.76);
         box-shadow:
-            inset 0 1px 0 rgba(248, 253, 255, 0.2),
+            inset 0 1px 0 rgba(252, 252, 250, 0.2),
             0 18px 30px rgba(0, 0, 0, 0.26),
-            0 0 24px rgba(84, 182, 255, 0.14);
+            0 0 24px rgba(166, 166, 164, 0.14);
     }
 
     &__desktop-nav-icon {
@@ -7138,21 +7138,21 @@ $nav-button-font:   13px;
         flex-direction: column;
         min-height: 0;
         border-radius: var(--ui-radius);
-        border: 1px solid rgba(140, 203, 255, 0.26);
+        border: 1px solid rgba(193, 193, 191, 0.26);
         background:
-            linear-gradient(180deg, rgba(17, 45, 72, 0.22) 0%, rgba(8, 24, 39, 0.95) 100%);
+            linear-gradient(180deg, rgba(41, 41, 39, 0.22) 0%, rgba(22, 22, 20, 0.95) 100%);
         box-shadow:
-            inset 0 1px 0 rgba(230, 244, 255, 0.1),
+            inset 0 1px 0 rgba(242, 242, 240, 0.1),
             0 24px 46px rgba(0, 0, 0, 0.26);
         overflow: hidden;
         transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 
         &.is-active {
-            border-color: rgba(191, 233, 255, 0.74);
+            border-color: rgba(226, 226, 224, 0.74);
             box-shadow:
-                inset 0 1px 0 rgba(244, 251, 255, 0.16),
+                inset 0 1px 0 rgba(250, 250, 248, 0.16),
                 0 28px 52px rgba(0, 0, 0, 0.3),
-                0 0 24px rgba(84, 182, 255, 0.16);
+                0 0 24px rgba(166, 166, 164, 0.16);
         }
     }
 
@@ -7162,7 +7162,7 @@ $nav-button-font:   13px;
 
         h3 {
             margin: 0;
-            color: #f7fbff;
+            color: #fafaf8;
             font-family: var(--ui-font);
             font-size: clamp(28px, 4vw, 42px);
             font-weight: 700;
@@ -7178,16 +7178,16 @@ $nav-button-font:   13px;
         margin: 0 20px;
         border-radius: var(--ui-radius);
         overflow: hidden;
-        border: 1px solid rgba(152, 212, 255, 0.18);
-        background: linear-gradient(180deg, rgba(14, 33, 53, 0.82) 0%, rgba(8, 21, 36, 0.98) 100%);
+        border: 1px solid rgba(202, 202, 200, 0.18);
+        background: linear-gradient(180deg, rgba(30, 30, 28, 0.82) 0%, rgba(19, 19, 17, 0.98) 100%);
 
         &::after {
             content: '';
             position: absolute;
             inset: 0;
             background:
-                linear-gradient(112deg, rgba(111, 221, 255, 0.34) 0%, rgba(98, 170, 255, 0.12) 28%, rgba(98, 170, 255, 0) 58%),
-                linear-gradient(180deg, rgba(5, 15, 25, 0) 12%, rgba(5, 15, 25, 0.56) 100%);
+                linear-gradient(112deg, rgba(200, 200, 198, 0.34) 0%, rgba(161, 161, 159, 0.12) 28%, rgba(161, 161, 159, 0) 58%),
+                linear-gradient(180deg, rgba(14, 14, 12, 0) 12%, rgba(14, 14, 12, 0.56) 100%);
             pointer-events: none;
         }
 
@@ -7362,7 +7362,7 @@ $nav-button-font:   13px;
     }
 
     &__desktop-filter-label {
-        color: rgba(201, 230, 255, 0.74);
+        color: rgba(226, 226, 224, 0.74);
         font-size: 11px;
         font-weight: 700;
         letter-spacing: 0.16em;
@@ -7380,9 +7380,9 @@ $nav-button-font:   13px;
         gap: 3px;
         padding: 10px 10px 9px;
         border-radius: var(--ui-radius);
-        border: 1px solid rgba(149, 207, 255, 0.28);
-        background: linear-gradient(180deg, rgba(28, 66, 103, 0.76) 0%, rgba(8, 23, 38, 0.98) 100%);
-        color: #f2fbff;
+        border: 1px solid rgba(198, 198, 196, 0.28);
+        background: linear-gradient(180deg, rgba(61, 61, 59, 0.76) 0%, rgba(21, 21, 19, 0.98) 100%);
+        color: #f9f9f7;
         text-align: left;
         transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 
@@ -7394,7 +7394,7 @@ $nav-button-font:   13px;
         }
 
         span {
-            color: rgba(225, 241, 255, 0.76);
+            color: rgba(239, 239, 237, 0.76);
             font-size: 9px;
             font-weight: 700;
             letter-spacing: 0.08em;
@@ -7403,11 +7403,11 @@ $nav-button-font:   13px;
         }
 
         &.is-active {
-            border-color: rgba(194, 234, 255, 0.72);
+            border-color: rgba(227, 227, 225, 0.72);
             box-shadow:
-                inset 0 1px 0 rgba(248, 253, 255, 0.16),
+                inset 0 1px 0 rgba(252, 252, 250, 0.16),
                 0 18px 28px rgba(0, 0, 0, 0.2),
-                0 0 22px rgba(88, 184, 255, 0.18);
+                0 0 22px rgba(169, 169, 167, 0.18);
         }
     }
 
@@ -7423,8 +7423,8 @@ $nav-button-font:   13px;
         height: 30px;
         border-radius: var(--ui-radius);
         overflow: hidden;
-        border: 1px solid rgba(209, 236, 255, 0.18);
-        background: linear-gradient(180deg, rgba(14, 33, 53, 0.82) 0%, rgba(8, 21, 36, 0.98) 100%);
+        border: 1px solid rgba(232, 232, 230, 0.18);
+        background: linear-gradient(180deg, rgba(30, 30, 28, 0.82) 0%, rgba(19, 19, 17, 0.98) 100%);
         flex: 0 0 auto;
 
         img {
@@ -7448,7 +7448,7 @@ $nav-button-font:   13px;
         align-items: center;
         justify-content: center;
         background: linear-gradient(180deg, rgba(143, 241, 176, 0.98) 0%, rgba(75, 213, 129, 0.98) 100%);
-        color: #062038;
+        color: #1c1c1a;
         font-size: 9px;
         font-weight: 700;
         line-height: 1;
@@ -7462,8 +7462,8 @@ $nav-button-font:   13px;
         gap: 10px;
         padding: 14px;
         border-radius: var(--ui-radius);
-        border: 1px solid rgba(149, 207, 255, 0.2);
-        background: linear-gradient(180deg, rgba(17, 45, 72, 0.66) 0%, rgba(7, 21, 36, 0.9) 100%);
+        border: 1px solid rgba(198, 198, 196, 0.2);
+        background: linear-gradient(180deg, rgba(41, 41, 39, 0.66) 0%, rgba(19, 19, 17, 0.9) 100%);
     }
 
     &__desktop-live-summary-top,
@@ -7477,7 +7477,7 @@ $nav-button-font:   13px;
 
     &__desktop-live-summary-top {
         strong {
-            color: #f8fcff;
+            color: #fbfbf9;
             font-size: 18px;
             font-weight: 700;
             letter-spacing: 0.03em;
@@ -7485,7 +7485,7 @@ $nav-button-font:   13px;
         }
 
         span {
-            color: rgba(220, 239, 255, 0.8);
+            color: rgba(236, 236, 234, 0.8);
             font-size: 11px;
             font-weight: 700;
             letter-spacing: 0.08em;
@@ -7495,7 +7495,7 @@ $nav-button-font:   13px;
 
     &__desktop-live-summary-bottom {
         span {
-            color: rgba(214, 234, 251, 0.78);
+            color: rgba(231, 231, 229, 0.78);
             font-size: 11px;
             font-weight: 700;
             letter-spacing: 0.08em;
@@ -7515,11 +7515,11 @@ $nav-button-font:   13px;
         gap: 10px;
         padding: 16px;
         border-radius: var(--ui-radius);
-        border: 1px solid rgba(147, 210, 255, 0.18);
-        background: linear-gradient(180deg, rgba(18, 48, 74, 0.72) 0%, rgba(7, 21, 35, 0.9) 100%);
+        border: 1px solid rgba(200, 200, 198, 0.18);
+        background: linear-gradient(180deg, rgba(43, 43, 41, 0.72) 0%, rgba(19, 19, 17, 0.9) 100%);
 
         strong {
-            color: #f8fcff;
+            color: #fbfbf9;
             font-size: 20px;
             font-weight: 700;
             letter-spacing: 0.03em;
@@ -7527,7 +7527,7 @@ $nav-button-font:   13px;
         }
 
         span {
-            color: rgba(222, 241, 255, 0.8);
+            color: rgba(238, 238, 236, 0.8);
             font-size: 14px;
             line-height: 1.5;
         }
@@ -7556,9 +7556,9 @@ $nav-button-font:   13px;
         height: 94px;
         border-radius: var(--ui-radius);
         overflow: hidden;
-        border: 1px solid rgba(166, 223, 255, 0.24);
-        background: linear-gradient(180deg, rgba(15, 42, 70, 0.92) 0%, rgba(8, 23, 38, 0.98) 100%);
-        box-shadow: inset 0 1px 0 rgba(244, 251, 255, 0.08), 0 18px 30px rgba(0, 0, 0, 0.24);
+        border: 1px solid rgba(213, 213, 211, 0.24);
+        background: linear-gradient(180deg, rgba(38, 38, 36, 0.92) 0%, rgba(21, 21, 19, 0.98) 100%);
+        box-shadow: inset 0 1px 0 rgba(250, 250, 248, 0.08), 0 18px 30px rgba(0, 0, 0, 0.24);
 
         img {
             width: 100%;
@@ -7569,7 +7569,7 @@ $nav-button-font:   13px;
     }
 
     &__desktop-profile-name {
-        color: #f7fbff;
+        color: #fafaf8;
         font-family: var(--ui-font);
         font-size: 21px;
         font-weight: 700;
@@ -7585,7 +7585,7 @@ $nav-button-font:   13px;
     }
 
     &__desktop-profile-balance {
-        color: rgba(221, 240, 255, 0.82);
+        color: rgba(237, 237, 235, 0.82);
         font-size: 13px;
         font-weight: 700;
         letter-spacing: 0.08em;
@@ -7608,10 +7608,10 @@ $nav-button-font:   13px;
         justify-content: space-between;
         gap: 12px;
         padding: 7px 10px;
-        border-bottom: 1px solid rgba(144, 202, 255, 0.12);
+        border-bottom: 1px solid rgba(193, 193, 191, 0.12);
 
         span {
-            color: rgba(207, 233, 255, 0.72);
+            color: rgba(229, 229, 227, 0.72);
             font-size: 11px;
             font-weight: 700;
             letter-spacing: 0.14em;
@@ -7619,7 +7619,7 @@ $nav-button-font:   13px;
         }
 
         strong {
-            color: #f7fbff;
+            color: #fafaf8;
             font-size: 16px;
             font-weight: 700;
             letter-spacing: 0.02em;
@@ -7649,15 +7649,15 @@ $nav-button-font:   13px;
     &__desktop-cta--primary {
         border: 1px solid rgba(174, 232, 194, 0.44);
         background: linear-gradient(180deg, #8dfcb3 0%, #42d985 100%);
-        color: #052132;
+        color: #1c1c1a;
         box-shadow: 0 18px 30px rgba(66, 217, 133, 0.24);
     }
 
     &__desktop-cta--secondary {
-        border: 1px solid rgba(157, 228, 255, 0.24);
-        background: linear-gradient(180deg, rgba(18, 50, 80, 0.84) 0%, rgba(7, 22, 37, 0.94) 100%);
-        color: #effbff;
-        box-shadow: inset 0 1px 0 rgba(239, 249, 255, 0.08);
+        border: 1px solid rgba(215, 215, 213, 0.24);
+        background: linear-gradient(180deg, rgba(45, 45, 43, 0.84) 0%, rgba(20, 20, 18, 0.94) 100%);
+        color: #f9f9f7;
+        box-shadow: inset 0 1px 0 rgba(247, 247, 245, 0.08);
     }
 
     &__desktop-cta:hover,
@@ -7669,7 +7669,7 @@ $nav-button-font:   13px;
         padding: 14px 12px 12px;
         border-radius: var(--ui-radius);
         box-shadow:
-            inset 0 1px 0 rgba(233, 246, 255, 0.08),
+            inset 0 1px 0 rgba(244, 244, 242, 0.08),
             0 18px 30px rgba(0, 0, 0, 0.18);
     }
 
@@ -7710,15 +7710,15 @@ $nav-button-font:   13px;
         gap: 12px;
         padding: 14px 14px 13px;
         border-radius: var(--ui-radius);
-        border: 1px solid rgba(146, 210, 255, 0.18);
-        background: linear-gradient(180deg, rgba(28, 85, 77, 0.82) 0%, rgba(20, 72, 68, 0.94) 100%);
-        box-shadow: inset 0 1px 0 rgba(235, 247, 255, 0.08);
+        border: 1px solid rgba(200, 200, 198, 0.18);
+        background: linear-gradient(180deg, rgba(72, 72, 70, 0.82) 0%, rgba(61, 61, 59, 0.94) 100%);
+        box-shadow: inset 0 1px 0 rgba(245, 245, 243, 0.08);
 
         &.is-current {
-            border-color: rgba(194, 234, 255, 0.42);
+            border-color: rgba(227, 227, 225, 0.42);
             box-shadow:
-                inset 0 1px 0 rgba(248, 253, 255, 0.14),
-                0 0 20px rgba(84, 182, 255, 0.12);
+                inset 0 1px 0 rgba(252, 252, 250, 0.14),
+                0 0 20px rgba(166, 166, 164, 0.12);
         }
 
         &.is-completed {
@@ -7732,7 +7732,7 @@ $nav-button-font:   13px;
         gap: 4px;
 
         span {
-            color: rgba(222, 241, 255, 0.7);
+            color: rgba(238, 238, 236, 0.7);
             font-size: 10px;
             font-weight: 700;
             letter-spacing: 0.14em;
@@ -7740,7 +7740,7 @@ $nav-button-font:   13px;
         }
 
         strong {
-            color: #f7fbff;
+            color: #fafaf8;
             font-size: 24px;
             font-family: var(--ui-font);
             line-height: 0.94;
@@ -7754,9 +7754,9 @@ $nav-button-font:   13px;
         min-height: 24px;
         padding: 3px 7px 2px;
         border-radius: var(--ui-radius);
-        border: 1px solid rgba(196, 235, 255, 0.22);
-        background: rgba(8, 23, 38, 0.26);
-        color: #eefbff;
+        border: 1px solid rgba(228, 228, 226, 0.22);
+        background: rgba(21, 21, 19, 0.26);
+        color: #f9f9f7;
         font-size: 10px;
         font-weight: 700;
         letter-spacing: 0.12em;
@@ -7775,10 +7775,10 @@ $nav-button-font:   13px;
         overflow: hidden;
         border: 1px solid rgba(var(--dashboard-theme-accent-rgb), 0.4);
         background:
-            linear-gradient(180deg, rgba(7, 18, 31, 0.24) 0%, rgba(7, 18, 31, 0.88) 100%),
+            linear-gradient(180deg, rgba(17, 17, 15, 0.24) 0%, rgba(17, 17, 15, 0.88) 100%),
             var(--profile-stage-image) center center / cover no-repeat;
         box-shadow:
-            inset 0 1px 0 rgba(223, 242, 255, 0.12),
+            inset 0 1px 0 rgba(239, 239, 237, 0.12),
             inset 0 0 36px rgba(var(--dashboard-theme-rgb), 0.18),
             0 22px 36px rgba(0, 0, 0, 0.24),
             0 0 26px rgba(var(--dashboard-theme-rgb), 0.18);
@@ -7788,8 +7788,8 @@ $nav-button-font:   13px;
             position: absolute;
             inset: 0;
             background:
-                linear-gradient(180deg, rgba(93, 165, 255, 0.12) 0%, rgba(93, 165, 255, 0) 26%),
-                linear-gradient(180deg, rgba(4, 14, 24, 0) 32%, rgba(4, 14, 24, 0.88) 100%);
+                linear-gradient(180deg, rgba(156, 156, 154, 0.12) 0%, rgba(156, 156, 154, 0) 26%),
+                linear-gradient(180deg, rgba(13, 13, 11, 0) 32%, rgba(13, 13, 11, 0.88) 100%);
             pointer-events: none;
         }
     }
@@ -7811,7 +7811,7 @@ $nav-button-font:   13px;
     }
 
     &__profile-stage &__profile-avatar {
-        background: linear-gradient(180deg, rgba(14, 48, 79, 0.76) 0%, rgba(8, 25, 42, 0.88) 100%);
+        background: linear-gradient(180deg, rgba(43, 43, 41, 0.76) 0%, rgba(23, 23, 21, 0.88) 100%);
         backdrop-filter: blur(10px);
     }
 
@@ -8046,7 +8046,7 @@ $nav-button-font:   13px;
         border: 1px solid rgba(var(--ui-gold-rgb), 0.48);
         border-radius: var(--ui-radius);
         color: var(--ui-gold);
-        background: linear-gradient(180deg, rgba(39, 48, 65, 0.9), rgba(11, 18, 29, 0.9));
+        background: linear-gradient(180deg, rgba(47, 47, 45, 0.9), rgba(17, 17, 15, 0.9));
         box-shadow: 0 10px 24px rgba(0, 0, 0, 0.26), inset 0 1px 0 rgba(255, 255, 255, 0.13);
         font-family: var(--ui-font);
         font-size: 12px;
@@ -8060,7 +8060,7 @@ $nav-button-font:   13px;
         &:focus-visible {
             border-color: rgba(var(--ui-gold-rgb), 0.78);
             color: var(--ui-text);
-            background: linear-gradient(180deg, rgba(66, 76, 95, 0.94), rgba(22, 31, 46, 0.94));
+            background: linear-gradient(180deg, rgba(75, 75, 73, 0.94), rgba(30, 30, 28, 0.94));
         }
 
         &--mobile {
@@ -8084,8 +8084,8 @@ $nav-button-font:   13px;
     }
 
     &__tab-menu {
-        --lobby-tab-blue-top: #163d64;
-        --lobby-tab-blue-bottom: #081b30;
+        --lobby-tab-blue-top: #383836;
+        --lobby-tab-blue-bottom: #181816;
         --lobby-tab-gold-top: var(--ui-gold);
         --lobby-tab-gold-bottom: var(--ui-gold);
         position: relative;
@@ -8098,12 +8098,12 @@ $nav-button-font:   13px;
         padding: 0;
         overflow-x: auto;
         scrollbar-width: thin;
-        scrollbar-color: var(--ui-gold) #081b30;
+        scrollbar-color: var(--ui-gold) #181816;
         border: 1px solid transparent;
         border-radius: 0 0 var(--ui-radius) var(--ui-radius);
         background:
             linear-gradient(var(--lobby-tab-blue-bottom), var(--lobby-tab-blue-bottom)) padding-box,
-            linear-gradient(110deg, #3774ab 0%, #8da3b7 36%, #455a70 67%, #276295 100%) border-box;
+            linear-gradient(110deg, #6b6b69 0%, #a0a09e 36%, #575755 67%, #595957 100%) border-box;
         box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
 
         &--pinned {
@@ -8118,20 +8118,20 @@ $nav-button-font:   13px;
         min-height: 48px;
         padding: 12px 8px;
         border: 0;
-        border-right: 1px solid rgba(126, 155, 183, 0.45);
+        border-right: 1px solid rgba(151, 151, 149, 0.45);
         border-radius: 0;
         background: linear-gradient(180deg, var(--lobby-tab-blue-top), var(--lobby-tab-blue-bottom));
-        color: #e2ecf7;
+        color: #ebebe9;
         font-family: var(--ui-font);
         font-size: clamp(13px, 2vw, 16px);
         font-weight: 700;
         line-height: 1.2;
-        text-shadow: 0 1px 2px #092349;
+        text-shadow: 0 1px 2px #20201e;
         transition: filter 0.15s ease;
 
         &:last-child { border-right: 0; }
         &:hover { filter: brightness(1.15); }
-        &:focus-visible { outline: 2px solid #b8cbdc; outline-offset: -4px; box-shadow: inset 0 0 0 2px #3774ab; }
+        &:focus-visible { outline: 2px solid #c8c8c6; outline-offset: -4px; box-shadow: inset 0 0 0 2px #6b6b69; }
         &.is-active {
             background: linear-gradient(180deg, var(--lobby-tab-gold-top), var(--lobby-tab-gold-bottom));
             color: #24190d;
@@ -8148,9 +8148,9 @@ $nav-button-font:   13px;
         align-content: start;
         padding: clamp(22px, 5vw, 38px);
         border-radius: var(--ui-radius);
-        border: 1px solid rgba(153, 210, 255, 0.24);
-        background: linear-gradient(180deg, rgba(11, 35, 57, 0.82) 0%, rgba(5, 20, 35, 0.94) 100%);
-        box-shadow: inset 0 1px 0 rgba(233, 246, 255, 0.1), 0 18px 34px rgba(0, 0, 0, 0.22);
+        border: 1px solid rgba(201, 201, 199, 0.24);
+        background: linear-gradient(180deg, rgba(31, 31, 29, 0.82) 0%, rgba(18, 18, 16, 0.94) 100%);
+        box-shadow: inset 0 1px 0 rgba(244, 244, 242, 0.1), 0 18px 34px rgba(0, 0, 0, 0.22);
 
         strong {
             max-width: 680px;
@@ -8165,7 +8165,7 @@ $nav-button-font:   13px;
         p {
             max-width: 560px;
             margin: 0;
-            color: rgba(222, 241, 255, 0.78);
+            color: rgba(238, 238, 236, 0.78);
             font-size: 15px;
             line-height: 1.45;
         }
@@ -8206,7 +8206,7 @@ $nav-button-font:   13px;
         min-width: 0;
         min-height: 74px;
         padding: 12px;
-        border: 1px solid rgba(153, 210, 255, 0.22);
+        border: 1px solid rgba(201, 201, 199, 0.22);
         border-radius: var(--ui-radius);
         background: rgba(255, 255, 255, 0.055);
         color: #ffffff;
@@ -8220,7 +8220,7 @@ $nav-button-font:   13px;
         }
 
         span {
-            color: rgba(222, 241, 255, 0.72);
+            color: rgba(238, 238, 236, 0.72);
             font-size: 12px;
             font-weight: 700;
             line-height: 1.18;
@@ -8249,9 +8249,9 @@ $nav-button-font:   13px;
     &__desktop-nav-button.is-active,
     &__desktop-nav-button:hover,
     &__desktop-nav-button:focus {
-        border-color: rgba(194, 234, 255, 0.42);
+        border-color: rgba(227, 227, 225, 0.42);
         box-shadow:
-            inset 0 1px 0 rgba(248, 253, 255, 0.2),
+            inset 0 1px 0 rgba(252, 252, 250, 0.2),
             0 18px 30px rgba(0, 0, 0, 0.26);
     }
 
@@ -8262,18 +8262,18 @@ $nav-button-font:   13px;
     &__store-item,
     &__private-room-card,
     &__profile-stage {
-        border-color: rgba(139, 169, 205, 0.24);
+        border-color: rgba(165, 165, 163, 0.24);
     }
 
     &__buyin-tile.is-active,
     &__desktop-cta--primary,
     &__cta,
     &__secondary-cta--accent {
-        border-color: rgba(162, 190, 224, 0.42) !important;
+        border-color: rgba(187, 187, 185, 0.42) !important;
         background:
-            linear-gradient(180deg, rgba(56, 75, 102, 0.74) 0%, rgba(18, 29, 46, 0.92) 100%) !important;
+            linear-gradient(180deg, rgba(73, 73, 71, 0.74) 0%, rgba(28, 28, 26, 0.92) 100%) !important;
         box-shadow:
-            inset 0 1px 0 rgba(248, 253, 255, 0.18),
+            inset 0 1px 0 rgba(252, 252, 250, 0.18),
             0 16px 28px rgba(0, 0, 0, 0.24) !important;
     }
 }
@@ -8285,7 +8285,7 @@ $nav-button-font:   13px;
         radial-gradient(circle at 84% 42%, rgba(var(--dashboard-theme-accent-rgb), 0.18) 0%, rgba(var(--dashboard-theme-accent-rgb), 0) 34%),
         radial-gradient(circle at 20% 72%, rgba(var(--dashboard-theme-soft-rgb), 0.38) 0%, rgba(var(--dashboard-theme-soft-rgb), 0) 34%),
         radial-gradient(circle at 82% 80%, rgba(var(--dashboard-theme-rgb), 0.36) 0%, rgba(var(--dashboard-theme-rgb), 0) 40%),
-        linear-gradient(180deg, #02060b 0%, #07101a 46%, #010305 100%);
+        linear-gradient(180deg, #060604 0%, #0f0f0d 46%, #030301 100%);
     box-shadow:
         inset 0 0 120px rgba(var(--dashboard-theme-rgb), 0.18),
         inset 0 0 220px rgba(var(--dashboard-theme-soft-rgb), 0.22);
@@ -8299,7 +8299,7 @@ $nav-button-font:   13px;
             radial-gradient(circle at 50% 34%, rgba(var(--dashboard-theme-rgb), 0.2) 0%, rgba(var(--dashboard-theme-rgb), 0.08) 30%, rgba(var(--dashboard-theme-rgb), 0) 62%),
             linear-gradient(180deg, rgba(var(--dashboard-theme-rgb), 0.12) 0%, rgba(var(--dashboard-theme-rgb), 0.04) 46%, rgba(var(--dashboard-theme-rgb), 0.1) 100%),
             linear-gradient(112deg, rgba(var(--dashboard-theme-accent-rgb), 0) 0%, rgba(var(--dashboard-theme-accent-rgb), 0) 34%, rgba(var(--dashboard-theme-accent-rgb), 0.15) 48%, rgba(var(--dashboard-theme-accent-rgb), 0) 62%, rgba(var(--dashboard-theme-accent-rgb), 0) 100%),
-            linear-gradient(180deg, rgba(196, 217, 238, 0.08) 0%, rgba(196, 217, 238, 0) 24%),
+            linear-gradient(180deg, rgba(214, 214, 212, 0.08) 0%, rgba(214, 214, 212, 0) 24%),
             repeating-linear-gradient(90deg, rgba(var(--dashboard-theme-accent-rgb), 0.022) 0px, rgba(var(--dashboard-theme-accent-rgb), 0.022) 1px, transparent 1px, transparent 18px);
         mix-blend-mode: normal;
         animation: dashboardRewardsSceneSheen 12s ease-in-out infinite;
@@ -8347,7 +8347,7 @@ $nav-button-font:   13px;
         background:
             radial-gradient(circle at 20% 0%, rgba(var(--dashboard-theme-accent-rgb), 0.18) 0%, rgba(var(--dashboard-theme-accent-rgb), 0) 34%),
             radial-gradient(circle at 86% 18%, rgba(var(--dashboard-theme-rgb), 0.18) 0%, rgba(var(--dashboard-theme-rgb), 0) 34%),
-            linear-gradient(180deg, rgba(10, 20, 33, 0.98) 0%, rgba(5, 11, 19, 0.99) 54%, rgba(1, 3, 6, 0.995) 100%);
+            linear-gradient(180deg, rgba(19, 19, 17, 0.98) 0%, rgba(10, 10, 8, 0.99) 54%, rgba(3, 3, 1, 0.995) 100%);
         box-shadow:
             inset 0 1px 0 rgba(var(--dashboard-theme-accent-rgb), 0.14),
             inset 0 0 0 1px rgba(var(--dashboard-theme-rgb), 0.1),
@@ -8378,8 +8378,8 @@ $nav-button-font:   13px;
         border: 1px solid rgba(var(--dashboard-theme-accent-rgb), 0.34);
         background:
             linear-gradient(135deg, rgba(var(--dashboard-theme-accent-rgb), 0.08) 0%, rgba(var(--dashboard-theme-accent-rgb), 0) 22%),
-            radial-gradient(circle at 50% 0%, rgba(201, 224, 246, 0.08) 0%, rgba(201, 224, 246, 0) 30%),
-            linear-gradient(180deg, rgba(var(--dashboard-theme-soft-rgb), 0.38) 0%, rgba(4, 9, 16, 0.98) 100%);
+            radial-gradient(circle at 50% 0%, rgba(221, 221, 219, 0.08) 0%, rgba(221, 221, 219, 0) 30%),
+            linear-gradient(180deg, rgba(var(--dashboard-theme-soft-rgb), 0.38) 0%, rgba(8, 8, 6, 0.98) 100%);
         box-shadow:
             inset 0 1px 0 rgba(var(--ui-gold-rgb), 0.1),
             inset 0 0 0 1px rgba(var(--dashboard-theme-rgb), 0.08),
@@ -8555,7 +8555,7 @@ $nav-button-font:   13px;
     .dashboard-hub__backdrop {
         opacity: 0.58;
         background:
-            linear-gradient(180deg, rgba(2, 8, 16, 0.48) 0%, rgba(2, 8, 16, 0.88) 100%),
+            linear-gradient(180deg, rgba(7, 7, 5, 0.48) 0%, rgba(7, 7, 5, 0.88) 100%),
             var(--dashboard-live-tables-image) center center / cover no-repeat;
     }
 
@@ -8578,8 +8578,8 @@ $nav-button-font:   13px;
 
     .dashboard-hub__viewport {
         background:
-            radial-gradient(circle at 18% 0%, rgba(135, 205, 255, 0.14) 0%, rgba(135, 205, 255, 0) 34%),
-            linear-gradient(180deg, rgba(7, 22, 38, 0.9) 0%, rgba(4, 12, 22, 0.98) 100%);
+            radial-gradient(circle at 18% 0%, rgba(194, 194, 192, 0.14) 0%, rgba(194, 194, 192, 0) 34%),
+            linear-gradient(180deg, rgba(20, 20, 18, 0.9) 0%, rgba(11, 11, 9, 0.98) 100%);
     }
 }
 
@@ -8597,9 +8597,9 @@ $nav-button-font:   13px;
         position: absolute;
         inset: 0;
         background:
-            radial-gradient(circle at 50% 36%, rgba(20, 117, 255, 0.34), transparent 38%),
+            radial-gradient(circle at 50% 36%, rgba(106, 106, 104, 0.34), transparent 38%),
             radial-gradient(circle at 18% 88%, rgba(var(--ui-gold-rgb), 0.2), transparent 30%),
-            rgba(1, 5, 16, 0.92);
+            rgba(5, 5, 3, 0.92);
         backdrop-filter: blur(10px);
     }
 
@@ -8617,7 +8617,7 @@ $nav-button-font:   13px;
             position: absolute;
             inset: -28%;
             border-radius: var(--ui-radius);
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.88) 0%, rgba(114, 206, 255, 0.38) 18%, transparent 46%);
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.88) 0%, rgba(190, 190, 188, 0.38) 18%, transparent 46%);
             opacity: 0;
             transform: scale(0.4);
             animation: dashboardOnboardingFlash 2s ease both;
@@ -8625,20 +8625,20 @@ $nav-button-font:   13px;
         }
 
         span {
-            color: rgba(228, 243, 255, 0.86);
+            color: rgba(241, 241, 239, 0.86);
             font-family: var(--ui-font);
             font-size: clamp(20px, 3vw, 34px);
             font-weight: 700;
             letter-spacing: 0;
             text-transform: uppercase;
-            text-shadow: 0 0 22px rgba(80, 189, 255, 0.45);
+            text-shadow: 0 0 22px rgba(171, 171, 169, 0.45);
         }
 
         img {
             width: min(560px, 82vw);
             max-height: 48vh;
             object-fit: contain;
-            filter: drop-shadow(0 28px 42px rgba(0, 0, 0, 0.55)) drop-shadow(0 0 26px rgba(54, 170, 255, 0.35));
+            filter: drop-shadow(0 28px 42px rgba(0, 0, 0, 0.55)) drop-shadow(0 0 26px rgba(151, 151, 149, 0.35));
         }
     }
 
@@ -8679,12 +8679,12 @@ $nav-button-font:   13px;
         border: 1px solid rgba(var(--ui-gold-rgb), 0.42);
         border-radius: var(--ui-radius);
         background:
-            linear-gradient(145deg, rgba(8, 35, 78, 0.96), rgba(3, 12, 31, 0.96)),
-            rgba(3, 12, 31, 0.94);
+            linear-gradient(145deg, rgba(32, 32, 30, 0.96), rgba(11, 11, 9, 0.96)),
+            rgba(11, 11, 9, 0.94);
         box-shadow:
             0 26px 60px rgba(0, 0, 0, 0.48),
             inset 0 1px 0 rgba(255, 255, 255, 0.16),
-            0 0 28px rgba(45, 158, 255, 0.24);
+            0 0 28px rgba(141, 141, 139, 0.24);
         animation: dashboardOnboardingBubbleIn 0.44s 0.15s ease both;
 
         form {
@@ -8712,7 +8712,7 @@ $nav-button-font:   13px;
         p {
             margin: 0;
             max-width: 520px;
-            color: rgba(229, 242, 255, 0.82);
+            color: rgba(240, 240, 238, 0.82);
             font-size: clamp(16px, 2vw, 20px);
             line-height: 1.35;
         }
@@ -8724,7 +8724,7 @@ $nav-button-font:   13px;
         text-align: left;
 
         span {
-            color: rgba(228, 243, 255, 0.72);
+            color: rgba(241, 241, 239, 0.72);
             font-size: 12px;
             font-weight: 700;
             text-transform: uppercase;
@@ -8733,9 +8733,9 @@ $nav-button-font:   13px;
         input {
             width: 100%;
             min-height: 56px;
-            border: 1px solid rgba(101, 190, 255, 0.48);
+            border: 1px solid rgba(176, 176, 174, 0.48);
             border-radius: var(--ui-radius);
-            background: rgba(1, 10, 28, 0.78);
+            background: rgba(9, 9, 7, 0.78);
             color: #ffffff;
             padding: 12px 16px;
             font-size: 22px;
@@ -8760,7 +8760,7 @@ $nav-button-font:   13px;
         justify-self: start;
         border: 0;
         background: transparent;
-        color: rgba(229, 242, 255, 0.66);
+        color: rgba(240, 240, 238, 0.66);
         padding: 4px 0;
         font-size: 14px;
         font-weight: 700;
@@ -9144,8 +9144,8 @@ $nav-button-font:   13px;
     align-items: center;
     justify-content: space-between;
     padding: 0 18px;
-    background: linear-gradient(180deg, rgba(4, 18, 32, 0.98) 0%, rgba(3, 14, 26, 0.97) 100%);
-    border-bottom: 1px solid rgba(111, 158, 206, 0.22);
+    background: linear-gradient(180deg, rgba(16, 16, 14, 0.98) 0%, rgba(13, 13, 11, 0.97) 100%);
+    border-bottom: 1px solid rgba(151, 151, 149, 0.22);
     backdrop-filter: blur(16px) saturate(160%);
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.36);
 
@@ -9177,7 +9177,7 @@ $nav-button-font:   13px;
         height: 58px;
         object-fit: contain;
         display: block;
-        filter: drop-shadow(0 0 14px rgba(70, 170, 255, 0.26));
+        filter: drop-shadow(0 0 14px rgba(155, 155, 153, 0.26));
     }
 
     &__account-actions {
@@ -9195,15 +9195,15 @@ $nav-button-font:   13px;
         gap: 10px;
         padding: 6px 12px 6px 6px;
         border-radius: var(--ui-radius);
-        border: 1px solid rgba(145, 202, 255, 0.28);
-        background: linear-gradient(180deg, rgba(16, 42, 68, 0.96) 0%, rgba(8, 22, 38, 0.98) 100%);
-        box-shadow: inset 0 1px 0 rgba(220, 242, 255, 0.1), 0 8px 20px rgba(0, 0, 0, 0.24);
+        border: 1px solid rgba(194, 194, 192, 0.28);
+        background: linear-gradient(180deg, rgba(38, 38, 36, 0.96) 0%, rgba(20, 20, 18, 0.98) 100%);
+        box-shadow: inset 0 1px 0 rgba(238, 238, 236, 0.1), 0 8px 20px rgba(0, 0, 0, 0.24);
         cursor: pointer;
         transition: border-color 0.2s ease, transform 0.2s ease;
         flex: 0 0 auto;
 
         &:hover {
-            border-color: rgba(145, 202, 255, 0.54);
+            border-color: rgba(194, 194, 192, 0.54);
             transform: translateY(-1px);
         }
     }
@@ -9214,7 +9214,7 @@ $nav-button-font:   13px;
     }
 
     &__signin-message {
-        color: #d7efff;
+        color: #ebebe9;
         font-size: 14px;
         font-weight: 700;
         letter-spacing: 0.03em;
@@ -9231,14 +9231,14 @@ $nav-button-font:   13px;
         height: 44px;
         padding: 0;
         border-radius: var(--ui-radius);
-        border: 1px solid rgba(145, 202, 255, 0.28);
-        background: linear-gradient(180deg, rgba(16, 42, 68, 0.96) 0%, rgba(8, 22, 38, 0.98) 100%);
-        box-shadow: inset 0 1px 0 rgba(220, 242, 255, 0.1), 0 8px 20px rgba(0, 0, 0, 0.24);
+        border: 1px solid rgba(194, 194, 192, 0.28);
+        background: linear-gradient(180deg, rgba(38, 38, 36, 0.96) 0%, rgba(20, 20, 18, 0.98) 100%);
+        box-shadow: inset 0 1px 0 rgba(238, 238, 236, 0.1), 0 8px 20px rgba(0, 0, 0, 0.24);
         cursor: pointer;
         transition: border-color 0.2s ease, transform 0.2s ease;
 
         &:hover {
-            border-color: rgba(145, 202, 255, 0.54);
+            border-color: rgba(194, 194, 192, 0.54);
             transform: translateY(-1px);
         }
 
@@ -9255,7 +9255,7 @@ $nav-button-font:   13px;
         height: 42px;
         border-radius: 50%;
         overflow: hidden;
-        border: 1px solid rgba(180, 219, 255, 0.2);
+        border: 1px solid rgba(213, 213, 211, 0.2);
         flex: 0 0 auto;
 
         img {
@@ -9274,7 +9274,7 @@ $nav-button-font:   13px;
     }
 
     &__bankroll-name {
-        color: rgba(210, 235, 255, 0.82);
+        color: rgba(231, 231, 229, 0.82);
         font-size: 13px;
         font-weight: 700;
         letter-spacing: 0.08em;
@@ -9369,12 +9369,12 @@ body:has(.dashboard-hub) {
             min-width: 0;
             height: 42px;
             padding: 10px 12px;
-            border: 1px solid #5387b9;
+            border: 1px solid #80807e;
             border-radius: var(--ui-radius);
-            background: #081b30;
+            background: #181816;
             color: #fff;
             font-size: 14px;
-            &::placeholder { color: #b7cce1; }
+            &::placeholder { color: #c9c9c7; }
             &:focus-visible { outline: 2px solid var(--ui-gold); outline-offset: 2px; }
         }
     }

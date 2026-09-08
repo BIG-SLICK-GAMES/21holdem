@@ -5,9 +5,9 @@
     isolation: isolate;
     overflow: clip;
     background:
-        radial-gradient(circle at 50% -8%, rgba(120, 176, 235, 0.24) 0%, rgba(120, 176, 235, 0) 28%),
-        radial-gradient(circle at 10% 24%, rgba(70, 130, 196, 0.14) 0%, rgba(70, 130, 196, 0) 24%),
-        linear-gradient(180deg, rgba(2, 17, 33, 0.96) 0%, rgba(4, 20, 39, 0.98) 100%),
+        radial-gradient(circle at 50% -8%, rgba(168, 168, 166, 0.24) 0%, rgba(168, 168, 166, 0) 28%),
+        radial-gradient(circle at 10% 24%, rgba(122, 122, 120, 0.14) 0%, rgba(122, 122, 120, 0) 24%),
+        linear-gradient(180deg, rgba(15, 15, 13, 0.96) 0%, rgba(18, 18, 16, 0.98) 100%),
         url("../../../images/ui/table_selection_bg.png") repeat top center / 420px auto;
 
     &__backdrop,
@@ -20,8 +20,8 @@
     &__backdrop {
         z-index: 0;
         background:
-            linear-gradient(180deg, rgba(162, 202, 240, 0.12) 0%, rgba(162, 202, 240, 0) 14%),
-            radial-gradient(circle at 50% 110%, rgba(30, 97, 169, 0.32) 0%, rgba(30, 97, 169, 0) 42%);
+            linear-gradient(180deg, rgba(196, 196, 194, 0.12) 0%, rgba(196, 196, 194, 0) 14%),
+            radial-gradient(circle at 50% 110%, rgba(88, 88, 86, 0.32) 0%, rgba(88, 88, 86, 0) 42%);
         overflow: hidden;
 
         &::before,
@@ -33,7 +33,7 @@
         &::before {
             inset: auto -12% 8% -12%;
             height: 34%;
-            background: radial-gradient(circle at 50% 50%, rgba(72, 141, 255, 0.28) 0%, rgba(72, 141, 255, 0) 70%);
+            background: radial-gradient(circle at 50% 50%, rgba(135, 135, 133, 0.28) 0%, rgba(135, 135, 133, 0) 70%);
             filter: blur(22px);
             animation: dailyRewardsGlowSweep 15s ease-in-out infinite;
         }
@@ -52,10 +52,10 @@
         background:
             repeating-linear-gradient(
                 135deg,
-                rgba(170, 224, 255, 0.02) 0px,
-                rgba(170, 224, 255, 0.02) 10px,
-                rgba(170, 224, 255, 0) 10px,
-                rgba(170, 224, 255, 0) 22px
+                rgba(215, 215, 213, 0.02) 0px,
+                rgba(215, 215, 213, 0.02) 10px,
+                rgba(215, 215, 213, 0) 10px,
+                rgba(215, 215, 213, 0) 22px
             );
         animation: guest-grid-drift 18s linear infinite;
     }
@@ -74,9 +74,9 @@
         position: relative;
         overflow: hidden;
         border-radius: var(--ui-radius);
-        border: 1px solid rgba(111, 166, 218, 0.26);
-        background: linear-gradient(180deg, rgba(10, 31, 51, 0.94) 0%, rgba(5, 20, 35, 0.98) 100%);
-        box-shadow: inset 0 1px 0 rgba(217, 238, 255, 0.08), 0 24px 48px rgba(0, 0, 0, 0.28);
+        border: 1px solid rgba(158, 158, 156, 0.26);
+        background: linear-gradient(180deg, rgba(28, 28, 26, 0.94) 0%, rgba(18, 18, 16, 0.98) 100%);
+        box-shadow: inset 0 1px 0 rgba(235, 235, 233, 0.08), 0 24px 48px rgba(0, 0, 0, 0.28);
     }
 
     &__hero {
@@ -89,7 +89,7 @@
             position: absolute;
             inset: 0;
             background:
-                linear-gradient(130deg, rgba(118, 182, 255, 0.16) 0%, rgba(118, 182, 255, 0) 38%),
+                linear-gradient(130deg, rgba(174, 174, 172, 0.16) 0%, rgba(174, 174, 172, 0) 38%),
                 radial-gradient(circle at 100% 0%, rgba(var(--ui-gold-rgb), 0.1) 0%, rgba(var(--ui-gold-rgb), 0) 36%);
             pointer-events: none;
         }
@@ -105,7 +105,7 @@
     &__section-heading span,
     &__progress-meta span:first-child,
     &__stat-card span {
-        color: rgba(197, 228, 255, 0.76);
+        color: rgba(223, 223, 221, 0.76);
         font-size: 11px;
         font-weight: 700;
         letter-spacing: 0.16em;
@@ -118,7 +118,7 @@
 
         h1 {
             margin: 0;
-            color: #f6fbff;
+            color: #fafaf8;
             font-family: var(--ui-font);
             font-size: clamp(34px, 10vw, 58px);
             font-weight: 700;
@@ -128,7 +128,7 @@
 
         p {
             margin: 0;
-            color: rgba(223, 241, 255, 0.82);
+            color: rgba(238, 238, 236, 0.82);
             font-size: 14px;
             line-height: 1.55;
             max-width: 40rem;
@@ -147,9 +147,9 @@
         padding: 14px;
         min-height: 88px;
         border-radius: var(--ui-radius);
-        border: 1px solid rgba(120, 174, 228, 0.22);
-        background: linear-gradient(180deg, rgba(11, 35, 57, 0.88) 0%, rgba(6, 23, 39, 0.94) 100%);
-        box-shadow: inset 0 1px 0 rgba(221, 240, 255, 0.08), 0 18px 34px rgba(0, 0, 0, 0.18);
+        border: 1px solid rgba(166, 166, 164, 0.22);
+        background: linear-gradient(180deg, rgba(31, 31, 29, 0.88) 0%, rgba(21, 21, 19, 0.94) 100%);
+        box-shadow: inset 0 1px 0 rgba(237, 237, 235, 0.08), 0 18px 34px rgba(0, 0, 0, 0.18);
 
         strong {
             color: #ffffff;
@@ -171,9 +171,9 @@
         gap: 8px;
         padding: 14px;
         border-radius: var(--ui-radius);
-        border: 1px solid rgba(120, 174, 228, 0.22);
-        background: linear-gradient(180deg, rgba(11, 35, 57, 0.88) 0%, rgba(6, 23, 39, 0.94) 100%);
-        box-shadow: inset 0 1px 0 rgba(221, 240, 255, 0.08), 0 18px 34px rgba(0, 0, 0, 0.18);
+        border: 1px solid rgba(166, 166, 164, 0.22);
+        background: linear-gradient(180deg, rgba(31, 31, 29, 0.88) 0%, rgba(21, 21, 19, 0.94) 100%);
+        box-shadow: inset 0 1px 0 rgba(237, 237, 235, 0.08), 0 18px 34px rgba(0, 0, 0, 0.18);
     }
 
     &__progress-meta {
@@ -182,7 +182,7 @@
         gap: 12px;
 
         span:last-child {
-            color: #f4fbff;
+            color: #fafaf8;
             font-size: 13px;
             font-weight: 700;
             letter-spacing: 0.08em;
@@ -211,27 +211,27 @@
         border-radius: var(--ui-radius);
         border: 0;
         padding: 0 22px;
-        color: #edfaff;
+        color: #f8f8f6;
         font-family: var(--ui-font);
         font-size: 22px;
         font-weight: 700;
         line-height: 1;
         text-transform: uppercase;
         letter-spacing: 0.03em;
-        background: linear-gradient(180deg, rgba(128, 236, 255, 0.96) 0%, rgba(70, 166, 255, 0.94) 50%, rgba(38, 102, 210, 0.98) 100%);
+        background: linear-gradient(180deg, rgba(214, 214, 212, 0.96) 0%, rgba(152, 152, 150, 0.94) 50%, rgba(96, 96, 94, 0.98) 100%);
         box-shadow:
-            inset 0 1px 0 rgba(248, 253, 255, 0.28),
-            0 16px 28px rgba(22, 84, 163, 0.32),
-            0 0 24px rgba(84, 182, 255, 0.16);
+            inset 0 1px 0 rgba(252, 252, 250, 0.28),
+            0 16px 28px rgba(77, 77, 75, 0.32),
+            0 0 24px rgba(166, 166, 164, 0.16);
         transition: transform 0.2s ease, box-shadow 0.2s ease;
 
         &:hover,
         &:focus {
             transform: translateY(-1px);
             box-shadow:
-                inset 0 1px 0 rgba(248, 253, 255, 0.32),
-                0 20px 32px rgba(22, 84, 163, 0.36),
-                0 0 28px rgba(84, 182, 255, 0.22);
+                inset 0 1px 0 rgba(252, 252, 250, 0.32),
+                0 20px 32px rgba(77, 77, 75, 0.36),
+                0 0 28px rgba(166, 166, 164, 0.22);
         }
 
         &.is-disabled,
@@ -240,8 +240,8 @@
             opacity: 0.62;
             transform: none;
             box-shadow:
-                inset 0 1px 0 rgba(248, 253, 255, 0.18),
-                0 12px 22px rgba(22, 84, 163, 0.18);
+                inset 0 1px 0 rgba(252, 252, 250, 0.18),
+                0 12px 22px rgba(77, 77, 75, 0.18);
         }
     }
 
@@ -256,7 +256,7 @@
         gap: 6px;
 
         strong {
-            color: #f6fbff;
+            color: #fafaf8;
             font-family: var(--ui-font);
             font-size: clamp(24px, 7vw, 38px);
             font-weight: 700;
@@ -313,7 +313,7 @@
 
 .daily-rewards-page__calendar-status-message {
     margin: 0;
-    color: rgba(233, 244, 252, 0.88);
+    color: rgba(242, 242, 240, 0.88);
     font-size: 13px;
     line-height: 1.4;
 }
@@ -329,11 +329,11 @@
     padding: 7px 10px 6px;
     border: 1px solid rgba(var(--ui-gold-rgb), 0.28);
     border-radius: var(--ui-radius);
-    background: rgba(12, 28, 44, 0.72);
+    background: rgba(26, 26, 24, 0.72);
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
 
     span {
-        color: rgba(225, 240, 250, 0.78);
+        color: rgba(238, 238, 236, 0.78);
         font-size: 9px;
         font-weight: 700;
         letter-spacing: 0.08em;
@@ -365,11 +365,11 @@
     grid-template-columns: repeat(7, minmax(0, 1fr));
     gap: 0;
     border-radius: var(--ui-radius);
-    border: 1px solid rgba(156, 212, 255, 0.24);
-    background: linear-gradient(180deg, rgba(10, 30, 50, 0.94) 0%, rgba(6, 20, 35, 0.98) 100%);
+    border: 1px solid rgba(203, 203, 201, 0.24);
+    background: linear-gradient(180deg, rgba(27, 27, 25, 0.94) 0%, rgba(18, 18, 16, 0.98) 100%);
     box-shadow:
-        inset 0 1px 0 rgba(241, 249, 255, 0.08),
-        0 18px 30px rgba(4, 16, 32, 0.22);
+        inset 0 1px 0 rgba(248, 248, 246, 0.08),
+        0 18px 30px rgba(15, 15, 13, 0.22);
 }
 
 .daily-rewards-calendar__day {
@@ -385,18 +385,18 @@
     align-content: start;
     min-height: 76px;
     padding: 7px 4px 7px;
-    border-right: 1px solid rgba(156, 212, 255, 0.16);
-    border-bottom: 1px solid rgba(156, 212, 255, 0.16);
+    border-right: 1px solid rgba(203, 203, 201, 0.16);
+    border-bottom: 1px solid rgba(203, 203, 201, 0.16);
     background:
-        radial-gradient(circle at var(--daily-reward-tilt-glow-x) var(--daily-reward-tilt-glow-y), rgba(186, 245, 255, 0.16) 0%, rgba(82, 166, 255, 0.08) 20%, rgba(82, 166, 255, 0) 48%),
-        linear-gradient(180deg, rgba(22, 56, 86, 0.24) 0%, rgba(9, 31, 56, 0.74) 100%);
+        radial-gradient(circle at var(--daily-reward-tilt-glow-x) var(--daily-reward-tilt-glow-y), rgba(233, 233, 231, 0.16) 0%, rgba(155, 155, 153, 0.08) 20%, rgba(155, 155, 153, 0) 48%),
+        linear-gradient(180deg, rgba(51, 51, 49, 0.24) 0%, rgba(28, 28, 26, 0.74) 100%);
     background-repeat: no-repeat, no-repeat, no-repeat;
     background-size: 160% 180%, 100% 100%;
     background-position:
         calc(50% + var(--daily-reward-tilt-shift-x)) calc(44% + var(--daily-reward-tilt-shift-y)),
         center;
     box-shadow:
-        inset 0 1px 0 rgba(240, 250, 255, 0.08);
+        inset 0 1px 0 rgba(248, 248, 246, 0.08);
     transition:
         transform 0.24s ease,
         opacity 0.24s ease,
@@ -424,8 +424,8 @@
     &.is-completed {
         opacity: 1;
         filter: saturate(0.42) brightness(0.66);
-        background: linear-gradient(180deg, rgba(13, 23, 35, 0.86) 0%, rgba(4, 10, 18, 0.94) 100%);
-        box-shadow: inset 0 1px 0 rgba(225, 239, 249, 0.03);
+        background: linear-gradient(180deg, rgba(22, 22, 20, 0.86) 0%, rgba(9, 9, 7, 0.94) 100%);
+        box-shadow: inset 0 1px 0 rgba(237, 237, 235, 0.03);
         animation: none;
 
         &::after {
@@ -439,17 +439,17 @@
 
     &.is-today {
         background:
-            radial-gradient(circle at var(--daily-reward-tilt-glow-x) var(--daily-reward-tilt-glow-y), rgba(194, 246, 255, 0.26) 0%, rgba(92, 182, 255, 0.14) 18%, rgba(92, 182, 255, 0) 46%),
-            linear-gradient(180deg, rgba(88, 170, 255, 0.28) 0%, rgba(9, 31, 56, 0.84) 100%);
+            radial-gradient(circle at var(--daily-reward-tilt-glow-x) var(--daily-reward-tilt-glow-y), rgba(236, 236, 234, 0.26) 0%, rgba(168, 168, 166, 0.14) 18%, rgba(168, 168, 166, 0) 46%),
+            linear-gradient(180deg, rgba(159, 159, 157, 0.28) 0%, rgba(28, 28, 26, 0.84) 100%);
         background-repeat: no-repeat, no-repeat;
         background-size: 162% 182%, 100% 100%;
         background-position:
             calc(50% + var(--daily-reward-tilt-shift-x)) calc(44% + var(--daily-reward-tilt-shift-y)),
             center;
         box-shadow:
-            inset 0 1px 0 rgba(248, 253, 255, 0.16),
-            0 0 0 1px rgba(202, 239, 255, 0.22),
-            0 0 24px rgba(110, 200, 255, 0.34);
+            inset 0 1px 0 rgba(252, 252, 250, 0.16),
+            0 0 0 1px rgba(232, 232, 230, 0.22),
+            0 0 24px rgba(185, 185, 183, 0.34);
         animation: dailyRewardsCalendarGlow 1.45s ease-in-out infinite alternate;
     }
 
@@ -475,7 +475,7 @@
 }
 
 .daily-rewards-calendar__label {
-    color: rgba(205, 234, 255, 0.74);
+    color: rgba(229, 229, 227, 0.74);
     font-size: 7px;
     font-weight: 700;
     letter-spacing: 0.08em;
@@ -485,7 +485,7 @@
 .daily-rewards-calendar__amount {
     position: relative;
     z-index: 1;
-    color: #f8fcff;
+    color: #fbfbf9;
     font-family: var(--ui-font);
     max-width: 100%;
     font-size: clamp(10px, 2.55vw, 20px);
@@ -528,16 +528,16 @@
     min-width: 48px;
     min-height: 22px;
     padding: 4px 8px 3px;
-    border: 1px solid rgba(202, 239, 255, 0.48);
+    border: 1px solid rgba(232, 232, 230, 0.48);
     border-radius: var(--ui-radius);
-    background: linear-gradient(180deg, rgba(134, 230, 255, 0.98) 0%, rgba(58, 150, 255, 0.96) 100%);
-    color: #06121f;
+    background: linear-gradient(180deg, rgba(211, 211, 209, 0.98) 0%, rgba(138, 138, 136, 0.96) 100%);
+    color: #10100e;
     font-size: 8px;
     font-weight: 700;
     letter-spacing: 0;
     line-height: 1;
     text-transform: uppercase;
-    box-shadow: 0 0 16px rgba(110, 200, 255, 0.24);
+    box-shadow: 0 0 16px rgba(185, 185, 183, 0.24);
 }
 
 .daily-rewards-calendar__claim:disabled {
@@ -549,22 +549,22 @@
 }
 
 .daily-rewards-calendar__day.is-today .daily-rewards-calendar__state {
-    color: #edf9ff;
+    color: #f7f7f5;
 }
 
 .daily-rewards-calendar__day.is-today .daily-rewards-calendar__amount {
     color: #ffffff;
-    text-shadow: 0 0 16px rgba(160, 225, 255, 0.42);
+    text-shadow: 0 0 16px rgba(213, 213, 211, 0.42);
 }
 
 .daily-rewards-calendar__day.is-completed .daily-rewards-calendar__state {
-    color: rgba(214, 231, 245, 0.68);
+    color: rgba(228, 228, 226, 0.68);
 }
 
 .daily-rewards-calendar__day.is-bonus {
     background:
         radial-gradient(circle at var(--daily-reward-tilt-glow-x) var(--daily-reward-tilt-glow-y), rgba(var(--ui-gold-rgb), 0.34) 0%, rgba(var(--ui-gold-rgb), 0.18) 18%, rgba(var(--ui-gold-rgb), 0) 48%),
-        linear-gradient(180deg, rgba(var(--ui-gold-rgb), 0.52) 0%, rgba(18, 28, 40, 0.9) 100%);
+        linear-gradient(180deg, rgba(var(--ui-gold-rgb), 0.52) 0%, rgba(27, 27, 25, 0.9) 100%);
     box-shadow:
         inset 0 1px 0 rgba(var(--ui-gold-rgb), 0.18),
         0 0 18px rgba(var(--ui-gold-rgb), 0.16);
@@ -587,16 +587,16 @@
 
 .daily-rewards-calendar__day.is-bonus-multiplier {
     background:
-        radial-gradient(circle at var(--daily-reward-tilt-glow-x) var(--daily-reward-tilt-glow-y), rgba(var(--ui-gold-rgb), 0.44) 0%, rgba(211, 226, 232, 0.22) 20%, rgba(211, 226, 232, 0) 50%),
-        linear-gradient(180deg, rgba(80, 89, 94, 0.56) 0%, rgba(20, 28, 34, 0.92) 100%);
+        radial-gradient(circle at var(--daily-reward-tilt-glow-x) var(--daily-reward-tilt-glow-y), rgba(var(--ui-gold-rgb), 0.44) 0%, rgba(223, 223, 221, 0.22) 20%, rgba(223, 223, 221, 0) 50%),
+        linear-gradient(180deg, rgba(80, 89, 94, 0.56) 0%, rgba(27, 27, 25, 0.92) 100%);
     box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.24),
-        0 0 20px rgba(216, 232, 238, 0.16);
+        0 0 20px rgba(229, 229, 227, 0.16);
 
     .daily-rewards-calendar__bonus {
-        border-color: rgba(240, 248, 250, 0.5);
-        background: rgba(220, 235, 240, 0.14);
-        color: #f6fbff;
+        border-color: rgba(246, 246, 244, 0.5);
+        background: rgba(232, 232, 230, 0.14);
+        color: #fafaf8;
     }
 }
 
@@ -641,13 +641,13 @@
 
 .daily-rewards-calendar__day.is-bonus-streak_shield {
     background:
-        radial-gradient(circle at var(--daily-reward-tilt-glow-x) var(--daily-reward-tilt-glow-y), rgba(216, 226, 255, 0.34) 0%, rgba(142, 162, 214, 0.18) 20%, rgba(142, 162, 214, 0) 50%),
-        linear-gradient(180deg, rgba(52, 60, 86, 0.56) 0%, rgba(18, 24, 34, 0.92) 100%);
+        radial-gradient(circle at var(--daily-reward-tilt-glow-x) var(--daily-reward-tilt-glow-y), rgba(226, 226, 224, 0.34) 0%, rgba(162, 162, 160, 0.18) 20%, rgba(162, 162, 160, 0) 50%),
+        linear-gradient(180deg, rgba(60, 60, 58, 0.56) 0%, rgba(23, 23, 21, 0.92) 100%);
 
     .daily-rewards-calendar__bonus {
-        border-color: rgba(216, 226, 255, 0.42);
-        background: rgba(142, 162, 214, 0.14);
-        color: #dbe6ff;
+        border-color: rgba(226, 226, 224, 0.42);
+        background: rgba(162, 162, 160, 0.14);
+        color: #e5e5e3;
     }
 }
 
@@ -734,7 +734,7 @@
 }
 
 .daily-bonus-lockup__eyebrow {
-    color: rgba(170, 221, 255, 0.78);
+    color: rgba(213, 213, 211, 0.78);
     font-size: 11px;
     font-weight: 700;
     letter-spacing: 0.22em;
@@ -742,14 +742,14 @@
 }
 
 .daily-bonus-lockup__copy strong {
-    color: #aaddff;
+    color: #d5d5d3;
     font-size: 34px;
     line-height: 0.9;
     font-family: var(--ui-font);
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.04em;
-    text-shadow: 0 0 16px rgba(115, 194, 255, 0.22);
+    text-shadow: 0 0 16px rgba(182, 182, 180, 0.22);
 }
 
 .daily-rewards-card {
@@ -761,9 +761,9 @@
     padding: 14px;
     border-radius: var(--ui-radius);
     overflow: hidden;
-    border: 1px solid rgba(120, 174, 228, 0.2);
-    background: linear-gradient(180deg, rgba(12, 35, 57, 0.92) 0%, rgba(7, 23, 39, 0.96) 100%);
-    box-shadow: inset 0 1px 0 rgba(221, 240, 255, 0.08), 0 18px 34px rgba(0, 0, 0, 0.18);
+    border: 1px solid rgba(166, 166, 164, 0.2);
+    background: linear-gradient(180deg, rgba(32, 32, 30, 0.92) 0%, rgba(21, 21, 19, 0.96) 100%);
+    box-shadow: inset 0 1px 0 rgba(237, 237, 235, 0.08), 0 18px 34px rgba(0, 0, 0, 0.18);
     transition: transform 0.24s ease, border-color 0.24s ease, box-shadow 0.24s ease, opacity 0.24s ease;
 
     &::before {
@@ -772,7 +772,7 @@
         inset: 0;
         background:
             linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0) 28%),
-            radial-gradient(circle at 100% 0%, rgba(92, 151, 255, 0.12) 0%, rgba(92, 151, 255, 0) 36%);
+            radial-gradient(circle at 100% 0%, rgba(146, 146, 144, 0.12) 0%, rgba(146, 146, 144, 0) 36%);
         pointer-events: none;
     }
 
@@ -781,16 +781,16 @@
     }
 
     &.is-claimable {
-        border-color: rgba(171, 223, 255, 0.54);
+        border-color: rgba(214, 214, 212, 0.54);
         box-shadow:
-            inset 0 1px 0 rgba(243, 251, 255, 0.14),
+            inset 0 1px 0 rgba(250, 250, 248, 0.14),
             0 20px 38px rgba(0, 0, 0, 0.2),
-            0 0 28px rgba(85, 184, 255, 0.18);
+            0 0 28px rgba(168, 168, 166, 0.18);
     }
 
     &.is-claimed {
         border-color: rgba(124, 236, 184, 0.28);
-        background: linear-gradient(180deg, rgba(12, 47, 54, 0.94) 0%, rgba(7, 28, 31, 0.98) 100%);
+        background: linear-gradient(180deg, rgba(40, 40, 38, 0.94) 0%, rgba(24, 24, 22, 0.98) 100%);
     }
 
     &.is-celebrating {
@@ -811,9 +811,9 @@
     min-height: 32px;
     padding: 7px 11px 5px;
     border-radius: var(--ui-radius);
-    border: 1px solid rgba(133, 191, 239, 0.18);
+    border: 1px solid rgba(182, 182, 180, 0.18);
     background: rgba(255, 255, 255, 0.05);
-    color: #d8eeff;
+    color: #ebebe9;
     font-size: 11px;
     font-weight: 700;
     letter-spacing: 0.08em;
@@ -827,13 +827,13 @@
 }
 
 .daily-rewards-card.is-claimable .daily-rewards-card__status {
-    border-color: rgba(171, 223, 255, 0.32);
-    background: rgba(82, 171, 255, 0.16);
-    color: #eefbff;
+    border-color: rgba(214, 214, 212, 0.32);
+    background: rgba(158, 158, 156, 0.16);
+    color: #f9f9f7;
 }
 
 .daily-rewards-card__day {
-    color: #f6fbff;
+    color: #fafaf8;
     font-family: var(--ui-font);
     font-size: 22px;
     font-weight: 700;
@@ -847,8 +847,8 @@
     place-items: center;
     min-height: 96px;
     border-radius: var(--ui-radius);
-    background: linear-gradient(180deg, rgba(10, 28, 45, 0.9) 0%, rgba(5, 18, 31, 0.96) 100%);
-    border: 1px solid rgba(135, 191, 239, 0.14);
+    background: linear-gradient(180deg, rgba(25, 25, 23, 0.9) 0%, rgba(16, 16, 14, 0.96) 100%);
+    border: 1px solid rgba(183, 183, 181, 0.14);
 
     img {
         width: auto;
@@ -1039,17 +1039,17 @@
     from {
         transform: translateY(0) scale(1);
         box-shadow:
-            inset 0 1px 0 rgba(243, 251, 255, 0.16),
+            inset 0 1px 0 rgba(250, 250, 248, 0.16),
             0 20px 38px rgba(0, 0, 0, 0.2),
-            0 0 28px rgba(85, 184, 255, 0.18);
+            0 0 28px rgba(168, 168, 166, 0.18);
     }
 
     to {
         transform: translateY(-3px) scale(1.02);
         box-shadow:
-            inset 0 1px 0 rgba(243, 251, 255, 0.18),
+            inset 0 1px 0 rgba(250, 250, 248, 0.18),
             0 24px 42px rgba(0, 0, 0, 0.22),
-            0 0 34px rgba(85, 184, 255, 0.28);
+            0 0 34px rgba(168, 168, 166, 0.28);
     }
 }
 
@@ -1057,34 +1057,34 @@
     from {
         transform: translateY(0) scale(1);
         box-shadow:
-            inset 0 1px 0 rgba(248, 253, 255, 0.22),
-            0 18px 30px rgba(4, 16, 32, 0.34),
-            0 0 34px rgba(110, 200, 255, 0.22);
+            inset 0 1px 0 rgba(252, 252, 250, 0.22),
+            0 18px 30px rgba(15, 15, 13, 0.34),
+            0 0 34px rgba(185, 185, 183, 0.22);
     }
 
     to {
         transform: translateY(-3px) scale(1.02);
         box-shadow:
-            inset 0 1px 0 rgba(248, 253, 255, 0.24),
-            0 22px 34px rgba(4, 16, 32, 0.38),
-            0 0 40px rgba(110, 200, 255, 0.28);
+            inset 0 1px 0 rgba(252, 252, 250, 0.24),
+            0 22px 34px rgba(15, 15, 13, 0.38),
+            0 0 40px rgba(185, 185, 183, 0.28);
     }
 }
 
 @keyframes dailyRewardsCalendarGlow {
     from {
         box-shadow:
-            inset 0 1px 0 rgba(248, 253, 255, 0.16),
-            0 0 0 1px rgba(202, 239, 255, 0.22),
-            0 0 20px rgba(110, 200, 255, 0.28);
+            inset 0 1px 0 rgba(252, 252, 250, 0.16),
+            0 0 0 1px rgba(232, 232, 230, 0.22),
+            0 0 20px rgba(185, 185, 183, 0.28);
         filter: brightness(1);
     }
 
     to {
         box-shadow:
-            inset 0 1px 0 rgba(248, 253, 255, 0.22),
-            0 0 0 1px rgba(202, 239, 255, 0.34),
-            0 0 34px rgba(110, 200, 255, 0.46);
+            inset 0 1px 0 rgba(252, 252, 250, 0.22),
+            0 0 0 1px rgba(232, 232, 230, 0.34),
+            0 0 34px rgba(185, 185, 183, 0.46);
         filter: brightness(1.08);
     }
 }

@@ -31,7 +31,7 @@ body,
 
 .gameplay-layout .main-layout-background {
     background:
-        linear-gradient(180deg, rgba(1, 6, 18, 0.16) 0%, rgba(1, 4, 12, 0.68) 100%),
+        linear-gradient(180deg, rgba(6, 6, 4, 0.16) 0%, rgba(4, 4, 2, 0.68) 100%),
         url("../../../images/bg/newgameBG.webp") center center / cover no-repeat;
 }
 
@@ -87,8 +87,8 @@ body,
     min-height: var(--game-frame-height);
     height: var(--game-frame-height);
     background:
-        radial-gradient(circle at 50% 42%, rgba(39, 151, 255, 0.16) 0%, rgba(4, 16, 48, 0) 54%),
-        linear-gradient(180deg, rgba(2, 10, 36, 0.2) 0%, rgba(1, 5, 18, 0.56) 100%),
+        radial-gradient(circle at 50% 42%, rgba(135, 135, 133, 0.16) 0%, rgba(16, 16, 14, 0) 54%),
+        linear-gradient(180deg, rgba(10, 10, 8, 0.2) 0%, rgba(5, 5, 3, 0.56) 100%),
         url("../../../images/bg/newgameBG.webp") center center / cover no-repeat;
     --game-playfield-offset-y: 0px;
     --seat-slot-width: clamp(74px, 18vw, 96px);
@@ -211,14 +211,14 @@ body,
     place-items: center;
     width: var(--seat-avatar-size, 60px);
     height: var(--seat-avatar-size, 60px);
-    border: 2px solid rgba(137, 213, 255, 0.56);
+    border: 2px solid rgba(200, 200, 198, 0.56);
     border-radius: 999px;
-    background: rgba(5, 22, 38, 0.92);
-    color: #dff5ff;
+    background: rgba(20, 20, 18, 0.92);
+    color: #f1f1ef;
     font-size: 0;
     font-weight: 700;
     overflow: hidden;
-    box-shadow: 0 0 0 2px rgba(3, 12, 22, 0.78), 0 7px 16px rgba(0, 0, 0, 0.36);
+    box-shadow: 0 0 0 2px rgba(11, 11, 9, 0.78), 0 7px 16px rgba(0, 0, 0, 0.36);
 }
 
 @property --seat-turn-angle {
@@ -233,13 +233,13 @@ body,
     inset: -5px;
     z-index: -1;
     border-radius: 999px;
-    background: rgba(4, 12, 22, 0.68);
+    background: rgba(11, 11, 9, 0.68);
     opacity: 0;
 }
 
 .game-table-page__seat-slot.is-active-turn .game-table-page__seat-avatar::before {
     opacity: 1;
-    background: conic-gradient(#67e8f9 0deg, var(--ui-gold) calc(var(--seat-turn-angle) * 0.68), #ff5f5f var(--seat-turn-angle), rgba(4, 12, 22, 0.72) 0deg);
+    background: conic-gradient(#cececc 0deg, var(--ui-gold) calc(var(--seat-turn-angle) * 0.68), #ff5f5f var(--seat-turn-angle), rgba(11, 11, 9, 0.72) 0deg);
     animation: seatTimerSweep var(--seat-turn-ms, 12000ms) linear forwards;
 }
 
@@ -313,7 +313,7 @@ body,
     padding: 0 7px;
     border: 2px solid rgba(255, 255, 255, 0.86);
     border-radius: var(--ui-radius);
-    background: rgba(7, 25, 42, 0.94);
+    background: rgba(22, 22, 20, 0.94);
     color: #ffffff;
     font-size: 15px;
     font-weight: 950;
@@ -426,9 +426,9 @@ body,
     max-width: calc(var(--seat-avatar-size, 60px) + 68px);
     height: var(--seat-action-label-height, 24px);
     padding: 0 12px;
-    border: 1px solid rgba(137, 213, 255, 0.58);
+    border: 1px solid rgba(200, 200, 198, 0.58);
     border-radius: var(--ui-radius);
-    background: rgba(7, 25, 42, 0.92);
+    background: rgba(22, 22, 20, 0.92);
     color: #ffffff;
     font-size: 12px;
     font-weight: 700;
@@ -655,7 +655,7 @@ body,
     gap: 5px;
     padding: 2px calc(env(safe-area-inset-right, 0px) + 6px) 2px calc(env(safe-area-inset-left, 0px) + 6px);
     background: #000000;
-    box-shadow: inset 0 -1px 0 rgba(137, 213, 255, 0.18);
+    box-shadow: inset 0 -1px 0 rgba(200, 200, 198, 0.18);
 }
 
 .game-table-page .game-stage-utility__blind {
@@ -878,14 +878,14 @@ body,
     height: var(--game-mobile-console-height);
     min-height: var(--game-mobile-console-height);
     padding: 14px 12px calc(16px + env(safe-area-inset-bottom, 0px));
-    border: 1px solid rgba(137, 213, 255, 0.3);
+    border: 1px solid rgba(200, 200, 198, 0.3);
     border-right: 0;
     border-bottom: 0;
     border-left: 0;
     border-radius: 0;
     background:
         linear-gradient(180deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0) 24%),
-        linear-gradient(180deg, rgba(8, 31, 47, 0.68) 0%, rgba(5, 15, 25, 0.82) 100%);
+        linear-gradient(180deg, rgba(27, 27, 25, 0.68) 0%, rgba(14, 14, 12, 0.82) 100%);
     box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.12),
         0 -16px 34px rgba(0, 0, 0, 0.34);
@@ -902,11 +902,11 @@ body,
         z-index: 0;
         border-radius: 0;
         background:
-            linear-gradient(180deg, rgba(130, 224, 255, 0.4) 0%, rgba(35, 151, 255, 0.28) 46%, rgba(15, 78, 170, 0.18) 100%);
+            linear-gradient(180deg, rgba(206, 206, 204, 0.4) 0%, rgba(134, 134, 132, 0.28) 46%, rgba(71, 71, 69, 0.18) 100%);
         box-shadow:
-            inset 0 0 0 1px rgba(171, 238, 255, 0.65),
-            inset 0 0 34px rgba(60, 181, 255, 0.52),
-            0 -10px 30px rgba(50, 167, 255, 0.34);
+            inset 0 0 0 1px rgba(225, 225, 223, 0.65),
+            inset 0 0 34px rgba(161, 161, 159, 0.52),
+            0 -10px 30px rgba(148, 148, 146, 0.34);
         opacity: 0;
         pointer-events: none;
         animation: consoleWinFlash 1.25s ease-out both;
@@ -1091,7 +1091,7 @@ body,
     }
 
     .game-action-overlay__console-col--center {
-        outline: 1px solid rgba(89, 214, 255, 0.9);
+        outline: 1px solid rgba(190, 190, 188, 0.9);
         outline-offset: -1px;
     }
 
@@ -1113,12 +1113,12 @@ body,
     width: 56px;
     height: 56px;
     padding: 4px;
-    border: 1px solid rgba(137, 213, 255, 0.42);
+    border: 1px solid rgba(200, 200, 198, 0.42);
     border-radius: 999px;
     background:
-        conic-gradient(#76e8ff 0 var(--turn-progress, 0%), rgba(118, 232, 255, 0.1) var(--turn-progress, 0%) 100%),
-        linear-gradient(180deg, rgba(137, 213, 255, 0.2) 0%, rgba(90, 57, 255, 0.2) 100%),
-        rgba(3, 14, 29, 0.92);
+        conic-gradient(#d1d1cf 0 var(--turn-progress, 0%), rgba(209, 209, 207, 0.1) var(--turn-progress, 0%) 100%),
+        linear-gradient(180deg, rgba(200, 200, 198, 0.2) 0%, rgba(78, 78, 76, 0.2) 100%),
+        rgba(13, 13, 11, 0.92);
     box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.16),
         0 10px 22px rgba(0, 0, 0, 0.34);
@@ -1137,7 +1137,7 @@ body,
     span {
         position: relative;
         z-index: 1;
-        color: #bfeeff;
+        color: #e5e5e3;
         font-size: 23px;
         font-weight: 700;
         line-height: 1;
@@ -1147,7 +1147,7 @@ body,
         content: '';
         position: absolute;
         inset: 5px;
-        border: 1px solid rgba(6, 23, 39, 0.9);
+        border: 1px solid rgba(21, 21, 19, 0.9);
         border-radius: 999px;
         pointer-events: none;
         z-index: 0;
@@ -1155,11 +1155,11 @@ body,
 }
 
 .game-action-overlay__console-avatar.is-timing {
-    border-color: rgba(118, 232, 255, 0.78);
+    border-color: rgba(209, 209, 207, 0.78);
     box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.16),
         0 10px 22px rgba(0, 0, 0, 0.34),
-        0 0 18px rgba(118, 232, 255, 0.18);
+        0 0 18px rgba(209, 209, 207, 0.18);
 }
 
 .game-action-overlay__console-bankroll,
@@ -1170,7 +1170,7 @@ body,
     min-width: 0;
 
     span {
-        color: rgba(180, 221, 255, 0.78);
+        color: rgba(215, 215, 213, 0.78);
         font-size: 10px;
         font-weight: 700;
         letter-spacing: 0.12em;
@@ -1251,7 +1251,7 @@ body,
 .game-action-overlay__top-up-backdrop {
     position: absolute;
     inset: 0;
-    background: rgba(0, 6, 14, 0.64);
+    background: rgba(5, 5, 3, 0.64);
 }
 
 .game-action-overlay__top-up-panel {
@@ -1261,11 +1261,11 @@ body,
     gap: 12px;
     width: min(342px, 100%);
     padding: 14px;
-    border: 1px solid rgba(137, 213, 255, 0.34);
+    border: 1px solid rgba(200, 200, 198, 0.34);
     border-radius: var(--ui-radius);
     background:
         radial-gradient(circle at 50% 0%, rgba(81, 255, 137, 0.12) 0%, rgba(81, 255, 137, 0) 42%),
-        linear-gradient(180deg, rgba(10, 35, 58, 0.98) 0%, rgba(3, 13, 24, 0.99) 100%);
+        linear-gradient(180deg, rgba(31, 31, 29, 0.98) 0%, rgba(12, 12, 10, 0.99) 100%);
     box-shadow: 0 18px 40px rgba(0, 0, 0, 0.46);
 }
 
@@ -1276,7 +1276,7 @@ body,
     gap: 12px;
 
     strong {
-        color: #f6fbff;
+        color: #fafaf8;
         font-size: 18px;
         font-weight: 700;
         line-height: 1;
@@ -1289,7 +1289,7 @@ body,
         width: 30px;
         height: 30px;
         padding: 0;
-        border: 1px solid rgba(137, 213, 255, 0.26);
+        border: 1px solid rgba(200, 200, 198, 0.26);
         border-radius: var(--ui-radius);
         background: rgba(255, 255, 255, 0.06);
         color: #ffffff;
@@ -1309,12 +1309,12 @@ body,
     display: grid;
     gap: 4px;
     padding: 9px;
-    border: 1px solid rgba(137, 213, 255, 0.16);
+    border: 1px solid rgba(200, 200, 198, 0.16);
     border-radius: var(--ui-radius);
-    background: rgba(4, 17, 30, 0.72);
+    background: rgba(15, 15, 13, 0.72);
 
     span {
-        color: rgba(201, 231, 255, 0.72);
+        color: rgba(226, 226, 224, 0.72);
         font-size: 10px;
         font-weight: 700;
         letter-spacing: 0.1em;
@@ -1332,10 +1332,10 @@ body,
 
 .game-action-overlay__top-up-options button {
     min-height: 38px;
-    border: 1px solid rgba(137, 213, 255, 0.22);
+    border: 1px solid rgba(200, 200, 198, 0.22);
     border-radius: var(--ui-radius);
-    background: rgba(11, 38, 63, 0.86);
-    color: #f7fbff;
+    background: rgba(34, 34, 32, 0.86);
+    color: #fafaf8;
     font-size: 13px;
     font-weight: 700;
 
@@ -1351,7 +1351,7 @@ body,
     align-items: center;
     gap: 8px;
     min-height: 36px;
-    color: #dcefff;
+    color: #ececea;
     font-size: 12px;
     font-weight: 700;
 }
@@ -1361,7 +1361,7 @@ body,
     border: 0;
     border-radius: var(--ui-radius);
     background: linear-gradient(180deg, #8dfcb3 0%, #42d985 100%);
-    color: #052132;
+    color: #1c1c1a;
     font-size: 14px;
     font-weight: 700;
     text-transform: uppercase;
@@ -1395,7 +1395,7 @@ body,
     overflow: visible;
 
     span {
-        color: rgba(180, 221, 255, 0.78);
+        color: rgba(215, 215, 213, 0.78);
         font-size: 10px;
         font-weight: 700;
         letter-spacing: 0.06em;
@@ -1425,7 +1425,7 @@ body,
     text-align: center;
 
     > span {
-        color: rgba(180, 221, 255, 0.78);
+        color: rgba(215, 215, 213, 0.78);
         font-size: 10px;
         font-weight: 700;
         letter-spacing: 0.14em;
@@ -1456,7 +1456,7 @@ body,
     align-items: flex-start;
     gap: 12px;
     padding-bottom: 8px;
-    border-bottom: 1px solid rgba(137, 213, 255, 0.18);
+    border-bottom: 1px solid rgba(200, 200, 198, 0.18);
     pointer-events: none;
 }
 
@@ -1491,14 +1491,14 @@ body,
     height: 34px;
     border-radius: var(--ui-radius);
     background:
-        radial-gradient(circle at center, rgba(5, 20, 34, 0.95) 0 55%, transparent 57%),
-        conic-gradient(#72e6ff 0 72%, rgba(120, 177, 224, 0.22) 72% 100%);
+        radial-gradient(circle at center, rgba(18, 18, 16, 0.95) 0 55%, transparent 57%),
+        conic-gradient(#cfcfcd 0 72%, rgba(168, 168, 166, 0.22) 72% 100%);
     box-shadow:
-        inset 0 0 0 1px rgba(137, 213, 255, 0.4),
+        inset 0 0 0 1px rgba(200, 200, 198, 0.4),
         0 5px 10px rgba(0, 0, 0, 0.24);
 
     span {
-        color: #f4fbff;
+        color: #fafaf8;
         font-family: var(--ui-font);
         font-size: 13px;
         font-weight: 700;
@@ -1555,9 +1555,9 @@ body,
     gap: 2px;
     padding: 5px 10px 4px;
     border-radius: var(--ui-radius);
-    border: 1px solid rgba(58, 154, 191, 0.35);
-    background: rgba(4, 25, 46, 0.72);
-    color: rgba(210, 240, 255, 0.9);
+    border: 1px solid rgba(136, 136, 134, 0.35);
+    background: rgba(22, 22, 20, 0.72);
+    color: rgba(235, 235, 233, 0.9);
     font-size: 10px;
     font-weight: 600;
     letter-spacing: 0.06em;
@@ -1573,8 +1573,8 @@ body,
     }
 
     &:hover {
-        background: rgba(58, 154, 191, 0.18);
-        border-color: rgba(58, 154, 191, 0.7);
+        background: rgba(136, 136, 134, 0.18);
+        border-color: rgba(136, 136, 134, 0.7);
     }
 }
 
@@ -1614,7 +1614,7 @@ body,
 .game-action-overlay__screenshot-backdrop {
     position: absolute;
     inset: 0;
-    background: rgba(2, 12, 24, 0.82);
+    background: rgba(11, 11, 9, 0.82);
     backdrop-filter: blur(8px);
 }
 
@@ -1627,9 +1627,9 @@ body,
     gap: 16px;
     padding: 16px;
     border-radius: var(--ui-radius);
-    border: 1px solid rgba(58, 154, 191, 0.45);
-    background: linear-gradient(180deg, rgba(5, 27, 48, 0.97) 0%, rgba(3, 16, 30, 0.99) 100%);
-    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(200, 240, 255, 0.1);
+    border: 1px solid rgba(136, 136, 134, 0.45);
+    background: linear-gradient(180deg, rgba(24, 24, 22, 0.97) 0%, rgba(14, 14, 12, 0.99) 100%);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(233, 233, 231, 0.1);
     max-width: min(94vw, 480px);
     width: 100%;
 }
@@ -1661,7 +1661,7 @@ body,
     display: block;
     width: 100%;
     border-radius: var(--ui-radius);
-    border: 1px solid rgba(58, 154, 191, 0.28);
+    border: 1px solid rgba(136, 136, 134, 0.28);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
     object-fit: cover;
 }
@@ -1696,9 +1696,9 @@ body,
     }
 
     &--share {
-        background: linear-gradient(180deg, rgba(58, 154, 191, 0.4) 0%, rgba(26, 90, 130, 0.5) 100%);
-        border: 1px solid rgba(58, 154, 191, 0.55);
-        color: #cdf0ff;
+        background: linear-gradient(180deg, rgba(136, 136, 134, 0.4) 0%, rgba(79, 79, 77, 0.5) 100%);
+        border: 1px solid rgba(136, 136, 134, 0.55);
+        color: #eaeae8;
     }
 
     &--save {
@@ -1710,7 +1710,7 @@ body,
 /* ── end screenshot modal ───────────────────────────────────── */
 
 .game-action-overlay__bankroll-label {
-    color: rgba(137, 213, 255, 0.86);
+    color: rgba(200, 200, 198, 0.86);
     font-size: 11px;
     font-weight: 700;
     letter-spacing: 0.16em;
@@ -1813,10 +1813,10 @@ body,
     min-width: 34px;
     height: 34px;
     padding: 0 8px;
-    border: 1px solid rgba(137, 213, 255, 0.38);
+    border: 1px solid rgba(200, 200, 198, 0.38);
     border-radius: var(--ui-radius);
-    background: rgba(7, 25, 42, 0.8);
-    color: #f4fbff;
+    background: rgba(22, 22, 20, 0.8);
+    color: #fafaf8;
     font-size: 18px;
     font-weight: 700;
     line-height: 1;
@@ -1879,16 +1879,16 @@ body,
 }
 
 .game-action-overlay__commentary-entry--empty {
-    color: rgba(137, 213, 255, 0.84);
+    color: rgba(200, 200, 198, 0.84);
 }
 
 .game-action-overlay__message {
     align-self: center;
     min-width: 220px;
     max-width: min(100%, 420px);
-    border: 1px solid rgba(137, 213, 255, 0.32);
+    border: 1px solid rgba(200, 200, 198, 0.32);
     border-radius: var(--ui-radius);
-    background: rgba(7, 24, 39, 0.86);
+    background: rgba(21, 21, 19, 0.86);
     color: #ffffff;
     padding: 10px 18px 8px;
     font-size: 20px;
@@ -1923,12 +1923,12 @@ body,
         letter-spacing: 0.04em;
         text-transform: uppercase;
         white-space: nowrap;
-        border: 1px solid rgba(159, 219, 255, 0.48);
-        background: linear-gradient(180deg, rgba(25, 73, 122, 0.96) 0%, rgba(12, 36, 76, 0.98) 100%);
-        color: #f7fcff;
+        border: 1px solid rgba(209, 209, 207, 0.48);
+        background: linear-gradient(180deg, rgba(66, 66, 64, 0.96) 0%, rgba(34, 34, 32, 0.98) 100%);
+        color: #fbfbf9;
         box-shadow:
             0 10px 22px rgba(0, 0, 0, 0.28),
-            0 0 18px rgba(69, 170, 255, 0.12);
+            0 0 18px rgba(155, 155, 153, 0.12);
         text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55);
         transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
 
@@ -1969,16 +1969,16 @@ body,
     }
 
     .guest-entry-btn {
-        border-color: rgba(162, 226, 255, 0.62);
-        background: linear-gradient(180deg, rgba(31, 122, 189, 0.98) 0%, rgba(24, 62, 132, 0.98) 100%);
+        border-color: rgba(214, 214, 212, 0.62);
+        background: linear-gradient(180deg, rgba(107, 107, 105, 0.98) 0%, rgba(59, 59, 57, 0.98) 100%);
         box-shadow:
             0 12px 24px rgba(0, 0, 0, 0.32),
-            0 0 20px rgba(86, 184, 255, 0.16);
+            0 0 20px rgba(168, 168, 166, 0.16);
     }
 
     .about-entry-btn {
-        border-color: rgba(185, 211, 238, 0.38);
-        background: linear-gradient(180deg, rgba(47, 65, 101, 0.98) 0%, rgba(18, 31, 58, 0.98) 100%);
+        border-color: rgba(207, 207, 205, 0.38);
+        background: linear-gradient(180deg, rgba(64, 64, 62, 0.98) 0%, rgba(30, 30, 28, 0.98) 100%);
     }
 }
 
@@ -2140,10 +2140,10 @@ body,
     width: 22px;
     height: 22px;
     padding: 0;
-    border: 1px solid rgba(137, 213, 255, 0.92);
+    border: 1px solid rgba(200, 200, 198, 0.92);
     border-radius: 999px;
-    background: rgba(6, 25, 43, 0.94);
-    color: #cfefff;
+    background: rgba(22, 22, 20, 0.94);
+    color: #e9e9e7;
     box-shadow: 0 4px 9px rgba(0, 0, 0, 0.34);
     pointer-events: auto;
 
@@ -2290,10 +2290,10 @@ body,
 
 .game-ui-layout__toggle {
     width: auto;
-    border: 1px solid rgba(140, 212, 255, 0.24);
+    border: 1px solid rgba(200, 200, 198, 0.24);
     border-radius: var(--ui-radius);
-    background: linear-gradient(180deg, rgba(10, 29, 47, 0.96) 0%, rgba(6, 18, 29, 0.98) 100%);
-    color: #f3fbff;
+    background: linear-gradient(180deg, rgba(26, 26, 24, 0.96) 0%, rgba(16, 16, 14, 0.98) 100%);
+    color: #fafaf8;
     padding: 8px 12px 7px;
     font-size: 13px;
     font-family: var(--ui-font);
@@ -2306,9 +2306,9 @@ body,
 
 .game-ui-layout__panel {
     margin-top: 10px;
-    border: 1px solid rgba(140, 212, 255, 0.22);
+    border: 1px solid rgba(200, 200, 198, 0.22);
     border-radius: var(--ui-radius);
-    background: linear-gradient(180deg, rgba(9, 28, 45, 0.96) 0%, rgba(5, 16, 27, 0.98) 100%);
+    background: linear-gradient(180deg, rgba(25, 25, 23, 0.96) 0%, rgba(14, 14, 12, 0.98) 100%);
     box-shadow: 0 24px 60px rgba(0, 0, 0, 0.34);
     backdrop-filter: blur(14px);
     padding: 16px;
@@ -2336,9 +2336,9 @@ body,
     gap: 6px;
     padding: 10px;
     border-radius: var(--ui-radius);
-    border: 1px solid rgba(140, 212, 255, 0.25);
-    background: linear-gradient(170deg, rgba(4, 22, 42, 0.97) 0%, rgba(3, 13, 26, 0.99) 100%);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(140, 212, 255, 0.1);
+    border: 1px solid rgba(200, 200, 198, 0.25);
+    background: linear-gradient(170deg, rgba(20, 20, 18, 0.97) 0%, rgba(12, 12, 10, 0.99) 100%);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(200, 200, 198, 0.1);
     backdrop-filter: blur(12px);
     margin-bottom: 6px;
 }
@@ -2346,7 +2346,7 @@ body,
 .emoji-picker__item {
     width: 44px;
     height: 44px;
-    border: 1px solid rgba(140, 212, 255, 0.15);
+    border: 1px solid rgba(200, 200, 198, 0.15);
     border-radius: var(--ui-radius);
     background: rgba(255, 255, 255, 0.04);
     font-size: 22px;
@@ -2359,8 +2359,8 @@ body,
     padding: 0;
 
     &:hover {
-        background: rgba(140, 212, 255, 0.14);
-        border-color: rgba(140, 212, 255, 0.4);
+        background: rgba(200, 200, 198, 0.14);
+        border-color: rgba(200, 200, 198, 0.4);
         transform: scale(1.15);
     }
 
@@ -2375,9 +2375,9 @@ body,
     gap: 5px;
     padding: 7px 13px;
     border-radius: var(--ui-radius);
-    border: 1px solid rgba(140, 212, 255, 0.3);
-    background: linear-gradient(170deg, rgba(4, 22, 42, 0.92) 0%, rgba(3, 13, 26, 0.95) 100%);
-    color: rgba(200, 235, 255, 0.85);
+    border: 1px solid rgba(200, 200, 198, 0.3);
+    background: linear-gradient(170deg, rgba(20, 20, 18, 0.92) 0%, rgba(12, 12, 10, 0.95) 100%);
+    color: rgba(229, 229, 227, 0.85);
     font-size: 14px;
     cursor: pointer;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
@@ -2386,13 +2386,13 @@ body,
     pointer-events: auto;
 
     &:hover {
-        border-color: rgba(140, 212, 255, 0.55);
-        background: linear-gradient(170deg, rgba(6, 30, 56, 0.95) 0%, rgba(4, 18, 34, 0.98) 100%);
+        border-color: rgba(200, 200, 198, 0.55);
+        background: linear-gradient(170deg, rgba(27, 27, 25, 0.95) 0%, rgba(16, 16, 14, 0.98) 100%);
     }
 
     &.emoji-picker__trigger--open {
-        border-color: rgba(90, 200, 255, 0.6);
-        background: linear-gradient(170deg, rgba(8, 38, 68, 0.97) 0%, rgba(5, 22, 42, 0.99) 100%);
+        border-color: rgba(181, 181, 179, 0.6);
+        background: linear-gradient(170deg, rgba(34, 34, 32, 0.97) 0%, rgba(20, 20, 18, 0.99) 100%);
     }
 }
 
@@ -2418,8 +2418,8 @@ body,
     width: 38px;
     height: 38px;
     border-radius: 50%;
-    border: 1px solid rgba(140, 212, 255, 0.3);
-    background: linear-gradient(170deg, rgba(4, 22, 42, 0.92) 0%, rgba(3, 13, 26, 0.95) 100%);
+    border: 1px solid rgba(200, 200, 198, 0.3);
+    background: linear-gradient(170deg, rgba(20, 20, 18, 0.92) 0%, rgba(12, 12, 10, 0.95) 100%);
     font-size: 18px;
     cursor: pointer;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
@@ -2428,8 +2428,8 @@ body,
     pointer-events: auto;
 
     &:hover {
-        border-color: rgba(140, 212, 255, 0.55);
-        background: linear-gradient(170deg, rgba(6, 30, 56, 0.95) 0%, rgba(4, 18, 34, 0.98) 100%);
+        border-color: rgba(200, 200, 198, 0.55);
+        background: linear-gradient(170deg, rgba(27, 27, 25, 0.95) 0%, rgba(16, 16, 14, 0.98) 100%);
         transform: scale(1.1);
     }
 
@@ -2462,9 +2462,9 @@ body,
     width: min(260px, calc(var(--app-mobile-frame-width) - 32px));
     border: 1px solid rgba(255, 139, 43, 0.36);
     border-radius: var(--ui-radius);
-    background: rgba(7, 18, 31, 0.96);
+    background: rgba(17, 17, 15, 0.96);
     box-shadow: 0 18px 42px rgba(0, 0, 0, 0.46);
-    color: #f4fbff;
+    color: #fafaf8;
     overflow: hidden;
 }
 
@@ -2478,7 +2478,7 @@ body,
 
 .game-audio-modal__header {
     padding: 12px 14px;
-    border-bottom: 1px solid rgba(137, 213, 255, 0.16);
+    border-bottom: 1px solid rgba(200, 200, 198, 0.16);
 
     strong {
         font-size: 14px;
@@ -2489,10 +2489,10 @@ body,
     button {
         width: 28px;
         height: 28px;
-        border: 1px solid rgba(137, 213, 255, 0.28);
+        border: 1px solid rgba(200, 200, 198, 0.28);
         border-radius: var(--ui-radius);
         background: rgba(255, 255, 255, 0.06);
-        color: #e8f4ff;
+        color: #f2f2f0;
         font-size: 14px;
         font-weight: 700;
     }
@@ -2587,8 +2587,8 @@ body,
     min-height: calc(var(--game-top-banner-height, 54px) + env(safe-area-inset-top, 0px));
     padding: calc(env(safe-area-inset-top, 0px) + 8px) calc(env(safe-area-inset-right, 0px) + 12px) 8px calc(env(safe-area-inset-left, 0px) + 12px);
     background:
-        linear-gradient(180deg, rgba(2, 10, 20, 0.88) 0%, rgba(4, 18, 32, 0.68) 62%, rgba(4, 18, 32, 0) 100%);
-    box-shadow: inset 0 -1px 0 rgba(137, 213, 255, 0.18);
+        linear-gradient(180deg, rgba(9, 9, 7, 0.88) 0%, rgba(16, 16, 14, 0.68) 62%, rgba(16, 16, 14, 0) 100%);
+    box-shadow: inset 0 -1px 0 rgba(200, 200, 198, 0.18);
     pointer-events: auto;
 }
 
@@ -2600,15 +2600,15 @@ body,
     height: 34px;
     margin-right: auto;
     padding: 3px 12px 2px;
-    border: 1px solid rgba(137, 213, 255, 0.34);
+    border: 1px solid rgba(200, 200, 198, 0.34);
     border-radius: var(--ui-radius);
-    background: rgba(7, 29, 48, 0.84);
-    color: #f4fbff;
+    background: rgba(26, 26, 24, 0.84);
+    color: #fafaf8;
     box-shadow: 0 5px 12px rgba(0, 0, 0, 0.26);
     line-height: 1;
 
     span {
-        color: rgba(177, 216, 240, 0.9);
+        color: rgba(209, 209, 207, 0.9);
         font-size: 8px;
         font-weight: 700;
         letter-spacing: 0.14em;
@@ -2629,9 +2629,9 @@ body,
     width: 34px;
     height: 34px;
     padding: 0;
-    border: 1px solid rgba(137, 213, 255, 0.38);
+    border: 1px solid rgba(200, 200, 198, 0.38);
     border-radius: var(--ui-radius);
-    background: rgba(7, 29, 48, 0.84);
+    background: rgba(26, 26, 24, 0.84);
     box-shadow: 0 5px 12px rgba(0, 0, 0, 0.26);
     cursor: pointer;
 
@@ -2683,7 +2683,7 @@ body,
 .game-action-overlay__utility-modal-backdrop {
     position: absolute;
     inset: 0;
-    background: rgba(0, 5, 12, 0.62);
+    background: rgba(4, 4, 2, 0.62);
 }
 
 .game-action-overlay__utility-panel {
@@ -2695,9 +2695,9 @@ body,
     max-height: min(78dvh, 680px);
     overflow: auto;
     padding: 14px;
-    border: 1px solid rgba(137, 213, 255, 0.32);
+    border: 1px solid rgba(200, 200, 198, 0.32);
     border-radius: var(--ui-radius);
-    background: linear-gradient(180deg, rgba(7, 27, 47, 0.98), rgba(2, 10, 20, 0.99));
+    background: linear-gradient(180deg, rgba(24, 24, 22, 0.98), rgba(9, 9, 7, 0.99));
     box-shadow: 0 24px 48px rgba(0, 0, 0, 0.48);
 }
 
@@ -2708,7 +2708,7 @@ body,
     gap: 12px;
 
     strong {
-        color: #f4fbff;
+        color: #fafaf8;
         font-family: var(--ui-font);
         font-size: 24px;
         font-weight: 700;
@@ -2743,7 +2743,7 @@ body,
     gap: 10px;
     min-height: 72px;
     padding: 10px;
-    border: 1px solid rgba(137, 213, 255, 0.18);
+    border: 1px solid rgba(200, 200, 198, 0.18);
     border-radius: var(--ui-radius);
     background: rgba(255, 255, 255, 0.045);
 
@@ -2767,7 +2767,7 @@ body,
     }
 
     span {
-        color: rgba(191, 238, 255, 0.84);
+        color: rgba(229, 229, 227, 0.84);
         font-size: 12px;
         font-weight: 700;
     }
@@ -2787,9 +2787,9 @@ body,
 
 .game-action-overlay__utility-empty {
     padding: 18px;
-    border: 1px solid rgba(137, 213, 255, 0.16);
+    border: 1px solid rgba(200, 200, 198, 0.16);
     border-radius: var(--ui-radius);
-    color: rgba(235, 249, 255, 0.82);
+    color: rgba(246, 246, 244, 0.82);
     text-align: center;
 }
 
@@ -2813,7 +2813,7 @@ body,
 
 .game-ui-layout__eyebrow {
     margin: 0;
-    color: #89d5ff;
+    color: #c8c8c6;
     font-size: 11px;
     font-weight: 700;
     letter-spacing: 0.16em;
@@ -2831,7 +2831,7 @@ body,
 
 .game-ui-layout__help {
     margin: 12px 0 0;
-    color: rgba(233, 244, 250, 0.9);
+    color: rgba(242, 242, 240, 0.9);
     font-size: 14px;
     line-height: 1.45;
 }
@@ -2839,7 +2839,7 @@ body,
 .game-ui-layout__group {
     margin-top: 16px;
     padding-top: 14px;
-    border-top: 1px solid rgba(140, 212, 255, 0.12);
+    border-top: 1px solid rgba(200, 200, 198, 0.12);
 
     h3 {
         margin: 0 0 12px;
@@ -2864,16 +2864,16 @@ body,
     margin-bottom: 8px;
 
     span {
-        color: #f3fbff;
+        color: #fafaf8;
         font-size: 14px;
         font-weight: 600;
     }
 
     input {
         width: 82px;
-        border: 1px solid rgba(140, 212, 255, 0.18);
+        border: 1px solid rgba(200, 200, 198, 0.18);
         border-radius: var(--ui-radius);
-        background: rgba(4, 14, 24, 0.92);
+        background: rgba(13, 13, 11, 0.92);
         color: #ffffff;
         padding: 8px 10px;
         font-size: 14px;
@@ -2883,7 +2883,7 @@ body,
 
 .game-ui-layout__slider {
     width: 100%;
-    accent-color: #6cc7ff;
+    accent-color: #b8b8b6;
 }
 
 .game-ui-layout__actions {
@@ -2896,7 +2896,7 @@ body,
         border: 0;
         border-radius: var(--ui-radius);
         background: linear-gradient(180deg, #8dfcb3 0%, #44da89 100%);
-        color: #072133;
+        color: #1d1d1b;
         padding: 12px 14px 10px;
         font-size: 15px;
         font-family: var(--ui-font);
@@ -2907,9 +2907,9 @@ body,
     }
 
     .is-secondary {
-        border: 1px solid rgba(140, 212, 255, 0.28);
-        background: rgba(9, 28, 45, 0.96);
-        color: #f3fbff;
+        border: 1px solid rgba(200, 200, 198, 0.28);
+        background: rgba(25, 25, 23, 0.96);
+        color: #fafaf8;
         box-shadow: none;
     }
 }
@@ -3013,10 +3013,10 @@ body,
 }
 
 .guest-menu-button {
-    border: 1px solid rgba(173, 221, 255, 0.3);
+    border: 1px solid rgba(213, 213, 211, 0.3);
     border-radius: var(--ui-radius);
-    background: rgba(7, 24, 39, 0.84);
-    color: #f3fbff;
+    background: rgba(21, 21, 19, 0.84);
+    color: #fafaf8;
     padding: 10px 16px 8px;
     font-size: 16px;
     font-family: var(--ui-font);
@@ -3034,7 +3034,7 @@ body,
 
     &:hover {
         transform: translateY(-1px);
-        background: rgba(10, 35, 56, 0.94);
+        background: rgba(31, 31, 29, 0.94);
     }
 
     &.is-active,
@@ -3043,13 +3043,13 @@ body,
     }
 
     &.pause-toggle {
-        background: rgba(7, 24, 39, 0.84);
-        color: #f3fbff;
+        background: rgba(21, 21, 19, 0.84);
+        color: #fafaf8;
     }
 
     &.pause-toggle.is-active {
         background: linear-gradient(180deg, rgba(93, 236, 150, 0.96) 0%, rgba(60, 177, 116, 0.96) 100%);
-        color: #072133;
+        color: #1d1d1b;
     }
 }
 
@@ -3058,7 +3058,7 @@ body,
     inset: 0;
     z-index: 1;
     border: 0;
-    background: linear-gradient(180deg, rgba(4, 13, 22, 0.3) 0%, rgba(4, 13, 22, 0.76) 100%);
+    background: linear-gradient(180deg, rgba(12, 12, 10, 0.3) 0%, rgba(12, 12, 10, 0.76) 100%);
     pointer-events: auto;
 }
 
@@ -3071,9 +3071,9 @@ body,
     width: min(560px, calc(100% - 36px));
     display: flex;
     flex-direction: column;
-    border: 1px solid rgba(173, 221, 255, 0.2);
+    border: 1px solid rgba(213, 213, 211, 0.2);
     border-radius: var(--ui-radius);
-    background: linear-gradient(180deg, rgba(8, 26, 41, 0.97) 0%, rgba(5, 16, 26, 0.98) 100%);
+    background: linear-gradient(180deg, rgba(23, 23, 21, 0.97) 0%, rgba(14, 14, 12, 0.98) 100%);
     box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
     overflow: hidden;
     pointer-events: auto;
@@ -3085,7 +3085,7 @@ body,
     justify-content: space-between;
     gap: 16px;
     padding: 22px 22px 18px;
-    border-bottom: 1px solid rgba(173, 221, 255, 0.14);
+    border-bottom: 1px solid rgba(213, 213, 211, 0.14);
 
     h2 {
         color: #ffffff;
@@ -3100,7 +3100,7 @@ body,
 
 .guest-game-help-eyebrow {
     margin-bottom: 10px;
-    color: #89d5ff;
+    color: #c8c8c6;
     font-size: 13px;
     font-weight: 700;
     letter-spacing: 0.18em;
@@ -3112,7 +3112,7 @@ body,
     border: 0;
     border-radius: var(--ui-radius);
     background: linear-gradient(180deg, #8dfcb3 0%, #42d985 100%);
-    color: #072133;
+    color: #1d1d1b;
     padding: 12px 18px 10px;
     font-size: 16px;
     font-family: var(--ui-font);
@@ -3130,13 +3130,13 @@ body,
     flex-wrap: wrap;
     gap: 10px;
     padding: 16px 22px;
-    border-bottom: 1px solid rgba(173, 221, 255, 0.1);
+    border-bottom: 1px solid rgba(213, 213, 211, 0.1);
 
     button {
-        border: 1px solid rgba(173, 221, 255, 0.18);
+        border: 1px solid rgba(213, 213, 211, 0.18);
         border-radius: var(--ui-radius);
         background: rgba(255, 255, 255, 0.04);
-        color: #d6e9f5;
+        color: #e6e6e4;
         padding: 9px 14px 7px;
         font-size: 14px;
         font-family: var(--ui-font);
@@ -3163,7 +3163,7 @@ body,
 
     p,
     li {
-        color: #d8e6f0;
+        color: #e4e4e2;
         font-size: 16px;
         line-height: 1.5;
     }
@@ -3181,7 +3181,7 @@ body,
 .guest-game-help-section {
     margin-top: 22px;
     padding-top: 20px;
-    border-top: 1px solid rgba(173, 221, 255, 0.1);
+    border-top: 1px solid rgba(213, 213, 211, 0.1);
 
     &:first-of-type {
         margin-top: 18px;

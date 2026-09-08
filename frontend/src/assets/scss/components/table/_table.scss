@@ -1,7 +1,7 @@
 .table-card {
-    background: radial-gradient(circle at center, #0d355e 0%, rgb(13, 54, 96) 50%, rgb(1, 14, 26) 100%);
+    background: radial-gradient(circle at center, #2f2f2d 0%, rgb(48, 48, 46) 50%, rgb(12, 12, 10) 100%);
     border-radius: var(--ui-radius);
-    border: 1px solid rgba(63, 103, 140, 0.5);
+    border: 1px solid rgba(97, 97, 95, 0.5);
     padding: 15px;
     width: 100%;
     max-width: 550px;
@@ -26,7 +26,7 @@
             top: -15px;
             left: 50%;
             transform: translateX(-50%); // Center horizontally and move up
-            background: #04162a;
+            background: #141412;
             color: var(--white-color);
             font-weight: bold;
             padding: 5px 50px;
@@ -53,12 +53,12 @@
             flex-direction: column;
             align-items: start;
             justify-content: center;
-            background-color: #03162A;
+            background-color: #131311;
             padding: 5px 25px;
             border-radius: var(--ui-radius);
             text-align: center;
             font-size: 20px;
-            color: #83F8FF;
+            color: #e0e0de;
 
             span {
                 width: 100%;
@@ -92,7 +92,7 @@
             background: #51FF89;
             border: none;
             border-radius: var(--ui-radius);
-            color: #03162A;
+            color: #131311;
             font-size: 22px;
             font-weight: bold;
             cursor: pointer;
@@ -110,12 +110,12 @@
             // right: 8px;
             height: 40px;
             width: 40px;
-            // background-color: #04162a;
+            // background-color: #141412;
             color: white;
             font-size: 14px;
             padding: 8px;
             border-radius: var(--ui-radius);
-            // border: 2px solid rgba(63, 103, 140, 0.5);
+            // border: 2px solid rgba(97, 97, 95, 0.5);
         }
     }
 }
