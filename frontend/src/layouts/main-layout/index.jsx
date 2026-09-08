@@ -126,7 +126,7 @@ function MainLayout({ children }) {
         >
             <div className='main-layout-background'></div>
             {!isGamePlay && !isLobby && !isSettingsPage && <HeaderPrivate />}
-            {!isGamePlay && <div className='lobby-topbar lobby-topbar--glass'>
+            {!isGamePlay && <div className='lobby-topbar'>
                     <Link to='/lobby' className='lobby-topbar__logo' aria-label="21 Hold'em home">
                         <img src={lobbyChipLogo} alt="21 Hold'em" className='lobby-topbar__logo-img' />
                     </Link>

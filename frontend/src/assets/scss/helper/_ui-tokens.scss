@@ -17,10 +17,10 @@
     --ui-gold-ink: #1b1005;
     --ui-border: #826338;
     --ui-border-gradient: linear-gradient(115deg, #5e421e, #c99744 28%, #fae1a0 42%, #745025 62%, #3b2b17 82%, #a37936);
-    --ui-blue-gradient: linear-gradient(165deg, rgba(57, 42, 25, 0.94), rgba(17, 13, 9, 0.98) 48%, rgba(5, 5, 4, 0.98));
-    --ui-gold-gradient: linear-gradient(165deg, #fff0bc 0%, var(--ui-gold-light) 12%, var(--ui-gold) 43%, #d69a36 52%, #e6b652 78%, var(--ui-gold-dark) 100%);
-    --ui-surface-gradient: linear-gradient(145deg, rgba(48, 36, 23, 0.92), rgba(15, 12, 9, 0.96) 38%, rgba(5, 5, 4, 0.96) 76%, rgba(29, 21, 12, 0.94));
-    --ui-shadow: inset 0 1px 0 rgba(255, 230, 161, 0.10), 0 10px 26px rgba(0, 0, 0, 0.48), 0 0 18px rgba(200, 139, 44, 0.05);
+    --ui-blue-gradient: linear-gradient(#14110c, #14110c);
+    --ui-gold-gradient: linear-gradient(var(--ui-gold), var(--ui-gold));
+    --ui-surface-gradient: linear-gradient(#0b0906, #0b0906);
+    --ui-shadow: none;
     --ui-focus: #ffe6a1;
     --ui-danger: #bb4858;
     --ui-success: #72c7a4;
