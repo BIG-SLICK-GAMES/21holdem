@@ -1,5 +1,6 @@
 import { loadStripe } from '@stripe/stripe-js';
 import { createPortal } from 'react-dom';
+import LobbyBannerCarousel from './LobbyBannerCarousel';
 import iconLobby from '../../assets/images/icons/lobby-menu/live-tables.png';
 import iconPrivate from '../../assets/images/icons/lobby-menu/private-table.png';
 import iconProfile from '../../assets/images/icons/working/profile (2).png';
@@ -1802,9 +1803,7 @@ const Dashboard = () => {
                         </button>
                     </header>
 
-                    <div className='dashboard-hub__lobby-banner'>
-                        <img src={profileLobbyBanner} alt='21 Holdem' />
-                    </div>
+                    <LobbyBannerCarousel />
 
                     <div className='dashboard-hub__tab-menu-anchor' ref={menuAnchorRef}>
                         {oPinnedMenu ? createPortal(oLobbyTabs, document.body) : oLobbyTabs}
