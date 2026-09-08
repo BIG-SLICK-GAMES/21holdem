@@ -1,0 +1,66 @@
+// One continuous lobby surface. Keep breathing room inside content, not between frames.
+body .dashboard-hub { --ui-divider: rgba(var(--ui-gold-rgb), 0.18); }
+body .dashboard-hub__shell { width: min(100%, 1120px); gap: 0; }
+body .dashboard-hub :is(.dashboard-hub__lobby-banner, .dashboard-hub__tab-menu-anchor,
+    .dashboard-hub__viewport, .dashboard-hub__tab-body, .dashboard-hub__tab-panel) { margin: 0; }
+body .dashboard-hub :is(.dashboard-hub__viewport-window, .dashboard-hub__tab-panels,
+    .dashboard-hub__settings-card) { padding: 0; }
+body .dashboard-hub :is(.dashboard-hub__tab-body, .dashboard-hub__tab-stack,
+    .dashboard-hub__tab-grid, .dashboard-hub__table-grid, .dashboard-hub__store-grid,
+    .dashboard-hub__profile-stats-grid, .dashboard-hub__settings-option-grid,
+    .dashboard-hub__desktop-grid, .dashboard-hub__desktop-card-body,
+    .dashboard-hub__desktop-profile-stats, .daily-rewards-calendar-board) { gap: 0; }
+
+body .dashboard-hub :is(.dashboard-hub__viewport, .dashboard-hub__tab-body,
+    .dashboard-hub__desktop-card, .dashboard-hub__settings-card,
+    .dashboard-hub__live-control-card, .dashboard-hub__table-card,
+    .dashboard-hub__table-row, .dashboard-hub__store-item, .dashboard-hub__profile-stat,
+    .dashboard-hub__profile-stage, .dashboard-hub__profile-stage-inner,
+    .dashboard-hub__guide-shell, .dashboard-hub__guide-step,
+    .dashboard-hub__private-room-card, .dashboard-hub__card-media,
+    .dashboard-hub__table-card-art, .dashboard-hub__lobby-banner,
+    .daily-rewards-page__calendar-shell, .daily-rewards-calendar__day) {
+    border: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+}
+body .dashboard-hub :is(.dashboard-hub__viewport, .dashboard-hub__tab-body,
+    .dashboard-hub__settings-card, .dashboard-hub__profile-stage)::before,
+body .dashboard-hub :is(.dashboard-hub__viewport, .dashboard-hub__tab-body,
+    .dashboard-hub__settings-card, .dashboard-hub__profile-stage)::after,
+body .dashboard-hub--themed-scene::after { display: none; }
+
+// Lightweight separators for lists and data, instead of individual boxes.
+body .dashboard-hub :is(.dashboard-hub__table-grid > li, .dashboard-hub__store-item,
+    .dashboard-hub__profile-stat, .daily-rewards-calendar__day) {
+    border-bottom: 1px solid var(--ui-divider) !important;
+}
+body .dashboard-hub :is(.dashboard-hub__settings-option, .dashboard-hub__guide-step) {
+    background: transparent !important;
+    border: 0 !important;
+    border-bottom: 1px solid var(--ui-divider) !important;
+    box-shadow: none !important;
+}
+body .dashboard-hub :is(.dashboard-hub__table-card, .dashboard-hub__settings-option):hover:not(:disabled) {
+    background: rgba(var(--ui-gold-rgb), 0.05) !important;
+}
+body .dashboard-hub .dashboard-hub__tab-body { padding: 12px 0 0; }
+body .dashboard-hub .dashboard-hub__live-label { padding: 0 12px 8px; }
+body .dashboard-hub .dashboard-hub__table-card { padding: 14px 12px; }
+body .dashboard-hub :is(.dashboard-hub__profile-stat, .dashboard-hub__store-item,
+    .dashboard-hub__settings-option) { padding: 16px; }
+
+// Connected controls keep their selected state and keyboard focus, without outer frames.
+body .dashboard-hub .ui-button-row, body .dashboard-hub__tab-menu {
+    border: 0;
+    border-bottom: 1px solid rgba(var(--ui-gold-rgb), 0.18);
+    box-shadow: none;
+    background: #090806;
+}
+body .dashboard-hub .ui-button-row > :is(button, a)[class],
+body .dashboard-hub__tab-menu > button { border-right-color: rgba(var(--ui-gold-rgb), 0.18) !important; }
+body .settings-detail__content {
+    border: 0 !important; background: transparent !important; box-shadow: none !important;
+}
