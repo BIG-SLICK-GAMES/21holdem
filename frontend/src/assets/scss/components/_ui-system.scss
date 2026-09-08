@@ -327,3 +327,19 @@ body :is(.dashboard-hub__viewport, .dashboard-hub__desktop-card,
 @media (prefers-reduced-transparency: reduce) {
     :root { --ui-surface-gradient: linear-gradient(180deg, #171715, #030303); }
 }
+
+body .lobby-banner-carousel {
+    .carousel, .carousel-inner, .carousel-item, .carousel-item > a { height: 100%; }
+    .carousel-item > a { display: block; }
+    .carousel-item img { object-fit: contain; }
+    .carousel-control-prev, .carousel-control-next { width: 7%; }
+    .carousel-indicators { margin-bottom: 12px; }
+    .carousel-indicators [data-bs-target] { background-color: var(--ui-gold); }
+    &__playback {
+        position: absolute; right: 12px; bottom: 10px; z-index: 3;
+        padding: 8px 12px; min-height: 44px;
+        background: rgba(0, 0, 0, 0.8); color: var(--ui-gold);
+        border: 1px solid var(--ui-border); border-radius: 0;
+    }
+    :is(a, button):focus-visible { outline: 2px solid var(--ui-gold); outline-offset: -3px; }
+}
