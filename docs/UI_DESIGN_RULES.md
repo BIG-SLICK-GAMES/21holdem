@@ -26,3 +26,7 @@ Palette sampled from `lobby_profile_banner.webp`: midnight navy `#000b23`,
 royal-blue chips `#1031a1`, metallic gold `#f7d06b`, silver lettering `#e5e4e4`
 and silver shadow `#aaa8a9`. Surface blues and gold gradient stops are tonal
 variants for readability. All lobby tabs use a black backdrop with animated gold bokeh. Controls use black glass and gold highlights; blue is retained only in original image artwork.
+
+Current theme takes its finish from `lobby_daily_bonus.png`: champagne highlights,
+ribbon-gold gradients, amber edge reflections, warm ivory text and smoked black glass.
+Theme changes must not alter markup, layout, spacing, sizes, fonts or corner geometry.

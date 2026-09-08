@@ -258,7 +258,7 @@ body .lobby-topbar .lobby-topbar__login--connected {
         width: clamp(70px, 12vw, 180px);
         aspect-ratio: 1;
         border-radius: 50%;
-        background: radial-gradient(circle, rgba(var(--ui-gold-rgb), 0.30), rgba(var(--ui-gold-rgb), 0.1) 48%, transparent 72%);
+        background: radial-gradient(circle, rgba(var(--ui-gold-rgb), 0.38), rgba(var(--ui-gold-rgb), 0.12) 48%, transparent 72%);
         filter: blur(5px);
         opacity: 0.7;
         animation: lobbyBokehDrift 23s ease-in-out infinite alternate;
@@ -302,7 +302,7 @@ body .lobby-topbar .lobby-topbar__login--connected {
     .cms-content, .transactions-container { padding: clamp(16px, 3vw, 32px); background: transparent; }
 }
 
-// Banner palette: midnight backdrop, royal-blue chips, metallic gold and silver.
+// Daily Bonus palette: black glass, amber atmosphere and ribbon-gold accents.
 body { background-color: #030303; }
 body .dashboard-hub--themed-scene {
     --dashboard-theme-rgb: var(--ui-gold-rgb);
@@ -343,3 +343,18 @@ body .lobby-banner-carousel {
     }
     :is(a, button):focus-visible { outline: 2px solid var(--ui-gold); outline-offset: -3px; }
 }
+
+// Theme-only finish: retain every component's existing geometry and layout.
+body :is(.dashboard-hub__section-title, .dashboard-hub__desktop-card-title,
+    .dashboard-hub__settings-title, .settings-detail h1, .modal-title) {
+    color: var(--ui-text);
+    text-shadow: 0 2px 12px rgba(var(--ui-gold-rgb), 0.16);
+}
+body :is(.dashboard-hub__cta, .dashboard-hub__signin-button--primary,
+    .dashboard-hub__desktop-cta--primary, .daily-rewards-calendar__claim,
+    .bsg-auth__submit):hover:not(:disabled) {
+    box-shadow: inset 0 1px 0 rgba(255, 244, 206, 0.65), 0 0 22px rgba(var(--ui-gold-rgb), 0.22) !important;
+}
+body :is(.dashboard-hub__lobby-banner, .dashboard-hub__table-card,
+    .dashboard-hub__private-room-card) { border-color: var(--ui-border); }
+body .ui-button-row { scrollbar-color: var(--ui-border) #030303; }
