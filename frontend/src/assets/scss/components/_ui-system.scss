@@ -261,7 +261,8 @@ body .lobby-topbar .lobby-topbar__login--connected {
         background: radial-gradient(circle, rgba(var(--ui-gold-rgb), 0.34) 0%, rgba(var(--ui-gold-rgb), 0.22) 42%, rgba(var(--ui-gold-rgb), 0.3) 48%, rgba(var(--ui-gold-rgb), 0.04) 55%, transparent 62%);
         filter: blur(1px);
         opacity: 0.7;
-        animation: lobbyBokehDrift 18s ease-in-out infinite alternate;
+        animation: lobbyBokehDrift 20s ease-in-out infinite alternate;
+        will-change: transform, opacity, filter;
     }
     i:nth-child(2n) { animation-duration: 22s; animation-direction: alternate-reverse; }
     i:nth-child(3n) { animation-duration: 26s; }
@@ -280,13 +281,15 @@ body .lobby-topbar .lobby-topbar__login--connected {
 }
 
 @keyframes lobbyBokehDrift {
-    0% { transform: translate3d(-18px, 16px, 0) scale(0.94); opacity: 0.5; }
-    50% { transform: translate3d(10px, -12px, 0) scale(1.02); opacity: 0.7; }
-    100% { transform: translate3d(28px, 8px, 0) scale(0.98); opacity: 0.6; }
+    0% { transform: translate3d(-24px, 18px, 0) scale(0.65); filter: blur(1px); opacity: 0.38; }
+    25% { transform: translate3d(12px, -26px, 0) scale(1.05); filter: blur(5px); opacity: 0.64; }
+    50% { transform: translate3d(38px, -12px, 0) scale(1.45); filter: blur(9px); opacity: 0.42; }
+    75% { transform: translate3d(8px, 32px, 0) scale(1.12); filter: blur(2px); opacity: 0.78; }
+    100% { transform: translate3d(-30px, 8px, 0) scale(0.8); filter: blur(0.5px); opacity: 0.5; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .dashboard-hub__bokeh i { animation: none; opacity: 0.35; }
+    .dashboard-hub__bokeh i { animation: none; filter: blur(1px); opacity: 0.35; will-change: auto; }
 }
 
 .settings-detail {
