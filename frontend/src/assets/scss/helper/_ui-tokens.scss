@@ -1,0 +1,29 @@
+// Single source of truth for application UI. See docs/UI_DESIGN_RULES.md.
+:root {
+    --ui-font: 'TT Commons', Arial, sans-serif;
+    --ui-blue-rgb: 148, 141, 124;
+    --ui-blue-deep-rgb: 3, 3, 3;
+    --ui-silver-rgb: 229, 228, 228;
+    --ui-radius: 0px;
+    --ui-blue: #242321;
+    --ui-blue-deep: #030303;
+    --ui-surface: #171715;
+    --ui-text: #e5e4e4;
+    --ui-text-muted: #bebbb3;
+    --ui-gold: #f7d06b;
+    --ui-gold-rgb: 247, 208, 107;
+    --ui-gold-light: #f9df95;
+    --ui-gold-dark: #d6a43d;
+    --ui-gold-ink: #211706;
+    --ui-border: #696761;
+    --ui-border-gradient: linear-gradient(110deg, #514f49, #aaa8a9 36%, #65635d 67%, #373632);
+    --ui-blue-gradient: linear-gradient(180deg, rgba(48, 47, 43, 0.9), rgba(7, 7, 6, 0.96));
+    --ui-gold-gradient: linear-gradient(180deg, var(--ui-gold-light), var(--ui-gold-dark));
+    --ui-surface-gradient: linear-gradient(150deg, rgba(42, 41, 37, 0.78), rgba(5, 5, 4, 0.92));
+    --ui-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    --ui-focus: #ded9cc;
+    --ui-danger: #bb4858;
+    --ui-success: #72c7a4;
+    --ui-control-height: 44px;
+    --ui-space: 8px;
+}

@@ -1,0 +1,43 @@
+{
+  "name": "nathan-reed-actions",
+  "character": "nathanreed",
+  "source": "generated from Nathan Reed DiceBear reference",
+  "image": "nathan-reed-actions-sprite-sheet-4x5.png",
+  "reference": "nathan-reed-reference.png",
+  "columns": 4,
+  "rows": 5,
+  "frameWidth": 320,
+  "frameHeight": 320,
+  "animations": {
+    "check": {
+      "row": 0,
+      "frames": [0, 1, 2, 3],
+      "frameDurationMs": 110,
+      "description": "Wink"
+    },
+    "raise": {
+      "row": 1,
+      "frames": [4, 5, 6, 7],
+      "frameDurationMs": 120,
+      "description": "Eyebrows lift and head nod"
+    },
+    "call": {
+      "row": 2,
+      "frames": [8, 9, 10, 11],
+      "frameDurationMs": 110,
+      "description": "Eyes squint"
+    },
+    "lose": {
+      "row": 3,
+      "frames": [12, 13, 14, 15],
+      "frameDurationMs": 130,
+      "description": "Doh reaction"
+    },
+    "win": {
+      "row": 4,
+      "frames": [16, 17, 18, 19],
+      "frameDurationMs": 120,
+      "description": "Smiles and yells yay"
+    }
+  }
+}

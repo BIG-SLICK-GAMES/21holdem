@@ -1,0 +1,1933 @@
+import { loadStripe } from '@stripe/stripe-js';
+import { createPortal } from 'react-dom';
+import iconLobby from '../../assets/images/icons/lobby-menu/live-tables.png';
+import iconPrivate from '../../assets/images/icons/lobby-menu/private-table.png';
+import iconProfile from '../../assets/images/icons/working/profile (2).png';
+import iconRewards from '../../assets/images/icons/lobby-menu/rewards.png';
+import iconShop from '../../assets/images/icons/working/shop.png';
+import iconSettings from '../../assets/images/icons/working/stats.png';
+import iconHowToPlay from '../../assets/images/icons/lobby-menu/how-to-play.png';
+import onboardingHost from '../../assets/images/onboarding/tutorial-host.webp';
+import onboardingLogo from '../../assets/images/splash/logo.png';
+import { chips1, chips2, chips3, chips4, chips5 } from 'assets/images/shop/shop';
+import { getDailyRewards, updateDailyRewards } from 'query/dailyRewards.query';
+import { getTables, joinTable } from 'query/gameTable.query';
+import { getProfile } from 'query/profile.query';
+import { buyChips, confirmPayment, getChips } from 'query/shop.query';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useLocation, useNavigate } from 'react-router-dom';
+import _ from 'scripts/helper';
+import DailyRewardsPanel from 'shared/components/DailyRewardsPanel';
+import { HOW_TO_PLAY_SECTIONS } from 'shared/content/gameGuideContent';
+import { DEFAULT_PROFILE_BANNER, getAvatarImageSrc } from 'shared/constants/builtInAvatars';
+import { getCookie, ReactToastify } from 'shared/utils';
+import { getBigSlickGamesUrl } from 'views/auth/authDestination';
+import dailyRewardsLobbyBackground from '../../assets/images/bg/daily_rewards_bg.webp';
+import dailyRewardsLightsVideo from '../../assets/videos/daily_rewards_lights.mp4';
+import liveTablesImage from '../../assets/images/bg/live_tables_lobby.webp';
+import profileLobbyBanner from '../../assets/images/bg/lobby_profile_banner.webp';
+import privateTableImage from '../../assets/images/bg/private_table.webp';
+import bigSlickGamesIcon from '../../assets/images/bsg/big-slick-games-cutout.webp';
+import twentyOneQuakeBanner from '../../assets/images/bsg-games/21-quake-banner.webp';
+import twentyOneQuakePoster from '../../assets/images/bsg-games/21-quake-poster.webp';
+import launch3001Banner from '../../assets/images/bsg-games/launch-3001-banner.webp';
+import launch3001Poster from '../../assets/images/bsg-games/launch-3001-poster.webp';
+import racingSuitsBanner from '../../assets/images/bsg-games/racing-suits-banner.webp';
+import racingSuitsIcon from '../../assets/images/bsg-games/racing-suits-icon.webp';
+
+function formatAmount(amount) {
+    return _.formatCurrencyWithComa(Number(amount) || 0);
+}
+
+function formatPercent(value) {
+    return `${Math.max(0, Math.round(Number(value) || 0))}%`;
+}
+
+function getBlindLabel(nMinBet) {
+    const nSmallBlind = Number(nMinBet) || 0;
+    const nBigBlind = nSmallBlind * 2;
+    return `${formatAmount(nSmallBlind)} / ${formatAmount(nBigBlind)}`;
+}
+
+function getActivePlayers(table) {
+    return Number(table?.nLiveParticipants) || Number(table?.nActivePlayers) || 0;
+}
+
+function getArrayPayload(value) {
+    return Array.isArray(value) ? value : [];
+}
+
+function getAvailableTableCount(table) {
+    return Math.max(Number(table?.nLiveTableCount) || 0, 1);
+}
+
+function hasPrivateTableAccess(profile = {}) {
+    return profile?.bIsMember === true;
+}
+
+const MEMBERS_AREA_APPROVAL_MESSAGE = 'Access to members area requires approval. Email bigslickgames@gmail.com for information.';
+
+function sortTablesByPriority(a, b) {
+    const nLiveTableDiff = Number(b?.nLiveTableCount || 0) - Number(a?.nLiveTableCount || 0);
+    if (nLiveTableDiff !== 0) return nLiveTableDiff;
+
+    const nPlayerDiff = getActivePlayers(b) - getActivePlayers(a);
+    if (nPlayerDiff !== 0) return nPlayerDiff;
+
+    const nBuyInDiff = Number(a?.nMinBuyIn || 0) - Number(b?.nMinBuyIn || 0);
+    if (nBuyInDiff !== 0) return nBuyInDiff;
+
+    return String(a?.sName || '').localeCompare(String(b?.sName || ''));
+}
+
+const PLAYER_OPTIONS = [4, 6, 9];
+const BUY_IN_OPTIONS = [1000, 5000, 15000, 20000];
+const DEFAULT_LOBBY_TAB_ID = 'lobby-live-tables';
+const LOBBY_TAB_IDS = ['lobby-live-tables', 'lobby-how-to-play', 'lobby-bsg-games', 'lobby-missions', 'lobby-private-table', 'lobby-player-profile', 'lobby-shop', 'lobby-settings'];
+const ONBOARDING_STORAGE_KEY = '21holdem:onboarding:v1';
+const TABLE_SEAT_COLORS = ['#d4af6a', '#58c7ff', '#ff6b8a', '#7ee081', '#c38cff', '#ffb15c', '#5eead4', '#f7e36b', '#9bb6ff'];
+const LAUNCH_3001_URL = 'https://launch3001.netlify.app';
+const BSG_GAME_PLACEHOLDERS = [
+    { title: '21 Quake', status: 'In Dev', mark: '21Q', theme: 'quake', imageSrc: twentyOneQuakePoster },
+    { title: 'Launch 3001', status: 'Beta', mark: '3001', theme: 'launch-3001', imageSrc: launch3001Poster, playUrl: LAUNCH_3001_URL },
+    { title: 'Racing Suits', status: 'In Dev', mark: 'RS', theme: 'racing-suits', imageSrc: racingSuitsIcon },
+];
+const BSG_FEATURED_GAMES = [
+    {
+        title: 'Racing Suits',
+        eyebrow: 'Featured Game',
+        subtitle: 'Card suits hit the racing line.',
+        theme: 'racing-suits',
+        bannerSrc: racingSuitsBanner,
+    },
+    {
+        title: '21 Quake',
+        eyebrow: 'Coming Soon',
+        subtitle: 'Stack tiles. Hit 21. Survive the quake.',
+        theme: 'quake',
+        bannerSrc: twentyOneQuakeBanner,
+    },
+    {
+        title: 'Launch 3001',
+        eyebrow: 'Beta Live',
+        subtitle: 'Play across mobile, PC, and VR.',
+        theme: 'launch-3001',
+        bannerSrc: launch3001Banner,
+        platforms: ['Mobile', 'PC', 'VR'],
+        playUrl: LAUNCH_3001_URL,
+    },
+];
+const stripePromise = process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY
+    ? loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY)
+    : Promise.resolve(null);
+
+function hashSeed(seed = '') {
+    return String(seed || '21-holdem')
+        .split('')
+        .reduce((hash, char) => ((hash * 31) + char.charCodeAt(0)) % 2147483647, 11);
+}
+
+function getSeatInitials(seed, index) {
+    const sCleanSeed = String(seed || 'PLAYER').replace(/[^a-zA-Z0-9]/g, '').toUpperCase() || 'PLAYER';
+    const nSeedLength = sCleanSeed.length;
+    const sFirst = sCleanSeed[index % nSeedLength] || 'P';
+    const sSecond = sCleanSeed[(nSeedLength - 1 - index + nSeedLength) % nSeedLength] || 'L';
+    return `${sFirst}${sSecond}`;
+}
+
+function getTableSeatMarkers(table) {
+    const nSeatCount = Math.max(0, Number(table?.nMaxPlayer) || 0);
+    if (!nSeatCount) return [];
+
+    const sSeed = `${table?._id || table?.sName || table?.nMaxPlayer || 'table'}`;
+    const nStartIndex = Math.abs(hashSeed(sSeed)) % TABLE_SEAT_COLORS.length;
+
+    return Array.from({ length: nSeatCount }, (_, index) => ({
+        initials: getSeatInitials(sSeed, index),
+        color: TABLE_SEAT_COLORS[(nStartIndex + index) % TABLE_SEAT_COLORS.length],
+    }));
+}
+
+function getShopChipImage(nChips) {
+    if (Number(nChips) <= 100) return chips1;
+    if (Number(nChips) <= 500) return chips2;
+    if (Number(nChips) <= 1000) return chips3;
+    if (Number(nChips) <= 2500) return chips4;
+    return chips5;
+}
+
+function formatStorePrice(nPrice, sCurrency = 'USD') {
+    const nNumericPrice = Number(nPrice);
+    if (!Number.isFinite(nNumericPrice)) return `${nPrice ?? '-'}`;
+
+    try {
+        return new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: sCurrency || 'USD',
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+        }).format(nNumericPrice);
+    } catch (error) {
+        return `$${nNumericPrice.toFixed(2)}`;
+    }
+}
+
+function getDefaultSeatCount(tables) {
+    return PLAYER_OPTIONS.find(nSeatCount =>
+        (tables || []).some(table => Number(table.nMaxPlayer) === nSeatCount)
+    ) || PLAYER_OPTIONS[0];
+}
+
+function getDefaultBuyIn(tables, nSeatCount) {
+    const aBuyInOptions = getBuyInOptions(tables);
+    return aBuyInOptions.find(nBuyIn =>
+        (tables || []).some(
+            table => Number(table.nMaxPlayer) === nSeatCount && Number(table.nMinBuyIn) === nBuyIn
+        )
+    ) || aBuyInOptions[0] || BUY_IN_OPTIONS[0];
+}
+
+function getBuyInOptions(tables) {
+    return Array.from(new Set([
+        ...BUY_IN_OPTIONS,
+        ...(tables || []).map(table => Number(table?.nMinBuyIn) || 0),
+    ].filter(Boolean))).sort((firstBuyIn, secondBuyIn) => firstBuyIn - secondBuyIn);
+}
+
+const Dashboard = () => {
+    const dashboardRef = useRef(null);
+    const navigate = useNavigate();
+    const location = useLocation();
+    const queryClient = useQueryClient();
+    const [sActiveTab, setActiveTab] = useState(DEFAULT_LOBBY_TAB_ID);
+    const [, setActiveSeatCount] = useState(PLAYER_OPTIONS[0]);
+    const [nActiveBuyIn, setActiveBuyIn] = useState(BUY_IN_OPTIONS[0]);
+    const [bHasAdjustedFilters, setHasAdjustedFilters] = useState(false);
+    const [nBsgFeatureIndex, setBsgFeatureIndex] = useState(0);
+    const [nHowToPlayStep, setHowToPlayStep] = useState(0);
+    const [aFallbackTablesData, setFallbackTablesData] = useState([]);
+    const [bIsJoiningTable, setIsJoiningTable] = useState(false);
+    const [sOnboardingStep, setOnboardingStep] = useState('hidden');
+    const menuAnchorRef = useRef(null);
+    const tabMenuRef = useRef(null);
+    const [oPinnedMenu, setPinnedMenu] = useState(null);
+
+    useEffect(() => {
+        const anchor = menuAnchorRef.current;
+        const topbar = document.querySelector('.lobby-topbar');
+        if (!anchor) return undefined;
+        let frame = 0;
+        const updateMenuPosition = () => {
+            frame = 0;
+            const rect = anchor.getBoundingClientRect();
+            const top = Math.max(0, topbar?.getBoundingClientRect().bottom || 0);
+            const height = tabMenuRef.current?.getBoundingClientRect().height || 50;
+            anchor.style.minHeight = `${height}px`;
+            const next = rect.top < top ? { top, left: rect.left, width: rect.width } : null;
+            setPinnedMenu((previous) => {
+                if (previous?.top === next?.top && previous?.left === next?.left && previous?.width === next?.width) return previous;
+                return next;
+            });
+        };
+        const scheduleUpdate = () => {
+            if (!frame) frame = window.requestAnimationFrame(updateMenuPosition);
+        };
+        const observer = new ResizeObserver(scheduleUpdate);
+        observer.observe(anchor);
+        if (topbar) observer.observe(topbar);
+        window.addEventListener('scroll', scheduleUpdate, { passive: true, capture: true });
+        window.addEventListener('resize', scheduleUpdate);
+        updateMenuPosition();
+        return () => {
+            window.cancelAnimationFrame(frame);
+            observer.disconnect();
+            window.removeEventListener('scroll', scheduleUpdate, true);
+            window.removeEventListener('resize', scheduleUpdate);
+        };
+    }, []);
+
+    const bIsSignedIn = Boolean(getCookie('sAuthToken'));
+
+    const { data: tablesData = [], isLoading: isDataTableLoading, refetch: refetchTables } = useQuery('getTables', () => getTables('public'), {
+        select: (data) => getArrayPayload(data?.data?.data),
+        onError: (error) => {
+            ReactToastify(error?.response?.data?.message || 'Unable to load tables', 'error');
+        },
+    });
+
+    const { data: signedInProfileData } = useQuery('profileData', getProfile, {
+        enabled: bIsSignedIn,
+        select: (data) => data?.data?.data || null,
+        onError: (error) => {
+        },
+    });
+
+    const profileData = bIsSignedIn ? signedInProfileData : null;
+
+    const { data: dataDailyRewards } = useQuery('getDailyRewards', getDailyRewards, {
+        enabled: bIsSignedIn,
+        select: (data) => data?.data?.data || null,
+        onError: (error) => {
+        },
+    });
+
+    const { data: aShopItems = [], isLoading: isShopLoading } = useQuery('getChips', getChips, {
+        select: (data) => getArrayPayload(data?.data?.data),
+        onError: (error) => {
+            ReactToastify(error?.response?.data?.message || 'Unable to load store items', 'error');
+        },
+    });
+
+    const joinTableLoading = bIsJoiningTable;
+
+    const joinTableMutate = async (sTableId) => {
+        if (!bIsSignedIn) {
+            navigate('/login');
+            return;
+        }
+        if (!sTableId || bIsJoiningTable) return;
+
+        setIsJoiningTable(true);
+        try {
+            const data = await joinTable(sTableId);
+            if (data.status === 200) {
+                navigate('/game', { state: { sAuthToken: getCookie('sAuthToken'), iBoardId: data.data.data.iBoardId } });
+            }
+        } catch (error) {
+            const sResponseMessage = error?.response?.data?.message || '';
+            if (/maximum limit of joining boards/i.test(sResponseMessage)) {
+                try {
+                    const profileResponse = await getProfile();
+                    const sActiveBoardId = profileResponse?.data?.data?.aPokerBoard?.[0] || profileData?.aPokerBoard?.[0];
+                    if (sActiveBoardId) {
+                        navigate('/game', { state: { sAuthToken: getCookie('sAuthToken'), iBoardId: sActiveBoardId } });
+                        return;
+                    }
+                } catch (profileError) {
+                }
+            }
+            ReactToastify(error?.response?.data?.message || 'Unable to join table', 'error');
+            queryClient.invalidateQueries('getTables');
+        } finally {
+            setIsJoiningTable(false);
+        }
+    };
+
+    const handleJoinTable = async (table) => {
+        if (joinTableLoading) return;
+        if (!bIsSignedIn) {
+            navigate('/login');
+            return;
+        }
+
+        const sActiveBoardId = profileData?.aPokerBoard?.[0];
+        if (sActiveBoardId) {
+            navigate('/game', { state: { sAuthToken: getCookie('sAuthToken'), iBoardId: sActiveBoardId } });
+            return;
+        }
+
+        const sTableId = table?._id || table?.id;
+        if (sTableId) {
+            joinTableMutate(sTableId);
+            return;
+        }
+
+        try {
+            await refetchTables();
+            const response = await getTables();
+            const aRefetchedTables = getArrayPayload(response?.data?.data).filter(Boolean).sort(sortTablesByPriority);
+            const oFallbackTable = (
+                aRefetchedTables.find(oTable => Number(oTable.nMinBuyIn) === nActiveBuyIn) ||
+                aRefetchedTables[0]
+            );
+            const sFallbackTableId = oFallbackTable?._id || oFallbackTable?.id;
+
+            if (sFallbackTableId) {
+                joinTableMutate(sFallbackTableId);
+                return;
+            }
+
+            ReactToastify('Tables are still loading. Try again in a moment.', 'error');
+        } catch (error) {
+            ReactToastify(error?.response?.data?.message || 'Unable to load tables', 'error');
+        }
+    };
+
+    const { mutate: mutateDailyRewardsClaimed, isLoading: isClaimingReward } = useMutation(updateDailyRewards, {
+        onSuccess: (response) => {
+            if (response?.status === 200) {
+                ReactToastify(response?.data?.message, 'success');
+                queryClient.invalidateQueries('profileData');
+                queryClient.invalidateQueries('getDailyRewards');
+                return;
+            }
+
+            ReactToastify(response?.data?.message || 'Unable to claim reward', 'error');
+        },
+        onError: (error) => {
+            queryClient.invalidateQueries('getDailyRewards');
+            ReactToastify(error?.response?.data?.message || 'Unable to claim reward', 'error');
+        },
+    });
+
+    const { mutate: mutateBuyChips, isLoading: isBuyingShopItem } = useMutation(buyChips, {
+        onSuccess: async (response) => {
+            const payload = response?.data;
+
+            if (response?.status === 200 && payload?.data?.sessionId) {
+                const stripe = await stripePromise;
+                if (!stripe) {
+                    if (payload?.data?.checkoutUrl) {
+                        window.location.assign(payload.data.checkoutUrl);
+                        return;
+                    }
+                    ReactToastify('Stripe publishable key is not configured and checkout URL was not returned', 'error');
+                    return;
+                }
+                const { error } = await stripe.redirectToCheckout({ sessionId: payload.data.sessionId });
+                if (error && payload?.data?.checkoutUrl) {
+                    window.location.assign(payload.data.checkoutUrl);
+                    return;
+                }
+                if (error) ReactToastify(error.message || 'Stripe redirect failed', 'error');
+                return;
+            }
+
+            if (payload?.status === 200 || response?.status === 200) {
+                ReactToastify(payload?.message || 'Purchase successful', 'success');
+                queryClient.invalidateQueries('profileData');
+                queryClient.invalidateQueries('getProfile');
+                queryClient.invalidateQueries('getChips');
+                return;
+            }
+
+            ReactToastify(payload?.message || 'Unable to complete purchase', 'error');
+        },
+        onError: (error) => {
+            ReactToastify(error?.response?.data?.message || 'Unable to complete purchase', 'error');
+        },
+    });
+
+    const aSafeShopItems = useMemo(() => getArrayPayload(aShopItems).filter(Boolean), [aShopItems]);
+    const aSortedTables = useMemo(() => (
+        getArrayPayload(tablesData).length ? getArrayPayload(tablesData) : getArrayPayload(aFallbackTablesData)
+    )
+            .filter(Boolean)
+            .sort(sortTablesByPriority)
+    , [aFallbackTablesData, tablesData]);
+    const aBuyInOptions = useMemo(() => getBuyInOptions(aSortedTables), [aSortedTables]);
+    const nActiveBsgFeatureIndex = ((nBsgFeatureIndex % BSG_FEATURED_GAMES.length) + BSG_FEATURED_GAMES.length) % BSG_FEATURED_GAMES.length;
+    const oActiveBsgFeature = BSG_FEATURED_GAMES[nActiveBsgFeatureIndex] || BSG_FEATURED_GAMES[0];
+
+    useEffect(() => {
+        if (BSG_FEATURED_GAMES.length <= 1) return undefined;
+
+        const nTimerId = window.setInterval(() => {
+            setBsgFeatureIndex((nIndex) => (nIndex + 1) % BSG_FEATURED_GAMES.length);
+        }, 7000);
+
+        return () => window.clearInterval(nTimerId);
+    }, []);
+
+    useEffect(() => {
+        let bIsMounted = true;
+        const nFallbackTimer = window.setTimeout(async () => {
+            if (getArrayPayload(tablesData).length) return;
+
+            try {
+                const response = await getTables();
+                if (bIsMounted) setFallbackTablesData(getArrayPayload(response?.data?.data));
+            } catch (error) {
+            }
+        }, 1500);
+
+        return () => {
+            bIsMounted = false;
+            window.clearTimeout(nFallbackTimer);
+        };
+    }, [tablesData]);
+
+    useEffect(() => {
+        if (bHasAdjustedFilters || !aSortedTables.length) return;
+
+        const nDefaultSeatCount = getDefaultSeatCount(aSortedTables);
+        const nDefaultBuyIn = getDefaultBuyIn(aSortedTables, nDefaultSeatCount);
+
+        setActiveSeatCount(nDefaultSeatCount);
+        setActiveBuyIn(nDefaultBuyIn);
+    }, [aSortedTables, bHasAdjustedFilters]);
+
+    useEffect(() => {
+        if (typeof window === 'undefined') return undefined;
+        const bShouldSkipOnboarding = window.localStorage.getItem(ONBOARDING_STORAGE_KEY) === 'complete'
+            || LOBBY_TAB_IDS.includes(new URLSearchParams(window.location.search).get('tab'));
+        if (bShouldSkipOnboarding) {
+            setOnboardingStep('hidden');
+            return undefined;
+        }
+
+        setOnboardingStep('splash');
+        const nSplashTimer = window.setTimeout(() => {
+            setOnboardingStep('choice');
+        }, 2000);
+
+        return () => window.clearTimeout(nSplashTimer);
+    }, []);
+
+    useEffect(() => {
+        const sRequestedTab = new URLSearchParams(location.search).get('tab');
+        if (LOBBY_TAB_IDS.includes(sRequestedTab)) {
+            setActiveTab(sRequestedTab);
+            return;
+        }
+        setActiveTab(DEFAULT_LOBBY_TAB_ID);
+    }, [location.search]);
+
+    useEffect(() => {
+        const oParams = new URLSearchParams(location.search);
+        const sCheckoutStatus = oParams.get('checkout');
+        const sSessionId = oParams.get('session_id');
+        if (sCheckoutStatus !== 'success' || !sSessionId) return;
+
+        confirmPayment({ session_id: sSessionId })
+            .then((response) => {
+                ReactToastify(response?.data?.message || 'Payment confirmed', 'success');
+                queryClient.invalidateQueries('profileData');
+                queryClient.invalidateQueries('getProfile');
+                queryClient.invalidateQueries('getChips');
+            })
+            .catch((error) => {
+                ReactToastify(error?.response?.data?.message || 'Unable to confirm payment', 'error');
+            })
+            .finally(() => {
+                oParams.delete('checkout');
+                oParams.delete('session_id');
+                navigate(`/lobby?${oParams.toString()}`, { replace: true });
+            });
+    }, [location.search, navigate, queryClient]);
+
+    useEffect(() => {
+        const dashboardNode = dashboardRef.current;
+        if (!dashboardNode || typeof window === 'undefined') return undefined;
+        if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return undefined;
+
+        let nFrame = 0;
+        let fnDetachOrientationListener = null;
+
+        const applyTilt = (nX, nY, nRotate = 0) => {
+            const nShiftX = Math.max(-12, Math.min(12, Number(nX) || 0));
+            const nShiftY = Math.max(-12, Math.min(12, Number(nY) || 0));
+            const nGlowX = Math.max(18, Math.min(82, 50 + (nShiftX * 2.4)));
+            const nGlowY = Math.max(18, Math.min(82, 50 + (nShiftY * 3.1)));
+
+            if (nFrame) window.cancelAnimationFrame(nFrame);
+            nFrame = window.requestAnimationFrame(() => {
+                dashboardNode.style.setProperty('--dashboard-tilt-shift-x', `${nShiftX.toFixed(2)}px`);
+                dashboardNode.style.setProperty('--dashboard-tilt-shift-y', `${nShiftY.toFixed(2)}px`);
+                dashboardNode.style.setProperty('--dashboard-tilt-glow-x', `${nGlowX.toFixed(1)}%`);
+                dashboardNode.style.setProperty('--dashboard-tilt-glow-y', `${nGlowY.toFixed(1)}%`);
+                dashboardNode.style.setProperty('--dashboard-tilt-rotate', `${nRotate.toFixed(2)}deg`);
+            });
+        };
+
+        const resetTilt = () => applyTilt(0, 0, 0);
+
+        const handlePointerMove = (event) => {
+            const oRect = dashboardNode.getBoundingClientRect();
+            if (!oRect.width || !oRect.height) return;
+
+            const nRelativeX = ((event.clientX - oRect.left) / oRect.width) - 0.5;
+            const nRelativeY = ((event.clientY - oRect.top) / oRect.height) - 0.5;
+
+            applyTilt(nRelativeX * 14, nRelativeY * 12, nRelativeX * 18);
+        };
+
+        const handlePointerLeave = () => resetTilt();
+
+        const startOrientationListener = () => {
+            if (fnDetachOrientationListener) return;
+
+            const handleDeviceOrientation = (event) => {
+                if (typeof event.gamma !== 'number' && typeof event.beta !== 'number') return;
+
+                const nGamma = Math.max(-18, Math.min(18, Number(event.gamma) || 0));
+                const nBeta = Math.max(-18, Math.min(18, Number(event.beta) || 0));
+
+                applyTilt(nGamma * 0.65, nBeta * 0.45, nGamma * 1.2);
+            };
+
+            window.addEventListener('deviceorientation', handleDeviceOrientation, true);
+            fnDetachOrientationListener = () => window.removeEventListener('deviceorientation', handleDeviceOrientation, true);
+        };
+
+        const handleMotionUnlock = async () => {
+            const oDeviceOrientation = window.DeviceOrientationEvent;
+            if (!oDeviceOrientation || typeof oDeviceOrientation.requestPermission !== 'function') return;
+
+            try {
+                const sPermission = await oDeviceOrientation.requestPermission();
+                if (sPermission === 'granted') {
+                    startOrientationListener();
+                }
+            } catch (error) {
+            }
+        };
+
+        const oDeviceOrientation = window.DeviceOrientationEvent;
+        if (oDeviceOrientation && typeof oDeviceOrientation.requestPermission === 'function') {
+            dashboardNode.addEventListener('pointerdown', handleMotionUnlock, { passive: true, once: true });
+        } else if (oDeviceOrientation) {
+            startOrientationListener();
+        }
+
+        dashboardNode.addEventListener('pointermove', handlePointerMove);
+        dashboardNode.addEventListener('pointerleave', handlePointerLeave);
+        resetTilt();
+
+        return () => {
+            dashboardNode.removeEventListener('pointermove', handlePointerMove);
+            dashboardNode.removeEventListener('pointerleave', handlePointerLeave);
+            dashboardNode.removeEventListener('pointerdown', handleMotionUnlock);
+            if (fnDetachOrientationListener) fnDetachOrientationListener();
+            if (nFrame) window.cancelAnimationFrame(nFrame);
+        };
+    }, []);
+
+    const aFilteredTables = useMemo(() => (
+        aSortedTables.filter(table => (
+            Number(table.nMinBuyIn) === nActiveBuyIn
+        ))
+    ), [aSortedTables, nActiveBuyIn]);
+    const aVisibleTables = aFilteredTables.length ? aFilteredTables : aSortedTables;
+
+    const oBuyInPlayerCounts = useMemo(() => (
+        aSortedTables.reduce((accumulator, table) => {
+            const nKey = Number(table.nMinBuyIn) || 0;
+            accumulator[nKey] = (accumulator[nKey] || 0) + getActivePlayers(table);
+            return accumulator;
+        }, {})
+    ), [aSortedTables]);
+
+    const nGamesPlayed = Number(profileData?.nGamePlayed) || 0;
+    const nGamesWon = Number(profileData?.nGameWon) || 0;
+    const nWinRate = nGamesPlayed ? Math.round((nGamesWon / nGamesPlayed) * 100) : 0;
+    const nTotalBetAmount = Number(profileData?.nTotalBetAmount) || 0;
+    const nTotalWinnings = Number(profileData?.nTotalWinningAmount) || 0;
+    const nBiggestWin = Number(
+        profileData?.nBiggestWin ??
+        profileData?.nBiggestWinningAmount ??
+        profileData?.nLargestWin ??
+        profileData?.nBestWin ??
+        0
+    ) || 0;
+    const nNetResult = nTotalWinnings - nTotalBetAmount;
+    const nChipsPurchased = Number(
+        profileData?.nChipsPurchased ??
+        profileData?.nTotalChipsPurchased ??
+        profileData?.nPurchasedChips ??
+        profileData?.nTotalPurchasedChips ??
+        0
+    ) || 0;
+    const aProfileStats = [
+        { label: 'Hands Played', value: nGamesPlayed },
+        { label: 'Hands Won', value: nGamesWon },
+        { label: 'Win %', value: formatPercent(nWinRate) },
+        { label: 'Biggest Win', value: nBiggestWin ? formatAmount(nBiggestWin) : '--' },
+        { label: 'Total Winnings', value: formatAmount(nTotalWinnings) },
+        { label: 'Net Result', value: formatAmount(nNetResult) },
+        { label: 'Chips Purchased', value: nChipsPurchased ? formatAmount(nChipsPurchased) : '--' },
+    ];
+    const bPrivateTablesUnlocked = hasPrivateTableAccess(profileData);
+    const sDisplayName = profileData?.sUserName || 'Guest';
+    const sAvatarSrc = getAvatarImageSrc(profileData?.sAvatar, profileData?.sUserName);
+    const aRewards = dataDailyRewards?.rewards?.length ? dataDailyRewards.rewards : [1000, 2500, 5000, 7500, 10000, 12500, 15000];
+    const nEligibleDay = Number(dataDailyRewards?.eligibleDay) || 1;
+    const bTodayRewardClaimed = Boolean(dataDailyRewards?.bTodayRewardClaimed);
+    const aHowToPlayMessages = [
+        {
+            title: "What is 21 Hold'em?",
+            message: "21 Hold'em is blackjack pressure on a Hold'em-style table.",
+            visual: 'logo',
+        },
+        {
+            title: 'One Private Card',
+            message: 'You get one private hole card before the board opens.',
+            visual: 'hole',
+        },
+        {
+            title: 'Community Cards',
+            message: "Shared cards hit the table and change every player's total.",
+            visual: 'community',
+        },
+        {
+            title: 'Make Your Move',
+            message: 'Bet, check, raise, double down or stand as the hand develops.',
+            visual: 'moves',
+        },
+        {
+            title: 'Get 21. Win.',
+            message: 'Get closer to 21 than everyone else without going bust.',
+            visual: 'win',
+        },
+    ];
+    const oActiveHowToPlayMessage = aHowToPlayMessages[nHowToPlayStep] || aHowToPlayMessages[0];
+    const bHasMoreHowToPlayMessages = nHowToPlayStep < aHowToPlayMessages.length - 1;
+
+    const oProfileStageStyle = useMemo(() => ({ '--profile-stage-image': `url("${sAvatarSrc || DEFAULT_PROFILE_BANNER}")` }), [sAvatarSrc]);
+
+    const getBuyInPlayerCount = (nBuyIn) => (
+        oBuyInPlayerCounts[Number(nBuyIn) || 0] || 0
+    );
+
+    const aQuickNavItems = useMemo(() => ([
+        {
+            id: 'lobby-live-tables',
+            label: 'Play',
+            iconSrc: iconLobby,
+            kind: 'tab',
+            theme: {
+                '--dashboard-theme-rgb': '48, 91, 166',
+                '--dashboard-theme-soft-rgb': '18, 38, 92',
+                '--dashboard-theme-accent-rgb': '130, 190, 255',
+            },
+        },
+        {
+            id: 'lobby-how-to-play',
+            label: 'Learn',
+            iconSrc: iconHowToPlay,
+            kind: 'tab',
+            theme: {
+                '--dashboard-theme-rgb': '48, 142, 217',
+                '--dashboard-theme-soft-rgb': '15, 44, 86',
+                '--dashboard-theme-accent-rgb': '118, 229, 255',
+            },
+        },
+        {
+            id: 'lobby-bsg-games',
+            label: 'BSG Games',
+            iconSrc: bigSlickGamesIcon,
+            kind: 'tab',
+            theme: {
+                '--dashboard-theme-rgb': '213, 93, 30',
+                '--dashboard-theme-soft-rgb': '65, 65, 65',
+                '--dashboard-theme-accent-rgb': '255, 143, 52',
+            },
+        },
+        {
+            id: 'lobby-missions',
+            label: 'Rewards',
+            iconSrc: iconRewards,
+            kind: 'tab',
+            theme: {
+                '--dashboard-theme-rgb': '226, 169, 35',
+                '--dashboard-theme-soft-rgb': '108, 66, 12',
+                '--dashboard-theme-accent-rgb': '255, 226, 122',
+            },
+        },
+        {
+            id: 'lobby-private-table',
+            label: 'Private',
+            iconSrc: iconPrivate,
+            kind: 'tab',
+            theme: {
+                '--dashboard-theme-rgb': '163, 53, 54',
+                '--dashboard-theme-soft-rgb': '92, 24, 30',
+                '--dashboard-theme-accent-rgb': '255, 154, 132',
+            },
+        },
+        {
+            id: 'lobby-player-profile',
+            label: 'Stats',
+            iconSrc: iconProfile,
+            kind: 'tab',
+            theme: {
+                '--dashboard-theme-rgb': '188, 107, 33',
+                '--dashboard-theme-soft-rgb': '96, 48, 18',
+                '--dashboard-theme-accent-rgb': '255, 198, 112',
+            },
+        },
+        {
+            id: 'lobby-shop',
+            label: 'Shop',
+            iconSrc: iconShop,
+            kind: 'tab',
+            theme: {
+                '--dashboard-theme-rgb': '51, 165, 86',
+                '--dashboard-theme-soft-rgb': '20, 91, 52',
+                '--dashboard-theme-accent-rgb': '147, 255, 180',
+            },
+        },
+        {
+            id: 'lobby-settings',
+            label: 'Settings',
+            iconSrc: iconSettings,
+            kind: 'tab',
+            theme: {
+                '--dashboard-theme-rgb': '89, 126, 181',
+                '--dashboard-theme-soft-rgb': '36, 58, 105',
+                '--dashboard-theme-accent-rgb': '174, 210, 255',
+            },
+        },
+    ]), []);
+    const aMenuNavItems = useMemo(() => (
+        aQuickNavItems.filter((item) => !['lobby-bsg-games', 'lobby-player-profile', 'lobby-shop', 'lobby-settings'].includes(item.id))
+    ), [aQuickNavItems]);
+
+    const oActiveNavItem = aQuickNavItems.find((item) => item.id === sActiveTab) || aQuickNavItems[0];
+
+    const getLobbyIconBackgroundStyle = (sItemId) => {
+        const oItem = aQuickNavItems.find((item) => item.id === sItemId);
+        return oItem?.iconSrc ? { '--dashboard-page-icon': `url("${oItem.iconSrc}")` } : undefined;
+    };
+
+    const oActiveLobbyIconBackgroundStyle = oActiveNavItem?.iconSrc
+        ? {
+            '--dashboard-page-icon': `url("${oActiveNavItem.iconSrc}")`,
+            '--dashboard-live-tables-image': `url("${liveTablesImage}")`,
+            ...(oActiveNavItem.theme || {}),
+        }
+        : undefined;
+    const sActiveSceneName = (sActiveTab || '').replace(/^lobby-/, '').replace(/[^a-z0-9]+/g, '-');
+    const sDashboardSceneClass = ` dashboard-hub--themed-scene dashboard-hub--scene-${sActiveSceneName}`;
+
+    useEffect(() => {
+        if (typeof document === 'undefined') return undefined;
+
+        const rootStyle = document.documentElement.style;
+        const theme = oActiveNavItem?.theme || {};
+        Object.entries(theme).forEach(([key, value]) => {
+            rootStyle.setProperty(key, value);
+        });
+
+        return () => {
+            Object.keys(theme).forEach((key) => rootStyle.removeProperty(key));
+        };
+    }, [oActiveNavItem]);
+
+    const oBestValueShopItem = useMemo(() => (
+        aSafeShopItems.reduce((oBestItem, item) => {
+            const nChips = Number(item?.nChips) || 0;
+            const nPrice = Number(item?.nPrice) || 0;
+            if (!nChips || !nPrice) return oBestItem;
+
+            if (!oBestItem) return item;
+
+            const nBestRatio = (Number(oBestItem?.nChips) || 0) / (Number(oBestItem?.nPrice) || 1);
+            return (nChips / nPrice) > nBestRatio ? item : oBestItem;
+        }, null)
+    ), [aSafeShopItems]);
+
+    const handleQuickNavSelect = (item, { bScrollDesktop = false } = {}) => {
+        if (item?.path) {
+            navigate(item.path);
+            return;
+        }
+
+        setActiveTab(item.id);
+        const oParams = new URLSearchParams(location.search);
+        oParams.set('tab', item.id);
+        navigate(`/lobby?${oParams.toString()}`, { replace: true });
+        if (!bScrollDesktop || typeof document === 'undefined') return;
+
+        const oPanel = document.getElementById(`${item.id}-desktop-card`);
+        if (oPanel) {
+            oPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+        }
+    };
+
+    const completeOnboarding = (sNextTab, { bNeverShowAgain = false } = {}) => {
+        if (typeof window !== 'undefined' && bNeverShowAgain) {
+            window.localStorage.setItem(ONBOARDING_STORAGE_KEY, 'complete');
+        }
+
+        setOnboardingStep('hidden');
+        const oNextItem = aQuickNavItems.find((item) => item.id === sNextTab);
+        if (oNextItem) {
+            handleQuickNavSelect(oNextItem);
+        }
+    };
+
+    const handleReturnToHub = () => {
+        window.location.assign(getBigSlickGamesUrl());
+    };
+
+    const handleBuyInChange = (nBuyIn) => {
+        setHasAdjustedFilters(true);
+        setActiveBuyIn(Number(nBuyIn) || aBuyInOptions[0] || BUY_IN_OPTIONS[0]);
+    };
+
+    const handlePrivateTablesClick = () => {
+        if (!bIsSignedIn) { navigate('/login'); return; }
+        if (!bPrivateTablesUnlocked) {
+            ReactToastify(MEMBERS_AREA_APPROVAL_MESSAGE, 'error');
+            return;
+        }
+        navigate('/private-table');
+    };
+
+    const handleBuyShopItem = (item) => {
+        if (!bIsSignedIn) { navigate('/login'); return; }
+        if (!item?.nPrice) return;
+        mutateBuyChips({ nPrice: item.nPrice });
+    };
+
+    const renderLiveTablesPanel = () => (
+        <>
+            <div className='dashboard-hub__tab-body dashboard-hub__tab-body--live'>
+
+                <span className='dashboard-hub__live-label'>Buy-in</span>
+                <div className='dashboard-hub__buyin-grid ui-button-row' role='group' aria-label='Choose buy-in'>
+                    {aBuyInOptions.map((nBuyInOption) => {
+                        const oBuyInTable = aSortedTables.find((table) => (
+                            Number(table.nMinBuyIn) === nBuyInOption
+                        ));
+                        const nBuyInPlayers = getBuyInPlayerCount(nBuyInOption);
+
+                        return (
+                            <button
+                                key={nBuyInOption}
+                                type='button'
+                                className={`dashboard-hub__buyin-tile${nBuyInOption === nActiveBuyIn ? ' is-active' : ''}`}
+                                onClick={() => handleBuyInChange(nBuyInOption)}
+                                aria-pressed={nBuyInOption === nActiveBuyIn}
+                                aria-label={`${formatAmount(nBuyInOption)} buy-in, ${nBuyInPlayers} ${nBuyInPlayers === 1 ? 'player' : 'players'} active`}
+                            >
+                                <span className='dashboard-hub__buyin-copy'>
+                                    <strong>{formatAmount(nBuyInOption)}</strong>
+                                    <span>{oBuyInTable ? getBlindLabel(oBuyInTable.nMinBet) : ''}</span>
+                                </span>
+                            </button>
+                        );
+                    })}
+                </div>
+
+                {aVisibleTables.length ? (
+                    <ul className='dashboard-hub__table-grid' aria-label='Available tables'>
+                        {aVisibleTables.map((table, index) => {
+                            const nOccupied = getActivePlayers(table);
+                            const nTotalSeats = Number(table.nMaxPlayer) || 0;
+                            const nOpenSeats = Math.max(0, nTotalSeats - nOccupied);
+                            const aSeatMarkers = getTableSeatMarkers(table);
+                            const sTableId = table?._id || table?.id || `${table?.sName || 'table'}-${index}`;
+                            const sTableName = table?.sName || 'Live Table';
+                            const sTableCta = !bIsSignedIn
+                                ? 'SIGN IN'
+                                : nOccupied > 0
+                                    ? `${nOccupied} ${nOccupied === 1 ? 'person' : 'people'} playing - tap to join`
+                                    : `${nOpenSeats} seat${nOpenSeats === 1 ? '' : 's'} open - be the first`;
+
+                            return (
+                                <li key={sTableId}>
+                                    <button
+                                        type='button'
+                                        className='dashboard-hub__table-card'
+                                        onClick={() => handleJoinTable(table)}
+                                        disabled={bIsSignedIn && (joinTableLoading || !(table?._id || table?.id))}
+                                        aria-label={`${sTableName}: ${nOccupied} playing, ${nOpenSeats} seat${nOpenSeats === 1 ? '' : 's'} open.`}
+                                    >
+                                        <span className='dashboard-hub__table-card-art' aria-hidden='true'>
+                                            <img src={liveTablesImage} alt='' />
+                                        </span>
+                                        <span className='dashboard-hub__table-card-copy'>
+                                            <span className='dashboard-hub__table-card-header'>
+                                                <strong>{sTableName}</strong>
+                                            </span>
+                                            <span className='dashboard-hub__table-card-avatars' aria-hidden='true'>
+                                                {Array.from({ length: nTotalSeats }, (_, index) => {
+                                                    const bFilled = index < nOccupied;
+                                                    return (
+                                                        <span
+                                                            key={`${sTableId}-seat-${index + 1}`}
+                                                            className={`dashboard-hub__table-card-avatar${bFilled ? '' : ' is-empty'}`}
+                                                        >
+                                                            {bFilled ? (
+                                                                <span
+                                                                    className='dashboard-hub__table-card-initials'
+                                                                    style={{ '--seat-color': aSeatMarkers[index]?.color }}
+                                                                >
+                                                                    {aSeatMarkers[index]?.initials || 'PL'}
+                                                                </span>
+                                                            ) : null}
+                                                        </span>
+                                                    );
+                                                })}
+                                            </span>
+                                            <span className='dashboard-hub__table-card-cta'>
+                                                {sTableCta}
+                                            </span>
+                                        </span>
+                                    </button>
+                                </li>
+                            );
+                        })}
+                    </ul>
+                ) : null}
+
+                {!aVisibleTables.length ? (
+                    <div className='dashboard-hub__empty'>
+                        <strong>{isDataTableLoading ? 'Loading tables...' : 'No tables at this buy-in yet'}</strong>
+                        <span>Try another buy-in to find an open table.</span>
+
+                    </div>
+                ) : null}
+            </div>
+        </>
+    );
+
+    const renderRewardsPanel = () => (
+        <>
+            <div className='dashboard-hub__tab-body dashboard-hub__tab-body--rewards'>
+                <DailyRewardsPanel embedded />
+            </div>
+        </>
+    );
+
+    const renderBsgGamesGrid = (bCompact = false) => (
+        <div className={`dashboard-hub__bsg-games-grid${bCompact ? ' dashboard-hub__bsg-games-grid--compact' : ''}`}>
+            {BSG_GAME_PLACEHOLDERS.map((game, index) => {
+                const CardElement = game.playUrl ? 'a' : 'article';
+
+                return (
+                    <CardElement
+                        className={`dashboard-hub__bsg-game-card${game.playUrl ? ' is-playable' : ''}`}
+                        href={game.playUrl || undefined}
+                        target={game.playUrl ? '_blank' : undefined}
+                        rel={game.playUrl ? 'noreferrer' : undefined}
+                        aria-label={game.playUrl ? `Play ${game.title}` : undefined}
+                        key={`${game.title}-${index}`}
+                    >
+                        <div className={`dashboard-hub__bsg-game-poster dashboard-hub__bsg-game-poster--${game.theme}${game.imageSrc ? ' has-image' : ''}`} aria-hidden='true'>
+                            {game.imageSrc ? (
+                                <img className='dashboard-hub__bsg-game-poster-image' src={game.imageSrc} alt='' />
+                            ) : null}
+                            <span className='dashboard-hub__bsg-game-poster-ribbon'>{game.status}</span>
+                            {!game.imageSrc ? <span className='dashboard-hub__bsg-game-poster-mark'>{game.mark}</span> : null}
+                        </div>
+                        <div className='dashboard-hub__bsg-game-copy'>
+                            <strong>{game.title}</strong>
+                            <span>{game.status}</span>
+                            {game.playUrl ? <em>Play Beta</em> : null}
+                        </div>
+                    </CardElement>
+                );
+            })}
+        </div>
+    );
+
+    const handleBsgFeatureStep = (nDirection) => {
+        setBsgFeatureIndex((nIndex) => (
+            (nIndex + nDirection + BSG_FEATURED_GAMES.length) % BSG_FEATURED_GAMES.length
+        ));
+    };
+
+    const renderBsgGamesCarousel = (bCompact = false) => (
+        <section
+            className={`dashboard-hub__bsg-carousel dashboard-hub__bsg-carousel--${oActiveBsgFeature.theme}${bCompact ? ' dashboard-hub__bsg-carousel--compact' : ''}`}
+            aria-label='Featured BSG games'
+        >
+            <div className='dashboard-hub__bsg-carousel-frame'>
+                <img
+                    className='dashboard-hub__bsg-carousel-image'
+                    src={oActiveBsgFeature.bannerSrc}
+                    alt={oActiveBsgFeature.title}
+                />
+                <div className='dashboard-hub__bsg-carousel-copy'>
+                    <span>{oActiveBsgFeature.eyebrow}</span>
+                    <strong>{oActiveBsgFeature.title}</strong>
+                    <em>{oActiveBsgFeature.subtitle}</em>
+                    {oActiveBsgFeature.platforms?.length ? (
+                        <div className='dashboard-hub__bsg-carousel-platforms' aria-label='Launch 3001 platforms'>
+                            {oActiveBsgFeature.platforms.map((platform) => (
+                                <span key={platform}>{platform}</span>
+                            ))}
+                        </div>
+                    ) : null}
+                    {oActiveBsgFeature.playUrl ? (
+                        <a
+                            className='dashboard-hub__bsg-carousel-cta'
+                            href={oActiveBsgFeature.playUrl}
+                            target='_blank'
+                            rel='noreferrer'
+                        >
+                            Play Beta
+                        </a>
+                    ) : null}
+                </div>
+            </div>
+
+            <button
+                type='button'
+                className='dashboard-hub__bsg-carousel-nav dashboard-hub__bsg-carousel-nav--prev'
+                aria-label='Previous BSG game'
+                onClick={() => handleBsgFeatureStep(-1)}
+            >
+                {'<'}
+            </button>
+            <button
+                type='button'
+                className='dashboard-hub__bsg-carousel-nav dashboard-hub__bsg-carousel-nav--next'
+                aria-label='Next BSG game'
+                onClick={() => handleBsgFeatureStep(1)}
+            >
+                {'>'}
+            </button>
+
+            <div className='dashboard-hub__bsg-carousel-dots' aria-label='Choose featured BSG game'>
+                {BSG_FEATURED_GAMES.map((game, index) => (
+                    <button
+                        key={game.title}
+                        type='button'
+                        className={`dashboard-hub__bsg-carousel-dot${index === nActiveBsgFeatureIndex ? ' is-active' : ''}`}
+                        aria-label={`Show ${game.title}`}
+                        aria-current={index === nActiveBsgFeatureIndex ? 'true' : undefined}
+                        onClick={() => setBsgFeatureIndex(index)}
+                    />
+                ))}
+            </div>
+        </section>
+    );
+
+    const renderBsgGamesPanel = () => (
+        <div className='dashboard-hub__tab-body dashboard-hub__tab-body--bsg-games'>
+            {renderBsgGamesCarousel()}
+            {renderBsgGamesGrid()}
+        </div>
+    );
+
+    const renderStoreItems = (bCompact = false) => {
+        if (!aSafeShopItems.length) {
+            return (
+                <div className='dashboard-hub__empty'>
+                    <strong>{isShopLoading ? 'Loading store...' : 'No store items available yet'}</strong>
+                    <span>Items added in the admin portal will appear here automatically.</span>
+                </div>
+            );
+        }
+
+        return (
+            <div className={`dashboard-hub__store-grid${bCompact ? ' dashboard-hub__store-grid--compact' : ''}`}>
+                {aSafeShopItems.map((item, index) => {
+                    const sItemKey = `${item?.sTitle || 'store-item'}-${item?.nPrice || index}`;
+                    const sItemTitle = item?.sTitle || 'Chip Package';
+                    const sItemAmount = Number(item?.nChips) ? `${formatAmount(item.nChips)} chips` : 'Store item';
+                    const sItemPrice = formatStorePrice(item?.nPrice, item?.sCurrency);
+                    const bIsBestValue = oBestValueShopItem === item;
+
+                    return (
+                        <article key={sItemKey} className='dashboard-hub__store-item'>
+                            {bIsBestValue ? <span className='dashboard-hub__store-tag'>Best Value</span> : null}
+
+                            <div className='dashboard-hub__store-art'>
+                                <img src={getShopChipImage(item?.nChips)} alt='' />
+                            </div>
+
+                            <div className='dashboard-hub__store-copy'>
+                                <strong>{sItemTitle}</strong>
+                                <span>{sItemAmount}</span>
+                                {!bIsSignedIn && <span>{sItemPrice}</span>}
+                            </div>
+
+                            <button
+                                type='button'
+                                className='dashboard-hub__store-buy'
+                                onClick={() => handleBuyShopItem(item)}
+                                disabled={isBuyingShopItem}
+                            >
+                                {!bIsSignedIn ? 'Sign in' : isBuyingShopItem ? 'Processing...' : sItemPrice}
+                            </button>
+                        </article>
+                    );
+                })}
+            </div>
+        );
+    };
+
+    const renderShopPanel = () => (
+        <>
+            <div className='dashboard-hub__tab-body dashboard-hub__tab-body--store'>
+                {renderStoreItems()}
+            </div>
+        </>
+    );
+
+    const renderPrivateTablePanel = () => (
+        <>
+            <div className='dashboard-hub__tab-body dashboard-hub__tab-body--private'>
+
+                <div className='dashboard-hub__tab-stack'>
+                    <div className={`dashboard-hub__card-media dashboard-hub__card-media--private${bPrivateTablesUnlocked ? '' : ' is-locked'}`}>
+                        <img src={privateTableImage} alt='21 Holdem private table' />
+                        {!bPrivateTablesUnlocked ? (
+                            <span className='dashboard-hub__private-lock-badge'>
+                                <strong>Members Only</strong>
+                                <span>{MEMBERS_AREA_APPROVAL_MESSAGE}</span>
+                            </span>
+                        ) : null}
+                    </div>
+
+                    <button
+                        type='button'
+                        className={`dashboard-hub__cta dashboard-hub__cta--private${bIsSignedIn && !bPrivateTablesUnlocked ? ' is-locked' : ''}`}
+                        onClick={handlePrivateTablesClick}
+                        aria-disabled={bIsSignedIn && !bPrivateTablesUnlocked}
+                    >
+                        {!bIsSignedIn ? 'Sign in' : bPrivateTablesUnlocked ? 'Create Private Table' : 'Members Only'}
+                    </button>
+                </div>
+
+            </div>
+        </>
+    );
+
+    const renderProfilePanel = () => (
+        <>
+            <div className='dashboard-hub__tab-body dashboard-hub__tab-body--profile'>
+
+                <div className='dashboard-hub__tab-grid dashboard-hub__tab-grid--profile'>
+                    <div className='dashboard-hub__profile-stage' style={oProfileStageStyle}>
+                        <div className='dashboard-hub__profile-stage-inner'>
+                            <div className='dashboard-hub__profile-hero'>
+                                <div className='dashboard-hub__profile-avatar'>
+                                    <img
+                                        src={sAvatarSrc}
+                                        alt={profileData?.sUserName || 'Player avatar'}
+                                        onError={(event) => {
+                                            event.currentTarget.src = getAvatarImageSrc('', profileData?.sUserName);
+                                        }}
+                                    />
+                                </div>
+
+                                <div className='dashboard-hub__profile-heading'>
+                                    <span className='dashboard-hub__profile-label'>{bIsSignedIn ? 'Signed in as' : 'Your player profile'}</span>
+                                    <div className='dashboard-hub__profile-name'>{_.appendSuffix(sDisplayName, 16)}</div>
+                                    <div className='dashboard-hub__profile-balance'>{bIsSignedIn ? `Balance ${formatAmount(profileData?.nChips)}` : 'Sign in to view your balance'}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className='dashboard-hub__tab-stack'>
+                        <div className='dashboard-hub__profile-stats-grid dashboard-hub__profile-stats-grid--expanded'>
+                            {aProfileStats.map((stat) => (
+                                <div className='dashboard-hub__profile-stat' key={stat.label}>
+                                    <span>{stat.label}</span>
+                                    <strong>{bIsSignedIn ? stat.value : '--'}</strong>
+                                </div>
+                            ))}
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </>
+    );
+
+    const renderHowToPlayVisual = () => {
+        if (oActiveHowToPlayMessage.visual === 'logo') {
+            return (
+                <div className='dashboard-hub__tutorial-logo' aria-hidden='true'>
+                    <img src={profileLobbyBanner} alt='' />
+                </div>
+            );
+        }
+
+        if (oActiveHowToPlayMessage.visual === 'hole') {
+            return (
+                <div className='dashboard-hub__tutorial-cards dashboard-hub__tutorial-cards--hole' aria-hidden='true'>
+                    <div className='dashboard-hub__tutorial-card is-red'>
+                        <span>{'\u2665'}</span>
+                        <strong>K</strong>
+                    </div>
+                    <div className='dashboard-hub__tutorial-total'>10</div>
+                </div>
+            );
+        }
+
+        if (oActiveHowToPlayMessage.visual === 'community') {
+            return (
+                <div className='dashboard-hub__tutorial-cards' aria-hidden='true'>
+                    <div className='dashboard-hub__tutorial-card is-red'>
+                        <span>{'\u2665'}</span>
+                        <strong>K</strong>
+                    </div>
+                    <div className='dashboard-hub__tutorial-card'>
+                        <span>{'\u2663'}</span>
+                        <strong>9</strong>
+                    </div>
+                    <div className='dashboard-hub__tutorial-card'>
+                        <span>{'\u2660'}</span>
+                        <strong>2</strong>
+                    </div>
+                    <div className='dashboard-hub__tutorial-total'>21</div>
+                </div>
+            );
+        }
+
+        if (oActiveHowToPlayMessage.visual === 'moves') {
+            return (
+                <div className='dashboard-hub__tutorial-actions' aria-hidden='true'>
+                    <span>Check</span>
+                    <span>Call</span>
+                    <span>Raise</span>
+                    <span>Fold</span>
+                    <span>Double</span>
+                    <span>Stand</span>
+                </div>
+            );
+        }
+
+        return (
+            <div className='dashboard-hub__tutorial-win' aria-hidden='true'>
+                <strong>21</strong>
+                <span>Hold'em</span>
+            </div>
+        );
+    };
+
+    const renderHowToPlayPanel = () => (
+        <div className='dashboard-hub__tab-body dashboard-hub__tab-body--how-to-play'>
+            <section className='dashboard-hub__phone-tutorial' aria-label="21 Hold'em text tutorial">
+                <div className='dashboard-hub__phone-showcase'>
+                    <div className='dashboard-hub__phone'>
+                        <div className='dashboard-hub__phone-speaker' />
+                        <div className='dashboard-hub__phone-screen'>
+                            <div className='dashboard-hub__phone-status'>
+                                <span>21H</span>
+                                <button
+                                    type='button'
+                                    className='dashboard-hub__phone-replay'
+                                    onClick={() => setHowToPlayStep(0)}
+                                    aria-label='Replay explainer'
+                                >
+                                    R
+                                </button>
+                                <span>9:21</span>
+                            </div>
+
+                            <div className='dashboard-hub__phone-notification'>
+                                <span className='dashboard-hub__phone-notification-icon'>21</span>
+                                <p>What is 21 Hold'em?</p>
+                            </div>
+
+                            <div className='dashboard-hub__phone-visual' key={`phone-visual-${oActiveHowToPlayMessage.visual}`}>
+                                {renderHowToPlayVisual()}
+                            </div>
+
+                            <div className='dashboard-hub__phone-message-stack' key={`phone-message-${oActiveHowToPlayMessage.title}`}>
+                                <article className='dashboard-hub__phone-message'>
+                                    <p>{oActiveHowToPlayMessage.message}</p>
+                                </article>
+                                <button
+                                    type='button'
+                                    className={`dashboard-hub__phone-more${bHasMoreHowToPlayMessages ? '' : ' is-hidden'}`}
+                                    onClick={() => setHowToPlayStep((nStep) => Math.min(nStep + 1, aHowToPlayMessages.length - 1))}
+                                    disabled={!bHasMoreHowToPlayMessages}
+                                >
+                                    Read More
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <div className='dashboard-hub__guide-shell'>
+                {HOW_TO_PLAY_SECTIONS.map((section) => (
+                    <article className='dashboard-hub__guide-step' key={section.title}>
+                        <h3>{section.title}</h3>
+                        {section.paragraphs?.map((paragraph) => (
+                            <p key={paragraph}>{paragraph}</p>
+                        ))}
+                        {section.bullets?.length ? (
+                            <ul>
+                                {section.bullets.map((item) => (
+                                    <li key={item}>{item}</li>
+                                ))}
+                            </ul>
+                        ) : null}
+                    </article>
+                ))}
+            </div>
+        </div>
+    );
+
+    const renderDesktopLiveCard = () => {
+        const oFeaturedTable = aVisibleTables[0] || aSortedTables[0] || null;
+        const nAvailableTables = oFeaturedTable ? getAvailableTableCount(oFeaturedTable) : 0;
+        const nFeaturedOccupied = oFeaturedTable ? getActivePlayers(oFeaturedTable) : 0;
+        const aSeatMarkers = oFeaturedTable ? getTableSeatMarkers(oFeaturedTable) : [];
+
+        return (
+        <article
+            id='lobby-live-tables-desktop-card'
+            className={`dashboard-hub__desktop-card dashboard-hub__desktop-card--live${sActiveTab === 'lobby-live-tables' ? ' is-active' : ''}`}
+            style={getLobbyIconBackgroundStyle('lobby-live-tables')}
+        >
+                <header className='dashboard-hub__desktop-card-header'>
+                    <h3>Live Tables</h3>
+                </header>
+
+                <div className='dashboard-hub__desktop-card-media'>
+                    <img src={liveTablesImage} alt='21 Holdem live tables' />
+                </div>
+
+                <div className='dashboard-hub__desktop-card-body dashboard-hub__desktop-card-body--live'>
+
+                    <div className='dashboard-hub__desktop-filter-block'>
+                        <span className='dashboard-hub__desktop-filter-label'>Buy-In</span>
+                        <div className='dashboard-hub__desktop-buyin-grid ui-button-row' role='group' aria-label='Choose buy-in'>
+                            {aBuyInOptions.map((nBuyInOption) => {
+                                const oBuyInTable = aSortedTables.find((table) => (
+                                    Number(table.nMinBuyIn) === nBuyInOption
+                                ));
+                                const nBuyInPlayers = getBuyInPlayerCount(nBuyInOption);
+
+                                return (
+                                    <button
+                                        key={`desktop-buyin-${nBuyInOption}`}
+                                        type='button'
+                                        className={`dashboard-hub__desktop-buyin-chip${nBuyInOption === nActiveBuyIn ? ' is-active' : ''}`}
+                                        onClick={() => handleBuyInChange(nBuyInOption)}
+                                aria-pressed={nBuyInOption === nActiveBuyIn}
+                                        aria-label={`${formatAmount(nBuyInOption)} buy-in, ${nBuyInPlayers} ${nBuyInPlayers === 1 ? 'player' : 'players'} active`}
+                                    >
+                                        <span className='dashboard-hub__desktop-buyin-chip-head'>
+                                            <span className='dashboard-hub__desktop-buyin-art' aria-hidden='true'>
+                                                <img src={liveTablesImage} alt='' />
+                                                <span className='dashboard-hub__desktop-buyin-art-badge'>{nBuyInPlayers}</span>
+                                            </span>
+                                            <strong>{formatAmount(nBuyInOption)}</strong>
+                                        </span>
+                                        <span>{oBuyInTable ? getBlindLabel(oBuyInTable.nMinBet) : ''}</span>
+                                    </button>
+                                );
+                            })}
+                        </div>
+                    </div>
+
+                    <div className='dashboard-hub__desktop-live-summary'>
+                        <div className='dashboard-hub__desktop-live-summary-top'>
+                            <strong>{oFeaturedTable?.sName || 'Open Table'}</strong>
+                            <span>{nAvailableTables} {nAvailableTables === 1 ? 'table' : 'tables'} available</span>
+                        </div>
+                        <div className='dashboard-hub__desktop-live-summary-bottom'>
+                            <span>{oFeaturedTable ? `${oFeaturedTable.nMaxPlayer}-player setup` : 'Select a buy-in'}</span>
+                            <span>{oFeaturedTable ? getBlindLabel(oFeaturedTable.nMinBet) : 'Blind amount waiting'}</span>
+                        </div>
+                        {oFeaturedTable ? (
+                            <div className='dashboard-hub__desktop-seat-strip' aria-hidden='true'>
+                                {Array.from({ length: oFeaturedTable.nMaxPlayer }, (_, index) => {
+                                    const bFilled = index < nFeaturedOccupied;
+                                    return (
+                                        <span
+                                            key={`desktop-live-seat-${index + 1}`}
+                                            className={`dashboard-hub__table-card-avatar${bFilled ? '' : ' is-empty'}`}
+                                        >
+                                            {bFilled ? (
+                                                <span
+                                                    className='dashboard-hub__table-card-initials'
+                                                    style={{ '--seat-color': aSeatMarkers[index]?.color }}
+                                                >
+                                                    {aSeatMarkers[index]?.initials || 'PL'}
+                                                </span>
+                                            ) : null}
+                                        </span>
+                                    );
+                                })}
+                            </div>
+                        ) : null}
+                    </div>
+                </div>
+
+                <div className='dashboard-hub__desktop-card-footer'>
+                    <button
+                        type='button'
+                        className='dashboard-hub__desktop-cta dashboard-hub__desktop-cta--primary'
+                        onClick={() => handleJoinTable(oFeaturedTable)}
+                        disabled={bIsSignedIn && joinTableLoading}
+                    >
+                        {!bIsSignedIn ? 'SIGN IN' : joinTableLoading ? 'Joining...' : 'Join Table'}
+                    </button>
+                </div>
+            </article>
+        );
+    };
+
+    const renderDesktopHowToPlayCard = () => (
+        <article
+            id='lobby-how-to-play-desktop-card'
+            className={`dashboard-hub__desktop-card dashboard-hub__desktop-card--how-to-play${sActiveTab === 'lobby-how-to-play' ? ' is-active' : ''}`}
+            style={getLobbyIconBackgroundStyle('lobby-how-to-play')}
+        >
+            <header className='dashboard-hub__desktop-card-header'>
+                <h3>HOW TO PLAY</h3>
+            </header>
+
+            <div className='dashboard-hub__desktop-card-body dashboard-hub__desktop-card-body--how-to-play'>
+                {renderHowToPlayPanel()}
+            </div>
+        </article>
+    );
+
+    const renderDesktopRewardsCard = () => (
+        <article
+            id='lobby-missions-desktop-card'
+            className={`dashboard-hub__desktop-card dashboard-hub__desktop-card--rewards${sActiveTab === 'lobby-missions' ? ' is-active' : ''}`}
+            style={getLobbyIconBackgroundStyle('lobby-missions')}
+        >
+            <header className='dashboard-hub__desktop-card-header'>
+                <h3>DAILY REWARDS</h3>
+            </header>
+
+
+            <>
+                <div className='dashboard-hub__desktop-card-media dashboard-hub__desktop-card-media--rewards'>
+                <video className='dashboard-hub__desktop-card-media-video' autoPlay muted loop playsInline preload='auto' aria-hidden='true'>
+                    <source src={dailyRewardsLightsVideo} type='video/mp4' />
+                </video>
+                <img src={dailyRewardsLobbyBackground} alt='21 Holdem daily rewards' />
+                </div>
+
+                <div className='dashboard-hub__desktop-card-body dashboard-hub__desktop-card-body--rewards'>
+                <div className='dashboard-hub__desktop-reward-list'>
+                    {aRewards.slice(0, 3).map((nRewardAmount, index) => {
+                        const nDayNumber = index + 1;
+                        const bCollected = bTodayRewardClaimed ? nDayNumber < nEligibleDay : nDayNumber < nEligibleDay;
+                        const bToday = !bTodayRewardClaimed && nDayNumber === nEligibleDay;
+
+                        return (
+                            <article key={`desktop-reward-${nDayNumber}`} className={`dashboard-hub__desktop-reward-item${bToday ? ' is-current' : ''}${bCollected ? ' is-completed' : ''}`}>
+                                <div className='dashboard-hub__desktop-reward-copy'>
+                                    <span>Day {nDayNumber}</span>
+                                    <strong>{formatAmount(nRewardAmount)}</strong>
+                                </div>
+                                <div className='dashboard-hub__desktop-reward-status'>
+                                    {bCollected ? 'Collected' : bToday ? 'Today' : 'Ready'}
+                                </div>
+                            </article>
+                        );
+                    })}
+                </div>
+                </div>
+
+                <div className='dashboard-hub__desktop-card-footer'>
+                <button
+                    type='button'
+                    className='dashboard-hub__desktop-cta dashboard-hub__desktop-cta--primary'
+                    onClick={() => {
+                        if (!bIsSignedIn) { navigate('/login'); return; }
+                        if (!bTodayRewardClaimed) mutateDailyRewardsClaimed();
+                    }}
+                    disabled={bIsSignedIn && (bTodayRewardClaimed || isClaimingReward)}
+                >
+                    {!bIsSignedIn ? 'Sign in' : bTodayRewardClaimed ? 'Collected' : isClaimingReward ? 'Collecting...' : 'Collect'}
+                </button>
+                </div>
+            </>
+
+        </article>
+    );
+
+    const renderDesktopBsgGamesCard = () => (
+        <article
+            id='lobby-bsg-games-desktop-card'
+            className={`dashboard-hub__desktop-card dashboard-hub__desktop-card--bsg-games${sActiveTab === 'lobby-bsg-games' ? ' is-active' : ''}`}
+            style={getLobbyIconBackgroundStyle('lobby-bsg-games')}
+        >
+            <header className='dashboard-hub__desktop-card-header'>
+                <h3>BSG GAMES</h3>
+            </header>
+
+            <div className='dashboard-hub__desktop-card-media dashboard-hub__desktop-card-media--bsg-games'>
+                {renderBsgGamesCarousel(true)}
+            </div>
+
+            <div className='dashboard-hub__desktop-card-body dashboard-hub__desktop-card-body--bsg-games'>
+                {renderBsgGamesGrid(true)}
+            </div>
+        </article>
+    );
+
+    const renderDesktopPrivateCard = () => (
+        <article
+            id='lobby-private-table-desktop-card'
+            className={`dashboard-hub__desktop-card dashboard-hub__desktop-card--private${sActiveTab === 'lobby-private-table' ? ' is-active' : ''}`}
+            style={getLobbyIconBackgroundStyle('lobby-private-table')}
+        >
+            <header className='dashboard-hub__desktop-card-header'>
+                <h3>PRIVATE TABLES</h3>
+            </header>
+
+
+            <>
+            <div className='dashboard-hub__desktop-card-media'>
+                <img src={privateTableImage} alt='21 Holdem private table' />
+                {!bPrivateTablesUnlocked ? (
+                    <span className='dashboard-hub__private-lock-badge dashboard-hub__private-lock-badge--desktop'>
+                        <strong>Members Only</strong>
+                        <span>{MEMBERS_AREA_APPROVAL_MESSAGE}</span>
+                    </span>
+                ) : null}
+            </div>
+
+            <div className='dashboard-hub__desktop-card-body'>
+                <div className='dashboard-hub__desktop-spotlight'>
+                    <strong>Host your own room</strong>
+                    <span>{bPrivateTablesUnlocked ? 'Create a code, invite your players, and keep the table private from the public lobby.' : MEMBERS_AREA_APPROVAL_MESSAGE}</span>
+                </div>
+            </div>
+
+            <div className='dashboard-hub__desktop-card-footer'>
+                <button
+                    type='button'
+                    className={`dashboard-hub__desktop-cta dashboard-hub__desktop-cta--primary${bIsSignedIn && !bPrivateTablesUnlocked ? ' is-locked' : ''}`}
+                    onClick={handlePrivateTablesClick}
+                    aria-disabled={bIsSignedIn && !bPrivateTablesUnlocked}
+                >
+                    {!bIsSignedIn ? 'Sign in' : bPrivateTablesUnlocked ? 'Create Table' : 'Members Only'}
+                </button>
+            </div>
+            </>
+
+        </article>
+    );
+
+    const renderDesktopShopCard = () => (
+        <article
+            id='lobby-shop-desktop-card'
+            className={`dashboard-hub__desktop-card dashboard-hub__desktop-card--shop${sActiveTab === 'lobby-shop' ? ' is-active' : ''}`}
+            style={getLobbyIconBackgroundStyle('lobby-shop')}
+        >
+            <header className='dashboard-hub__desktop-card-header'>
+                <h3>STORE</h3>
+            </header>
+
+
+            <div className='dashboard-hub__desktop-card-body dashboard-hub__desktop-card-body--store'>
+                <div className='dashboard-hub__desktop-spotlight'>
+                    <strong>Chip packages</strong>
+                    <span>Buy-ins, refills, and future store items managed from the admin portal all surface here.</span>
+                </div>
+
+                {renderStoreItems(true)}
+            </div>
+
+        </article>
+    );
+
+    const renderDesktopProfileCard = () => (
+        <article
+            id='lobby-player-profile-desktop-card'
+            className={`dashboard-hub__desktop-card dashboard-hub__desktop-card--profile${sActiveTab === 'lobby-player-profile' ? ' is-active' : ''}`}
+            style={getLobbyIconBackgroundStyle('lobby-player-profile')}
+        >
+            <header className='dashboard-hub__desktop-card-header'>
+                <h3>PLAYER STATS</h3>
+            </header>
+
+
+            <div className='dashboard-hub__desktop-profile-shell'>
+                <div className='dashboard-hub__desktop-profile-hero'>
+                    <div className='dashboard-hub__desktop-profile-avatar'>
+                        <img
+                            src={sAvatarSrc}
+                            alt={profileData?.sUserName || 'Player avatar'}
+                            onError={(event) => {
+                                event.currentTarget.src = getAvatarImageSrc('', profileData?.sUserName);
+                            }}
+                        />
+                    </div>
+
+                    <div className='dashboard-hub__desktop-profile-copy'>
+                        <div className='dashboard-hub__desktop-profile-name'>{_.appendSuffix(sDisplayName, 16)}</div>
+                        <div className='dashboard-hub__desktop-profile-balance'>{bIsSignedIn ? `Balance ${formatAmount(profileData?.nChips)}` : 'Sign in to view your balance'}</div>
+                    </div>
+                </div>
+
+                <div className='dashboard-hub__desktop-profile-stats dashboard-hub__desktop-profile-stats--compact'>
+                    {aProfileStats.map((stat) => (
+                        <div className='dashboard-hub__desktop-profile-statline' key={stat.label}>
+                            <span>{stat.label}</span>
+                            <strong>{bIsSignedIn ? stat.value : '--'}</strong>
+                        </div>
+                    ))}
+                </div>
+
+            </div>
+
+
+        </article>
+    );
+
+    const renderSettingsPanel = () => {
+        const aSettings = [
+            { label: 'Transactions', description: 'Review chip purchases and account activity.', path: '/settings/transactions' },
+            { label: 'How To Play', description: 'Gameplay guide and table flow.', path: '/settings/how-to-play' },
+            { label: 'Rules', description: '21 Holdem rules and table flow.', path: '/settings/rules' },
+            { label: 'Report Issue', description: 'Send feedback or flag a game problem.', path: '/settings/report-issue' },
+        ];
+        const handleSettingsItemClick = (item) => {
+            if (item.tabId) {
+                setActiveTab(item.tabId);
+                return;
+            }
+            if (item.path) navigate(item.path);
+        };
+
+        return (
+            <div className='dashboard-hub__tab-body dashboard-hub__tab-body--settings'>
+                <div className='dashboard-hub__settings-card'>
+                    <strong>Player Settings</strong>
+                    <p>Choose a setting to open its page.</p>
+
+                    <section className='dashboard-hub__settings-section' aria-label='Settings pages'>
+                        <div className='dashboard-hub__settings-option-grid dashboard-hub__settings-option-grid--advanced'>
+                            {aSettings.map((item) => (
+                                <button type='button' className='dashboard-hub__settings-option' key={item.label} onClick={() => handleSettingsItemClick(item)}>
+                                    <strong>{item.label}</strong>
+                                    <span>{item.description}</span>
+                                </button>
+                            ))}
+                        </div>
+                    </section>
+                </div>
+            </div>
+        );
+    };
+
+    const renderOnboardingOverlay = () => {
+        if (sOnboardingStep === 'hidden') return null;
+
+        return (
+            <div className={`dashboard-hub__onboarding dashboard-hub__onboarding--${sOnboardingStep}`} role='dialog' aria-modal='true' aria-label="21 Hold'em welcome">
+                <div className='dashboard-hub__onboarding-backdrop' />
+
+                {sOnboardingStep === 'splash' ? (
+                    <div className='dashboard-hub__onboarding-splash'>
+                        <span>Welcome to</span>
+                        <img src={onboardingLogo} alt="21 Hold'em" />
+                    </div>
+                ) : (
+                    <div className='dashboard-hub__onboarding-dialog'>
+                        <div className='dashboard-hub__onboarding-host'>
+                            <img src={onboardingHost} alt='' aria-hidden='true' />
+                        </div>
+
+                        <div className='dashboard-hub__onboarding-bubble'>
+                            <span>Welcome!</span>
+                            <h2>Want me to show you the ropes?</h2>
+                            <p>{`Learn how to play 21 Hold'em, or jump straight into the live tables.`}</p>
+                            <div className='dashboard-hub__onboarding-actions ui-button-row'>
+                                <button type='button' className='dashboard-hub__signin-button dashboard-hub__signin-button--primary' onClick={() => completeOnboarding('lobby-how-to-play')}>
+                                    Show me
+                                </button>
+                                <button type='button' className='dashboard-hub__signin-button' onClick={() => completeOnboarding('lobby-live-tables', { bNeverShowAgain: true })}>
+                                    {`Let me play (don't show again)`}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+            </div>
+        );
+    };
+
+    const oLobbyTabs = (
+                    <nav ref={tabMenuRef} className={`dashboard-hub__tab-menu ui-button-row${oPinnedMenu ? ' dashboard-hub__tab-menu--pinned' : ''}`} style={oPinnedMenu || undefined} role='tablist' aria-label='Lobby pages' onKeyDown={(event) => {
+                        const keys = ['ArrowLeft', 'ArrowRight', 'Home', 'End'];
+                        if (!keys.includes(event.key)) return;
+                        event.preventDefault();
+                        const tabs = Array.from(event.currentTarget.querySelectorAll('[role="tab"]'));
+                        const current = tabs.indexOf(document.activeElement);
+                        const next = event.key === 'Home' ? 0 : event.key === 'End' ? tabs.length - 1 : (current + (event.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length;
+                        tabs[next]?.focus();
+                        tabs[next]?.click();
+                    }}>
+                        {aMenuNavItems.map((item) => {
+                            const bIsActive = sActiveTab === item.id;
+
+                            return (
+                                <button
+                                    key={item.id}
+                                    type='button'
+                                    className={`dashboard-hub__tab-menu-button${bIsActive ? ' is-active' : ''}`}
+                                    id={`${item.id}-tab`}
+                                    role='tab'
+                                    tabIndex={bIsActive || (!aMenuNavItems.some((navItem) => navItem.id === sActiveTab) && item.id === aMenuNavItems[0].id) ? 0 : -1}
+                                    onClick={() => handleQuickNavSelect(item)}
+                                    aria-controls={`${item.id}-panel`}
+                                    aria-selected={bIsActive}
+                                    aria-label={item.label}
+                                    title={item.label}
+                                >
+                                    <span className='dashboard-hub__tab-menu-label'>{item.label}</span>
+                                </button>
+                            );
+                        })}
+                    </nav>
+    );
+
+    return (
+        <div className='dashboard-container'>
+            <section className={`dashboard-hub${sDashboardSceneClass}`} ref={dashboardRef} style={oActiveLobbyIconBackgroundStyle}>
+                {renderOnboardingOverlay()}
+                <div className='dashboard-hub__backdrop' aria-hidden='true' />
+                <div className='dashboard-hub__bokeh' aria-hidden='true'>{Array.from({ length: 8 }, (_, index) => <i key={index} />)}</div>
+                <div className='dashboard-hub__ambient-grid' aria-hidden='true' />
+                <div className='dashboard-hub__stage-lights' aria-hidden='true'>
+                    <span className='dashboard-hub__stage-beam dashboard-hub__stage-beam--one' />
+                    <span className='dashboard-hub__stage-beam dashboard-hub__stage-beam--two' />
+                    <span className='dashboard-hub__stage-beam dashboard-hub__stage-beam--three' />
+                    <span className='dashboard-hub__stage-beam dashboard-hub__stage-beam--four' />
+                    <span className='dashboard-hub__stage-beam dashboard-hub__stage-beam--five' />
+                    <span className='dashboard-hub__stage-fixture dashboard-hub__stage-fixture--one' />
+                    <span className='dashboard-hub__stage-fixture dashboard-hub__stage-fixture--two' />
+                    <span className='dashboard-hub__stage-fixture dashboard-hub__stage-fixture--three' />
+                    <span className='dashboard-hub__stage-fixture dashboard-hub__stage-fixture--four' />
+                    <span className='dashboard-hub__stage-fixture dashboard-hub__stage-fixture--five' />
+                </div>
+                <div className='dashboard-hub__lobby-atmosphere' aria-hidden='true'>
+                    <span className='dashboard-hub__lobby-orb dashboard-hub__lobby-orb--one' />
+                    <span className='dashboard-hub__lobby-orb dashboard-hub__lobby-orb--two' />
+                    <span className='dashboard-hub__lobby-orb dashboard-hub__lobby-orb--three' />
+                    <span className='dashboard-hub__lobby-beam' />
+                </div>
+
+                <div className='dashboard-hub__shell'>
+                    <header className='dashboard-hub__hero'>
+                        <button type='button' className='dashboard-hub__hub-link dashboard-hub__hub-link--mobile' onClick={handleReturnToHub}>
+                            BSG Hub
+                        </button>
+                    </header>
+
+                    <div className='dashboard-hub__lobby-banner'>
+                        <img src={profileLobbyBanner} alt='21 Holdem' />
+                    </div>
+
+                    <div className='dashboard-hub__tab-menu-anchor' ref={menuAnchorRef}>
+                        {oPinnedMenu ? createPortal(oLobbyTabs, document.body) : oLobbyTabs}
+                    </div>
+
+                    <div className='dashboard-hub__desktop-stage'>
+                        <div className='dashboard-hub__desktop-topbar'>
+                            <button type='button' className='dashboard-hub__hub-link dashboard-hub__hub-link--desktop' onClick={handleReturnToHub}>
+                                BSG Hub
+                            </button>
+                            <nav className='dashboard-hub__desktop-nav' aria-label='Lobby shortcuts'>
+                                {aMenuNavItems.map((item) => {
+                                    const bIsActive = item.kind === 'tab' && sActiveTab === item.id;
+
+                                    return (
+                                        <button
+                                            key={`${item.id}-desktop-nav`}
+                                            type='button'
+                                            className={`dashboard-hub__desktop-nav-button${bIsActive ? ' is-active' : ''}`}
+                                            onClick={() => handleQuickNavSelect(item, { bScrollDesktop: true })}
+                                            aria-label={item.label}
+                                            aria-pressed={item.kind === 'tab' ? bIsActive : undefined}
+                                            title={item.label}
+                                        >
+                                            <span className='dashboard-hub__desktop-nav-icon'>
+                                                <img src={item.iconSrc} alt='' aria-hidden='true' />
+                                            </span>
+                                        </button>
+                                    );
+                                })}
+                            </nav>
+                        </div>
+
+                        <div className='dashboard-hub__desktop-grid'>
+                            {renderDesktopLiveCard()}
+                            {renderDesktopHowToPlayCard()}
+                            {renderDesktopBsgGamesCard()}
+                            {renderDesktopRewardsCard()}
+                            {renderDesktopPrivateCard()}
+                            {renderDesktopProfileCard()}
+                            {renderDesktopShopCard()}
+                        </div>
+                    </div>
+
+                    <div className='dashboard-hub__viewport'>
+                        <div className='dashboard-hub__viewport-window'>
+                            <section
+                                id='lobby-live-tables-panel'
+                                role='tabpanel'
+                                aria-labelledby='lobby-live-tables-tab'
+                                className={`dashboard-hub__tab-panel dashboard-hub__tab-panel--live${sActiveTab === 'lobby-live-tables' ? ' is-active' : ''}`}
+                                hidden={sActiveTab !== 'lobby-live-tables'}
+                            >
+                                {renderLiveTablesPanel()}
+                            </section>
+
+                            <section
+                                id='lobby-how-to-play-panel'
+                                role='tabpanel'
+                                aria-labelledby='lobby-how-to-play-tab'
+                                className={`dashboard-hub__tab-panel dashboard-hub__tab-panel--how-to-play${sActiveTab === 'lobby-how-to-play' ? ' is-active' : ''}`}
+                                hidden={sActiveTab !== 'lobby-how-to-play'}
+                            >
+                                {renderHowToPlayPanel()}
+                            </section>
+
+                            <section
+                                id='lobby-bsg-games-panel'
+                                className={`dashboard-hub__tab-panel dashboard-hub__tab-panel--bsg-games${sActiveTab === 'lobby-bsg-games' ? ' is-active' : ''}`}
+                                hidden={sActiveTab !== 'lobby-bsg-games'}
+                            >
+                                {renderBsgGamesPanel()}
+                            </section>
+
+                            <section
+                                id='lobby-missions-panel'
+                                role='tabpanel'
+                                aria-labelledby='lobby-missions-tab'
+                                className={`dashboard-hub__tab-panel dashboard-hub__tab-panel--rewards${sActiveTab === 'lobby-missions' ? ' is-active' : ''}`}
+                                hidden={sActiveTab !== 'lobby-missions'}
+                            >
+                                {renderRewardsPanel()}
+                            </section>
+
+                            <section
+                                id='lobby-private-table-panel'
+                                role='tabpanel'
+                                aria-labelledby='lobby-private-table-tab'
+                                className={`dashboard-hub__tab-panel dashboard-hub__tab-panel--private${sActiveTab === 'lobby-private-table' ? ' is-active' : ''}`}
+                                hidden={sActiveTab !== 'lobby-private-table'}
+                            >
+                                {renderPrivateTablePanel()}
+                            </section>
+
+                            <section
+                                id='lobby-player-profile-panel'
+                                className={`dashboard-hub__tab-panel dashboard-hub__tab-panel--profile${sActiveTab === 'lobby-player-profile' ? ' is-active' : ''}`}
+                                hidden={sActiveTab !== 'lobby-player-profile'}
+                            >
+                                {renderProfilePanel()}
+                            </section>
+
+                            <section
+                                id='lobby-shop-panel'
+                                className={`dashboard-hub__tab-panel dashboard-hub__tab-panel--shop${sActiveTab === 'lobby-shop' ? ' is-active' : ''}`}
+                                hidden={sActiveTab !== 'lobby-shop'}
+                            >
+                                {renderShopPanel()}
+                            </section>
+
+                            <section
+                                id='lobby-settings-panel'
+                                className={`dashboard-hub__tab-panel dashboard-hub__tab-panel--settings${sActiveTab === 'lobby-settings' ? ' is-active' : ''}`}
+                                hidden={sActiveTab !== 'lobby-settings'}
+                            >
+                                {renderSettingsPanel()}
+                            </section>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    );
+};
+
+export default Dashboard;
