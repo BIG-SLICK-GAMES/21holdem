@@ -9,7 +9,7 @@ import iconShop from '../../assets/images/icons/working/shop.png';
 import iconSettings from '../../assets/images/icons/working/stats.png';
 import iconHowToPlay from '../../assets/images/icons/lobby-menu/how-to-play.png';
 import onboardingHost from '../../assets/images/onboarding/tutorial-host.webp';
-import onboardingLogo from '../../assets/images/splash/logo.png';
+import VideoSplash from './VideoSplash';
 import { chips1, chips2, chips3, chips4, chips5 } from 'assets/images/shop/shop';
 import { getDailyRewards, updateDailyRewards } from 'query/dailyRewards.query';
 import { getTables, joinTable } from 'query/gameTable.query';
@@ -461,19 +461,9 @@ const Dashboard = () => {
 
     useEffect(() => {
         if (typeof window === 'undefined') return undefined;
-        const bShouldSkipOnboarding = window.localStorage.getItem(ONBOARDING_STORAGE_KEY) === 'complete'
-            || LOBBY_TAB_IDS.includes(new URLSearchParams(window.location.search).get('tab'));
-        if (bShouldSkipOnboarding) {
-            setOnboardingStep('hidden');
-            return undefined;
-        }
-
-        setOnboardingStep('splash');
-        const nSplashTimer = window.setTimeout(() => {
-            setOnboardingStep('choice');
-        }, 2000);
-
-        return () => window.clearTimeout(nSplashTimer);
+        const bReturningToTab = LOBBY_TAB_IDS.includes(new URLSearchParams(window.location.search).get('tab'));
+        setOnboardingStep(bReturningToTab ? 'hidden' : 'splash');
+        return undefined;
     }, []);
 
     useEffect(() => {
@@ -1668,10 +1658,9 @@ const Dashboard = () => {
                 <div className='dashboard-hub__onboarding-backdrop' />
 
                 {sOnboardingStep === 'splash' ? (
-                    <div className='dashboard-hub__onboarding-splash'>
-                        <span>Welcome to</span>
-                        <img src={onboardingLogo} alt="21 Hold'em" />
-                    </div>
+                    <VideoSplash onComplete={() => setOnboardingStep(
+                        window.localStorage.getItem(ONBOARDING_STORAGE_KEY) === 'complete' ? 'hidden' : 'choice'
+                    )} />
                 ) : (
                     <div className='dashboard-hub__onboarding-dialog'>
                         <div className='dashboard-hub__onboarding-host'>
