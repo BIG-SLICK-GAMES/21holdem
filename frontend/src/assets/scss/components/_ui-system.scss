@@ -358,3 +358,16 @@ body :is(.dashboard-hub__cta, .dashboard-hub__signin-button--primary,
 body :is(.dashboard-hub__lobby-banner, .dashboard-hub__table-card,
     .dashboard-hub__private-room-card) { border-color: var(--ui-border); }
 body .ui-button-row { scrollbar-color: var(--ui-border) #030303; }
+
+// Keep complete promotional artwork inside its existing frame at every breakpoint.
+body :is(.dashboard-hub__lobby-banner, .dashboard-hub__profile-banner,
+    .dashboard-hub__desktop-profile-banner, .dashboard-hub__card-media,
+    .dashboard-hub__arrival-media, .dashboard-hub__table-card-art,
+    .dashboard-hub__desktop-card-media, .dashboard-hub__desktop-buyin-art,
+    .bsg-auth__banner) img,
+body :is(.dashboard-hub__bsg-carousel-image, .dashboard-hub__bsg-game-poster-image) {
+    object-fit: contain !important;
+    object-position: center;
+    max-width: 100%;
+    max-height: 100%;
+}
