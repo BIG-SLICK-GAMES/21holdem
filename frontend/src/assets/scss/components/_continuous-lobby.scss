@@ -79,3 +79,13 @@ body .dashboard-hub__buyin-field {
     }
     .dashboard-hub__buyin-result { color: var(--ui-text-muted); font-size: 13px; }
 }
+
+// Availability is text within the clickable table row, not a nested button.
+body .dashboard-hub .dashboard-hub__table-card-cta {
+    border: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    padding: 0;
+    min-height: 0;
+    color: var(--ui-gold) !important;
+}
