@@ -1698,9 +1698,9 @@ const Dashboard = () => {
     };
 
     const oLobbyTabs = (
-                    <nav ref={tabMenuRef} className={`dashboard-hub__tab-menu ui-button-row${oPinnedMenu ? ' dashboard-hub__tab-menu--pinned' : ''}`} style={oPinnedMenu || undefined} role='tablist' aria-label='Lobby pages' onKeyDown={(event) => {
+                    <nav ref={tabMenuRef} className={`dashboard-hub__tab-menu ui-button-row${oPinnedMenu ? ' dashboard-hub__tab-menu--pinned' : ''}`} style={oPinnedMenu || undefined} aria-label='Lobby navigation' onKeyDown={(event) => {
                         const keys = ['ArrowLeft', 'ArrowRight', 'Home', 'End'];
-                        if (!keys.includes(event.key)) return;
+                        if (!keys.includes(event.key) || !event.target.closest('[role=tab]')) return;
                         event.preventDefault();
                         const tabs = Array.from(event.currentTarget.querySelectorAll('[role="tab"]'));
                         const current = tabs.indexOf(document.activeElement);
@@ -1708,6 +1708,7 @@ const Dashboard = () => {
                         tabs[next]?.focus();
                         tabs[next]?.click();
                     }}>
+                        <div className='dashboard-hub__tab-list ui-button-row' role='tablist' aria-label='Lobby pages'>
                         {aMenuNavItems.map((item) => {
                             const bIsActive = sActiveTab === item.id;
 
@@ -1729,6 +1730,10 @@ const Dashboard = () => {
                                 </button>
                             );
                         })}
+                        </div>
+                        <button type='button' className='dashboard-hub__tab-menu-button' onClick={handleReturnToHub}>
+                            BSG Hub
+                        </button>
                     </nav>
     );
 
@@ -1759,11 +1764,6 @@ const Dashboard = () => {
                 </div>
 
                 <div className='dashboard-hub__shell'>
-                    <header className='dashboard-hub__hero'>
-                        <button type='button' className='dashboard-hub__hub-link dashboard-hub__hub-link--mobile' onClick={handleReturnToHub}>
-                            BSG Hub
-                        </button>
-                    </header>
 
                     <LobbyBannerCarousel />
 
@@ -1773,9 +1773,6 @@ const Dashboard = () => {
 
                     <div className='dashboard-hub__desktop-stage'>
                         <div className='dashboard-hub__desktop-topbar'>
-                            <button type='button' className='dashboard-hub__hub-link dashboard-hub__hub-link--desktop' onClick={handleReturnToHub}>
-                                BSG Hub
-                            </button>
                             <nav className='dashboard-hub__desktop-nav' aria-label='Lobby shortcuts'>
                                 {aMenuNavItems.map((item) => {
                                     const bIsActive = item.kind === 'tab' && sActiveTab === item.id;
