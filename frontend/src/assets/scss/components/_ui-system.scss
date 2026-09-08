@@ -258,8 +258,8 @@ body .lobby-topbar .lobby-topbar__login--connected {
         width: clamp(70px, 12vw, 180px);
         aspect-ratio: 1;
         border-radius: 50%;
-        background: radial-gradient(circle, rgba(var(--ui-gold-rgb), 0.38), rgba(var(--ui-gold-rgb), 0.12) 48%, transparent 72%);
-        filter: blur(5px);
+        background: radial-gradient(circle, rgba(var(--ui-gold-rgb), 0.34) 0%, rgba(var(--ui-gold-rgb), 0.22) 42%, rgba(var(--ui-gold-rgb), 0.3) 48%, rgba(var(--ui-gold-rgb), 0.04) 55%, transparent 62%);
+        filter: blur(1px);
         opacity: 0.7;
         animation: lobbyBokehDrift 23s ease-in-out infinite alternate;
     }
@@ -273,7 +273,7 @@ body .lobby-topbar .lobby-topbar__login--connected {
     i:nth-child(8) { left: 57%; top: 7%; animation-delay: -21s; }
     i:nth-child(3n) {
         width: clamp(50px, 8vw, 110px);
-        background: radial-gradient(circle, rgba(var(--ui-gold-rgb), 0.2), rgba(var(--ui-gold-rgb), 0.05) 48%, transparent 72%);
+        background: radial-gradient(circle, rgba(var(--ui-gold-rgb), 0.3) 0%, rgba(var(--ui-gold-rgb), 0.18) 40%, rgba(var(--ui-gold-rgb), 0.26) 48%, transparent 62%);
     }
 }
 
