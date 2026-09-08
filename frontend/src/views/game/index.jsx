@@ -266,6 +266,8 @@ function Game({ isPausedExternally = false }) {
     const gameRef = useRef(null);
     const phaserGameRef = useRef(null);
     const autoJoinAttemptedRef = useRef(false);
+    const viewportRafRef = useRef(0);
+    const lastViewportHeightRef = useRef(0);
     const [playerSlots, setPlayerSlots] = useState([]);
     const layoutMode = 'mobile';
     const tableOnlyMode = false;
@@ -284,21 +286,24 @@ function Game({ isPausedExternally = false }) {
         if (typeof window === 'undefined' || typeof document === 'undefined') return undefined;
 
         const setVisibleViewportHeight = () => {
-            const viewportHeight = window.visualViewport?.height || window.innerHeight;
+            const viewportHeight = window.innerHeight;
+            if (Math.abs(viewportHeight - lastViewportHeightRef.current) < 8) return;
+            lastViewportHeightRef.current = viewportHeight;
             document.documentElement.style.setProperty('--vh', `${viewportHeight * 0.01}px`);
+        };
+        const queueVisibleViewportHeight = () => {
+            window.cancelAnimationFrame(viewportRafRef.current);
+            viewportRafRef.current = window.requestAnimationFrame(setVisibleViewportHeight);
         };
 
         setVisibleViewportHeight();
-        window.addEventListener('resize', setVisibleViewportHeight);
-        window.addEventListener('orientationchange', setVisibleViewportHeight);
-        window.visualViewport?.addEventListener('resize', setVisibleViewportHeight);
-        window.visualViewport?.addEventListener('scroll', setVisibleViewportHeight);
+        window.addEventListener('resize', queueVisibleViewportHeight);
+        window.addEventListener('orientationchange', queueVisibleViewportHeight);
 
         return () => {
-            window.removeEventListener('resize', setVisibleViewportHeight);
-            window.removeEventListener('orientationchange', setVisibleViewportHeight);
-            window.visualViewport?.removeEventListener('resize', setVisibleViewportHeight);
-            window.visualViewport?.removeEventListener('scroll', setVisibleViewportHeight);
+            window.cancelAnimationFrame(viewportRafRef.current);
+            window.removeEventListener('resize', queueVisibleViewportHeight);
+            window.removeEventListener('orientationchange', queueVisibleViewportHeight);
         };
     }, []);
 
@@ -365,11 +370,9 @@ function Game({ isPausedExternally = false }) {
                             return;
                         }
                     } catch (profileError) {
-                        console.log(profileError);
                     }
                 }
 
-                console.log(error);
                 ReactToastify(sResponseMessage || 'Unable to open a 21 Holdem table.', 'error');
                 navigate(fallbackPath);
             } finally {

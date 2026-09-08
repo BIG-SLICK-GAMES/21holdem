@@ -1,6 +1,6 @@
 .not-found {
     padding: 100px 20px;
-    border-radius: 10px;
+    border-radius: var(--ui-radius);
     display: flex;
     flex-direction: column;
     justify-content: center;

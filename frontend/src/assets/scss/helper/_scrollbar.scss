@@ -5,11 +5,11 @@
 
 // /* Track */
 ::-webkit-scrollbar-track {
-  border-radius: 4px;
+  border-radius: var(--ui-radius);
 }
  
 /* Handle */
 ::-webkit-scrollbar-thumb {
   background: var(--primary-color);
-  border-radius: 4px;
+  border-radius: var(--ui-radius);
 }

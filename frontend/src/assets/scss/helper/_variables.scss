@@ -22,12 +22,12 @@ body {
     --primary-text-color: #006D80;
     --form-label-color: #8e8e8e;
     --neon-color: #CFFF04;
-    --hover-color: #fcfc3b;
+    --hover-color: var(--ui-gold);
     --table-selection-color: #0C263B;
     --table-header_bgcolor: #163C57;
     --table-header_color: #ffffff;
 
-    --button-color: #d29b00;
+    --button-color: var(--ui-gold);
 
     --not-disable-color: #1a1a1a;
     --not-disable-background: transparent;

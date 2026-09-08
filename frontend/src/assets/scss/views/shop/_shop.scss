@@ -1,7 +1,7 @@
 .shop-chip-page {
     margin: 100px 50px;
     border: 2px solid #163c57;
-    border-radius: 15px;
+    border-radius: var(--ui-radius);
     overflow: hidden;
 
     .shop-chip-header {
@@ -35,7 +35,7 @@
                 min-width: 350px;
                 height: 100%;
                 max-width: calc((100% / 4) - 40px);
-                border-radius: 20px;
+                border-radius: var(--ui-radius);
                 padding: 20px;
                 background: url(../../../images/shop/card-bg.png) no-repeat center center / cover;
                 border: 1px solid #89D5FF80;
@@ -64,7 +64,7 @@
                 .icon {
                     width: 100%;
                     background-color: #00000080;
-                    border-radius: 10px;
+                    border-radius: var(--ui-radius);
                     padding: 15px;
 
                     img {
@@ -86,7 +86,7 @@
                     padding: 12px 15px;
                     background: #51FF89;
                     border: none;
-                    border-radius: 10px;
+                    border-radius: var(--ui-radius);
                     color: #03162A;
                     font-size: 20px;
                     font-weight: 600;

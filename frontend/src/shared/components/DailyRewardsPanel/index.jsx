@@ -1,9 +1,10 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
-import { getDailyRewards, updateDailyRewards } from 'query/dailyRewards.query';
+import { getDailyRewards, getDailyRewardsPreview, updateDailyRewards } from 'query/dailyRewards.query';
 import _ from 'scripts/helper';
-import { ReactToastify } from 'shared/utils';
+import { getCookie, ReactToastify } from 'shared/utils';
+import { useNavigate } from 'react-router-dom';
 
 const FALLBACK_REWARDS = [100, 200, 300, 400, 500, 750, 1000];
 const FALLBACK_BOARD_DAYS = 28;
@@ -29,14 +30,15 @@ function formatCountdown(nMilliseconds = 0) {
 }
 
 function DailyRewardsPanel({ embedded }) {
+    const navigate = useNavigate();
+    const bIsSignedIn = Boolean(getCookie('sAuthToken'));
     const queryClient = useQueryClient();
     const [bPulseEligibleReward, setPulseEligibleReward] = useState(false);
     const [nNow, setNow] = useState(Date.now());
 
-    const { data: dataDailyRewards, isLoading: isDailyRewardsLoading } = useQuery('getDailyRewards', getDailyRewards, {
+    const { data: dataDailyRewards, isLoading: isDailyRewardsLoading } = useQuery(bIsSignedIn ? 'getDailyRewards' : 'dailyRewardsPreview', bIsSignedIn ? getDailyRewards : getDailyRewardsPreview, {
         select: (data) => data?.data?.data || null,
         onError: (error) => {
-            console.log(error);
             ReactToastify(error?.response?.data?.message || 'Unable to load daily rewards', 'error');
         },
     });
@@ -73,7 +75,6 @@ function DailyRewardsPanel({ embedded }) {
             ReactToastify(response?.data?.message || 'Unable to claim reward', 'error');
         },
         onError: (error) => {
-            console.log(error);
             queryClient.invalidateQueries('getDailyRewards');
             ReactToastify(error?.response?.data?.message || 'Unable to claim reward', 'error');
         },
@@ -126,10 +127,11 @@ function DailyRewardsPanel({ embedded }) {
     }), [aConfiguredRewards, aDailyBonuses, bPulseEligibleReward, bTodayRewardClaimed, nClaimedDays, nEligibleDay, nTotalRewardDays]);
 
     const oStatusReward = aRewardDays.find((reward) => reward.absoluteDay === (bTodayRewardClaimed ? nCurrentStreakDay : nEligibleDay)) || aRewardDays[0];
-    const sStatusMessage = bTodayRewardClaimed
+    const sStatusMessage = !bIsSignedIn ? 'Explore the daily rewards. Sign in to start your streak.' : bTodayRewardClaimed
         ? 'Come back tomorrow to continue the streak.'
         : 'Claim before the timer ends or the streak resets.';
     const handleClaimReward = () => {
+        if (!bIsSignedIn) { navigate('/login'); return; }
         if (bTodayRewardClaimed || isClaimingReward || isDailyRewardsLoading) return;
         mutateDailyRewardsClaimed();
     };
@@ -146,10 +148,10 @@ function DailyRewardsPanel({ embedded }) {
                             <div className='daily-rewards-page__calendar-status'>
                                 <strong className='daily-rewards-page__calendar-status-amount'>{formatAmount(oStatusReward?.amount)}</strong>
                                 <p className='daily-rewards-page__calendar-status-message'>{sStatusMessage}</p>
-                                <div className={`daily-rewards-page__countdown${bTodayRewardClaimed ? ' is-claimed' : ''}`}>
+                                {bIsSignedIn && <div className={`daily-rewards-page__countdown${bTodayRewardClaimed ? ' is-claimed' : ''}`}>
                                     <span>{sCountdownLabel}</span>
                                     <strong>{sCountdownValue}</strong>
-                                </div>
+                                </div>}
                             </div>
                         </div>
                     </header>
@@ -184,7 +186,7 @@ function DailyRewardsPanel({ embedded }) {
                                         }}
                                         disabled={isClaimingReward || isDailyRewardsLoading}
                                     >
-                                        {isDailyRewardsLoading ? 'Loading' : isClaimingReward ? 'Claiming' : 'Claim'}
+                                        {!bIsSignedIn ? 'Sign in' : isDailyRewardsLoading ? 'Loading' : isClaimingReward ? 'Claiming' : 'Claim'}
                                     </button>
                                 ) : null}
                             </article>

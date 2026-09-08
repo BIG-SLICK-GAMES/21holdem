@@ -17,10 +17,10 @@ const config = {
     centerY: LAYOUTS.mobile.height / 2,
     layoutMode: 'mobile',
     version: '1.3',
-    CommonFont: 'NeuePlakCondensed',
+    CommonFont: 'TTCommons',
     ButtonFont: 'TTCommons',
-    playerFont: 'playerFont',
-    playerFontBold: 'playerFontBold',
+    playerFont: 'TTCommons',
+    playerFontBold: 'TTCommonsBold',
     CardFont: 'CardFont',
     popupDepth: 100000,
 };

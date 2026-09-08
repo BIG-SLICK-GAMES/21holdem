@@ -50,7 +50,7 @@ import {
 } from '../scripts/clientGameSelectors';
 import { reduceSocketEventToClientState } from '../scripts/socketStateReducer';
 import { getApiRoot } from '../axios';
-import { GAME_UI_LAYOUT_EVENT, readSavedGameUiLayout, sanitizeGameUiLayout } from '../scripts/gameUiLayout';
+import { GAME_UI_LAYOUT_EVENT, sanitizeGameUiLayout } from '../scripts/gameUiLayout';
 import {
     emitGameActionOverlayState,
     GAME_ACTION_OVERLAY_COMMAND_EVENT,
@@ -62,8 +62,6 @@ import GameInfo from 'prefabs/GameInfo';
 
 const BOT_INVITE_MIN_COUNT = 2;
 const BOT_INVITE_MAX_COUNT = 8;
-const TABLE_BACKGROUND_CONSOLE_HEIGHT = 90;
-const TABLE_BACKGROUND_CONSOLE_OVERLAP_Y = 28;
 const WIN_ANIMATION_SOUND_DELAY_MS = 150;
 const WIN_PAYOUT_FEEDBACK_DELAY_MS = 650;
 const SHOWDOWN_WIN_BADGE_CLEAR_DELAY_MS = HAND_RESULT_CLEAR_DELAY_MS + 400;
@@ -94,17 +92,9 @@ export default class Level extends Phaser.Scene {
         return 100;
     }
 
-    getTableBackgroundScaleY(tableY, fallbackScaleY, parentOffsetY = Number(this.container_body?.y) || 0) {
-        if (!this.table?.height) return fallbackScaleY;
-
-        const tableScreenCenterY = Number(tableY) + parentOffsetY;
-        const targetBottomY = config.height - TABLE_BACKGROUND_CONSOLE_HEIGHT + TABLE_BACKGROUND_CONSOLE_OVERLAP_Y;
-        const requiredScaleY = ((targetBottomY - tableScreenCenterY) * 2) / this.table.height;
-        return Math.max(fallbackScaleY, requiredScaleY);
-    }
-
     initializeGameUILayout() {
         this.oGameUILayoutBase = {
+            tableX: this.table?.x || 0,
             tableY: this.table?.y || 0,
             tableScaleX: this.table?.scaleX || 1,
             tableScaleY: this.table?.scaleY || 1,
@@ -148,7 +138,7 @@ export default class Level extends Phaser.Scene {
             })),
         };
 
-        this.oGameUILayout = sanitizeGameUiLayout(readSavedGameUiLayout());
+        this.oGameUILayout = sanitizeGameUiLayout();
         this.applyGameUILayout(this.oGameUILayout);
     }
 
@@ -175,12 +165,11 @@ export default class Level extends Phaser.Scene {
         });
 
         if (this.table) {
+            const tableX = base.tableX + layout.tableOffsetX;
             const tableY = base.tableY + layout.tableOffsetY;
             const tableScaleX = base.tableScaleX * layout.tableScale;
-            const tableScaleY = this.getTableBackgroundScaleY(
-                tableY,
-                base.tableScaleY * layout.tableScale
-            );
+            const tableScaleY = base.tableScaleY * layout.tableScale * layout.tablePerspective;
+            this.table.setX(tableX);
             this.table.setY(tableY);
             this.table.setScale(
                 tableScaleX,
@@ -2297,8 +2286,8 @@ setButtons() {
         this.container_body = this.add.container(0, 0);
         this.backgroundImage = null;
         this.table = this.add.image(config.centerX, config.centerY + 8 + tableImageOffsetY, assets.table);
-        const tableCoverScale = Math.max(config.width / this.table.width, config.height / this.table.height) * 0.92;
-        this.table.setScale(tableCoverScale);
+        const tableFitScale = Math.min(config.width / this.table.width, config.height / this.table.height) * 0.86;
+        this.table.setScale(tableFitScale);
         this.container_body.add(this.table);
         this.container_header = this.add.container(0, 0);
         this.container_pot_amount = this.add.container(0, 0);

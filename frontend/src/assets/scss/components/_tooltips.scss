@@ -11,7 +11,7 @@
     background-color: #282828 !important;
     max-width: unset;
     font-size: 12px;
-    border-radius: 3px;
+    border-radius: var(--ui-radius);
     // box-shadow: 0 0px 15px rgba(0, 0, 0, 0.662);
 }
 

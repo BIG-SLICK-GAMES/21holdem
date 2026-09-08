@@ -11,28 +11,10 @@ const CONTROL_GROUPS = [
     {
         title: 'Table',
         controls: [
+            { key: 'tableOffsetX', label: 'Table X', min: -360, max: 360, step: 1 },
             { key: 'tableOffsetY', label: 'Table Y', min: -500, max: 240, step: 1 },
-            { key: 'tableScale', label: 'Table Scale', min: 0.7, max: 1.35, step: 0.01 },
-        ],
-    },
-    {
-        title: 'Top HUD',
-        controls: [
-            { key: 'headerOffsetY', label: 'Header Y', min: -220, max: 220, step: 1 },
-            { key: 'potOffsetY', label: 'Pot Y', min: -220, max: 220, step: 1 },
-        ],
-    },
-    {
-        title: 'Seats',
-        controls: [
-            { key: 'playerProfilesOffsetY', label: 'Profiles Y', min: -260, max: 260, step: 1 },
-            { key: 'playerProfilesScale', label: 'Profiles Scale', min: 0.75, max: 1.4, step: 0.01 },
-        ],
-    },
-    {
-        title: 'Console',
-        controls: [
-            { key: 'footerOffsetY', label: 'Console Y', min: -240, max: 260, step: 1 },
+            { key: 'tableScale', label: 'Table Scale', min: 0.55, max: 1.35, step: 0.01 },
+            { key: 'tablePerspective', label: 'Perspective', min: 0.55, max: 1.35, step: 0.01 },
         ],
     },
 ];
@@ -46,7 +28,7 @@ const formatLayoutValue = (key, value) => {
 };
 
 function GameLayoutOverlay() {
-    const [isOpen, setIsOpen] = useState(true);
+    const [isOpen, setIsOpen] = useState(false);
     const [copyStatus, setCopyStatus] = useState('');
     const [layout, setLayout] = useState(() => readSavedGameUiLayout());
     const layoutJson = useMemo(() => JSON.stringify(layout, null, 2), [layout]);
@@ -116,11 +98,11 @@ function GameLayoutOverlay() {
                             <p className='game-ui-layout__eyebrow'>Main Game Screen</p>
                             <h2>UI Adjuster</h2>
                         </div>
-                        <span className='game-ui-layout__saved'>Auto-saves</span>
+                        <span className='game-ui-layout__saved'>Live</span>
                     </div>
 
                     <p className='game-ui-layout__help'>
-                        Move the sliders, watch the table update live, then use <strong>Copy Values</strong> if you want to save the numbers somewhere.
+                        Move the table live. Tell me when it is right and I will save these values into the app.
                     </p>
 
                     {CONTROL_GROUPS.map(group => (

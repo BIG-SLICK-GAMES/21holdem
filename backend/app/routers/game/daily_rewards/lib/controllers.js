@@ -102,6 +102,20 @@ function getRewardStreakState(user) {
   };
 }
 
+controllers.previewDailyRewards = async (req, res) => {
+  try {
+    const settings = await Setting.findOne({}, { aDailyReward: true }).lean();
+    const rewards = Array.isArray(settings?.aDailyReward) && settings.aDailyReward.length ? settings.aDailyReward : DEFAULT_DAILY_REWARDS;
+    return res.reply(messages.success(), {
+      rewards,
+      nBoardDays: REWARD_BOARD_DAYS,
+      aDailyBonuses: getDailyBonusBoard(new Date(), REWARD_BOARD_DAYS),
+    });
+  } catch (error) {
+    return res.reply(messages.server_error('previewDailyRewards'));
+  }
+};
+
 controllers.getDailyRewards = async (req, res) => {
   try {
     const settings = await Setting.findOne({}, { aDailyReward: true }).lean();

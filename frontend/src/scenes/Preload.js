@@ -109,10 +109,8 @@ import fold_sound from '../assets/sounds/fold_sound.mp3'
 import timer_sound from '../assets/sounds/timer_sound.mp3'
 import raise_sound from '../assets/sounds/raise_sound.mp3'
 import check_sound from '../assets/sounds/check_sound.mp3'
-import NeuePlakCondensed from '../assets/fonts/game/NeuePlak-CondRegular.ttf'
 import TTCommons from '../assets/fonts/game/TTCommons-Regular.ttf'
-import playerFont from '../assets/fonts/game/player_font.ttf'
-import playerFontBold from '../assets/fonts/game/player_font_bold.ttf'
+import TTCommonsBold from '../assets/fonts/TTCommons-Bold.ttf'
 import CardFont from '../assets/fonts/game/card_font.TTF'
 import { BUILT_IN_AVATARS } from '../shared/constants/builtInAvatars';
 
@@ -121,10 +119,8 @@ export default class Preload extends Phaser.Scene {
         super("Preload");
     }
     editorPreload() {
-        this.load.font('NeuePlakCondensed', NeuePlakCondensed);
         this.load.font('TTCommons', TTCommons);
-        this.load.font('playerFont', playerFont);
-        this.load.font('playerFontBold', playerFontBold);
+        this.load.font('TTCommonsBold', TTCommonsBold);
         this.load.font('CardFont', CardFont);
 
         // gameplay

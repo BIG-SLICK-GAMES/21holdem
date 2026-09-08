@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { ReactToastify, setCookie } from 'shared/utils';
 import bigSlickGamesLogoImg from '../../../assets/images/bsg/big-slick-games.png';
+import authBannerImg from '../../../assets/images/bg/lobby_profile_banner.webp';
 
 const LOGIN_REMEMBER_ME_KEY = 'bsg:remember-me';
 const LOGIN_REMEMBERED_IDENTIFIER_KEY = 'bsg:remembered-login';
@@ -199,11 +200,15 @@ const AuthScreen = () => {
     return (
         <main className='bsg-auth' aria-label='Big Slick Games authentication'>
             <section className='bsg-auth__panel' aria-label={formTitle}>
+                <div className='bsg-auth__banner'>
+                    <img src={authBannerImg} alt="21 Hold'em" />
+                </div>
+
                 <div className='bsg-auth__mobile-brand'>
                     <img src={bigSlickGamesLogoImg} alt='Big Slick Games' />
                 </div>
 
-                <div className='bsg-auth__mode' role='tablist' aria-label='Authentication mode'>
+                <div className='bsg-auth__mode ui-button-row' role='tablist' aria-label='Authentication mode'>
                     <button type='button' className={!isCreateMode ? 'is-active' : ''} onClick={() => switchMode('login')} role='tab' aria-selected={!isCreateMode}>
                         Sign in
                     </button>

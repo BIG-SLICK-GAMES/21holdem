@@ -55,7 +55,7 @@ html {
 body {
     background: rgb(0, 0, 0);
     background: linear-gradient(90deg, rgba(0, 0, 0, 1) 0%, var(--theme-color) 50%, rgba(0, 0, 0, 1) 100%);
-    font-family: 'TT Commons';
+    font-family: var(--ui-font);
     font-weight: 400;
     width: 100%;
     min-height: 100%;
@@ -305,3 +305,8 @@ h6 {
     margin: 0;
     padding: 0;
 }
+
+// Shared design contract must follow the legacy view rules.
+@import './helper/ui-tokens';
+@import './components/ui-system';
+@import './components/glass-topbar';

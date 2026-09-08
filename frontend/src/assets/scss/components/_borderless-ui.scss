@@ -1,0 +1,38 @@
+// Borderless presentation applies to page content and controls portalled to body.
+// The root in :is gives the shared rule priority over legacy component skins.
+html body :is(#root, .modal, .Toastify__toast-container, .dashboard-hub__tab-menu),
+html body :is(#root, .modal, .Toastify__toast-container, .dashboard-hub__tab-menu) *,
+html body :is(#root, .modal, .Toastify__toast-container, .dashboard-hub__tab-menu)::before,
+html body :is(#root, .modal, .Toastify__toast-container, .dashboard-hub__tab-menu)::after,
+html body :is(#root, .modal, .Toastify__toast-container, .dashboard-hub__tab-menu) *::before,
+html body :is(#root, .modal, .Toastify__toast-container, .dashboard-hub__tab-menu) *::after {
+    border: 0 !important;
+    border-radius: 0 !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+:root {
+    --ui-radius: 0px;
+    --ui-border: transparent;
+    --ui-border-gradient: linear-gradient(transparent, transparent);
+    --ui-shadow: none;
+}
+
+// Player/seat indicators are circular symbols, including unoccupied seats.
+html body #root :is(.dashboard-hub__table-card-avatar, .dashboard-hub__buyin-seat-dot, .game-table-page__seat-avatar) {
+    border-radius: 50% !important;
+    overflow: hidden;
+}
+
+// Remove the glass header's decorative one-pixel edge.
+body .lobby-topbar.lobby-topbar--glass::after { display: none; }
+
+// Keyboard focus remains visible through fill and text treatment, without rings.
+html body :is(button, a, input, select, textarea):focus-visible {
+    filter: brightness(1.2);
+}
+html body :is(button, a):focus-visible {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}

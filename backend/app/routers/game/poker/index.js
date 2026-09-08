@@ -16,9 +16,9 @@ router.post(
 );
 router.get('/guest/board/leave', commonMiddleware.isGuestAuthenticated, controllers.leaveBoard);
 
-router.use(commonMiddleware.isAuthenticated);
-
 router.get('/board/list', controllers.listBoard);
+
+router.use(commonMiddleware.isAuthenticated);
 router.post('/board/join', middleware.getPrototype, middleware.joiningProcess, controllers.joinBoard);
 router.post('/board/invite-bots', controllers.inviteLiveBots);
 router.post('/private/create', middleware.getPrototype, middleware.createPrivateBoard, controllers.joinBoard);

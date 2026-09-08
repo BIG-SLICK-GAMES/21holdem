@@ -9,7 +9,7 @@
     margin: 74px auto 18px;
     width: min(100% - 20px, 430px);
     border: 1px solid rgba(137, 213, 255, 0.26);
-    border-radius: 8px;
+    border-radius: var(--ui-radius);
     overflow: hidden;
     position: relative;
     background: #071725;
@@ -46,11 +46,11 @@
         min-height: 34px;
         padding: 0 14px;
         border: 1px solid rgba(81, 255, 137, 0.5);
-        border-radius: 999px;
+        border-radius: var(--ui-radius);
         background: rgba(3, 16, 27, 0.86);
         color: #dfffea;
         font-size: 12px;
-        font-weight: 800;
+        font-weight: 700;
         letter-spacing: 0;
         line-height: 1;
         box-shadow: 0 8px 18px rgba(0, 0, 0, 0.28);
@@ -96,7 +96,7 @@
                     linear-gradient(145deg, #58c7ff 0%, rgba(6, 18, 31, 0.82) 118%);
                 color: #06101c;
                 font-size: 42px;
-                font-weight: 900;
+                font-weight: 700;
                 line-height: 1;
                 text-transform: uppercase;
                 text-shadow: 0 1px 0 rgba(255, 255, 255, 0.34);
@@ -106,7 +106,7 @@
         .avatar-name {
             text-align: center;
             font-size: 28px;
-            font-family: "TT Commons";
+            font-family: var(--ui-font);
             font-weight: 500;
             color: white;
             margin-top: 10px;
@@ -146,7 +146,7 @@
                         linear-gradient(145deg, #58c7ff 0%, rgba(6, 18, 31, 0.82) 118%);
                     color: #06101c;
                     font-size: 34px;
-                    font-weight: 900;
+                    font-weight: 700;
                     line-height: 1;
                     text-transform: uppercase;
                 }
@@ -168,7 +168,7 @@
 
         .form-label {
             color: white;
-            font-family: "TT Commons";
+            font-family: var(--ui-font);
             font-weight: 300;
             font-size: 20px;
             margin-bottom: 5px;
@@ -179,7 +179,7 @@
             border: 1px solid #89D5FF;
             box-shadow: none !important;
             color: white;
-            font-family: "TT Commons";
+            font-family: var(--ui-font);
             font-size: 18px;
             padding: 10px 20px 8px;
 
@@ -211,7 +211,7 @@
             flex-wrap: wrap;
             text-align: center;
             padding: 25px 10px;
-            border-radius: 10px;
+            border-radius: var(--ui-radius);
 
             >div {
                 flex: 1 1 calc(20% - 12px);
@@ -232,7 +232,7 @@
         .profile-settings {
             margin-top: 18px;
             padding: 12px;
-            border-radius: 8px;
+            border-radius: var(--ui-radius);
             border: 1px solid rgba(137, 213, 255, 0.22);
             background: linear-gradient(180deg, rgba(13, 42, 69, 0.9) 0%, rgba(8, 25, 42, 0.96) 100%);
 
@@ -246,7 +246,7 @@
             .profile-settings-title {
                 color: white;
                 font-size: 18px;
-                font-weight: 800;
+                font-weight: 700;
                 line-height: 1.1;
             }
 
@@ -272,7 +272,7 @@
                 min-height: 48px;
                 padding: 9px 11px;
                 border: 1px solid rgba(137, 213, 255, 0.24);
-                border-radius: 8px;
+                border-radius: var(--ui-radius);
                 background: linear-gradient(180deg, rgba(19, 58, 94, 0.78) 0%, rgba(11, 33, 55, 0.92) 100%);
                 text-align: left;
                 transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
@@ -371,7 +371,7 @@
                         linear-gradient(145deg, #58c7ff 0%, rgba(6, 18, 31, 0.82) 118%);
                     color: #06101c;
                     font-size: 42px;
-                    font-weight: 900;
+                    font-weight: 700;
                     line-height: 1;
                     text-transform: uppercase;
                     text-shadow: 0 1px 0 rgba(255, 255, 255, 0.34);
@@ -428,7 +428,7 @@
 @include media-max(xxl) {
     .profile {
         margin: 74px auto 18px;
-        border-radius: 8px;
+        border-radius: var(--ui-radius);
 
         .profile-content {
             padding: 58px 14px 18px;
@@ -540,7 +540,7 @@
 @include media-max(md) {
     .profile {
         margin: 74px auto 18px;
-        border-radius: 8px;
+        border-radius: var(--ui-radius);
 
         .profile-content {
             padding: 58px 14px 18px;
@@ -818,7 +818,7 @@
             min-height: 36px;
             padding: 7px 10px 6px;
             font-size: 13px;
-            border-radius: 7px;
+            border-radius: var(--ui-radius);
         }
 
         .profile-locked-note {
@@ -860,14 +860,14 @@
             margin-top: 12px;
             padding: 9px;
             border: 1px solid rgba(137, 213, 255, 0.18);
-            border-radius: 8px;
+            border-radius: var(--ui-radius);
             background: rgba(0, 0, 0, 0.42);
 
             > div {
                 min-width: 0;
                 max-width: none;
                 padding: 8px 5px 7px;
-                border-radius: 7px;
+                border-radius: var(--ui-radius);
                 background: rgba(13, 42, 69, 0.5);
             }
 
@@ -932,7 +932,7 @@
             grid-template-columns: 62px minmax(0, 1fr);
             gap: 10px;
             border: 1px solid rgba(137, 213, 255, 0.18);
-            border-radius: 8px;
+            border-radius: var(--ui-radius);
             background: rgba(5, 20, 34, 0.72);
             text-align: left;
 
@@ -995,7 +995,7 @@
             min-height: 42px;
             margin-top: 12px;
             padding: 9px 12px;
-            border-radius: 8px;
+            border-radius: var(--ui-radius);
             font-size: 15px;
         }
     }

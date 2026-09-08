@@ -1,9 +1,9 @@
 import React, { Suspense } from 'react'
 import { Spinner } from 'react-bootstrap'
-import { Route, BrowserRouter, Routes, Navigate } from 'react-router-dom'
+import { Navigate, Route, BrowserRouter, Routes } from 'react-router-dom'
 import Router from 'routes/Router'
 import NotFound from 'shared/components/404'
-import { getCookie, setCookie } from 'shared/utils'
+import { setCookie } from 'shared/utils'
 
 function RootRedirect() {
     const params = new URLSearchParams(window.location.search)
@@ -11,11 +11,9 @@ function RootRedirect() {
 
     if (hubToken) {
         setCookie('sAuthToken', hubToken, 14)
-        return <Navigate to='/lobby' replace />
     }
 
-    const token = getCookie('sAuthToken')
-    return <Navigate to={token ? '/lobby' : '/login'} replace />
+    return <Navigate to='/lobby' replace />
 }
 
 function AllRoutes() {

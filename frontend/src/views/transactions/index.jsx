@@ -2,13 +2,14 @@ import { formatDate } from "helper/helper";
 import { getTransactions } from "query/transactions.query";
 import React, { useCallback, useRef, useState } from "react";
 import { useQuery } from "react-query";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import DataTable from "shared/components/DataTable";
 import TransactionFilter from "shared/components/TransactionFilter";
 import { TransactionListColumn } from "shared/constants/tableHeaders";
-import { appendParams, formatIndianNumber, parseParams } from "shared/utils";
+import { appendParams, formatIndianNumber, getCookie, parseParams } from "shared/utils";
 
 const Transactions = () => {
+    const bIsSignedIn = Boolean(getCookie('sAuthToken'))
     const location = useLocation()
     const parsedData = parseParams(location.search)
     const params = useRef(parseParams(location.search))
@@ -28,10 +29,12 @@ const Transactions = () => {
     }
 
     const [requestParams, setRequestParams] = useState(getRequestParams())
-    const [data, setData] = useState(null)
+    const [transactionData, setData] = useState(null)
+    const data = bIsSignedIn ? transactionData : null
 
     // List
     useQuery(['transactionList', requestParams], () => getTransactions(requestParams), {
+        enabled: bIsSignedIn,
         select: (data) => data?.data?.data[0],
         onSuccess: (response) => {
             setData(response);
@@ -95,6 +98,7 @@ const Transactions = () => {
         <div className="transactions">
             <div className="transactions-container">
                 <h2 className="transactions-title">MY TRANSACTIONS</h2>
+                {!bIsSignedIn && <p><Link to='/login'>Sign in</Link> to view your transactions.</p>}
                 <DataTable
                     columns={columns}
                     showEntriesCount={true}

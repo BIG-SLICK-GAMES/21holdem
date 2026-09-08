@@ -1,7 +1,6 @@
 import axios from "../axios";
 
 export async function register(data) {
-    console.log('data', data)
     return await axios.post('/api/v1/auth/register', data)
 }
 

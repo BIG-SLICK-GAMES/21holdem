@@ -1,10 +1,10 @@
 .header-public {
     background: linear-gradient(to bottom, #456380, #BECAD3);
-    font-family: 'Neue Plak Condensed';
+    font-family: var(--ui-font);
     font-weight: bold;
     padding: 10px 20px;
     box-sizing: border-box;
-    border-bottom: 2px solid #FBFA36;
+    border-bottom: 2px solid var(--ui-gold);
     position: fixed;
     width: 100%;
     z-index: 1000;
@@ -51,11 +51,11 @@
             text-decoration: none;
 
             &.active {
-                color: #FBFA36 !important;
+                color: var(--ui-gold) !important;
             }
 
             &:hover {
-                color: #FBFA36 !important;
+                color: var(--ui-gold) !important;
             }
         }
 
@@ -93,7 +93,7 @@
         .navbar-collapse {
             margin-top: 12px;
             padding: 12px 14px 14px;
-            border-radius: 18px;
+            border-radius: var(--ui-radius);
             background: linear-gradient(180deg, rgba(235, 242, 248, 0.98) 0%, rgba(207, 220, 230, 0.98) 100%);
             box-shadow: 0 18px 28px rgba(0, 0, 0, 0.24);
         }

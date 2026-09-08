@@ -6,7 +6,7 @@
     bottom: 0px;
     left: 0;
     padding: 5px 0;
-    font-family: 'Neue Plak Condensed';
+    font-family: var(--ui-font);
 
     .footer-menu {
         ul {
@@ -22,7 +22,7 @@
                 a {
                     font-size: 18px;
                     text-decoration: none;
-                    color: #FFFFCE;
+                    color: var(--ui-text);
 
                     img{
                         width: 20px;

@@ -130,11 +130,7 @@ export default class Settings extends Phaser.GameObjects.Container {
             bSoundEnabled: this.scene.oSoundManager.isSoundOn,
             bMusicEnabled: this.scene.oSoundManager.isMusicOn
         }
-        this.scene.oServices.setting(payload).then(res => {
-            console.log('res', res);
-        }).catch(err => {
-            console.log('err', err);
-        });
+        this.scene.oServices.setting(payload).catch(() => {});
     }
     close() {
         this.bg.setVisible(false);

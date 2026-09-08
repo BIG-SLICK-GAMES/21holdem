@@ -5,7 +5,7 @@
   color: #fff;
   height: 38px;
   border: none;
-  border-radius: 5px;
+  border-radius: var(--ui-radius);
   border: 1px solid #fff;
 
   &:focus-visible {
@@ -31,7 +31,7 @@
   background-color: var(--boxes-color) !important;
   border-color: #fff !important;
   overflow: hidden;
-  border-radius: 7px !important;
+  border-radius: var(--ui-radius) !important;
 }
 
 .react-datepicker__navigation--previous {
@@ -118,7 +118,7 @@
 }
 
 .react-datepicker__day--today {
-  border-radius: 0.3rem;
+  border-radius: var(--ui-radius);
   background-color: #4174ba !important;
   color: white !important;
 }
@@ -161,7 +161,7 @@
       display: block;
       width: 100%;
       background: transparent;
-      border-radius: 5px !important;
+      border-radius: var(--ui-radius) !important;
       padding: 9px 12px;
       box-shadow: none !important;
       border: 1px solid #c0c0c0;

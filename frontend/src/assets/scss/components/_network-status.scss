@@ -19,7 +19,7 @@
     background-color: #9fafbd7d;
     background-size: cover;
     padding: 32px;
-    border-radius: 10px;
+    border-radius: var(--ui-radius);
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     z-index: 9999;
     display: flex;

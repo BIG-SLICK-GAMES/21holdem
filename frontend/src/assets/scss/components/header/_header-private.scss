@@ -9,7 +9,7 @@
     align-items: center;
     padding: 10px 20px;
     background: linear-gradient(to bottom, var(--primary-color), #bac6d0);
-    font-family: 'TT Commons';
+    font-family: var(--ui-font);
     font-weight: 400;
 
     .header-private__logo {
@@ -62,7 +62,7 @@
 
                     &.active,
                     &:hover {
-                        color: #FBFA36;
+                        color: var(--ui-gold);
                     }
                 }
 
@@ -76,7 +76,7 @@
 
                     &.active,
                     &:hover {
-                        color: #FBFA36;
+                        color: var(--ui-gold);
                     }
                 }
             }
@@ -98,7 +98,7 @@
 
             &.active,
             &:hover {
-                color: #FBFA36;
+                color: var(--ui-gold);
             }
         }
 
@@ -109,7 +109,7 @@
             justify-content: space-between;
             background-color: #154D73;
             padding: 5px 5px;
-            border-radius: 10px;
+            border-radius: var(--ui-radius);
             width: 130px;
             position: relative;
 
@@ -121,7 +121,7 @@
                 background-color: #154D73;
                 color: var(--white-color);
                 padding: 2px 15px;
-                border-radius: 5px;
+                border-radius: var(--ui-radius);
                 min-width: 70px;
                 text-align: center;
                 opacity: 0;
@@ -168,7 +168,7 @@
             justify-content: space-between;
             background-color: #051F34;
             padding: 5px 5px;
-            border-radius: 10px;
+            border-radius: var(--ui-radius);
             width: 130px;
             cursor: pointer;
 
@@ -176,7 +176,7 @@
                 img {
                     width: 30px;
                     height: 30px;
-                    border-radius: 7px;
+                    border-radius: var(--ui-radius);
                 }
             }
 
@@ -200,7 +200,7 @@
             transform: translateX(50%);
             z-index: 1000;
             background-color: #fff;
-            border-radius: 8px;
+            border-radius: var(--ui-radius);
             background: linear-gradient(to top, #4c7baa, #b8d1e6);
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             min-width: 190px;
@@ -220,7 +220,7 @@
                         width: 100%;
                         font-size: 20px;
                         text-align: center;
-                        border-radius: 5px;
+                        border-radius: var(--ui-radius);
                         cursor: pointer;
                         padding: 0px 10px;
                         display: block;

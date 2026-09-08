@@ -20,7 +20,7 @@
       padding: 12px 15px;
       border-color: var(--primary-color);
       border: 1px solid transparent;
-      border-radius: 5px;
+      border-radius: var(--ui-radius);
 
       &:hover {
         background-color: var(--primary-color);

@@ -53,7 +53,7 @@ function isValidApiEndpoint(url) {
 export function getApiRoot(url = process.env.REACT_APP_API_ENDPOINT) {
     const configuredUrl = isValidApiEndpoint(url) ? url : "";
 
-    if (!configuredUrl) return getDefaultLocalApiRoot();
+    if (!configuredUrl) return process.env.REACT_APP_PROXY_TARGET ? '' : getDefaultLocalApiRoot();
 
     const browserHostname = getBrowserHostname();
     try {
@@ -104,9 +104,10 @@ Axios.interceptors.response.use(
     (err) => {
         const currentPath = typeof window !== 'undefined' ? window.location?.pathname || '' : '';
         const isAuthRoute = currentPath === '/login' || currentPath === '/register';
+        const isGuestSafeRoute = currentPath === '/' || currentPath === '/lobby';
         if (err?.code?.includes?.("ERR_NETWORK")) {
             ReactToastify("Network Error", "error");
-            if (!isAuthRoute) {
+            if (!isAuthRoute && !isGuestSafeRoute) {
                 removeToken();
                 setTimeout(() => {
                     window.location.href = "/login";
@@ -115,7 +116,7 @@ Axios.interceptors.response.use(
             return Promise.reject(err);
         }
         if (err?.response?.status === 401) {
-            if (!isAuthRoute) {
+            if (!isAuthRoute && !isGuestSafeRoute) {
                 removeToken();
                 window.location.href = "/login";
             }

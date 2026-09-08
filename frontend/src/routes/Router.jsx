@@ -6,6 +6,7 @@ const PrivateRoute = lazy(() => import('routes/PrivateRoutes'))
 const Register = lazy(() => import('views/auth/register'))
 const Login = lazy(() => import('views/auth/login'))
 const Dashboard = lazy(() => import('views/dashboard/index'))
+const SettingsPage = lazy(() => import('views/settings'))
 const PrivateTable = lazy(() => import('views/dashboard/privateTable'))
 const Profile = lazy(() => import('views/profile/index'))
 const Transactions = lazy(() => import('views/transactions/index'))
@@ -41,6 +42,7 @@ const RoutesDetails = [
         isPrivateRoute: true,
         children: [
             { path: '/lobby', Component: Dashboard, exact: true },
+            { path: '/settings/:settingId', Component: SettingsPage, exact: true },
             { path: '/private-table', Component: PrivateTable, exact: true },
             { path: '/profile', Component: Profile, exact: true },
             { path: '/transactions', Component: Transactions, exact: true },
