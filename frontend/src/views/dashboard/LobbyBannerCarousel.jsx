@@ -17,9 +17,9 @@ export default function LobbyBannerCarousel() {
     }, []);
     return (
         <section className='dashboard-hub__lobby-banner lobby-banner-carousel' aria-label='Featured promotions'
-            onFocusCapture={(event) => { if (!event.target.closest('.lobby-banner-carousel__playback')) setPlaying(false); }}>
+            onFocusCapture={() => setPlaying(false)}>
             <Carousel interval={playing ? 6000 : null} slide={!reducedMotion} pause='hover'
-                indicatorLabels={['21 Holdem', 'Daily Bonus', 'Blackjack scoring with poker pressure']}>
+                controls={false} indicators={false}>
                 <Carousel.Item>
                     <img src={welcomeBanner} alt='21 Holdem ? where blackjack meets holdem' />
                 </Carousel.Item>
@@ -34,10 +34,6 @@ export default function LobbyBannerCarousel() {
                     </Link>
                 </Carousel.Item>
             </Carousel>
-            <button type='button' className='lobby-banner-carousel__playback' onClick={() => setPlaying(!playing)}
-                aria-label={playing ? 'Pause banner rotation' : 'Play banner rotation'}>
-                {playing ? 'Pause' : 'Play'}
-            </button>
         </section>
     );
 }
