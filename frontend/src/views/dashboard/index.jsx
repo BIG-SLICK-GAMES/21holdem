@@ -10,6 +10,7 @@ import iconSettings from '../../assets/images/icons/working/stats.png';
 import iconHowToPlay from '../../assets/images/icons/lobby-menu/how-to-play.png';
 import onboardingHost from '../../assets/images/onboarding/tutorial-host.webp';
 import VideoSplash from './VideoSplash';
+import welcomeBrand from '../../assets/images/bg/lobby_chip_logo.png';
 import { chips1, chips2, chips3, chips4, chips5 } from 'assets/images/shop/shop';
 import { getDailyRewards, updateDailyRewards } from 'query/dailyRewards.query';
 import { getTables, joinTable } from 'query/gameTable.query';
@@ -1668,9 +1669,10 @@ const Dashboard = () => {
                         </div>
 
                         <div className='dashboard-hub__onboarding-bubble'>
-                            <span>Welcome!</span>
-                            <h2>Want me to show you the ropes?</h2>
-                            <p>{`Learn how to play 21 Hold'em, or jump straight into the live tables.`}</p>
+                            <div className='dashboard-hub__welcome-brand' aria-label="21 Hold'em">
+                                <img src={welcomeBrand} alt='21 crowned logo' />
+                                <strong>HOLD?EM</strong>
+                            </div>
                             <div className='dashboard-hub__onboarding-actions ui-button-row'>
                                 <button type='button' className='dashboard-hub__signin-button dashboard-hub__signin-button--primary' onClick={() => completeOnboarding('lobby-how-to-play')}>
                                     Show me
