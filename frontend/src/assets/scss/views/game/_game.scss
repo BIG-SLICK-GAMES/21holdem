@@ -32,7 +32,7 @@ body,
 .gameplay-layout .main-layout-background {
     background:
         linear-gradient(180deg, rgba(6, 6, 4, 0.16) 0%, rgba(4, 4, 2, 0.68) 100%),
-        url("../../../images/bg/newgameBG.webp") center center / cover no-repeat;
+        url("../../../images/bg/casino-interior-game.png") center center / cover no-repeat;
 }
 
 .gameplay-layout .main-container,
@@ -89,7 +89,7 @@ body,
     background:
         radial-gradient(circle at 50% 42%, rgba(135, 135, 133, 0.16) 0%, rgba(16, 16, 14, 0) 54%),
         linear-gradient(180deg, rgba(10, 10, 8, 0.2) 0%, rgba(5, 5, 3, 0.56) 100%),
-        url("../../../images/bg/newgameBG.webp") center center / cover no-repeat;
+        url("../../../images/bg/casino-interior-game.png") center center / cover no-repeat;
     --game-playfield-offset-y: 0px;
     --seat-slot-width: clamp(74px, 18vw, 96px);
     --profile-x: 50%;
