@@ -150,3 +150,37 @@ body .dashboard-hub__onboarding--splash {
     0%, 100% { opacity: 0; }
     30%, 72% { opacity: 1; }
 }
+
+// Enlarge the host from the top edge so his head never moves outside the frame.
+body .dashboard-hub__onboarding--choice {
+    overflow-y: auto;
+    .dashboard-hub__onboarding-dialog { align-items: center; }
+    .dashboard-hub__onboarding-host {
+        width: 100%; height: min(84dvh, 820px); min-height: 0;
+        margin: 0; overflow: hidden; align-self: start; justify-self: center;
+        img {
+            display: block; width: 100%; height: 100%; max-height: none;
+            object-fit: contain; object-position: top center;
+            transform: scale(1.4); transform-origin: top center;
+        }
+    }
+    .dashboard-hub__onboarding-bubble {
+        margin: 0; background: transparent !important; border: 0 !important;
+        box-shadow: none !important; justify-items: center;
+    }
+    .dashboard-hub__welcome-brand {
+        display: grid; justify-items: center; gap: 8px;
+        img { width: min(260px, 32vw); height: auto; object-fit: contain; }
+        strong { color: var(--ui-gold); font-size: clamp(28px, 4vw, 48px); letter-spacing: 0.06em; }
+    }
+    .dashboard-hub__onboarding-actions { width: 100%; }
+}
+@media (max-width: 767px) {
+    body .dashboard-hub__onboarding--choice {
+        place-items: start center;
+        .dashboard-hub__onboarding-host { height: min(52dvh, 520px); }
+        .dashboard-hub__onboarding-bubble { padding: 12px 0; }
+        .dashboard-hub__welcome-brand { gap: 4px; }
+        .dashboard-hub__welcome-brand img { width: min(120px, 24vw); }
+    }
+}
