@@ -9,7 +9,6 @@ import iconShop from '../../assets/images/icons/working/shop.png';
 import iconSettings from '../../assets/images/icons/working/stats.png';
 import iconHowToPlay from '../../assets/images/icons/lobby-menu/how-to-play.png';
 import onboardingHost from '../../assets/images/onboarding/tutorial-host.webp';
-import VideoSplash from './VideoSplash';
 import welcomeBrand from '../../assets/images/bg/lobby_chip_logo.png';
 import { chips1, chips2, chips3, chips4, chips5 } from 'assets/images/shop/shop';
 import { getDailyRewards, updateDailyRewards } from 'query/dailyRewards.query';
@@ -463,7 +462,8 @@ const Dashboard = () => {
     useEffect(() => {
         if (typeof window === 'undefined') return undefined;
         const bReturningToTab = LOBBY_TAB_IDS.includes(new URLSearchParams(window.location.search).get('tab'));
-        setOnboardingStep(bReturningToTab ? 'hidden' : 'splash');
+        const bSkipWelcome = window.localStorage.getItem(ONBOARDING_STORAGE_KEY) === 'complete';
+        setOnboardingStep(bReturningToTab || bSkipWelcome ? 'hidden' : 'choice');
         return undefined;
     }, []);
 
@@ -1658,11 +1658,6 @@ const Dashboard = () => {
             <div className={`dashboard-hub__onboarding dashboard-hub__onboarding--${sOnboardingStep}`} role='dialog' aria-modal='true' aria-label="21 Hold'em welcome">
                 <div className='dashboard-hub__onboarding-backdrop' />
 
-                {sOnboardingStep === 'splash' ? (
-                    <VideoSplash onComplete={() => setOnboardingStep(
-                        window.localStorage.getItem(ONBOARDING_STORAGE_KEY) === 'complete' ? 'hidden' : 'choice'
-                    )} />
-                ) : (
                     <div className='dashboard-hub__onboarding-dialog'>
                         <div className='dashboard-hub__onboarding-host'>
                             <img src={onboardingHost} alt='' aria-hidden='true' />
@@ -1686,7 +1681,6 @@ const Dashboard = () => {
                             </div>
                         </div>
                     </div>
-                )}
             </div>
         );
     };
