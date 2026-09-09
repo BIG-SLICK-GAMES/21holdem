@@ -127,104 +127,60 @@ body .dashboard-hub__tab-menu.ui-button-row > .dashboard-hub__tab-menu-button--h
     border-left: 1px solid rgba(var(--ui-gold-rgb), 0.3) !important;
 }
 
-// Enlarge the host from the top edge so his head never moves outside the frame.
-body .dashboard-hub__onboarding--choice {
-    overflow-y: auto;
-    .dashboard-hub__onboarding-dialog { align-items: center; }
-    .dashboard-hub__onboarding-host {
-        width: 100%; height: min(84dvh, 820px); min-height: 0;
-        margin: 0; overflow: hidden; align-self: start; justify-self: center;
-        img {
-            display: block; width: 100%; height: 100%; max-height: none;
-            object-fit: contain; object-position: top center;
-            transform: scale(1.4); transform-origin: top center;
-        }
-    }
-    .dashboard-hub__onboarding-bubble {
-        margin: 0; background: transparent !important; border: 0 !important;
-        box-shadow: none !important; justify-items: center;
-    }
-    .dashboard-hub__welcome-brand {
-        display: grid; justify-items: center; gap: 8px;
-        img { width: min(260px, 32vw); height: auto; object-fit: contain; }
-        strong { color: var(--ui-gold); font-size: clamp(28px, 4vw, 48px); letter-spacing: 0.06em; }
-    }
-    .dashboard-hub__onboarding-actions { width: 100%; }
-}
-@media (max-width: 767px) {
-    body .dashboard-hub__onboarding--choice {
-        place-items: start center;
-        .dashboard-hub__onboarding-host { height: min(52dvh, 520px); }
-        .dashboard-hub__onboarding-bubble { padding: 12px 0; }
-        .dashboard-hub__welcome-brand { gap: 4px; }
-        .dashboard-hub__welcome-brand img { width: min(120px, 24vw); }
-    }
-}
 
-body .dashboard-hub__onboarding--choice .dashboard-hub__onboarding-bubble {
-    text-align: center;
-    &::before, &::after { display: none; }
-}
-
-// Layer artwork outside the lobby's clipping and transform contexts.
+// A viewport-sized welcome stage: artwork behind, scrollable copy above fixed actions.
 body .dashboard-hub__onboarding--choice {
-    padding: max(24px, env(safe-area-inset-top)) 24px 24px;
-    place-items: start center;
-    overflow-x: hidden;
-    overflow-y: auto;
+    padding: max(16px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom));
+    height: 100dvh; box-sizing: border-box; overflow: hidden;
+    place-items: stretch center;
+    &, *, *::before, *::after {
+        -webkit-backdrop-filter: none !important;
+        backdrop-filter: none !important;
+    }
+    .dashboard-hub__onboarding-backdrop { position: fixed; pointer-events: none; }
     .dashboard-hub__onboarding-dialog {
-        display: block;
-        position: relative;
-        isolation: isolate;
-        width: min(1120px, 100%);
-        min-height: calc(100dvh - 48px);
-        overflow: visible;
+        display: block; position: relative; isolation: isolate;
+        width: min(1120px, 100%); height: 100%; min-height: 0; overflow: visible;
     }
     .dashboard-hub__onboarding-host {
-        position: absolute;
-        top: 0;
-        left: 0;
-        z-index: 1;
-        width: min(70vw, 784px);
-        height: auto;
-        margin: 0;
-        overflow: visible;
-        pointer-events: none;
-        animation: none;
+        position: absolute; top: 0; left: 0; z-index: 1;
+        width: min(70vw, 784px); height: auto; margin: 0;
+        overflow: visible; pointer-events: none; animation: none;
         img {
-            width: 100%;
-            height: auto;
-            max-height: none;
-            object-fit: contain;
-            object-position: top center;
-            transform: none;
+            display: block; width: 100%; height: auto; max-height: none;
+            object-fit: contain; object-position: top center; transform: none;
         }
     }
     .dashboard-hub__onboarding-bubble {
-        position: relative;
-        z-index: 2;
-        width: 52%;
-        margin: 0 0 0 auto;
+        position: absolute; right: 0; bottom: 0; z-index: 2;
+        width: 52%; height: 100%; max-height: 100%; min-height: 0;
+        display: grid; grid-template-rows: minmax(0, 1fr) auto;
+        gap: 12px; margin: 0; padding: 12px;
+        background: transparent !important; border: 0 !important;
+        box-shadow: none !important; text-align: center; animation: none;
+        &::before, &::after { display: none; }
+        h2 { font-size: clamp(24px, 4dvh, 38px); line-height: 1.05; margin: 8px 0; }
+        p { font-size: 16px; line-height: 1.3; margin: 8px 0; }
     }
-}
-body .dashboard-hub__onboarding-backdrop {
-    position: fixed;
-    -webkit-backdrop-filter: none;
-    backdrop-filter: none;
+    .dashboard-hub__welcome-copy { min-height: 0; overflow-y: auto; align-self: stretch; }
+    .dashboard-hub__welcome-brand {
+        display: grid; justify-items: center; gap: 4px; margin: 0 0 12px;
+        img { width: clamp(64px, 16dvh, 140px); height: auto; object-fit: contain; }
+        strong { color: var(--ui-gold); font-size: clamp(24px, 4dvh, 36px); letter-spacing: 0.06em; }
+    }
+    .dashboard-hub__onboarding-actions {
+        width: 100%; min-width: 0; align-self: end;
+        > button { flex: 1 1 0; min-width: 0; white-space: normal; min-height: 48px; }
+    }
 }
 @media (max-width: 767px) {
     body .dashboard-hub__onboarding--choice {
-        padding: max(20px, env(safe-area-inset-top)) 16px 24px;
         .dashboard-hub__onboarding-host {
-            width: min(115vw, 476px);
-            height: auto;
-            left: 50%;
-            transform: translateX(-50%);
+            width: min(115vw, 476px); left: 50%; transform: translateX(-50%);
         }
-        .dashboard-hub__onboarding-bubble {
-            width: 100%;
-            margin: 0;
-            padding: clamp(310px, 56dvh, 520px) 0 12px;
-        }
+        .dashboard-hub__onboarding-bubble { width: 100%; height: 60%; padding: 0; gap: 8px; }
+        .dashboard-hub__welcome-brand { margin-bottom: 6px; }
+        .dashboard-hub__welcome-brand img { width: clamp(48px, 10dvh, 80px); }
+        .dashboard-hub__onboarding-bubble h2 { font-size: clamp(22px, 3.5dvh, 30px); }
     }
 }
