@@ -184,3 +184,8 @@ body .dashboard-hub__onboarding--choice {
         .dashboard-hub__welcome-brand img { width: min(120px, 24vw); }
     }
 }
+
+body .dashboard-hub__onboarding--choice .dashboard-hub__onboarding-bubble {
+    text-align: center;
+    &::before, &::after { display: none; }
+}

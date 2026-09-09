@@ -1673,6 +1673,9 @@ const Dashboard = () => {
                                 <img src={welcomeBrand} alt='21 crowned logo' />
                                 <strong>HOLD?EM</strong>
                             </div>
+                            <span>Welcome!</span>
+                            <h2>Want me to show you the ropes?</h2>
+                            <p>{`Learn how to play 21 Hold'em, or jump straight into the live tables.`}</p>
                             <div className='dashboard-hub__onboarding-actions ui-button-row'>
                                 <button type='button' className='dashboard-hub__signin-button dashboard-hub__signin-button--primary' onClick={() => completeOnboarding('lobby-how-to-play')}>
                                     Show me
