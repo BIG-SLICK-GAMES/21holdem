@@ -1671,7 +1671,7 @@ const Dashboard = () => {
                         <div className='dashboard-hub__onboarding-bubble'>
                             <div className='dashboard-hub__welcome-brand' aria-label="21 Hold'em">
                                 <img src={welcomeBrand} alt='21 crowned logo' />
-                                <strong>HOLD?EM</strong>
+                                <strong>HOLD&rsquo;EM</strong>
                             </div>
                             <span>Welcome!</span>
                             <h2>Want me to show you the ropes?</h2>
