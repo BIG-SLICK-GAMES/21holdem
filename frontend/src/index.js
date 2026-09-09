@@ -12,6 +12,12 @@ import { ToastContainer } from 'react-toastify'
 import reportWebVitals from 'reportWebVitals'
 import NetworkStatus from 'shared/components/NetworkStatus';
 
+// Start every document load at the top, including browser-restored pages.
+window.history.scrollRestoration = 'manual';
+const resetPageScroll = () => window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+resetPageScroll();
+window.addEventListener('pageshow', resetPageScroll);
+
 const root = ReactDOM.createRoot(document.getElementById('root'))
 
 root.render(
