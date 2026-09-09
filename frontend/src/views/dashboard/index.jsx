@@ -1734,7 +1734,7 @@ const Dashboard = () => {
     return (
         <div className='dashboard-container'>
             <section className={`dashboard-hub${sDashboardSceneClass}`} ref={dashboardRef} style={oActiveLobbyIconBackgroundStyle}>
-                {renderOnboardingOverlay()}
+                {createPortal(renderOnboardingOverlay(), document.body)}
                 <div className='dashboard-hub__backdrop' aria-hidden='true' />
                 <div className='dashboard-hub__bokeh' aria-hidden='true'>{Array.from({ length: 8 }, (_, index) => <i key={index} />)}</div>
                 <div className='dashboard-hub__ambient-grid' aria-hidden='true' />

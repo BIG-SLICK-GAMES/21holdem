@@ -189,3 +189,66 @@ body .dashboard-hub__onboarding--choice .dashboard-hub__onboarding-bubble {
     text-align: center;
     &::before, &::after { display: none; }
 }
+
+// Layer artwork outside the lobby's clipping and transform contexts.
+body .dashboard-hub__onboarding--choice {
+    padding: max(24px, env(safe-area-inset-top)) 24px 24px;
+    place-items: start center;
+    overflow-x: hidden;
+    overflow-y: auto;
+    .dashboard-hub__onboarding-dialog {
+        display: block;
+        position: relative;
+        isolation: isolate;
+        width: min(1120px, 100%);
+        min-height: calc(100dvh - 48px);
+        overflow: visible;
+    }
+    .dashboard-hub__onboarding-host {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1;
+        width: min(70vw, 784px);
+        height: auto;
+        margin: 0;
+        overflow: visible;
+        pointer-events: none;
+        animation: none;
+        img {
+            width: 100%;
+            height: auto;
+            max-height: none;
+            object-fit: contain;
+            object-position: top center;
+            transform: none;
+        }
+    }
+    .dashboard-hub__onboarding-bubble {
+        position: relative;
+        z-index: 2;
+        width: 52%;
+        margin: 0 0 0 auto;
+    }
+}
+body .dashboard-hub__onboarding-backdrop {
+    position: fixed;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+}
+@media (max-width: 767px) {
+    body .dashboard-hub__onboarding--choice {
+        padding: max(20px, env(safe-area-inset-top)) 16px 24px;
+        .dashboard-hub__onboarding-host {
+            width: min(115vw, 476px);
+            height: auto;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .dashboard-hub__onboarding-bubble {
+            width: 100%;
+            margin: 0;
+            padding: clamp(310px, 56dvh, 520px) 0 12px;
+        }
+    }
+}
