@@ -1,3 +1,4 @@
+import { THEME_PRESETS } from '../../scripts/siteThemePresets';
 import React, { useEffect, useLayoutEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { COLOURS, DEFAULT_THEME, THEME_EVENT, THEME_KEY, isSiteThemeRoute, readTheme, saveTheme, themeCss } from '../../scripts/siteTheme';
@@ -29,6 +30,12 @@ export default function ThemeAdjuster() {
         setTheme(next);
         setStatus(saveTheme(next) ? 'Saved on this device' : 'Preview only: browser storage is unavailable');
     };
+    const activePreset = THEME_PRESETS.find(preset => COLOURS.every(([key]) => theme[key] === preset.colours[key]));
+    const applyPreset = preset => {
+        const next = { ...preset.colours };
+        setTheme(next);
+        setStatus(saveTheme(next) ? `${preset.name} saved on this device` : 'Preview only: browser storage is unavailable');
+    };
     const reset = () => { setTheme(DEFAULT_THEME); saveTheme(null); setStatus('Original site theme restored'); };
     const copy = async () => {
         try { await navigator.clipboard.writeText(JSON.stringify(theme, null, 2)); setStatus('Theme values copied'); }
@@ -36,6 +43,17 @@ export default function ThemeAdjuster() {
     };
     return <section className='site-theme-editor'>
         <p>Customise the site colours. In-game colours and artwork stay unchanged.</p>
+        <h2>Presets</h2>
+        <div className='site-theme-editor__presets' role='group' aria-label='Theme presets'>
+            {THEME_PRESETS.map(preset => <button type='button' className='site-theme-editor__preset' key={preset.id}
+                aria-pressed={activePreset?.id === preset.id} onClick={() => applyPreset(preset)}>
+                <span className='site-theme-editor__swatches' aria-hidden='true'>
+                    {['background', 'surface', 'accent', 'text'].map(key => <i key={key} style={{ backgroundColor: preset.colours[key] }} />)}
+                </span>
+                <span>{preset.name}</span>
+            </button>)}
+        </div>
+        <p>Current theme: {activePreset?.name || 'Custom'}. You can fine-tune any colour below.</p>
         <div className='site-theme-editor__colours'>
             {COLOURS.map(([key, label]) => <label className='site-theme-editor__colour' key={key}>
                 <span>{label}</span>

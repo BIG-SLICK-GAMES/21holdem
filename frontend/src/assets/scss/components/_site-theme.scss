@@ -24,3 +24,12 @@ body[data-site-theme] {
     input[type='color'] { width: 48px; height: 40px; padding: 2px; cursor: pointer; }
     &__actions { display: flex; gap: 12px; flex-wrap: wrap; margin: 24px 0 12px; }
 }
+
+.site-theme-editor {
+    &__presets { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 160px), 1fr)); gap: 10px; margin: 14px 0; }
+    &__preset { display: grid; gap: 10px; min-height: 82px; padding: 12px; text-align: left; background: var(--ui-surface); color: var(--ui-text); border: 1px solid var(--ui-border); }
+    &__preset[aria-pressed='true'] { outline: 2px solid var(--ui-gold); outline-offset: -2px; }
+    &__preset:focus-visible { outline: 2px solid var(--ui-focus); outline-offset: 2px; }
+    &__swatches { display: flex; height: 18px; }
+    &__swatches i { flex: 1; }
+}
