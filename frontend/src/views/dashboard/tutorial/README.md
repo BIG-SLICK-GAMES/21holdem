@@ -43,14 +43,24 @@ server; fixing either is outside this change.
 
 ## Playback and audio
 
-One reducer owns the scene/time/play state. Manual navigation shows a complete
-scene and pauses; Play restarts that scene's motion. Replay increments generation
-and resets all derived hand state. Decision buttons also pause autoplay.
+One reducer owns the scene/time/play state. Twelve reading checkpoints stop the
+clock and add a navy tint mask, leaving the relevant elements above it. Continue
+resumes from the same instant; no timer dismisses the explanation. Manual scene
+navigation opens that scene's first checkpoint. Replay resets all checkpoints
+and derived hand state. Decision buttons select the matching reading checkpoint.
 The clock stops for hidden tabs, offscreen instances and unmount. Reduced motion
-starts paused and displays complete states. Arrow keys navigate; Space toggles
+starts at the first checkpoint; Continue goes straight to the next checkpoint.
+Arrow keys navigate; Space toggles
 playback when the tutorial region itself is focused.
 
 Audio hooks use SOUND_STATE soundOn, defaulting silent when no preference is known.
 No sound plays before a gesture; rejected play promises are caught. Card/chip/click/
 win hooks reuse existing audio; the optional dedicated twentyOne cue is null.
 No game audio or preference storage is modified.
+
+Optional narration is opt-in through Voice off/on. The twelve MP3 recordings in
+assets/sounds/tutorial are generated from READING_STOPS text using Windows SAPI
+Microsoft David Desktop at rate -1, then encoded to 64 kbps MP3. Only the current
+clip loads. Voice off, changing scenes/checkpoints, leaving Learn and unmount
+cancel playback. Existing SOUND_STATE mute disables narration. A hidden browser
+document pauses the clip. Finishing narration never dismisses a reading pause.
