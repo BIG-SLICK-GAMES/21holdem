@@ -27,5 +27,5 @@ export function textureImage(value) {
 }
 export function textureCss(value) {
     const t = sanitizeTexture(value);
-    return `body[data-site-theme] :is(.main-layout:not(.gameplay-layout), .main-layout:not(.gameplay-layout) .main-layout-background, .auth-layout, .common-layout, .dashboard-hub--themed-scene) {background-image:${textureImage(t)} !important;background-size:${t.pattern === 'dimples' ? '18px 18px' : 'auto'} !important;}`;
+    return `body[data-site-theme] :is(.main-layout:not(.gameplay-layout), .auth-layout, .common-layout) {background-image:${textureImage(t)} !important;background-size:${t.pattern === 'dimples' ? '18px 18px' : 'auto'} !important;}body[data-site-theme] :is(.main-layout:not(.gameplay-layout) .main-layout-background, .dashboard-hub--themed-scene) {background:transparent !important;}`;
 }
