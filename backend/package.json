@@ -10,7 +10,8 @@
     "lint": "eslint . --ext .js --max-warnings=0",
     "lint:fix": "eslint . --ext .js --fix",
     "test": "npm run test:rules",
-    "test:rules": "node scripts/TwentyOneHoldem-rules-scenarios.js"
+    "test:rules": "node scripts/TwentyOneHoldem-rules-scenarios.js",
+    "test:daily-rewards": "node scripts/daily-rewards-test.js"
   },
   "keywords": [],
   "author": "",

@@ -47,6 +47,7 @@ const User = new mongoose.Schema(
     sGoogleId: String,
     nDailyRewardStreak: { type: Number },
     dLastRewardClaimDate: { type: Date },
+    oDailyReward: { type: Object, default: null },
     sPrivateCode: String,
     oBotProfile: { type: Object, default: null },
   },
