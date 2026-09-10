@@ -188,3 +188,6 @@ body .dashboard-hub__onboarding--choice {
 // Rounded text bubbles belong to the phone tutorial only.
 body .dashboard-hub__phone-tutorial .dashboard-hub__phone-notification { border-radius: 18px; }
 body .dashboard-hub__phone-tutorial .dashboard-hub__phone-message { border-radius: 18px 18px 18px 6px; }
+
+// Match settings spacing to the compact 76px site header.
+body .settings-detail { padding-top: 96px; }
