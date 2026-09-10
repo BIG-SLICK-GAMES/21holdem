@@ -155,6 +155,9 @@ export default class Level extends Phaser.Scene {
 
         const layout = this.oGameUILayout;
         const base = this.oGameUILayoutBase;
+        // Convert the requested 100 screen pixels to the canvas coordinate system.
+        const canvasHeight = this.game.canvas.getBoundingClientRect().height || config.height;
+        const tableAndPlayersOffsetY = 100 * config.height / canvasHeight;
         const uiScale = config.isDesktopLayout() ? 1 : (layout.uiScale || 1);
 
         base.uiNodes?.forEach(({ node, x, y, scaleX, scaleY }) => {
@@ -169,7 +172,7 @@ export default class Level extends Phaser.Scene {
 
         if (this.table) {
             const tableX = base.tableX + layout.tableOffsetX;
-            const tableY = base.tableY + layout.tableOffsetY;
+            const tableY = base.tableY + layout.tableOffsetY + tableAndPlayersOffsetY;
             const tableScaleX = base.tableScaleX * layout.tableScale;
             const tableScaleY = base.tableScaleY * layout.tableScale * layout.tablePerspective;
             this.table.setX(tableX);
@@ -189,7 +192,7 @@ export default class Level extends Phaser.Scene {
 
         base.playerProfiles.forEach(({ playerProfile, x, y, scaleX, scaleY }) => {
             if (!playerProfile) return;
-            playerProfile.setPosition(x, y);
+            playerProfile.setPosition(x, y + tableAndPlayersOffsetY);
             playerProfile.setScale(
                 scaleX,
                 scaleY
@@ -2432,6 +2435,7 @@ setButtons() {
         this.bindGameActionOverlayEvents();
         this.registerFXOverlayPotAnchor();
         this.cleanupRegistry.addPhaserListener(this.scale, 'resize', this.registerFXOverlayPotAnchor, this);
+        this.cleanupRegistry.addPhaserListener(this.scale, 'resize', () => this.applyGameUILayout(this.oGameUILayout), this);
         window.FXOverlay?.enable?.();
         window.FXOverlay?.setSoundEnabled?.(this.oSoundManager.isSoundOn);
         window.FXOverlay?.setMusicEnabled?.(this.oSoundManager.isMusicOn);

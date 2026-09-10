@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { Button, Col, Form, Row, Spinner } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
 import _ from "scripts/helper";
@@ -31,6 +31,7 @@ function getPlayerInitials(name = "") {
 const Profile = () => {
     const [payload, setPayload] = useState({});
     const navigate = useNavigate();
+    const fromSettings = new URLSearchParams(useLocation().search).get('from') === 'settings';
     const queryClient = useQueryClient();
     const [avatarList, setAvatarList] = useState();
     const { reset, watch, formState: { isDirty, dirtyFields }, handleSubmit, setValue } = useForm({ mode: "all" });
@@ -198,8 +199,8 @@ const Profile = () => {
     return (
         <>
             <div className="profile" style={{ '--profile-page-icon': `url("${iconSettings}")` }}>
-                <button type="button" className="profile-back-pill" onClick={() => navigate('/lobby')}>
-                    Back to Lobby
+                <button type="button" className="profile-back-pill" onClick={() => navigate(fromSettings ? '/lobby?tab=lobby-settings' : '/lobby')}>
+                    {fromSettings ? 'Back to Settings' : 'Back to Lobby'}
                 </button>
                 <Form className="profile-content" onSubmit={handleSubmit(onSubmit)}>
                     {

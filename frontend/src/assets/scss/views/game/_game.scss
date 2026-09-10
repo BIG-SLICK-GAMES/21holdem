@@ -3433,3 +3433,6 @@ body,
     width: min(280px, calc(100vw - 16px));
     .game-ui-layout__panel { max-height: calc(100dvh - 120px); background: #0c0a07; backdrop-filter: none; }
 }
+
+// Keep the HTML player rail aligned with the table's requested screen-pixel offset.
+.game-table-page__seat-overlay { transform: translateY(100px); }
