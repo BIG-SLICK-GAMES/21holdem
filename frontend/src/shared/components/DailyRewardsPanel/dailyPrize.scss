@@ -1,0 +1,44 @@
+.daily-prize {
+    --prize-gold: var(--site-accent, #e9c677);
+    position: relative; isolation: isolate; width: 100%; max-width: 880px; margin: 0 auto; padding: 42px 20px 24px; text-align: center; color: var(--site-text, #f5f1e8);
+    h2 { font-size: clamp(28px, 5vw, 44px); margin: 10px 0; font-weight: 750; }
+    h3 { font-size: 25px; margin: 6px 0; }
+    p { line-height: 1.6; margin: 8px auto; }
+    &__eyebrow { color: var(--prize-gold); font-size: 11px; font-weight: 800; letter-spacing: .2em; }
+    &__chest { position: relative; display: block; width: min(100%, 360px); aspect-ratio: 1; margin: 0 auto; padding: 0; border: 0 !important; background: none !important; box-shadow: none !important; cursor: pointer; overflow: visible; -webkit-tap-highlight-color: transparent;
+        &:disabled { opacity: 1; cursor: default; }
+        &:focus-visible { outline: 2px solid var(--prize-gold) !important; outline-offset: 4px; }
+    }
+    &__halo { position: absolute; inset: 12% -5% 0; background: radial-gradient(ellipse, #c28a273b, transparent 68%); animation: prize-glow 4s ease-in-out infinite alternate; pointer-events: none; }
+    &__rays { position: absolute; inset: 5% 0; background: repeating-conic-gradient(from 0deg, transparent 0deg 18deg, #ffd77e55 20deg 24deg, transparent 26deg 40deg); mask-image: radial-gradient(ellipse, #000, transparent 70%); opacity: 0; transform: scale(.6); transition: opacity .5s, transform 1.5s; pointer-events: none; }
+    .is-opening, .is-open { .daily-prize__rays { opacity: 1; transform: scale(1.35); } }
+    &__sparkles { position: absolute; inset: 12% 4%; pointer-events: none;
+        i { position: absolute; left: calc(8% + var(--i) * 12%); top: calc(25% + mod(var(--i), 3) * 20%); width: 5px; height: 5px; background: #f2ce7a; transform: rotate(45deg); opacity: 0; animation: prize-spark 3s calc(var(--i) * -.4s) infinite; }
+    }
+    &__status { min-height: 76px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    &__open, &__status > button { padding: 14px 28px; color: #1c150b !important; background: linear-gradient(110deg, #f8e1a5, #d6a444) !important; border: 1px solid #efcd82 !important; font: inherit; font-weight: 750; cursor: pointer; min-height: 48px; }
+    &__amount { color: var(--prize-gold); font-size: clamp(26px, 5vw, 36px); }
+    &__countdown { font-size: 14px; strong { display: block; font-variant-numeric: tabular-nums; font-size: 26px; color: var(--prize-gold); letter-spacing: .08em; } }
+    &__note { font-size: 12px; opacity: .7; }
+    &__pool { margin: 30px auto 0; max-width: 560px; text-align: left; border-top: 1px solid #d3b57444; padding-top: 18px;
+        summary { cursor: pointer; font-weight: 650; span { float: right; font-size: 12px; opacity: .7; } }
+        ul { list-style: none; padding: 0; margin: 12px 0; } li { display: flex; justify-content: space-between; gap: 16px; padding: 9px 0; font-size: 14px; strong { color: var(--prize-gold); white-space: nowrap; } }
+        p { font-size: 12px; opacity: .7; }
+    }
+}
+@keyframes prize-float { 0%,100% { transform: translateY(0) rotate(-1deg); } 50% { transform: translateY(-9px) rotate(1deg); } }
+@keyframes prize-glow { to { opacity: .5; transform: scale(.9); } }
+@keyframes prize-spark { 0%,100% { opacity: 0; transform: translateY(12px) rotate(45deg) scale(.5); } 50% { opacity: .9; transform: translateY(-15px) rotate(45deg) scale(1); } }
+@media (max-width: 480px) { .daily-prize { padding: 28px 12px 20px; &__chest { max-width: 310px; } &__pool li { flex-wrap: wrap; gap: 2px; } } }
+@media (prefers-reduced-motion: reduce) { .daily-prize *, .daily-prize *::before { animation: none !important; transition: none !important; } }
+
+.daily-prize {
+    &__art { position: absolute; inset: 0; z-index: 1; animation: prize-float 4s ease-in-out infinite; pointer-events: none; }
+    &__art img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; transition: opacity .8s ease, filter .4s; }
+    &__opened { opacity: 0; }
+    .is-opening, .is-open { .daily-prize__closed { opacity: 0; } .daily-prize__opened { opacity: 1; } }
+    .is-opening .daily-prize__art { animation: prize-reveal 1.5s ease-out both; }
+    .is-open .daily-prize__art { animation: none; }
+    &__chest:not(:disabled):hover .daily-prize__art { filter: brightness(1.15); }
+}
+@keyframes prize-reveal { 0% { transform: scale(1) rotate(0); } 18% { transform: scale(.97) rotate(-3deg); } 35% { transform: scale(1.02) rotate(3deg); } 55% { transform: scale(1.08) rotate(-1deg); } 100% { transform: scale(1); } }
