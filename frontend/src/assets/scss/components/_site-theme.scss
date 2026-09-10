@@ -4,9 +4,15 @@ body[data-site-theme] {
     :is(.main-layout:not(.gameplay-layout), .main-layout:not(.gameplay-layout) .main-layout-background, .auth-layout, .common-layout, .dashboard-hub--themed-scene) {
         background: var(--ui-blue-deep) !important;
     }
-    .main-layout:not(.gameplay-layout) .main-layout-background::after { background: transparent; }
+    .main-layout:not(.gameplay-layout) .main-layout-background::before,
+    .main-layout:not(.gameplay-layout) .main-layout-background::after { display: none; }
+    .settings-detail, .settings-detail__content {
+        background: transparent !important;
+        -webkit-backdrop-filter: none !important;
+        backdrop-filter: none !important;
+    }
     :is(.lobby-topbar, .dashboard-hub__tab-menu, .dashboard-hub .ui-button-row) { background: var(--site-navigation) !important; }
-    :is(.modal-content, .bsg-auth__panel, .profile-card, .settings-detail) { background-color: var(--ui-surface) !important; color: var(--ui-text); }
+    :is(.modal-content, .bsg-auth__panel, .profile-card) { background-color: var(--ui-surface) !important; color: var(--ui-text); }
     :is(input:not([type='color']):not([type='range']):not([type='checkbox']):not([type='radio']), select, textarea) {
         background-color: var(--site-field) !important; color: var(--ui-text) !important; border-color: var(--ui-border) !important;
     }
