@@ -1,7 +1,7 @@
 // Custom site colours are opt-in and the marker is removed before gameplay renders.
 body[data-site-theme] {
     background-color: var(--ui-blue-deep); color: var(--ui-text);
-    :is(.main-layout:not(.gameplay-layout), .main-layout:not(.gameplay-layout) .main-layout-background, .auth-layout, .common-layout) {
+    :is(.main-layout:not(.gameplay-layout), .main-layout:not(.gameplay-layout) .main-layout-background, .auth-layout, .common-layout, .dashboard-hub--themed-scene) {
         background: var(--ui-blue-deep) !important;
     }
     .main-layout:not(.gameplay-layout) .main-layout-background::after { background: transparent; }
