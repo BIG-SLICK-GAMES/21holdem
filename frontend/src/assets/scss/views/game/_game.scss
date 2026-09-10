@@ -3444,12 +3444,3 @@ body,
     width: min(280px, calc(100vw - 16px));
     .game-ui-layout__panel { max-height: calc(100dvh - 120px); background: #0c0a07; backdrop-filter: none; }
 }
-
-// User-requested whole-game offset; reserve scroll space for the lower controls.
-.gameplay-layout {
-    padding-bottom: 200px;
-    box-sizing: content-box;
-    overflow: visible;
-}
-.gameplay-layout .main-container, .gameplay-layout .container-fluid { overflow: visible; }
-.gameplay-layout .game-table-page { transform: translateY(200px); }
