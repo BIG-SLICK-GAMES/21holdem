@@ -1,8 +1,13 @@
 // Custom site colours are opt-in and the marker is removed before gameplay renders.
 body[data-site-theme] {
     background-color: var(--ui-blue-deep); color: var(--ui-text);
-    :is(.main-layout:not(.gameplay-layout), .main-layout:not(.gameplay-layout) .main-layout-background, .auth-layout, .common-layout, .dashboard-hub--themed-scene) {
-        background: var(--ui-blue-deep) !important;
+    // One owner for the page background, including after routes/styles load.
+    :is(.main-layout:not(.gameplay-layout), .auth-layout, .common-layout) {
+        background: var(--site-texture-image, none) var(--ui-blue-deep) !important;
+        background-size: var(--site-texture-size, auto) !important;
+    }
+    :is(.main-layout:not(.gameplay-layout) .main-layout-background, .dashboard-hub--themed-scene) {
+        background: transparent !important;
     }
     .main-layout:not(.gameplay-layout) .main-layout-background::before,
     .main-layout:not(.gameplay-layout) .main-layout-background::after { display: none; }
