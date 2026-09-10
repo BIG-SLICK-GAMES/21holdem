@@ -3437,3 +3437,10 @@ body,
     &__actions { display: flex; gap: 8px; }
     p { margin: 10px 0 0; color: var(--ui-text-muted); font-size: 13px; }
 }
+
+// Table adjustment tools live outside the clipped playfield.
+.game-ui-layout.game-ui-layout--table-adjuster {
+    position: fixed; top: max(58px, env(safe-area-inset-top)); left: 8px; z-index: 11001;
+    width: min(280px, calc(100vw - 16px));
+    .game-ui-layout__panel { max-height: calc(100dvh - 120px); background: #0c0a07; backdrop-filter: none; }
+}
