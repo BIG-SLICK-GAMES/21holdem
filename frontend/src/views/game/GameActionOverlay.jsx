@@ -22,7 +22,7 @@ import {
     GAME_ACTION_OVERLAY_STATE_EVENT,
 } from '../../scripts/gameActionOverlayBridge';
 import { GAME_BROWSER_EVENTS } from '../../scripts/gameEvents';
-import { getAvatarImageSrc } from '../../shared/constants/builtInAvatars';
+import { getGameAvatar } from '../../shared/constants/builtInAvatars';
 import { ReactToastify } from '../../shared/utils';
 
 const DEBUG_CONSOLE_LAYOUT = false;
@@ -655,7 +655,7 @@ function GameActionOverlay({ isPaused = false }) {
         ? `${formatBlindAmount(Number.isFinite(nSmallBlind) && nSmallBlind > 0 ? nSmallBlind : nBigBlind / 2)}/${formatBlindAmount(nBigBlind)}`
         : '';
     const sConsoleName = profileData?.sUserName || 'Player';
-    const sConsoleAvatar = getAvatarImageSrc(profileData?.sAvatar, sConsoleName) || getAvatarImageSrc('', sConsoleName);
+    const sConsoleAvatar = getGameAvatar(profileData?.sAvatar, sConsoleName).sPath;
     const isVisible = Boolean(overlayState.visible);
     const bHasHoleCards = consoleCards.hand.length > 0;
     const bKeepConsoleVisible = isVisible || bHasHoleCards;

@@ -151,7 +151,7 @@ const Profile = () => {
             id: 'profile-settings-how-to-play',
             label: 'How To Play',
             description: 'Review table flow, actions, and controls.',
-            onClick: () => navigate('/how-to-play'),
+            onClick: () => navigate('/lobby?tab=lobby-how-to-play'),
         },
         {
             id: 'profile-settings-rules',
