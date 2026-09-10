@@ -50,7 +50,7 @@ import {
 } from '../scripts/clientGameSelectors';
 import { reduceSocketEventToClientState } from '../scripts/socketStateReducer';
 import { getApiRoot } from '../axios';
-import { GAME_UI_LAYOUT_EVENT, sanitizeGameUiLayout } from '../scripts/gameUiLayout';
+import { GAME_UI_LAYOUT_EVENT, sanitizeGameUiLayout, readSavedGameUiLayout } from '../scripts/gameUiLayout';
 import {
     emitGameActionOverlayState,
     GAME_ACTION_OVERLAY_COMMAND_EVENT,
@@ -138,7 +138,10 @@ export default class Level extends Phaser.Scene {
             })),
         };
 
-        this.oGameUILayout = sanitizeGameUiLayout();
+        const savedTableLayout = readSavedGameUiLayout();
+        this.oGameUILayout = sanitizeGameUiLayout(Object.fromEntries(
+            ['tableOffsetX', 'tableOffsetY', 'tableScale', 'tablePerspective'].map(key => [key, savedTableLayout[key]])
+        ));
         this.applyGameUILayout(this.oGameUILayout);
     }
 
