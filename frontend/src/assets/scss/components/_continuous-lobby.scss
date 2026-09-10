@@ -184,3 +184,7 @@ body .dashboard-hub__onboarding--choice {
         .dashboard-hub__onboarding-bubble h2 { font-size: clamp(22px, 3.5dvh, 30px); }
     }
 }
+
+// Rounded text bubbles belong to the phone tutorial only.
+body .dashboard-hub__phone-tutorial .dashboard-hub__phone-notification { border-radius: 18px; }
+body .dashboard-hub__phone-tutorial .dashboard-hub__phone-message { border-radius: 18px 18px 18px 6px; }
