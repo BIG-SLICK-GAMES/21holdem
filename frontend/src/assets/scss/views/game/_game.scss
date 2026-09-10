@@ -2141,7 +2141,7 @@ body,
     height: 22px;
     padding: 0;
     border: 1px solid rgba(200, 200, 198, 0.92);
-    border-radius: 999px;
+    border-radius: 50% !important;
     background: rgba(22, 22, 20, 0.94);
     color: #e9e9e7;
     box-shadow: 0 4px 9px rgba(0, 0, 0, 0.34);
@@ -2150,31 +2150,20 @@ body,
     &.is-active {
         border-color: rgba(var(--ui-gold-rgb), 0.98);
         background: rgba(var(--ui-gold-rgb), 0.96);
-        color: var(--ui-gold);
+        color: var(--ui-gold-ink);
     }
 }
 
-.game-action-overlay__hole-card-eye {
-    position: relative;
+ .game-action-overlay__hole-card-eye {
     display: block;
-    width: 13px;
-    height: 8px;
-    border: 1.7px solid currentColor;
-    border-radius: 999px 999px 999px 999px / 78% 78% 78% 78%;
-
-    &::after {
-        content: '';
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        width: 4px;
-        height: 4px;
-        --ui-radius: 999px; border-radius: 999px;
-        background: currentColor;
-        transform: translate(-50%, -50%);
-    }
+    width: 16px;
+    height: 12px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
 }
-
 
 .game-stage--table-only {
     width: min(100%, var(--game-frame-width));

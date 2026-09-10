@@ -231,7 +231,10 @@ function HoleCardDisplay({ cards, score, isFolded, revealCardId, onRevealCardTog
                                     onRevealCardToggle?.(bRevealSelected ? '' : key);
                                 }}
                             >
-                                <span className='game-action-overlay__hole-card-eye' />
+                                <svg className='game-action-overlay__hole-card-eye' viewBox='0 0 24 16' aria-hidden='true' focusable='false'>
+                                    <path d='M1 8C4 3 8 1 12 1s8 2 11 7c-3 5-7 7-11 7S4 13 1 8Z' />
+                                    <circle cx='12' cy='8' r='3' />
+                                </svg>
                             </button>
                         </span>
                     );
