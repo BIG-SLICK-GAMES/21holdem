@@ -33,3 +33,7 @@ body[data-site-theme] {
     &__swatches { display: flex; height: 18px; }
     &__swatches i { flex: 1; }
 }
+
+.site-theme-editor__texture-sample { display: block; height: 48px; background-color: var(--ui-blue-deep); }
+.site-theme-editor__intensity { display: grid; gap: 8px; max-width: 420px; margin: 12px 0 24px; }
+.site-theme-editor__intensity input { width: 100%; accent-color: var(--ui-gold); }
