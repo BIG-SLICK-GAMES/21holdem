@@ -1,4 +1,4 @@
-import { DEFAULT_TEXTURE, TEXTURES, TEXTURE_KEY, TEXTURE_EVENT, readTexture, saveTexture, textureCss, textureImage } from '../../scripts/siteTexture';
+import { DEFAULT_TEXTURE, TEXTURES, TEXTURE_KEY, TEXTURE_EVENT, readTexture, saveTexture, textureCss, texturePaint, hasTexture } from '../../scripts/siteTexture';
 import { THEME_PRESETS } from '../../scripts/siteThemePresets';
 import React, { useEffect, useLayoutEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
@@ -21,13 +21,13 @@ export function SiteThemeRuntime() {
         window.addEventListener('storage', storage);
         return () => { window.removeEventListener(THEME_EVENT, change); window.removeEventListener('storage', storage); };
     }, []);
-    const enabled = (Boolean(theme) || texture.pattern !== 'none') && isSiteThemeRoute(pathname);
+    const enabled = (Boolean(theme) || hasTexture(texture)) && isSiteThemeRoute(pathname);
     useLayoutEffect(() => {
         if (enabled) document.body.setAttribute('data-site-theme', 'custom');
         else document.body.removeAttribute('data-site-theme');
         return () => document.body.removeAttribute('data-site-theme');
     }, [enabled]);
-    return enabled ? <style>{themeCss(theme || DEFAULT_THEME) + (texture.pattern !== 'none' ? textureCss(texture) : '')}</style> : null;
+    return enabled ? <style>{themeCss(theme || DEFAULT_THEME) + (hasTexture(texture) ? textureCss(texture) : '')}</style> : null;
 }
 
 export default function ThemeAdjuster() {
@@ -64,18 +64,28 @@ export default function ThemeAdjuster() {
             </button>)}
         </div>
         <p>Current theme: {activePreset?.name || 'Custom'}. You can fine-tune any colour below.</p>
-        <h2>Background texture</h2>
+        <h2>Background textures</h2>
+        <p>Select any combination. Adjust each pattern independently.</p>
+        <button type='button' className='dashboard-hub__signin-button' onClick={() => updateTexture({ layers: Object.fromEntries(Object.entries(texture.layers).map(([key, layer]) => [key, { ...layer, enabled: false }])) })}>Plain background</button>
         <div className='site-theme-editor__presets' role='group' aria-label='Background textures'>
-            {TEXTURES.map(([pattern, label]) => <button type='button' className='site-theme-editor__preset' key={pattern}
-                aria-pressed={texture.pattern === pattern} onClick={() => updateTexture({ ...texture, pattern })}>
-                <span className='site-theme-editor__texture-sample' aria-hidden='true' style={{ backgroundImage: textureImage({ pattern, intensity: 80 }), backgroundSize: pattern === 'dimples' ? '18px 18px' : 'auto' }} />
-                <span>{label}</span>
-            </button>)}
+            {TEXTURES.map(([pattern, label]) => {
+                const layer = texture.layers[pattern];
+                const changeLayer = patch => updateTexture({ layers: { ...texture.layers, [pattern]: { ...layer, ...patch } } });
+                const sample = texturePaint({ layers: { [pattern]: { ...layer, enabled: true } } });
+                return <div className='site-theme-editor__texture-layer' key={pattern}>
+                    <button type='button' className='site-theme-editor__preset' aria-pressed={layer.enabled} onClick={() => changeLayer({ enabled: !layer.enabled })}>
+                        <span className='site-theme-editor__texture-sample' aria-hidden='true' style={{ backgroundImage: sample.image, backgroundSize: sample.size }} />
+                        <span>{label}{layer.enabled ? ' (selected)' : ''}</span>
+                    </button>
+                    <label className='site-theme-editor__layer-control'>{label} opacity: {layer.opacity}%
+                        <input type='range' min='0' max='100' step='0.25' value={layer.opacity} disabled={!layer.enabled} onChange={event => changeLayer({ opacity: Number(event.target.value) })} />
+                    </label>
+                    <label className='site-theme-editor__layer-control'>{label} tile size: {layer.scale}%
+                        <input type='range' min='25' max='400' step='5' value={layer.scale} disabled={!layer.enabled} onChange={event => changeLayer({ scale: Number(event.target.value) })} />
+                    </label>
+                </div>;
+            })}
         </div>
-        <label className='site-theme-editor__intensity'>Texture intensity: {texture.intensity}%
-            <input type='range' min='0' max='100' value={texture.intensity} disabled={texture.pattern === 'none'}
-                onChange={event => updateTexture({ ...texture, intensity: Number(event.target.value) })} />
-        </label>
         <h2>Fine-tune colours</h2>
         <div className='site-theme-editor__colours'>
             {COLOURS.map(([key, label]) => <label className='site-theme-editor__colour' key={key}>
