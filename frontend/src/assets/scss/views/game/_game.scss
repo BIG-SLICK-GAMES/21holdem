@@ -3412,3 +3412,28 @@ body,
 // -----------------------------------------------
 // Keyframes
 // -----------------------------------------------
+
+// One independently adjustable background layer behind gameplay.
+.gameplay-layout .main-layout-background, .game-table-page {
+    isolation: isolate;
+    background: #080705;
+    &::before {
+        content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+        background: url('../../../images/bg/casino-adjustable-background.png') center / cover no-repeat;
+        transform: translate(var(--game-bg-x, 0px), var(--game-bg-y, 0px)) scale(var(--game-bg-scale-x, 1), var(--game-bg-scale-y, 1));
+        transform-origin: center;
+    }
+}
+.game-bg-adjuster {
+    position: fixed; top: max(8px, env(safe-area-inset-top)); right: 8px; z-index: 11000;
+    width: min(320px, calc(100vw - 16px)); pointer-events: none; text-align: right;
+    button, input, &__panel { pointer-events: auto; }
+    button { min-height: 40px; padding: 8px 12px; background: #15110a; color: var(--ui-gold); border: 1px solid var(--ui-border); }
+    &__panel { margin-top: 6px; padding: 16px; max-height: calc(100dvh - 76px); overflow-y: auto; text-align: left; background: #0c0a07; border: 1px solid var(--ui-border); color: var(--ui-text); }
+    h2 { font-size: 20px; margin-bottom: 12px; }
+    &__control { display: grid; grid-template-columns: 1fr 76px; gap: 6px; margin-bottom: 12px; align-items: center; }
+    input[type='number'] { width: 100%; min-height: 36px; background: #211a10; color: var(--ui-text); border: 1px solid var(--ui-border); }
+    input[type='range'] { grid-column: 1 / -1; width: 100%; accent-color: var(--ui-gold); }
+    &__actions { display: flex; gap: 8px; }
+    p { margin: 10px 0 0; color: var(--ui-text-muted); font-size: 13px; }
+}
