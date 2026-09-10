@@ -1540,7 +1540,7 @@ const Dashboard = () => {
                             </div>
                             <span>Welcome!</span>
                             <h2>Want me to show you the ropes?</h2>
-                            <p>{`Learn how to play 21 Hold'em, or jump straight into the live tables.`}</p>
+                            <p>21 Hold&rsquo;em combines blackjack scoring with poker-style betting rounds.<br />Build your total, read the table, and decide when to push or stand.</p>
                             </div>
                             <div className='dashboard-hub__onboarding-actions ui-button-row'>
                                 <button type='button' className='dashboard-hub__signin-button dashboard-hub__signin-button--primary' onClick={() => completeOnboarding('lobby-how-to-play')}>
