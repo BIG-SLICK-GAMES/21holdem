@@ -9,21 +9,57 @@ export const SCENES = [
   { title: 'Win the pot', duration: 7500, lines: ['Perfect 21.', 'The pot is yours.'] },
 ];
 
-export const INITIAL_PLAYBACK = { scene: 0, elapsed: 0, playing: true, generation: 0 };
+export const READING_STOPS = [
+  [{ at: 3200, focus: 'seats', id: 'seat', text: 'You play against the other players. The dealer button and blinds move around the table.' }],
+  [{ at: 3000, focus: 'private', id: 'private-card', text: 'This Jack is your private card. Face cards count as 10, so your starting total is 10.' }],
+  [
+    { at: 2200, focus: 'fold', id: 'fold', text: 'Fold to leave the hand. You give up your claim to the pot.' },
+    { at: 5200, focus: 'call', id: 'call', text: 'Call to match the current bet and stay in the hand.' },
+    { at: 8200, focus: 'raise', id: 'raise', text: 'Raise to increase the bet when raising is available. The chips go into the pot.' },
+  ],
+  [
+    { at: 2900, focus: 'board', id: 'fourteen', text: 'The shared 4 joins your Jack. Ten plus four makes 14.' },
+    { at: 6900, focus: 'board', id: 'twenty-one', text: 'Now the shared 7 arrives. Ten plus four plus seven makes 21.' },
+  ],
+  [
+    { at: 2000, focus: 'decision', id: 'hit', text: 'Earlier in the hand, you can continue through betting to take the next community card. This is Hit.' },
+    { at: 7000, focus: 'decision', id: 'stand', text: 'Stand locks your total. Later community cards no longer count, but you may still need to call or fold.' },
+    { at: 12000, focus: 'decision', id: 'double-down', text: 'Double Down is offered in round 2, after the first shared card. Pay twice the current minimum bet, take a second private card, and lock your total.' },
+  ],
+  [{ at: 6500, focus: 'showdown', id: 'showdown', text: 'Everyone stands and betting settles. They reveal 18, 19 and 20. Your 21 is the highest valid total.' }],
+  [{ at: 4000, focus: 'win', id: 'win', text: 'You win! The 80-chip pot moves to your balance. You are ready to find a table.' }],
+];
+
+export const INITIAL_PLAYBACK = { scene: 0, elapsed: 0, playing: true, generation: 0, reading: false };
+const atStop = (state, scene, index = 0) => ({ ...state, scene, elapsed: READING_STOPS[scene][index].at, playing: false, reading: true });
+export function currentReading(state) {
+  return state.reading ? READING_STOPS[state.scene].find(stop => stop.at === state.elapsed) : null;
+}
 export function playbackReducer(state, action) {
   switch (action.type) {
     case 'tick': {
       if (!state.playing) return state;
       const elapsed = state.elapsed + action.delta;
+      const stopIndex = READING_STOPS[state.scene].findIndex(stop => stop.at > state.elapsed && stop.at <= elapsed);
+      if (stopIndex >= 0) return atStop(state, state.scene, stopIndex);
       if (elapsed < SCENES[state.scene].duration) return { ...state, elapsed };
       if (state.scene === 6) return { ...state, elapsed: SCENES[6].duration, playing: false };
       return { ...state, scene: state.scene + 1, elapsed: 0 };
     }
-    case 'move': return { ...state, scene: Math.max(0, Math.min(6, state.scene + action.direction)), elapsed: SCENES[Math.max(0, Math.min(6, state.scene + action.direction))].duration, playing: false };
-    case 'toggle': return { ...state, playing: !state.playing, elapsed: !state.playing && state.elapsed >= SCENES[state.scene].duration ? 0 : state.elapsed };
+    case 'move': return atStop(state, Math.max(0, Math.min(6, state.scene + action.direction)));
+    case 'checkpoint': return atStop(state, state.scene, action.index || 0);
+    case 'toggle': {
+      if (action.reducedMotion) {
+        const next = READING_STOPS[state.scene].findIndex(stop => stop.at > state.elapsed);
+        if (next >= 0) return atStop(state, state.scene, next);
+        if (state.scene < 6) return atStop(state, state.scene + 1);
+        return { ...state, elapsed: SCENES[6].duration, reading: false, playing: false };
+      }
+      return { ...state, reading: false, playing: !state.playing, elapsed: !state.playing && state.elapsed >= SCENES[state.scene].duration ? 0 : state.elapsed };
+    }
     case 'pause': return { ...state, playing: false };
-    case 'replay': return { ...INITIAL_PLAYBACK, generation: state.generation + 1, playing: action.playing !== false };
-    case 'skip': return { ...state, scene: 6, elapsed: SCENES[6].duration, playing: false };
+    case 'replay': return action.playing === false ? atStop({ ...INITIAL_PLAYBACK, generation: state.generation + 1 }, 0) : { ...INITIAL_PLAYBACK, generation: state.generation + 1 };
+    case 'skip': return { ...state, scene: 6, elapsed: SCENES[6].duration, playing: false, reading: false };
     default: return state;
   }
 }

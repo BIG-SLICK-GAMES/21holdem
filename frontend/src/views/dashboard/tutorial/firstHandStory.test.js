@@ -1,4 +1,4 @@
-import { INITIAL_PLAYBACK, SCENES, playbackReducer, handSnapshot } from './firstHandStory';
+import { INITIAL_PLAYBACK, SCENES, READING_STOPS, currentReading, playbackReducer, handSnapshot } from './firstHandStory';
 
 test('the Jack and each shared card produce valid totals, with a unique winner', () => {
   expect(handSnapshot(1, 6500).total).toBe(10);
@@ -25,9 +25,28 @@ test('manual movement pauses and clamps; replay clears scene and time', () => {
   state = playbackReducer(state, { type: 'replay' });
   expect(state).toEqual({ ...INITIAL_PLAYBACK, generation: 1 });
 });
-test('autoplay advances through seven scenes and stops at the CTA', () => {
+test('every teaching checkpoint holds indefinitely until explicitly continued', () => {
   let state = INITIAL_PLAYBACK;
-  for (const scene of SCENES) state = playbackReducer(state, { type: 'tick', delta: scene.duration });
+  const seen = [];
+  for (let guard = 0; guard < 40; guard++) {
+    state = playbackReducer(state, { type: 'tick', delta: 20000 });
+    if (state.reading) {
+      seen.push(currentReading(state).id);
+      expect(playbackReducer(state, { type: 'tick', delta: 60000 })).toEqual(state);
+      state = playbackReducer(state, { type: 'toggle' });
+    } else if (!state.playing) break;
+  }
+  expect(seen).toEqual(READING_STOPS.flat().map(stop => stop.id));
   expect(state).toMatchObject({ scene: 6, playing: false });
   expect(playbackReducer(state, { type: 'move', direction: 1 }).scene).toBe(6);
+});
+test('reduced-motion Continue visits each explanation without running a clock', () => {
+  let state = playbackReducer(INITIAL_PLAYBACK, { type: 'checkpoint' });
+  const seen = [];
+  while (state.reading) {
+    seen.push(currentReading(state).id);
+    state = playbackReducer(state, { type: 'toggle', reducedMotion: true });
+    expect(state.playing).toBe(false);
+  }
+  expect(seen).toEqual(READING_STOPS.flat().map(stop => stop.id));
 });

@@ -80,6 +80,23 @@ body .first-hand {
   &__betting .is-selected, &__decision-tabs .is-selected { background: #e8c478; color: #142235; border-color: #e8c478; box-shadow: 0 0 14px #e8c47835; }
   &__decision { position: absolute; inset: 2% 3%; z-index: 5; background: #091827f5; border: 1px solid #52718c; border-radius: 16px; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 8px; padding: 10px; text-align: center; }
   &__stage--4 .first-hand__player { visibility: hidden; }
+  &__reading-mask { position: absolute; inset: 0; z-index: 4; background: rgba(2, 8, 20, .76); pointer-events: none; }
+  &__focus--seats .first-hand__opponent,
+  &__focus--private .first-hand__player,
+  &__focus--board .first-hand__board,
+  &__focus--board .first-hand__player,
+  &__focus--showdown .first-hand__opponent,
+  &__focus--showdown .first-hand__player,
+  &__focus--win .first-hand__victory,
+  &__focus--win .first-hand__player { z-index: 6; }
+  &__focus--fold .first-hand__betting,
+  &__focus--call .first-hand__betting,
+  &__focus--raise .first-hand__betting { z-index: 6; }
+  &__focus--private .first-hand__private,
+  &__focus--board .first-hand__board { filter: drop-shadow(0 0 8px #e8c47880); }
+  &__focus--decision .first-hand__decision { border-color: #e8c478; }
+  &__focus--decision .first-hand__decision-tabs button:not(.is-selected) { opacity: .55; }
+  &__transport button.first-hand__continue { background: #e8c478; border-color: #e8c478; color: #112235; }
   &__eyebrow { color: #e8c478; font-size: 9px; letter-spacing: 1.5px; }
   &__decision-tabs { display: flex; gap: 4px; width: 100%; }
   &__decision-tabs button { border: 1px solid #38526f; border-radius: 10px; padding: 5px; flex: 1; font-size: 11px; white-space: nowrap; }
@@ -118,6 +135,7 @@ body .first-hand {
   body .first-hand__decision { gap: 4px; padding: 6px; }
   body .first-hand__decision p { font-size: 12px; }
   body .first-hand__decision > small { font-size: 10px; }
+  body .first-hand__stage--6 { min-height: 120px; }
 }
 @media (prefers-reduced-motion: reduce) {
   body .first-hand *, body .first-hand *::before, body .first-hand *::after { animation: none !important; transition: none !important; }

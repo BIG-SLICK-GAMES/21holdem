@@ -8,7 +8,7 @@ export default function useTutorialPlayback(active) {
   const [state, dispatch] = useReducer(playbackReducer, INITIAL_PLAYBACK);
   useEffect(() => {
     const query = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const update = () => { setReducedMotion(query.matches); if (query.matches) dispatch({ type: 'pause' }); };
+    const update = () => { setReducedMotion(query.matches); if (query.matches) dispatch({ type: 'checkpoint' }); };
     update(); query.addEventListener('change', update);
     return () => query.removeEventListener('change', update);
   }, []);
