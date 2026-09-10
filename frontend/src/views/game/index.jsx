@@ -14,13 +14,11 @@ import clubImage from '../../assets/images/card/club.png';
 import diamondImage from '../../assets/images/card/diamond.png';
 import heartImage from '../../assets/images/card/heart.png';
 import spadeImage from '../../assets/images/card/spades.png';
-import nathanReedSpriteSheet from '../../assets/images/player-profile/sprites/nathan-reed-actions-sprite-sheet-4x5.png';
-import nathanReedSpriteMeta from '../../assets/images/player-profile/sprites/nathan-reed-actions-sprite-sheet.json';
 import GameActionOverlay from "./GameActionOverlay";
 import GameLayoutOverlay from "./GameLayoutOverlay";
 import GameBackgroundAdjuster from "./GameBackgroundAdjuster";
 import { hideGameActionOverlay } from "../../scripts/gameActionOverlayBridge";
-import { getAvatarImageSrc } from "../../shared/constants/builtInAvatars";
+import { getGameAvatar } from "../../shared/constants/builtInAvatars";
 import gameElementControls from "./gameElementControls.json";
 import profileLayoutControls from "./profileLayoutControls.json";
 import { getProfile } from "../../query/profile.query";
@@ -107,26 +105,10 @@ function getShowdownCardSuit(card) {
     }[sSuitKey] || { image: spadeImage, name: 'spade', red: false };
 }
 
-function getNathanReedActionKey(player, sActionLabel, bShowdownWinner, bShowdownEligible, isInactiveHand) {
-    const sUserName = String(player?.sUserName || '').replace(/[^a-z0-9]/gi, '').toLowerCase();
-    if (sUserName !== 'nathanreed') return '';
-
-    const sLabel = String(sActionLabel || '').toLowerCase();
-    if (sLabel.includes('check')) return 'check';
-    if (sLabel.includes('raise') || sLabel.includes('bet')) return 'raise';
-    if (sLabel.includes('call')) return 'call';
-    if (sLabel.includes('bust')) return 'lose';
-    if (bShowdownWinner) return 'win';
-    if (bShowdownEligible && !bShowdownWinner) return 'lose';
-    if (isInactiveHand) return 'lose';
-
-    return '';
-}
-
 function PlayerRailSlot({ nSeat, player, style }) {
     if (!player) return null;
 
-    const avatarSrc = player ? getAvatarImageSrc(player.sAvatar, player.sUserName || 'Player', player.nSeat) : '';
+    const avatarSrc = player ? getGameAvatar(player.sAvatar, player.sUserName || 'Player').sPath : '';
     const initials = String(player?.sUserName || 'Seat').slice(0, 2).toUpperCase();
     const sPlayerState = String(player?.eState || '').toLowerCase();
     const isFolded = sPlayerState === 'fold';
@@ -142,9 +124,6 @@ function PlayerRailSlot({ nSeat, player, style }) {
     const aShowdownCards = bShowdownEligible && Array.isArray(player?.aCardHand) ? player.aCardHand.slice(0, 2) : [];
     const bShowdownWinner = Boolean(player?.bShowdownWinner);
     const nShowdownWinAmount = Math.max(0, Number(player?.nShowdownWinAmount) || 0);
-    const sNathanActionKey = getNathanReedActionKey(player, sActionLabel, bShowdownWinner, bShowdownEligible, isInactiveHand);
-    const oNathanAnimation = sNathanActionKey ? nathanReedSpriteMeta.animations?.[sNathanActionKey] : null;
-    const sSpriteRestartKey = `${player.iUserId || nSeat}-${sNathanActionKey}-${player.nActionLabelKey || bShowScore || sPlayerState}`;
 
     return (
         <span
@@ -158,16 +137,6 @@ function PlayerRailSlot({ nSeat, player, style }) {
         >
             <span className={`game-table-page__seat-avatar${aShowdownCards.length ? ' has-showdown-cards' : ''}`}>
                 {avatarSrc ? <img className='game-table-page__seat-avatar-image' src={avatarSrc} alt='' draggable='false' /> : <span className='game-table-page__seat-initials'>{initials}</span>}
-                {oNathanAnimation ? (
-                    <span
-                        className={`game-table-page__seat-avatar-sprite game-table-page__seat-avatar-sprite--${sNathanActionKey}`}
-                        key={sSpriteRestartKey}
-                        style={{
-                            '--seat-avatar-sprite': `url("${nathanReedSpriteSheet}")`,
-                            '--seat-avatar-sprite-duration': `${Math.max(80, Number(oNathanAnimation.frameDurationMs) || 120) * 4}ms`,
-                        }}
-                    />
-                ) : null}
                 {bShowScore && Number.isFinite(nScore) && nScore > 0 ? (
                     <span className='game-table-page__seat-score'>{nScore}</span>
                 ) : null}

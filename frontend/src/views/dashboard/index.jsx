@@ -1620,7 +1620,7 @@ const Dashboard = () => {
             { label: 'Full Profile', description: 'Change your profile picture and view your account details.', path: '/profile?from=settings' },
             { label: 'Theme Adjuster', description: 'Customise site colours.', path: '/settings/theme' },
             { label: 'Transactions', description: 'Review chip purchases and account activity.', path: '/settings/transactions' },
-            { label: 'How To Play', description: 'Gameplay guide and table flow.', path: '/settings/how-to-play' },
+            { label: 'How To Play', description: 'Gameplay guide and table flow.', path: '/lobby?tab=lobby-how-to-play' },
             { label: 'Rules', description: '21 Holdem rules and table flow.', path: '/settings/rules' },
             { label: 'Report Issue', description: 'Send feedback or flag a game problem.', path: '/settings/report-issue' },
         ];

@@ -119,3 +119,9 @@ export function buildAvatarOptions(aAvatarList = [], sAvatar = '') {
 }
 
 export default BUILT_IN_AVATARS;
+
+// Gameplay uses the same portrait collection offered in the profile picker.
+export function getGameAvatar(src, seed = '') {
+  const source = String(src || '');
+  return BUILT_IN_AVATARS.find(avatar => source === avatar.sPath || source.endsWith(avatar.sPath)) || getBuiltInAvatar(seed);
+}
