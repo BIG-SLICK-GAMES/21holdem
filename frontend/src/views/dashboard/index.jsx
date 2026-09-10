@@ -1,6 +1,7 @@
 import { loadStripe } from '@stripe/stripe-js';
 import { createPortal } from 'react-dom';
 import LobbyBannerCarousel from './LobbyBannerCarousel';
+import FirstHandTutorial from './tutorial/FirstHandTutorial';
 import iconLobby from '../../assets/images/icons/lobby-menu/live-tables.png';
 import iconPrivate from '../../assets/images/icons/lobby-menu/private-table.png';
 import iconProfile from '../../assets/images/icons/working/profile (2).png';
@@ -27,7 +28,6 @@ import { getBigSlickGamesUrl } from 'views/auth/authDestination';
 import dailyRewardsLobbyBackground from '../../assets/images/bg/daily_rewards_bg.webp';
 import dailyRewardsLightsVideo from '../../assets/videos/daily_rewards_lights.mp4';
 import liveTablesImage from '../../assets/images/bg/live_tables_lobby.webp';
-import profileLobbyBanner from '../../assets/images/bg/lobby_profile_banner.webp';
 import privateTableImage from '../../assets/images/bg/private_table.webp';
 import bigSlickGamesIcon from '../../assets/images/bsg/big-slick-games-cutout.webp';
 import twentyOneQuakeBanner from '../../assets/images/bsg-games/21-quake-banner.webp';
@@ -206,7 +206,6 @@ const Dashboard = () => {
     const [nActiveBuyIn, setActiveBuyIn] = useState(BUY_IN_OPTIONS[0]);
     const [bHasAdjustedFilters, setHasAdjustedFilters] = useState(false);
     const [nBsgFeatureIndex, setBsgFeatureIndex] = useState(0);
-    const [nHowToPlayStep, setHowToPlayStep] = useState(0);
     const [aFallbackTablesData, setFallbackTablesData] = useState([]);
     const [bIsJoiningTable, setIsJoiningTable] = useState(false);
     const [sOnboardingStep, setOnboardingStep] = useState('hidden');
@@ -636,36 +635,6 @@ const Dashboard = () => {
     const aRewards = dataDailyRewards?.rewards?.length ? dataDailyRewards.rewards : [1000, 2500, 5000, 7500, 10000, 12500, 15000];
     const nEligibleDay = Number(dataDailyRewards?.eligibleDay) || 1;
     const bTodayRewardClaimed = Boolean(dataDailyRewards?.bTodayRewardClaimed);
-    const aHowToPlayMessages = [
-        {
-            title: "What is 21 Hold'em?",
-            message: "21 Hold'em is blackjack pressure on a Hold'em-style table.",
-            visual: 'logo',
-        },
-        {
-            title: 'One Private Card',
-            message: 'You get one private hole card before the board opens.',
-            visual: 'hole',
-        },
-        {
-            title: 'Community Cards',
-            message: "Shared cards hit the table and change every player's total.",
-            visual: 'community',
-        },
-        {
-            title: 'Make Your Move',
-            message: 'Bet, check, raise, double down or stand as the hand develops.',
-            visual: 'moves',
-        },
-        {
-            title: 'Get 21. Win.',
-            message: 'Get closer to 21 than everyone else without going bust.',
-            visual: 'win',
-        },
-    ];
-    const oActiveHowToPlayMessage = aHowToPlayMessages[nHowToPlayStep] || aHowToPlayMessages[0];
-    const bHasMoreHowToPlayMessages = nHowToPlayStep < aHowToPlayMessages.length - 1;
-
     const oProfileStageStyle = useMemo(() => ({ '--profile-stage-image': `url("${sAvatarSrc || DEFAULT_PROFILE_BANNER}")` }), [sAvatarSrc]);
 
     const getBuyInPlayerCount = (nBuyIn) => (
@@ -1208,114 +1177,12 @@ const Dashboard = () => {
         </>
     );
 
-    const renderHowToPlayVisual = () => {
-        if (oActiveHowToPlayMessage.visual === 'logo') {
-            return (
-                <div className='dashboard-hub__tutorial-logo' aria-hidden='true'>
-                    <img src={profileLobbyBanner} alt='' />
-                </div>
-            );
-        }
-
-        if (oActiveHowToPlayMessage.visual === 'hole') {
-            return (
-                <div className='dashboard-hub__tutorial-cards dashboard-hub__tutorial-cards--hole' aria-hidden='true'>
-                    <div className='dashboard-hub__tutorial-card is-red'>
-                        <span>{'\u2665'}</span>
-                        <strong>K</strong>
-                    </div>
-                    <div className='dashboard-hub__tutorial-total'>10</div>
-                </div>
-            );
-        }
-
-        if (oActiveHowToPlayMessage.visual === 'community') {
-            return (
-                <div className='dashboard-hub__tutorial-cards' aria-hidden='true'>
-                    <div className='dashboard-hub__tutorial-card is-red'>
-                        <span>{'\u2665'}</span>
-                        <strong>K</strong>
-                    </div>
-                    <div className='dashboard-hub__tutorial-card'>
-                        <span>{'\u2663'}</span>
-                        <strong>9</strong>
-                    </div>
-                    <div className='dashboard-hub__tutorial-card'>
-                        <span>{'\u2660'}</span>
-                        <strong>2</strong>
-                    </div>
-                    <div className='dashboard-hub__tutorial-total'>21</div>
-                </div>
-            );
-        }
-
-        if (oActiveHowToPlayMessage.visual === 'moves') {
-            return (
-                <div className='dashboard-hub__tutorial-actions' aria-hidden='true'>
-                    <span>Check</span>
-                    <span>Call</span>
-                    <span>Raise</span>
-                    <span>Fold</span>
-                    <span>Double</span>
-                    <span>Stand</span>
-                </div>
-            );
-        }
-
-        return (
-            <div className='dashboard-hub__tutorial-win' aria-hidden='true'>
-                <strong>21</strong>
-                <span>Hold'em</span>
-            </div>
-        );
-    };
-
     const renderHowToPlayPanel = () => (
         <div className='dashboard-hub__tab-body dashboard-hub__tab-body--how-to-play'>
-            <section className='dashboard-hub__phone-tutorial' aria-label="21 Hold'em text tutorial">
-                <div className='dashboard-hub__phone-showcase'>
-                    <div className='dashboard-hub__phone'>
-                        <div className='dashboard-hub__phone-speaker' />
-                        <div className='dashboard-hub__phone-screen'>
-                            <div className='dashboard-hub__phone-status'>
-                                <span>21H</span>
-                                <button
-                                    type='button'
-                                    className='dashboard-hub__phone-replay'
-                                    onClick={() => setHowToPlayStep(0)}
-                                    aria-label='Replay explainer'
-                                >
-                                    R
-                                </button>
-                                <span>9:21</span>
-                            </div>
-
-                            <div className='dashboard-hub__phone-notification'>
-                                <span className='dashboard-hub__phone-notification-icon'>21</span>
-                                <p>What is 21 Hold'em?</p>
-                            </div>
-
-                            <div className='dashboard-hub__phone-visual' key={`phone-visual-${oActiveHowToPlayMessage.visual}`}>
-                                {renderHowToPlayVisual()}
-                            </div>
-
-                            <div className='dashboard-hub__phone-message-stack' key={`phone-message-${oActiveHowToPlayMessage.title}`}>
-                                <article className='dashboard-hub__phone-message'>
-                                    <p>{oActiveHowToPlayMessage.message}</p>
-                                </article>
-                                <button
-                                    type='button'
-                                    className={`dashboard-hub__phone-more${bHasMoreHowToPlayMessages ? '' : ' is-hidden'}`}
-                                    onClick={() => setHowToPlayStep((nStep) => Math.min(nStep + 1, aHowToPlayMessages.length - 1))}
-                                    disabled={!bHasMoreHowToPlayMessages}
-                                >
-                                    Read More
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
+            <FirstHandTutorial
+                active={sActiveTab === 'lobby-how-to-play'}
+                onPlay={() => handleQuickNavSelect({ id: 'lobby-live-tables' }, { bScrollDesktop: true })}
+            />
 
             <div className='dashboard-hub__guide-shell'>
                 {HOW_TO_PLAY_SECTIONS.map((section) => (
