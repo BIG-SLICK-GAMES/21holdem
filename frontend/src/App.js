@@ -2,6 +2,7 @@ import { GamePlayProvider } from 'context/gamePlayContext'
 import React, { Suspense } from 'react'
 import { Spinner } from 'react-bootstrap'
 import { MutationCache, QueryClient, QueryClientProvider } from 'react-query'
+import BrandSplash from 'shared/components/BrandSplash'
 const AllRoutes = React.lazy(() => import('./routes'))
 
 export const queryClient = new QueryClient({
@@ -49,6 +50,7 @@ export const queryClient = new QueryClient({
 function App() {
     return (
         <QueryClientProvider client={queryClient}>
+            <BrandSplash />
             <GamePlayProvider>
                 <Suspense fallback={
                     <div className='d-flex align-items-center justify-content-center top-0 left-0 position-fixed h-100 w-100'>
