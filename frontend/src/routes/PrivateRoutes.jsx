@@ -7,7 +7,7 @@ import { getCookie, ReactToastify } from 'shared/utils'
 import CommonLayout from 'layouts/common-layout'
 
 const PUBLIC_ROUTES = ['/how-to-play', '/game-rule', '/privacy-policy', '/terms-conditions']
-const PUBLIC_MAIN_ROUTES = ['/lobby', '/settings/transactions', '/settings/how-to-play', '/settings/rules', '/settings/report-issue']
+const PUBLIC_MAIN_ROUTES = ['/settings/theme', '/lobby', '/settings/transactions', '/settings/how-to-play', '/settings/rules', '/settings/report-issue']
 
 function PrivateRoute() {
     const token = getCookie('sAuthToken');

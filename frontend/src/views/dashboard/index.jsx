@@ -1617,6 +1617,7 @@ const Dashboard = () => {
 
     const renderSettingsPanel = () => {
         const aSettings = [
+            { label: 'Theme Adjuster', description: 'Customise site colours.', path: '/settings/theme' },
             { label: 'Transactions', description: 'Review chip purchases and account activity.', path: '/settings/transactions' },
             { label: 'How To Play', description: 'Gameplay guide and table flow.', path: '/settings/how-to-play' },
             { label: 'Rules', description: '21 Holdem rules and table flow.', path: '/settings/rules' },
