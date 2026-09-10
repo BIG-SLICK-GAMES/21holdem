@@ -17,6 +17,7 @@ import spadeImage from '../../assets/images/card/spades.png';
 import nathanReedSpriteSheet from '../../assets/images/player-profile/sprites/nathan-reed-actions-sprite-sheet-4x5.png';
 import nathanReedSpriteMeta from '../../assets/images/player-profile/sprites/nathan-reed-actions-sprite-sheet.json';
 import GameActionOverlay from "./GameActionOverlay";
+import GameBackgroundAdjuster from "./GameBackgroundAdjuster";
 import { hideGameActionOverlay } from "../../scripts/gameActionOverlayBridge";
 import { getAvatarImageSrc } from "../../shared/constants/builtInAvatars";
 import gameElementControls from "./gameElementControls.json";
@@ -452,6 +453,7 @@ function Game({ isPausedExternally = false }) {
 
     return (
         <div className={`game-table-page game-shell game-shell--${layoutMode}`} style={gameElementStyle}>
+            <GameBackgroundAdjuster />
             <div className='game-table-page__overlay-layer'>
                 <GameActionOverlay isPaused={isPausedExternally} />
             </div>
