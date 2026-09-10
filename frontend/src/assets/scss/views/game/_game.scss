@@ -312,7 +312,7 @@ body,
     height: 30px;
     padding: 0 7px;
     border: 2px solid rgba(255, 255, 255, 0.86);
-    border-radius: var(--ui-radius);
+    --ui-radius: 999px; border-radius: 999px;
     background: rgba(22, 22, 20, 0.94);
     color: #ffffff;
     font-size: 15px;
@@ -406,7 +406,7 @@ body,
     height: 24px;
     padding: 0 5px;
     border: 1px solid rgba(var(--ui-gold-rgb), 0.84);
-    border-radius: var(--ui-radius);
+    --ui-radius: 999px; border-radius: 999px;
     background: linear-gradient(180deg, rgba(var(--ui-gold-rgb), 0.96), rgba(var(--ui-gold-rgb), 0.96));
     color: var(--ui-gold-ink);
     font-size: 10px;
@@ -427,7 +427,7 @@ body,
     height: var(--seat-action-label-height, 24px);
     padding: 0 12px;
     border: 1px solid rgba(200, 200, 198, 0.58);
-    border-radius: var(--ui-radius);
+    --ui-radius: 999px; border-radius: 999px;
     background: rgba(22, 22, 20, 0.92);
     color: #ffffff;
     font-size: 12px;
@@ -468,7 +468,7 @@ body,
         min-height: 28px;
         padding: 5px 13px 3px;
         border: 1px solid rgba(var(--ui-gold-rgb), 0.72);
-        border-radius: var(--ui-radius);
+        --ui-radius: 999px; border-radius: 999px;
         background:
             linear-gradient(180deg, rgba(var(--ui-gold-rgb), 0.98) 0%, rgba(var(--ui-gold-rgb), 0.95) 100%);
         color: var(--ui-gold-ink);
@@ -635,7 +635,7 @@ body,
     z-index: 1;
     width: var(--seat-card-back-width, 26px);
     height: var(--seat-card-back-height, 37px);
-    border-radius: var(--ui-radius);
+    --ui-radius: 2px; border-radius: 2px;
     object-fit: cover;
     opacity: 0.72;
     transform: translateY(-50%) rotate(12deg);
@@ -943,7 +943,7 @@ body,
         min-height: 34px;
         padding: 6px 16px 4px;
         border: 1px solid rgba(var(--ui-gold-rgb), 0.7);
-        border-radius: var(--ui-radius);
+        --ui-radius: 999px; border-radius: 999px;
         background:
             linear-gradient(180deg, rgba(var(--ui-gold-rgb), 0.98) 0%, rgba(var(--ui-gold-rgb), 0.95) 100%);
         color: var(--ui-gold-ink);
@@ -981,7 +981,7 @@ body,
     min-height: 30px;
     padding: 5px 13px 4px;
     border: 1px solid rgba(255, 255, 255, 0.78);
-    border-radius: var(--ui-radius);
+    --ui-radius: 999px; border-radius: 999px;
     background: linear-gradient(180deg, rgba(var(--ui-gold-rgb), 0.98) 0%, rgba(var(--ui-gold-rgb), 0.98) 100%);
     color: #281500;
     font-size: 14px;
@@ -1228,7 +1228,7 @@ body,
     height: 24px;
     padding: 0;
     border: 1px solid rgba(81, 255, 137, 0.54);
-    border-radius: var(--ui-radius);
+    --ui-radius: 999px; border-radius: 999px;
     background: linear-gradient(180deg, rgba(22, 82, 52, 0.92) 0%, rgba(6, 35, 28, 0.96) 100%);
     color: #dffff0;
     font-size: 18px;
@@ -1262,7 +1262,7 @@ body,
     width: min(342px, 100%);
     padding: 14px;
     border: 1px solid rgba(200, 200, 198, 0.34);
-    border-radius: var(--ui-radius);
+    --ui-radius: 10px; border-radius: 10px;
     background:
         radial-gradient(circle at 50% 0%, rgba(81, 255, 137, 0.12) 0%, rgba(81, 255, 137, 0) 42%),
         linear-gradient(180deg, rgba(31, 31, 29, 0.98) 0%, rgba(12, 12, 10, 0.99) 100%);
@@ -1290,7 +1290,7 @@ body,
         height: 30px;
         padding: 0;
         border: 1px solid rgba(200, 200, 198, 0.26);
-        border-radius: var(--ui-radius);
+        --ui-radius: 999px; border-radius: 999px;
         background: rgba(255, 255, 255, 0.06);
         color: #ffffff;
         font-size: 20px;
@@ -1310,7 +1310,7 @@ body,
     gap: 4px;
     padding: 9px;
     border: 1px solid rgba(200, 200, 198, 0.16);
-    border-radius: var(--ui-radius);
+    --ui-radius: 8px; border-radius: 8px;
     background: rgba(15, 15, 13, 0.72);
 
     span {
@@ -1333,7 +1333,7 @@ body,
 .game-action-overlay__top-up-options button {
     min-height: 38px;
     border: 1px solid rgba(200, 200, 198, 0.22);
-    border-radius: var(--ui-radius);
+    --ui-radius: 8px; border-radius: 8px;
     background: rgba(34, 34, 32, 0.86);
     color: #fafaf8;
     font-size: 13px;
@@ -1359,7 +1359,7 @@ body,
 .game-action-overlay__top-up-submit {
     min-height: 42px;
     border: 0;
-    border-radius: var(--ui-radius);
+    --ui-radius: 8px; border-radius: 8px;
     background: linear-gradient(180deg, #8dfcb3 0%, #42d985 100%);
     color: #1c1c1a;
     font-size: 14px;
@@ -1489,7 +1489,7 @@ body,
     flex: 0 0 auto;
     width: 34px;
     height: 34px;
-    border-radius: var(--ui-radius);
+    --ui-radius: 999px; border-radius: 999px;
     background:
         radial-gradient(circle at center, rgba(18, 18, 16, 0.95) 0 55%, transparent 57%),
         conic-gradient(#cfcfcd 0 72%, rgba(168, 168, 166, 0.22) 72% 100%);
@@ -1554,7 +1554,7 @@ body,
     align-items: center;
     gap: 2px;
     padding: 5px 10px 4px;
-    border-radius: var(--ui-radius);
+    --ui-radius: 12px; border-radius: 12px;
     border: 1px solid rgba(136, 136, 134, 0.35);
     background: rgba(22, 22, 20, 0.72);
     color: rgba(235, 235, 233, 0.9);
@@ -1581,7 +1581,7 @@ body,
 .game-action-overlay__exit-btn {
     background: rgba(255, 255, 255, 0.07);
     border: 1px solid rgba(255, 100, 100, 0.5);
-    border-radius: var(--ui-radius);
+    --ui-radius: 999px; border-radius: 999px;
     color: rgba(255, 160, 160, 0.95);
     font-size: 13px;
     font-weight: 700;
@@ -1626,7 +1626,7 @@ body,
     align-items: center;
     gap: 16px;
     padding: 16px;
-    border-radius: var(--ui-radius);
+    --ui-radius: 20px; border-radius: 20px;
     border: 1px solid rgba(136, 136, 134, 0.45);
     background: linear-gradient(180deg, rgba(24, 24, 22, 0.97) 0%, rgba(14, 14, 12, 0.99) 100%);
     box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(233, 233, 231, 0.1);
@@ -1660,7 +1660,7 @@ body,
 .game-action-overlay__screenshot-img {
     display: block;
     width: 100%;
-    border-radius: var(--ui-radius);
+    --ui-radius: 12px; border-radius: 12px;
     border: 1px solid rgba(136, 136, 134, 0.28);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
     object-fit: cover;
@@ -1679,7 +1679,7 @@ body,
     justify-content: center;
     gap: 8px;
     padding: 12px 16px;
-    border-radius: var(--ui-radius);
+    --ui-radius: 14px; border-radius: 14px;
     font-size: 15px;
     font-weight: 700;
     letter-spacing: 0.04em;
@@ -1814,7 +1814,7 @@ body,
     height: 34px;
     padding: 0 8px;
     border: 1px solid rgba(200, 200, 198, 0.38);
-    border-radius: var(--ui-radius);
+    --ui-radius: 999px; border-radius: 999px;
     background: rgba(22, 22, 20, 0.8);
     color: #fafaf8;
     font-size: 18px;
@@ -1868,7 +1868,7 @@ body,
 }
 
 .game-action-overlay__commentary-entry {
-    border-radius: var(--ui-radius);
+    --ui-radius: 14px; border-radius: 14px;
     background: rgba(255, 255, 255, 0.05);
     color: rgba(255, 255, 255, 0.9);
     padding: 10px 12px 8px;
@@ -1887,7 +1887,7 @@ body,
     min-width: 220px;
     max-width: min(100%, 420px);
     border: 1px solid rgba(200, 200, 198, 0.32);
-    border-radius: var(--ui-radius);
+    --ui-radius: 999px; border-radius: 999px;
     background: rgba(21, 21, 19, 0.86);
     color: #ffffff;
     padding: 10px 18px 8px;
@@ -1915,7 +1915,7 @@ body,
         overflow: hidden;
         flex: 1 1 0;
         min-width: 0;
-        border-radius: var(--ui-radius);
+        --ui-radius: 999px; border-radius: 999px;
         padding: 9px 14px 7px;
         font-size: 18px;
         font-family: var(--ui-font);
@@ -2169,7 +2169,7 @@ body,
         top: 50%;
         width: 4px;
         height: 4px;
-        border-radius: var(--ui-radius);
+        --ui-radius: 999px; border-radius: 999px;
         background: currentColor;
         transform: translate(-50%, -50%);
     }
@@ -2215,7 +2215,7 @@ body,
     .game-action-overlay__tray {
         border-left: 0;
         border-right: 0;
-        border-radius: var(--ui-radius) var(--ui-radius) 0 0;
+        --ui-radius: 22px 22px 0 0; border-radius: 22px 22px 0 0;
         min-height: var(--game-mobile-console-height);
         padding-left: 0;
         padding-right: 0;
@@ -2291,7 +2291,7 @@ body,
 .game-ui-layout__toggle {
     width: auto;
     border: 1px solid rgba(200, 200, 198, 0.24);
-    border-radius: var(--ui-radius);
+    --ui-radius: 18px; border-radius: 18px;
     background: linear-gradient(180deg, rgba(26, 26, 24, 0.96) 0%, rgba(16, 16, 14, 0.98) 100%);
     color: #fafaf8;
     padding: 8px 12px 7px;
@@ -2307,7 +2307,7 @@ body,
 .game-ui-layout__panel {
     margin-top: 10px;
     border: 1px solid rgba(200, 200, 198, 0.22);
-    border-radius: var(--ui-radius);
+    --ui-radius: 22px; border-radius: 22px;
     background: linear-gradient(180deg, rgba(25, 25, 23, 0.96) 0%, rgba(14, 14, 12, 0.98) 100%);
     box-shadow: 0 24px 60px rgba(0, 0, 0, 0.34);
     backdrop-filter: blur(14px);
@@ -2335,7 +2335,7 @@ body,
     grid-template-columns: repeat(4, 1fr);
     gap: 6px;
     padding: 10px;
-    border-radius: var(--ui-radius);
+    --ui-radius: 14px; border-radius: 14px;
     border: 1px solid rgba(200, 200, 198, 0.25);
     background: linear-gradient(170deg, rgba(20, 20, 18, 0.97) 0%, rgba(12, 12, 10, 0.99) 100%);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(200, 200, 198, 0.1);
@@ -2347,7 +2347,7 @@ body,
     width: 44px;
     height: 44px;
     border: 1px solid rgba(200, 200, 198, 0.15);
-    border-radius: var(--ui-radius);
+    --ui-radius: 10px; border-radius: 10px;
     background: rgba(255, 255, 255, 0.04);
     font-size: 22px;
     line-height: 1;
@@ -2374,7 +2374,7 @@ body,
     align-items: center;
     gap: 5px;
     padding: 7px 13px;
-    border-radius: var(--ui-radius);
+    --ui-radius: 20px; border-radius: 20px;
     border: 1px solid rgba(200, 200, 198, 0.3);
     background: linear-gradient(170deg, rgba(20, 20, 18, 0.92) 0%, rgba(12, 12, 10, 0.95) 100%);
     color: rgba(229, 229, 227, 0.85);
@@ -2461,7 +2461,7 @@ body,
 .game-audio-modal__panel {
     width: min(260px, calc(var(--app-mobile-frame-width) - 32px));
     border: 1px solid rgba(255, 139, 43, 0.36);
-    border-radius: var(--ui-radius);
+    --ui-radius: 8px; border-radius: 8px;
     background: rgba(17, 17, 15, 0.96);
     box-shadow: 0 18px 42px rgba(0, 0, 0, 0.46);
     color: #fafaf8;
@@ -2490,7 +2490,7 @@ body,
         width: 28px;
         height: 28px;
         border: 1px solid rgba(200, 200, 198, 0.28);
-        border-radius: var(--ui-radius);
+        --ui-radius: 999px; border-radius: 999px;
         background: rgba(255, 255, 255, 0.06);
         color: #f2f2f0;
         font-size: 14px;
@@ -2510,7 +2510,7 @@ body,
         min-width: 64px;
         height: 30px;
         border: 1px solid rgba(255, 112, 32, 0.42);
-        border-radius: var(--ui-radius);
+        --ui-radius: 999px; border-radius: 999px;
         background: rgba(255, 102, 28, 0.12);
         color: #ffb16d;
         font-size: 11px;
@@ -2601,7 +2601,7 @@ body,
     margin-right: auto;
     padding: 3px 12px 2px;
     border: 1px solid rgba(200, 200, 198, 0.34);
-    border-radius: var(--ui-radius);
+    --ui-radius: 999px; border-radius: 999px;
     background: rgba(26, 26, 24, 0.84);
     color: #fafaf8;
     box-shadow: 0 5px 12px rgba(0, 0, 0, 0.26);
@@ -2630,7 +2630,7 @@ body,
     height: 34px;
     padding: 0;
     border: 1px solid rgba(200, 200, 198, 0.38);
-    border-radius: var(--ui-radius);
+    --ui-radius: 999px; border-radius: 999px;
     background: rgba(26, 26, 24, 0.84);
     box-shadow: 0 5px 12px rgba(0, 0, 0, 0.26);
     cursor: pointer;
@@ -2646,7 +2646,7 @@ body,
     height: 34px;
     padding: 0 12px;
     border: 1px solid rgba(255, 120, 120, 0.42);
-    border-radius: var(--ui-radius);
+    --ui-radius: 999px; border-radius: 999px;
     background: linear-gradient(170deg, rgba(42, 13, 20, 0.78) 0%, rgba(17, 9, 15, 0.9) 100%);
     color: rgba(255, 190, 190, 0.95);
     font-size: 11px;
@@ -2696,7 +2696,7 @@ body,
     overflow: auto;
     padding: 14px;
     border: 1px solid rgba(200, 200, 198, 0.32);
-    border-radius: var(--ui-radius);
+    --ui-radius: 14px; border-radius: 14px;
     background: linear-gradient(180deg, rgba(24, 24, 22, 0.98), rgba(9, 9, 7, 0.99));
     box-shadow: 0 24px 48px rgba(0, 0, 0, 0.48);
 }
@@ -2722,7 +2722,7 @@ body,
         width: 30px;
         height: 30px;
         border: 1px solid rgba(255, 255, 255, 0.18);
-        border-radius: var(--ui-radius);
+        --ui-radius: 999px; border-radius: 999px;
         background: rgba(255, 255, 255, 0.06);
         color: #ffffff;
         font-size: 18px;
@@ -2744,7 +2744,7 @@ body,
     min-height: 72px;
     padding: 10px;
     border: 1px solid rgba(200, 200, 198, 0.18);
-    border-radius: var(--ui-radius);
+    --ui-radius: 10px; border-radius: 10px;
     background: rgba(255, 255, 255, 0.045);
 
     img {
@@ -2776,7 +2776,7 @@ body,
         min-width: 74px;
         min-height: 32px;
         border: 1px solid rgba(var(--ui-gold-rgb), 0.72);
-        border-radius: var(--ui-radius);
+        --ui-radius: 999px; border-radius: 999px;
         background: linear-gradient(180deg, var(--ui-gold) 0%, var(--ui-gold) 100%);
         color: var(--ui-gold-ink);
         font-size: 13px;
@@ -2788,7 +2788,7 @@ body,
 .game-action-overlay__utility-empty {
     padding: 18px;
     border: 1px solid rgba(200, 200, 198, 0.16);
-    border-radius: var(--ui-radius);
+    --ui-radius: 10px; border-radius: 10px;
     color: rgba(246, 246, 244, 0.82);
     text-align: center;
 }
@@ -2872,7 +2872,7 @@ body,
     input {
         width: 82px;
         border: 1px solid rgba(200, 200, 198, 0.18);
-        border-radius: var(--ui-radius);
+        --ui-radius: 12px; border-radius: 12px;
         background: rgba(13, 13, 11, 0.92);
         color: #ffffff;
         padding: 8px 10px;
@@ -2894,7 +2894,7 @@ body,
     button {
         flex: 1 1 0;
         border: 0;
-        border-radius: var(--ui-radius);
+        --ui-radius: 14px; border-radius: 14px;
         background: linear-gradient(180deg, #8dfcb3 0%, #44da89 100%);
         color: #1d1d1b;
         padding: 12px 14px 10px;
@@ -3014,7 +3014,7 @@ body,
 
 .guest-menu-button {
     border: 1px solid rgba(213, 213, 211, 0.3);
-    border-radius: var(--ui-radius);
+    --ui-radius: 999px; border-radius: 999px;
     background: rgba(21, 21, 19, 0.84);
     color: #fafaf8;
     padding: 10px 16px 8px;
@@ -3072,7 +3072,7 @@ body,
     display: flex;
     flex-direction: column;
     border: 1px solid rgba(213, 213, 211, 0.2);
-    border-radius: var(--ui-radius);
+    --ui-radius: 24px; border-radius: 24px;
     background: linear-gradient(180deg, rgba(23, 23, 21, 0.97) 0%, rgba(14, 14, 12, 0.98) 100%);
     box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
     overflow: hidden;
@@ -3110,7 +3110,7 @@ body,
 .guest-game-resume-button {
     flex: 0 0 auto;
     border: 0;
-    border-radius: var(--ui-radius);
+    --ui-radius: 999px; border-radius: 999px;
     background: linear-gradient(180deg, #8dfcb3 0%, #42d985 100%);
     color: #1d1d1b;
     padding: 12px 18px 10px;
@@ -3134,7 +3134,7 @@ body,
 
     button {
         border: 1px solid rgba(213, 213, 211, 0.18);
-        border-radius: var(--ui-radius);
+        --ui-radius: 999px; border-radius: 999px;
         background: rgba(255, 255, 255, 0.04);
         color: #e6e6e4;
         padding: 9px 14px 7px;
@@ -3225,7 +3225,7 @@ body,
         right: 12px;
         bottom: 12px;
         width: auto;
-        border-radius: var(--ui-radius);
+        --ui-radius: 18px; border-radius: 18px;
     }
 
     .guest-game-help-header {
@@ -3444,3 +3444,12 @@ body,
     width: min(280px, calc(100vw - 16px));
     .game-ui-layout__panel { max-height: calc(100dvh - 120px); background: #0c0a07; backdrop-filter: none; }
 }
+
+// User-requested whole-game offset; reserve scroll space for the lower controls.
+.gameplay-layout {
+    padding-bottom: 200px;
+    box-sizing: content-box;
+    overflow: visible;
+}
+.gameplay-layout .main-container, .gameplay-layout .container-fluid { overflow: visible; }
+.gameplay-layout .game-table-page { transform: translateY(200px); }
