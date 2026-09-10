@@ -1,6 +1,6 @@
+import { createPortal } from "react-dom";
 import React, { useEffect, useMemo, useState } from "react";
 import {
-    clearSavedGameUiLayout,
     DEFAULT_GAME_UI_LAYOUT,
     dispatchGameUiLayoutUpdate,
     readSavedGameUiLayout,
@@ -13,14 +13,14 @@ const CONTROL_GROUPS = [
         controls: [
             { key: 'tableOffsetX', label: 'Table X', min: -360, max: 360, step: 1 },
             { key: 'tableOffsetY', label: 'Table Y', min: -500, max: 240, step: 1 },
-            { key: 'tableScale', label: 'Table Scale', min: 0.55, max: 1.35, step: 0.01 },
+            { key: 'tableScale', label: 'Table Scale', min: 0.7, max: 1.35, step: 0.01 },
             { key: 'tablePerspective', label: 'Perspective', min: 0.55, max: 1.35, step: 0.01 },
         ],
     },
 ];
 
 const formatLayoutValue = (key, value) => {
-    if (key.toLowerCase().includes('scale')) {
+    if (key.toLowerCase().includes('scale') || key === 'tablePerspective') {
         return Number(value || 0).toFixed(2);
     }
 
@@ -31,7 +31,7 @@ function GameLayoutOverlay() {
     const [isOpen, setIsOpen] = useState(false);
     const [copyStatus, setCopyStatus] = useState('');
     const [layout, setLayout] = useState(() => readSavedGameUiLayout());
-    const layoutJson = useMemo(() => JSON.stringify(layout, null, 2), [layout]);
+    const layoutJson = useMemo(() => JSON.stringify(Object.fromEntries(CONTROL_GROUPS[0].controls.map(({ key }) => [key, layout[key]])), null, 2), [layout]);
 
     useEffect(() => {
         if (!copyStatus) return undefined;
@@ -62,9 +62,7 @@ function GameLayoutOverlay() {
     };
 
     const handleReset = () => {
-        const nextLayout = clearSavedGameUiLayout();
-        setLayout(nextLayout);
-        dispatchGameUiLayoutUpdate(nextLayout);
+        commitLayout(previous => ({ ...previous, ...Object.fromEntries(CONTROL_GROUPS[0].controls.map(({ key }) => [key, DEFAULT_GAME_UI_LAYOUT[key]])) }));
         setCopyStatus('Reset');
     };
 
@@ -81,14 +79,15 @@ function GameLayoutOverlay() {
         }
     };
 
-    return (
-        <div className={`game-ui-layout ${isOpen ? 'is-open' : ''}`}>
+    return createPortal(
+        <div className={`game-ui-layout game-ui-layout--table-adjuster ${isOpen ? 'is-open' : ''}`}>
             <button
                 type='button'
                 className='game-ui-layout__toggle'
+                aria-expanded={isOpen}
                 onClick={() => setIsOpen(previousIsOpen => !previousIsOpen)}
             >
-                {isOpen ? 'Hide UI Adjuster' : 'Open UI Adjuster'}
+                {isOpen ? 'Close Table Adjuster' : 'Table Adjuster'}
             </button>
 
             {isOpen && (
@@ -96,13 +95,13 @@ function GameLayoutOverlay() {
                     <div className='game-ui-layout__header'>
                         <div>
                             <p className='game-ui-layout__eyebrow'>Main Game Screen</p>
-                            <h2>UI Adjuster</h2>
+                            <h2>Table Adjuster</h2>
                         </div>
                         <span className='game-ui-layout__saved'>Live</span>
                     </div>
 
                     <p className='game-ui-layout__help'>
-                        Move the table live. Tell me when it is right and I will save these values into the app.
+                        Adjust the table live. Settings save on this device. Copy Values to share your placement.
                     </p>
 
                     {CONTROL_GROUPS.map(group => (
@@ -151,7 +150,7 @@ function GameLayoutOverlay() {
                     </p>
                 </div>
             )}
-        </div>
+        </div>, document.body
     );
 }
 
