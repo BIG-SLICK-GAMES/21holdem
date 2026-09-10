@@ -1,3 +1,4 @@
+import { SiteThemeRuntime } from '../views/settings/SiteTheme';
 import React, { Suspense } from 'react'
 import { Spinner } from 'react-bootstrap'
 import { Navigate, Route, BrowserRouter, Routes } from 'react-router-dom'
@@ -45,6 +46,7 @@ function AllRoutes() {
         <>
             {/* <Toaster limit={5} /> */}
             <BrowserRouter>
+                <SiteThemeRuntime />
                 <Routes>
                     {Router?.map(({ isPrivateRoute, children, Component }, index) => {
                         return (

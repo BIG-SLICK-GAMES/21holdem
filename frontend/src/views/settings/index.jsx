@@ -1,11 +1,13 @@
 import React, { useEffect } from 'react';
 import { Link, Navigate, useParams } from 'react-router-dom';
+import ThemeAdjuster from './SiteTheme';
 import Transactions from 'views/transactions';
 import HowToPlay from 'views/cms/howToPlay';
 import GameRule from 'views/cms/gameRule';
 import Contact from 'views/cms/contact';
 
 const SETTINGS_PAGES = {
+    theme: { title: 'Theme Adjuster', Content: ThemeAdjuster },
     transactions: { title: 'Transactions', Content: Transactions },
     'how-to-play': { title: 'How to Play', Content: HowToPlay },
     rules: { title: 'Rules', Content: GameRule },

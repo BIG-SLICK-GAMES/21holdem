@@ -127,6 +127,7 @@ const Profile = () => {
     };
 
     const aSettingsItems = [
+        { id: 'profile-settings-theme', label: 'Theme Adjuster', description: 'Customise site colours.', onClick: () => navigate('/settings/theme') },
         {
             id: 'profile-settings-shop',
             label: 'Shop',

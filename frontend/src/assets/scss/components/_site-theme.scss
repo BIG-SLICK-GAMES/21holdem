@@ -1,0 +1,26 @@
+// Custom site colours are opt-in and the marker is removed before gameplay renders.
+body[data-site-theme] {
+    background-color: var(--ui-blue-deep); color: var(--ui-text);
+    :is(.main-layout:not(.gameplay-layout), .main-layout:not(.gameplay-layout) .main-layout-background, .auth-layout, .common-layout) {
+        background: var(--ui-blue-deep) !important;
+    }
+    .main-layout:not(.gameplay-layout) .main-layout-background::after { background: transparent; }
+    :is(.lobby-topbar, .dashboard-hub__tab-menu, .dashboard-hub .ui-button-row) { background: var(--site-navigation) !important; }
+    :is(.modal-content, .bsg-auth__panel, .profile-card, .settings-detail) { background-color: var(--ui-surface) !important; color: var(--ui-text); }
+    :is(input:not([type='color']):not([type='range']):not([type='checkbox']):not([type='radio']), select, textarea) {
+        background-color: var(--site-field) !important; color: var(--ui-text) !important; border-color: var(--ui-border) !important;
+    }
+    .dashboard-hub__bokeh i {
+        background: radial-gradient(circle, rgba(var(--site-bokeh-rgb), .65), rgba(var(--site-bokeh-rgb), .2) 45%, transparent 72%) !important;
+    }
+    .dashboard-hub :is(.dashboard-hub__table-card, .dashboard-hub__store-item, .dashboard-hub__profile-stat) {
+        background-color: var(--ui-surface) !important;
+    }
+    .dashboard-hub { --ui-divider: var(--ui-border); }
+}
+.site-theme-editor {
+    &__colours { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 0 24px; }
+    &__colour { display: grid; grid-template-columns: minmax(0, 1fr) 48px 76px; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--ui-border); }
+    input[type='color'] { width: 48px; height: 40px; padding: 2px; cursor: pointer; }
+    &__actions { display: flex; gap: 12px; flex-wrap: wrap; margin: 24px 0 12px; }
+}
