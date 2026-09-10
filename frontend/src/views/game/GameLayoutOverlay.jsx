@@ -49,7 +49,7 @@ function GameLayoutOverlay() {
                 ? nextLayoutOrUpdater(previousLayout)
                 : nextLayoutOrUpdater;
             const sanitizedLayout = saveGameUiLayout(nextLayout);
-            dispatchGameUiLayoutUpdate(sanitizedLayout);
+            dispatchGameUiLayoutUpdate(Object.fromEntries(CONTROL_GROUPS[0].controls.map(({ key }) => [key, sanitizedLayout[key]])));
             return sanitizedLayout;
         });
     };
