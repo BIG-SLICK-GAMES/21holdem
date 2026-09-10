@@ -17,14 +17,15 @@ const countdown = (ms) => {
 export default function DailyRewardsPanel({ embedded = false }) {
     const navigate = useNavigate();
     const signedIn = Boolean(getCookie('sAuthToken'));
+    const testMode = new URLSearchParams(window.location.search).get('chestTest') === '1';
     const client = useQueryClient();
-    const key = signedIn ? 'getDailyRewards' : 'dailyRewardsPreview';
+    const key = signedIn && !testMode ? 'getDailyRewards' : 'dailyRewardsPreview';
     const [now, setNow] = useState(Date.now());
     const [opening, setOpening] = useState(false);
     const [revealed, setRevealed] = useState(null);
     const revealTimer = useRef(null);
     const claimedRef = useRef(false);
-    const { data, isLoading, isError, refetch, dataUpdatedAt } = useQuery(key, signedIn ? getDailyRewards : getDailyRewardsPreview, {
+    const { data, isLoading, isError, refetch, dataUpdatedAt } = useQuery(key, signedIn && !testMode ? getDailyRewards : getDailyRewardsPreview, {
         select: (response) => response?.data?.data,
         refetchOnWindowFocus: true,
     });
@@ -65,22 +66,30 @@ export default function DailyRewardsPanel({ embedded = false }) {
             ReactToastify(error?.response?.data?.message || 'Unable to claim reward. Please try again.', 'error');
         },
     });
-    const claimed = Boolean(data?.bTodayRewardClaimed || revealed);
-    const prize = revealed || data?.prize;
+    const claimed = Boolean((!testMode && data?.bTodayRewardClaimed) || revealed);
+    const prize = revealed || (!testMode && data?.prize);
     const prizes = data?.prizes || [];
     const unavailable = !isLoading && !isError && !prizes.length;
     const claim = () => {
-        if (!signedIn) { navigate('/login'); return; }
+        if (!signedIn && !testMode) { navigate('/login'); return; }
         if (claimed || claimedRef.current || opening || mutation.isLoading || isLoading || isError || unavailable) return;
         claimedRef.current = true;
         setOpening(true);
+        if (testMode) {
+            const previewPrize = prizes[Math.floor(Math.random() * prizes.length)];
+            revealTimer.current = window.setTimeout(() => {
+                setRevealed(previewPrize);
+                setOpening(false);
+            }, window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 1500);
+            return;
+        }
         mutation.mutate();
     };
-    const label = opening ? 'Opening your prize...' : claimed ? "Today's prize collected" : !signedIn ? 'Sign in to open' : 'Open your daily prize';
+    const label = opening ? 'Opening your prize...' : claimed ? "Today's prize collected" : !signedIn && !testMode ? 'Sign in to open' : 'Open your daily prize';
     return (
         <section className={`daily-prize${embedded ? ' daily-prize--embedded' : ''}`} aria-labelledby='daily-prize-title'>
             <header>
-                <span className='daily-prize__eyebrow'>ONE DAY. ONE SURPRISE.</span>
+                <span className='daily-prize__eyebrow'>{testMode ? 'CHEST TEST MODE' : 'ONE DAY. ONE SURPRISE.'}</span>
                 <h2 id='daily-prize-title'>Your daily treasure</h2>
                 <p>A mystery prize from the shop, on us. Open it and see what's inside.</p>
             </header>
@@ -96,14 +105,14 @@ export default function DailyRewardsPanel({ embedded = false }) {
             </button>
             <div className='daily-prize__status' aria-live='polite' aria-atomic='true'>
                 {isError ? <><p>We couldn't load today's prizes.</p><button type='button' onClick={() => refetch()}>Try again</button></> : unavailable ? <p>Prizes are being restocked. Check back soon.</p> : opening ? <strong>Opening your prize...</strong> : claimed ? <>
-                    <span className='daily-prize__eyebrow'>COLLECTED TODAY</span>
+                    <span className='daily-prize__eyebrow'>{testMode ? 'PREVIEW PRIZE' : 'COLLECTED TODAY'}</span>
                     <h3>{prize?.sTitle || 'Daily reward'}</h3>
                     {prize && <strong className='daily-prize__amount'>+{amount(prize.nChips)} chips</strong>}
-                    <p>{prize ? 'Added to your balance. Enjoy the tables!' : 'Your reward has already been collected.'}</p>
+                    <p>{testMode ? 'Preview only. Refresh to open the chest again.' : prize ? 'Added to your balance. Enjoy the tables!' : 'Your reward has already been collected.'}</p>
                 </> : <button type='button' className='daily-prize__open' onClick={claim} disabled={isLoading}>{isLoading ? 'Loading prizes...' : label}<span aria-hidden='true'> &rarr;</span></button>}
             </div>
-            {claimed && !opening && <p className='daily-prize__countdown'>Your next treasure opens in <strong>{countdown(remaining)}</strong></p>}
-            <p className='daily-prize__note'>One free prize per day. Resets at 00:00 UTC. No streaks to keep.</p>
+            {claimed && !opening && !testMode && <p className='daily-prize__countdown'>Your next treasure opens in <strong>{countdown(remaining)}</strong></p>}
+            <p className='daily-prize__note'>{testMode ? 'Animation test: no chips are credited and your daily claim is untouched.' : 'One free prize per day. Resets at 00:00 UTC. No streaks to keep.'}</p>
             {prizes.length > 0 && <details className='daily-prize__pool'><summary>What could be inside? <span>{prizes.length} shop prizes</span></summary>
                 <ul>{prizes.map((item, index) => <li key={`${item.sShopItemId}-${index}`}><span>{item.sTitle}</span><strong>{amount(item.nChips)} chips</strong></li>)}</ul>
                 <p>Every listed package has an equal chance. New shop packages join automatically.</p>
