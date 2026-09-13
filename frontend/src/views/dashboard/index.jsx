@@ -21,6 +21,8 @@ import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useLocation, useNavigate } from 'react-router-dom';
 import _ from 'scripts/helper';
 import DailyRewardsPanel from 'shared/components/DailyRewardsPanel';
+import CosmeticShop from 'shared/components/CosmeticShop';
+import useAuthToken from 'shared/hooks/useAuthToken';
 import { HOW_TO_PLAY_SECTIONS } from 'shared/content/gameGuideContent';
 import { DEFAULT_PROFILE_BANNER, getAvatarImageSrc } from 'shared/constants/builtInAvatars';
 import { getCookie, ReactToastify } from 'shared/utils';
@@ -247,7 +249,7 @@ const Dashboard = () => {
         };
     }, []);
 
-    const bIsSignedIn = Boolean(getCookie('sAuthToken'));
+    const bIsSignedIn = Boolean(useAuthToken());
 
     const { data: tablesData = [], isLoading: isDataTableLoading, refetch: refetchTables } = useQuery('getTables', () => getTables('public'), {
         select: (data) => getArrayPayload(data?.data?.data),
@@ -1098,6 +1100,7 @@ const Dashboard = () => {
 
     const renderShopPanel = () => (
         <>
+            <CosmeticShop />
             <div className='dashboard-hub__tab-body dashboard-hub__tab-body--store'>
                 {renderStoreItems()}
             </div>

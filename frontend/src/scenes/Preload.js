@@ -22,7 +22,8 @@
 import Phaser from 'phaser';
 import config from '../scripts/config';
 // gameplay
-import portrait_table from '../assets/images/gameplay/portrate_table.png'
+import portrait_table from '../assets/images/gameplay/classic-table-v2.webp'
+import portrait_table_png from '../assets/images/gameplay/classic-table-v2.png'
 import prompt_bg from '../assets/images/gameplay/prompt_bg.png'
 import chip_icon from '../assets/images/gameplay/chip_icon.png';
 import pot_amount_base from '../assets/images/gameplay/pot_amount_base.png';
@@ -126,6 +127,9 @@ export default class Preload extends Phaser.Scene {
         // gameplay
         this.load.image('table', portrait_table);
         this.load.image('private_table', portrait_table);
+        const themeIds = ['timber-saloon-scene', 'riverboat-lounge-scene', 'art-deco-club-scene', 'neon-skyline-scene', 'grand-casino-scene'];
+        this.bRequestedTheme = themeIds.includes(this.sTableTheme);
+        if (this.bRequestedTheme) this.load.image('equipped_table', `/images/shop/${this.sTableTheme.replace(/-scene$/, '-table')}.webp`);
         this.load.image('prompt_bg', prompt_bg);
         this.load.image('chip_icon', chip_icon);
         this.load.image('pot_amount_base', pot_amount_base);
@@ -240,7 +244,9 @@ export default class Preload extends Phaser.Scene {
             color: '#ffffff',
         }).setOrigin(0.5);
     }
-    init({ sAuthToken, iBoardId, sPrivateCode, fallbackPath, isGuestTutorial = false, tableOnlyMode = false }) {
+    init({ sAuthToken, iBoardId, sPrivateCode, fallbackPath, isGuestTutorial = false, tableOnlyMode = false, sTableTheme = '' }) {
+        this.sTableTheme = sTableTheme;
+        this.bRequestedTheme = false;
         this.sAuthToken = sAuthToken;
         this.iBoardId = iBoardId;
         this.sPrivateCode = sPrivateCode;
@@ -261,8 +267,25 @@ export default class Preload extends Phaser.Scene {
         };
 
         let bLevelStarted = false;
+        let bPreloadTimedOut = false;
+        const missingTables = () => ['table', 'private_table', ...(this.bRequestedTheme ? ['equipped_table'] : [])]
+            .filter(key => !this.textures.exists(key));
+        const hasTableArtwork = () => missingTables().length === 0;
+        let fallbackAttempted = false;
+        let retryLabel;
+        const retryTables = () => {
+            retryLabel?.destroy();
+            retryLabel = null;
+            for (const key of missingTables()) {
+                const url = key === 'equipped_table'
+                    ? `/images/shop/${this.sTableTheme.replace(/-scene$/, '-table')}.png`
+                    : portrait_table_png;
+                this.load.image(key, `${url}?retry=${Date.now()}`);
+            }
+            this.load.start();
+        };
         const startLevel = () => {
-            if (bLevelStarted) return;
+            if (bLevelStarted || !hasTableArtwork()) return;
             bLevelStarted = true;
             clearTimeout(nPreloadTimeout);
             this.cameras.main.fadeOut(400);
@@ -272,6 +295,13 @@ export default class Preload extends Phaser.Scene {
         };
         const nPreloadTimeout = setTimeout(() => {
             if (bLevelStarted) return;
+            bPreloadTimedOut = true;
+            // Slow downloads must not turn the table into a missing texture or silently discard an equipped theme.
+            // The loader's COMPLETE event will start the game when these essential images finish.
+            if (!hasTableArtwork()) {
+                console.warn('Waiting for table artwork before starting the game.');
+                return;
+            }
             const pending = this.load?.list?.getArray
                 ? this.load.list.getArray().map((file) => file?.key || file?.url || '').filter(Boolean)
                 : [];
@@ -282,7 +312,26 @@ export default class Preload extends Phaser.Scene {
         this.load.on(Phaser.Loader.Events.LOAD_ERROR, (file) => {
             console.error('Preload asset failed:', file?.key || '', file?.src || file?.url || '');
         });
-        this.load.on(Phaser.Loader.Events.COMPLETE, () => startLevel());
+        this.load.on(Phaser.Loader.Events.FILE_COMPLETE, () => {
+            if (bPreloadTimedOut && hasTableArtwork()) startLevel();
+        });
+        this.load.on(Phaser.Loader.Events.COMPLETE, () => {
+            if (bLevelStarted) return;
+            if (hasTableArtwork()) return startLevel();
+            if (!fallbackAttempted) {
+                fallbackAttempted = true;
+                retryTables();
+                return;
+            }
+            retryLabel = this.add.text(config.centerX, config.centerY,
+                'Couldn’t load your table.\nTap to retry', {
+                    fontFamily: 'Arial', fontSize: '32px', color: '#ffffff',
+                    backgroundColor: '#17130c', padding: { x: 24, y: 20 }, align: 'center',
+                }).setOrigin(0.5).setDepth(1000).setInteractive({ useHandCursor: true });
+            retryLabel.on('pointerdown', retryTables);
+        });
+
+        this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => clearTimeout(nPreloadTimeout));
 
         this.editorPreload();
     }

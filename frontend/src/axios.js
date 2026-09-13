@@ -116,9 +116,12 @@ Axios.interceptors.response.use(
             return Promise.reject(err);
         }
         if (err?.response?.status === 401) {
-            if (!isAuthRoute && !isGuestSafeRoute) {
+            const rejectedToken = String(err.config?.headers?.Authorization || '').replace(/^Bearer\s+/i, '');
+            const currentToken = getCookie('sAuthToken');
+            // A late response from an old session must not sign out a new session.
+            if (!isAuthRoute && currentToken && rejectedToken === currentToken) {
                 removeToken();
-                window.location.href = "/login";
+                if (!isGuestSafeRoute) window.location.href = "/lobby";
             }
             return Promise.reject(err);
         }

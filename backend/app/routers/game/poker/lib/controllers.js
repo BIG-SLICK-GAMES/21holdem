@@ -2,11 +2,11 @@ const _ = require('../../../../../globals/lib/helper');
 const boardManager = require('../../../../game/boardManager');
 const { BoardProtoType, User, PokerBoard } = require('../../../../models');
 const middleware = require('./middlewares');
+const systemBots = require('../../../../utils/lib/system-bots');
 
 const controllers = {};
-const LOBBY_SEED_BUY_INS = [1000, 5000];
 const LOBBY_SEED_SEAT_COUNTS = [4, 6, 9];
-const LOBBY_SEED_TARGET_PARTICIPANTS = 3;
+let lobbySeedPromise = null;
 const LIVE_BOT_INVITE_MIN_COUNT = 2;
 const LIVE_BOT_INVITE_MAX_COUNT = 8;
 
@@ -110,7 +110,7 @@ function getLobbySeedProtoCandidates(aProtoData = []) {
   for (const proto of aProtoData) {
     const nMinBuyIn = Number(proto?.nMinBuyIn) || 0;
     const nMaxPlayer = Number(proto?.nMaxPlayer) || 0;
-    if (!LOBBY_SEED_BUY_INS.includes(nMinBuyIn) || !LOBBY_SEED_SEAT_COUNTS.includes(nMaxPlayer)) continue;
+    if (!(nMinBuyIn > 0) || !LOBBY_SEED_SEAT_COUNTS.includes(nMaxPlayer)) continue;
 
     const sKey = `${nMinBuyIn}:${nMaxPlayer}`;
     if (!oSelectedByKey[sKey]) oSelectedByKey[sKey] = proto;
@@ -130,8 +130,8 @@ async function ensureLiveLobbySeedBoards(aProtoData = []) {
   for (const proto of aSeedProtoCandidates) {
     const aProtoBoards = await PokerBoard.find({ iProtoId: proto._id, eTableMode: 'live' }).sort({ dUpdatedDate: -1 }).lean();
 
-    let nCurrentParticipantCount = 0;
     let oTargetBoard = null;
+    let bHasHumanBoard = false;
 
     for (const pokerBoard of aProtoBoards) {
       const board = await boardManager.getBoard(pokerBoard.iBoardId.toString());
@@ -151,15 +151,19 @@ async function ensureLiveLobbySeedBoards(aProtoData = []) {
         continue;
       }
 
-      const nBoardParticipantCount = board.aParticipant.filter(participant => participant.eState !== 'leave').length;
-      nCurrentParticipantCount += nBoardParticipantCount;
-
-      if (!oTargetBoard && nBoardParticipantCount < Number(board.nMaxPlayer || proto.nMaxPlayer || 0)) {
+      const aActiveParticipants = board.aParticipant.filter(participant => participant.eState !== 'leave');
+      if (aActiveParticipants.some(participant => participant.eUserType !== 'bot')) {
+        bHasHumanBoard = true;
+      }
+      if (!oTargetBoard && board.eState === 'waiting' && aActiveParticipants.every(participant => participant.eUserType === 'bot')) {
         oTargetBoard = board;
       }
     }
 
-    const nMissingParticipants = Math.max(LOBBY_SEED_TARGET_PARTICIPANTS - nCurrentParticipantCount, 0);
+    // Leave occupied games alone; prepare one waiting table per lobby option.
+    if (bHasHumanBoard && !oTargetBoard) continue;
+    const nCurrentBots = oTargetBoard?.aParticipant.filter(participant => participant.eState !== 'leave').length || 0;
+    const nMissingParticipants = Math.max(systemBots.getBotSeatCap(proto.nMaxPlayer) - nCurrentBots, 0);
     if (!nMissingParticipants) continue;
 
     if (!oTargetBoard) {
@@ -176,7 +180,9 @@ async function ensureLiveLobbySeedBoards(aProtoData = []) {
       board: oTargetBoard,
       boardProto: proto,
       count: nMissingParticipants,
+      bDeferStart: true,
     });
+    await oTargetBoard.deleteScheduler('refundOnLongWait', '');
   }
 }
 
@@ -201,6 +207,13 @@ controllers.listBoard = async (req, res) => {
     };
 
     const aProtoData = await BoardProtoType.find(query, project).sort({ nMinBet: 1 }).lean();
+    if (sBoardType === 'public') {
+      // Concurrent lobby refreshes share one seed pass to avoid duplicate tables/bots.
+      if (!lobbySeedPromise) {
+        lobbySeedPromise = ensureLiveLobbySeedBoards(aProtoData).finally(() => { lobbySeedPromise = null; });
+      }
+      await lobbySeedPromise;
+    }
     const aProtoIds = aProtoData.map(proto => proto._id);
 
     const aLiveBoardStats = aProtoIds.length
@@ -272,6 +285,14 @@ controllers.joinBoard = async (req, res) => {
     await User.updateOne({ _id: req.user._id }, { $addToSet: { aPokerBoard: req.board._id } });
 
     req.board = await boardManager.getBoard(req.board._id.toString());
+    if (!req.board.sPrivateCode && req.boardProto.eBoardType !== 'private') {
+      await seedLiveBots({
+        board: req.board,
+        boardProto: req.boardProto,
+        count: middleware.getMissingLiveBotCount({ board: req.board, boardProto: req.boardProto }),
+        bDeferStart: true,
+      });
+    }
     const refreshedBoard = await ensureLiveBoardCanStart(req.board);
     if (refreshedBoard) {
       response.eState = refreshedBoard.eState;

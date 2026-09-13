@@ -56,9 +56,7 @@ function isBotOnlyStartedBoard(board) {
   if (!board) return false;
 
   const nHumanParticipantCount = getLiveHumanParticipantCount(board);
-  const nActiveParticipantCount = board.aParticipant.filter(participant => participant.eState !== 'leave').length;
-
-  return nHumanParticipantCount === 0 && (board.eState !== 'waiting' || nActiveParticipantCount >= 3);
+  return nHumanParticipantCount === 0 && board.eState !== 'waiting';
 }
 
 function getTargetLiveBotCount({ board, boardProto }) {

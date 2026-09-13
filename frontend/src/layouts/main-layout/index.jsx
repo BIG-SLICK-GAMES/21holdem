@@ -2,10 +2,11 @@ import React, { Suspense, useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 // import Breadcrumbs from '../../shared/components/'
 import useMediaQuery from '../../shared/hooks/useMediaQuery'
+import useAuthToken from 'shared/hooks/useAuthToken'
 import { Spinner } from 'react-bootstrap'
 import HeaderPrivate from 'shared/components/Header/Private'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { getCookie, setCookie } from 'shared/utils'
+import { setCookie } from 'shared/utils'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { login } from 'query/login.query'
 import { getProfile } from 'query/profile.query'
@@ -24,7 +25,7 @@ function MainLayout({ children }) {
 
     const getPath = useLocation().pathname
     const isGamePlay = getPath === '/game'
-    const bIsSignedIn = Boolean(getCookie('sAuthToken'))
+    const bIsSignedIn = Boolean(useAuthToken())
     const [sLoginError, setLoginError] = useState('')
     const { mutate: signIn, isLoading: bSigningIn } = useMutation(login, {
         onSuccess: (response) => {
@@ -124,7 +125,11 @@ function MainLayout({ children }) {
             id={isGamePlay ? 'main-layout' : undefined}
             className={`main-layout main-layout--scene-${sBackgroundScene} ${isGamePlay ? 'gameplay-layout' : ''}`}
         >
-            <div className='main-layout-background'></div>
+            {isGamePlay ? (
+                <div className='game-room-viewport' aria-hidden='true'>
+                    <div className='game-room-art' />
+                </div>
+            ) : <div className='main-layout-background' />}
             {!isGamePlay && !isLobby && !isSettingsPage && <HeaderPrivate />}
             {!isGamePlay && <div className='lobby-topbar'>
                     <Link to='/lobby' className='lobby-topbar__logo' aria-label="21 Hold'em home">

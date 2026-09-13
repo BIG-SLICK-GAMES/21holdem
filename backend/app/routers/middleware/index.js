@@ -9,6 +9,7 @@ const authProject = {
   sPassword: true,
   eUserType: true,
   sAvatar: true,
+  sTableTheme: true,
   sRootSocket: true,
   eStatus: true,
   sToken: true,

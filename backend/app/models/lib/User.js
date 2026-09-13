@@ -15,6 +15,8 @@ const User = new mongoose.Schema(
       default: 'user',
     },
     sAvatar: { type: String, default: '' },
+    sTableTheme: { type: String, default: '' },
+    aCosmeticPurchases: { type: [Object], default: [] },
     // eLoginType: { type: String, enum: ['M', 'G', 'A', 'F'], default: 'M' },
     sRootSocket: { type: String, default: '' },
     eStatus: {

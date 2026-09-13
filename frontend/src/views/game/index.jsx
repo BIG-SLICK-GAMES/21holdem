@@ -185,6 +185,7 @@ class Boot extends Phaser.Scene {
         super({ key: 'Boot' });
     }
     init(data) {
+        this.sTableTheme = data.sTableTheme || '';
         this.sAuthToken = data.sAuthToken;
         this.iBoardId = data.iBoardId;
         this.sPrivateCode = data.sPrivateCode;
@@ -195,6 +196,7 @@ class Boot extends Phaser.Scene {
     preload() {
         const data = {
             sAuthToken: this.sAuthToken,
+            sTableTheme: this.sTableTheme,
             iBoardId: this.iBoardId,
             sPrivateCode: this.sPrivateCode,
             isGuestTutorial: this.isGuestTutorial,
@@ -226,11 +228,23 @@ function Game({ isPausedExternally = false }) {
         isLoading: isProfileLoading,
         isFetching: isProfileFetching,
         isFetched: isProfileFetched,
-    } = useQuery('game-profile-board', getProfile, {
-        enabled: Boolean(resolvedAuthToken) && !iBoardId,
+    } = useQuery(['game-profile-board', resolvedAuthToken], getProfile, {
+        enabled: Boolean(resolvedAuthToken),
         staleTime: 5000,
     });
     const activeProfileBoardId = profileResp?.data?.data?.aPokerBoard?.[0];
+    const equippedTableTheme = profileResp?.data?.data?.sTableTheme || '';
+    useEffect(() => {
+        const themes = ['timber-saloon-scene', 'riverboat-lounge-scene', 'art-deco-club-scene', 'neon-skyline-scene', 'grand-casino-scene'];
+        const isRiverboat = equippedTableTheme === 'riverboat-lounge-scene';
+        const image = isRiverboat ? 'riverboat-room-v2.webp' : themes.includes(equippedTableTheme) ? `${equippedTableTheme}.webp` : 'classic-room-v2.webp';
+        document.documentElement.style.setProperty('--game-room-image', `url("/images/shop/${image}")`);
+        // Room-only artwork can fill the viewport without enlarging a small crop of the shop preview.
+        const usesShopPreview = themes.includes(equippedTableTheme) && !isRiverboat;
+        document.documentElement.style.setProperty('--game-room-size', usesShopPreview ? 'max(100vw, 300vh) auto' : 'cover');
+        document.documentElement.style.setProperty('--game-room-position', usesShopPreview ? 'center top' : 'center');
+        return () => ['--game-room-image', '--game-room-size', '--game-room-position'].forEach(key => document.documentElement.style.removeProperty(key));
+    }, [equippedTableTheme]);
     const [joinedBoardId, setJoinedBoardId] = useState(null);
     const [isAutoJoining, setIsAutoJoining] = useState(false);
     const resolvedBoardId = iBoardId || joinedBoardId || activeProfileBoardId;
@@ -359,7 +373,7 @@ function Game({ isPausedExternally = false }) {
     }, [fallbackPath, isProfileFetched, isProfileFetching, isProfileLoading, navigate, resolvedAuthToken, resolvedBoardId]);
 
     useEffect(() => {
-        if (!resolvedAuthToken || !resolvedBoardId || isAutoJoining) return undefined;
+        if (!resolvedAuthToken || !resolvedBoardId || isAutoJoining || !isProfileFetched) return undefined;
 
         config.setLayout('mobile');
         const gameConfig = {
@@ -381,6 +395,7 @@ function Game({ isPausedExternally = false }) {
         const game = new Phaser.Game(gameConfig);
         const data = {
             sAuthToken: resolvedAuthToken,
+            sTableTheme: equippedTableTheme,
             iBoardId: resolvedBoardId,
             sPrivateCode: sPrivateCode,
             isGuestTutorial,
@@ -399,7 +414,7 @@ function Game({ isPausedExternally = false }) {
             game.destroy(true);
         };
 
-    }, [fallbackPath, isAutoJoining, isGuestTutorial, resolvedAuthToken, resolvedBoardId, sPrivateCode, tableOnlyMode]);
+    }, [fallbackPath, isAutoJoining, isGuestTutorial, resolvedAuthToken, resolvedBoardId, sPrivateCode, tableOnlyMode, isProfileFetched, equippedTableTheme]);
 
     useEffect(() => {
         const game = phaserGameRef.current;

@@ -2,7 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { getDailyRewards, getDailyRewardsPreview, updateDailyRewards } from 'query/dailyRewards.query';
-import { getCookie, ReactToastify } from 'shared/utils';
+import { ReactToastify } from 'shared/utils';
+import useAuthToken from 'shared/hooks/useAuthToken';
 import { useNavigate } from 'react-router-dom';
 import './dailyPrize.scss';
 import chestClosed from 'assets/images/rewards/daily-chest-closed.webp';
@@ -16,7 +17,7 @@ const countdown = (ms) => {
 
 export default function DailyRewardsPanel({ embedded = false }) {
     const navigate = useNavigate();
-    const signedIn = Boolean(getCookie('sAuthToken'));
+    const signedIn = Boolean(useAuthToken());
     const testMode = new URLSearchParams(window.location.search).get('chestTest') === '1';
     const client = useQueryClient();
     const key = signedIn && !testMode ? 'getDailyRewards' : 'dailyRewardsPreview';

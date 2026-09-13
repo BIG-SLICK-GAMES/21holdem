@@ -213,7 +213,7 @@ body :is(.dashboard-hub__buyin-grid, .dashboard-hub__desktop-buyin-grid).ui-butt
     body .lobby-topbar__login-actions.ui-button-row > :is(button, a) { min-height: 36px; }
 }
 
-// Credentials and actions remain one connected strip, including on narrow screens.
+// Keep account entry in the top bar without hiding controls off-screen.
 .lobby-topbar__account-actions { position: relative; min-width: 0; }
 body .lobby-topbar .lobby-topbar__login--connected {
     display: flex;
@@ -243,6 +243,34 @@ body .lobby-topbar .lobby-topbar__login--connected {
     }
     > input { flex: 1 1 150px; width: 150px; min-width: 120px; }
     > :is(button, a) { min-width: 86px; }
+}
+
+@media (max-width: 800px) {
+    body .lobby-topbar .lobby-topbar__account-actions:has(.lobby-topbar__login) {
+        flex: 1 1 0;
+        min-width: 0;
+        margin-left: 8px;
+    }
+
+    body .lobby-topbar .lobby-topbar__login--connected {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        width: 100%;
+        overflow: visible;
+
+        > :is(input, button, a) {
+            width: 100%;
+            min-width: 0;
+            height: 32px;
+            min-height: 32px;
+            padding: 4px 8px;
+        }
+
+        > input {
+            font-size: 16px;
+            border-bottom: 1px solid var(--ui-border) !important;
+        }
+    }
 }
 
 .dashboard-hub__bokeh {

@@ -1,0 +1,14 @@
+.cosmetic-shop {
+    padding: 24px; color: #f9e8c7;
+    &__heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+    h2 { font-size: 24px; color: #edbd60; margin-bottom: 8px; }
+    p { color: #c9b99e; }
+    &__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 18px; }
+    &__card { background: #12100c; border: 1px solid #655029; border-radius: 14px; overflow: hidden; }
+    &__card img { width: 100%; aspect-ratio: 2 / 3; object-fit: cover; display: block; }
+    &__details { padding: 16px; h3 { color: #f2ce89; font-size: 19px; } p { font-size: 13px; } strong { display: block; margin: 12px 0; } button { width: 100%; } }
+    button { border: 1px solid #edbd60; border-radius: 8px; padding: 10px 14px; background: #edbd60; color: #181108; font-weight: 700; cursor: pointer; }
+    button:disabled { cursor: default; opacity: .55; }
+    button:focus-visible, a:focus-visible { outline: 3px solid white; outline-offset: 3px; }
+    @media (max-width: 480px) { padding: 16px 10px; &__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; } &__details { padding: 10px; h3 { font-size: 16px; } button { padding: 10px 6px; font-size: 13px; } } }
+}

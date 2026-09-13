@@ -2141,7 +2141,7 @@ setConsolePrompt(label = 'Waiting for turn') {
             lockIcon.setVisible(true);
             banner.setVisible(true);
             bannerText.setVisible(true);
-            this.table.setTexture(assets.private_table);
+            this.table.setTexture(this.textures.exists('equipped_table') ? 'equipped_table' : assets.private_table);
             this.container_table.bringToTop(container_private_table);
         }
         this.oTable = {
@@ -2291,7 +2291,8 @@ setButtons() {
         const headerOffsetY = config.isDesktopLayout() ? playfieldOffsetY : 0;
         this.container_body = this.add.container(0, 0);
         this.backgroundImage = null;
-        this.table = this.add.image(config.centerX, config.centerY + 8 + tableImageOffsetY, assets.table);
+        const hasTheme = this.textures.exists('equipped_table');
+        this.table = this.add.image(config.centerX, config.centerY + 8 + tableImageOffsetY, hasTheme ? 'equipped_table' : assets.table);
         const tableFitScale = Math.min(config.width / this.table.width, config.height / this.table.height) * 0.86;
         this.table.setScale(tableFitScale);
         this.container_body.add(this.table);

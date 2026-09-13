@@ -104,6 +104,7 @@ export function setCookie(name, value, days) {
         expires = "; expires=" + date.toUTCString();
     }
     document.cookie = name + "=" + (value || "") + expires + "; path=/";
+    if (name === 'sAuthToken') window.dispatchEvent(new Event('bsg:auth-change'));
 }
 
 export function getCookie(name) {
@@ -119,6 +120,12 @@ export function getCookie(name) {
 
 export function removeCookie(name) {
     document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+    if (name === 'sAuthToken') {
+        if (window.location.hostname === '21-holdem.com' || window.location.hostname.endsWith('.21-holdem.com')) {
+            document.cookie = name + '=; Path=/; Domain=21-holdem.com; Max-Age=0;';
+        }
+        window.dispatchEvent(new Event('bsg:auth-change'));
+    }
 }
 
 export function formatIndianNumber(amount) {

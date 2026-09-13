@@ -29,12 +29,6 @@ body,
     overflow: hidden;
 }
 
-.gameplay-layout .main-layout-background {
-    background:
-        linear-gradient(180deg, rgba(6, 6, 4, 0.16) 0%, rgba(4, 4, 2, 0.68) 100%),
-        url("../../../images/bg/casino-interior-game.png") center center / cover no-repeat;
-}
-
 .gameplay-layout .main-container,
 .gameplay-layout .container-fluid {
     width: 100%;
@@ -3402,16 +3396,31 @@ body,
 // Keyframes
 // -----------------------------------------------
 
-// One independently adjustable background layer behind gameplay.
-.gameplay-layout .main-layout-background, .game-table-page {
+// Keep the room across the viewport instead of painting another room inside the narrow game frame.
+#main-layout.gameplay-layout {
     isolation: isolate;
-    background: #080705;
-    &::before {
-        content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
-        background: url('../../../images/bg/casino-adjustable-background.png') center / cover no-repeat;
+    background: transparent;
+}
+#main-layout.gameplay-layout > .game-room-viewport {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100dvh;
+    z-index: -1;
+    overflow: hidden;
+    background: #0b0705;
+    pointer-events: none;
+    .game-room-art {
+        position: absolute; inset: 0;
+        background: var(--game-room-image, none) var(--game-room-position, center) / var(--game-room-size, cover) no-repeat;
         transform: translate(var(--game-bg-x, 0px), var(--game-bg-y, 0px)) scale(var(--game-bg-scale-x, 1), var(--game-bg-scale-y, 1));
         transform-origin: center;
+        filter: brightness(.88);
     }
+}
+.game-table-page {
+    background: transparent;
+    &::before { content: none; }
 }
 .game-bg-adjuster {
     position: fixed; top: max(8px, env(safe-area-inset-top)); right: 8px; z-index: 11000;

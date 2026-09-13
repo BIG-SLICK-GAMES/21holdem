@@ -136,7 +136,11 @@ const BOT_ACCOUNT_BLUEPRINTS = [
   { sUserName: 'nathanreed', eGender: 'male', sStyle: 'wildcard' },
   { sUserName: 'aubreyquinn', eGender: 'female', sStyle: 'balanced' },
   { sUserName: 'romanellis', eGender: 'male', sStyle: 'pressure' },
-];
+].flatMap(bot => [
+  bot,
+  { ...bot, sUserName: `${bot.sUserName}2` },
+  { ...bot, sUserName: `${bot.sUserName}3` },
+]);
 
 function getBotAvatar(sUserName = '') {
   return `https://api.dicebear.com/9.x/adventurer/svg?seed=21-holdem-${encodeURIComponent(sUserName)}`;
@@ -150,8 +154,8 @@ function getBotSeatCap(nMaxPlayer = 0) {
   const nTableSize = Number(nMaxPlayer) || 0;
   const oSeatCaps = {
     4: 2,
-    6: 4,
-    9: 5,
+    6: 3,
+    9: 6,
   };
 
   if (oSeatCaps[nTableSize] !== undefined) return oSeatCaps[nTableSize];

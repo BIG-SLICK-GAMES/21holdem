@@ -1,0 +1,5 @@
+AddType image/webp .webp
+
+<Files "index.html">
+    Header set Cache-Control "no-cache"
+</Files>

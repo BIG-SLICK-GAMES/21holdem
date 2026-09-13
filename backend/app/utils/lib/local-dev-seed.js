@@ -20,11 +20,21 @@ const DEFAULT_BOARD_PROTOTYPES = [
     nTurnTime: 20,
     nMaxPlayer: 9,
     nMinBuyIn: 1000,
-    nMinBet: 50,
+    nMinBet: 5,
     eBoardType: 'public',
     ePokerType: 'TwentyOneHoldem',
     eStatus: 'y',
   },
+  ...[4, 6].map(nMaxPlayer => ({
+    sName: `Starter Table ${nMaxPlayer}-Seat`,
+    nTurnTime: 20,
+    nMaxPlayer,
+    nMinBuyIn: 1000,
+    nMinBet: 5,
+    eBoardType: 'public',
+    ePokerType: 'TwentyOneHoldem',
+    eStatus: 'y',
+  })),
   {
     sName: 'Classic Table',
     nTurnTime: 20,
@@ -48,7 +58,7 @@ const DEFAULT_BOARD_PROTOTYPES = [
 ];
 
 const LEGACY_BOARD_MIN_BET_UPDATES = {
-  'Starter Table': { 100: 50 },
+  'Starter Table': { 100: 5, 50: 5 },
   'Classic Table': { 250: 125 },
   'High Roller': { 1000: 500 },
   'High 100': { 100: 50 },

@@ -1,0 +1,62 @@
+[
+    {
+        "id":  "timber-saloon-scene",
+        "theme":  "timber-saloon",
+        "name":  "Timber Saloon",
+        "category":  "table-room",
+        "level":  1,
+        "description":  "A matching table and room: a rustic timber frontier saloon, warm oil lanterns, weathered wood floor, carved oak rail, aged tobacco-brown leather, deep bottle-green felt.",
+        "image":  "/images/shop/timber-saloon-scene.png",
+        "price":  500,
+        "currency":  "chips",
+        "status":  "available"
+    },
+    {
+        "id":  "riverboat-lounge-scene",
+        "theme":  "riverboat-lounge",
+        "name":  "Riverboat Lounge",
+        "category":  "table-room",
+        "level":  2,
+        "description":  "A matching table and room: an elegant riverboat gambling lounge, sunset through tall arched windows, warm brass lamps, polished mahogany rail, oxblood leather, burgundy felt.",
+        "image":  "/images/shop/riverboat-lounge-scene.png",
+        "price":  500,
+        "currency":  "chips",
+        "status":  "available"
+    },
+    {
+        "id":  "art-deco-club-scene",
+        "theme":  "art-deco-club",
+        "name":  "Art Deco Club",
+        "category":  "table-room",
+        "level":  3,
+        "description":  "A matching table and room: a glamorous 1920s Art Deco private club, geometric brass wall panels, emerald velvet, soft warm sconces, black lacquer table rail with gold inlays and deep emerald felt.",
+        "image":  "/images/shop/art-deco-club-scene.png",
+        "price":  500,
+        "currency":  "chips",
+        "status":  "available"
+    },
+    {
+        "id":  "neon-skyline-scene",
+        "theme":  "neon-skyline",
+        "name":  "Neon Skyline",
+        "category":  "table-room",
+        "level":  4,
+        "description":  "A matching table and room: a modern high-rise casino lounge at night, soft defocused city skyline and cyan magenta accent lights, graphite carbon table rail, muted cyan edge light and deep midnight teal felt.",
+        "image":  "/images/shop/neon-skyline-scene.png",
+        "price":  500,
+        "currency":  "chips",
+        "status":  "available"
+    },
+    {
+        "id":  "grand-casino-scene",
+        "theme":  "grand-casino",
+        "name":  "Grand Casino",
+        "category":  "table-room",
+        "level":  5,
+        "description":  "A matching table and room: an opulent grand casino, crystal chandeliers in warm bokeh, ivory marble and gold architectural details, highly polished champagne gold table rail with midnight blue leather and rich royal blue felt.",
+        "image":  "/images/shop/grand-casino-scene.png",
+        "price":  500,
+        "currency":  "chips",
+        "status":  "available"
+    }
+]
