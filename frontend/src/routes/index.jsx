@@ -5,6 +5,7 @@ import { Navigate, Route, BrowserRouter, Routes } from 'react-router-dom'
 import Router from 'routes/Router'
 import NotFound from 'shared/components/404'
 import { setCookie } from 'shared/utils'
+const MobileExperience = React.lazy(() => import('../views/mobile'));
 
 function RootRedirect() {
     const params = new URLSearchParams(window.location.search)
@@ -48,6 +49,7 @@ function AllRoutes() {
             <BrowserRouter>
                 <SiteThemeRuntime />
                 <Routes>
+                    <Route path='/mobile/*' element={<Suspense fallback={<p>Loading mobile…</p>}><MobileExperience /></Suspense>} />
                     {Router?.map(({ isPrivateRoute, children, Component }, index) => {
                         return (
                             <Route key={`${index}-${isPrivateRoute ? 'private' : 'public'}`} element={<Component />}>

@@ -104,7 +104,7 @@ Axios.interceptors.response.use(
     (err) => {
         const currentPath = typeof window !== 'undefined' ? window.location?.pathname || '' : '';
         const isAuthRoute = currentPath === '/login' || currentPath === '/register';
-        const isGuestSafeRoute = currentPath === '/' || currentPath === '/lobby';
+        const isGuestSafeRoute = currentPath === '/' || currentPath === '/lobby' || currentPath.startsWith('/mobile');
         if (err?.code?.includes?.("ERR_NETWORK")) {
             ReactToastify("Network Error", "error");
             if (!isAuthRoute && !isGuestSafeRoute) {

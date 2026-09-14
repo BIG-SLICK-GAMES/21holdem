@@ -107,6 +107,13 @@ export default class Popup extends Phaser.GameObjects.Container {
     }
 
     open({ confirm = true, title = '', message = '', callback, confirmText = 'Yes', cancelText = 'No' }) {
+        if (window.location.pathname.startsWith('/mobile')) {
+            window.dispatchEvent(new CustomEvent('bsg:mobile-dialog', { detail: {
+                id: Date.now(), confirm, title, message, confirmText, cancelText,
+                respond: accepted => { this.close(); if (accepted) callback?.(); },
+            } }));
+            return;
+        }
         this.callback = callback;
         this.setPosition(config.centerX, config.centerY);
         this.setDepth(config.popupDepth || 100000);

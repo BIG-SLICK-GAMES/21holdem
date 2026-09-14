@@ -20,6 +20,7 @@ export default class Prompt extends Phaser.GameObjects.Container {
         this.show(message);
     }
     show(message) {
+        if (window.location.pathname.startsWith('/mobile')) window.dispatchEvent(new CustomEvent('bsg:mobile-prompt', { detail: { message } }));
         this.txt_message.setText(message);
         this.setVisible(true);
         this.scene.tweens.add({
@@ -32,6 +33,7 @@ export default class Prompt extends Phaser.GameObjects.Container {
         })
     }
     hide() {
+        if (window.location.pathname.startsWith('/mobile')) window.dispatchEvent(new CustomEvent('bsg:mobile-prompt', { detail: { message: '' } }));
         this.setVisible(false);
     }
     showForSeconds(message, time = 2000) {

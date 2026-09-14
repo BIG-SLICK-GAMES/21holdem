@@ -15,7 +15,7 @@ const countdown = (ms) => {
     return [Math.floor(seconds / 3600), Math.floor(seconds / 60) % 60, seconds % 60].map((n) => String(n).padStart(2, '0')).join(':');
 };
 
-export default function DailyRewardsPanel({ embedded = false }) {
+export default function DailyRewardsPanel({ embedded = false, loginPath = '/login' }) {
     const navigate = useNavigate();
     const signedIn = Boolean(useAuthToken());
     const testMode = new URLSearchParams(window.location.search).get('chestTest') === '1';
@@ -72,12 +72,12 @@ export default function DailyRewardsPanel({ embedded = false }) {
     const prizes = data?.prizes || [];
     const unavailable = !isLoading && !isError && !prizes.length;
     const claim = () => {
-        if (!signedIn && !testMode) { navigate('/login'); return; }
+        if (!signedIn && !testMode) { navigate(loginPath); return; }
         if (claimed || claimedRef.current || opening || mutation.isLoading || isLoading || isError || unavailable) return;
         claimedRef.current = true;
         setOpening(true);
         if (testMode) {
-            const previewPrize = prizes[Math.floor(Math.random() * prizes.length)];
+            const previewPrize = prizes[0];
             revealTimer.current = window.setTimeout(() => {
                 setRevealed(previewPrize);
                 setOpening(false);
@@ -116,9 +116,9 @@ export default function DailyRewardsPanel({ embedded = false }) {
             <p className='daily-prize__note'>{testMode ? 'Animation test: no chips are credited and your daily claim is untouched.' : 'One free prize per day. Resets at 00:00 UTC. No streaks to keep.'}</p>
             {prizes.length > 0 && <details className='daily-prize__pool'><summary>What could be inside? <span>{prizes.length} shop prizes</span></summary>
                 <ul>{prizes.map((item, index) => <li key={`${item.sShopItemId}-${index}`}><span>{item.sTitle}</span><strong>{amount(item.nChips)} chips</strong></li>)}</ul>
-                <p>Every listed package has an equal chance. New shop packages join automatically.</p>
+                <p>{data?.sOddsDescription || 'Prize availability and odds are set by the server.'}</p>
             </details>}
         </section>
     );
 }
-DailyRewardsPanel.propTypes = { embedded: PropTypes.bool };
+DailyRewardsPanel.propTypes = { embedded: PropTypes.bool, loginPath: PropTypes.string };

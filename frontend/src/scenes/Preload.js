@@ -323,6 +323,14 @@ export default class Preload extends Phaser.Scene {
                 retryTables();
                 return;
             }
+            if (typeof window !== 'undefined' && window.location.pathname.startsWith('/mobile')) {
+                window.dispatchEvent(new CustomEvent('bsg:mobile-dialog', { detail: {
+                    id: Date.now(), title: 'Table could not load', message: 'Check your connection, then try loading the table again.',
+                    confirm: true, confirmText: 'Try again', cancelText: 'Back to lobby',
+                    respond: accepted => accepted ? retryTables() : window.dispatchEvent(new CustomEvent('bsg:navigate', { detail: { path: '/mobile' } })),
+                } }));
+                return;
+            }
             retryLabel = this.add.text(config.centerX, config.centerY,
                 'Couldn’t load your table.\nTap to retry', {
                     fontFamily: 'Arial', fontSize: '32px', color: '#ffffff',
