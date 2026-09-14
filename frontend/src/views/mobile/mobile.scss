@@ -112,6 +112,26 @@ body.ucd-mobile-active #fx-overlay-ui-root, body.ucd-mobile-active .brand-splash
     .ucd-hand { background: #1e1710; border-color: #806333; }
     .ucd-danger { background: #50292c; border-color: #dca5a6; }
     .ucd-skip { background: #17130d; }
+    .ucd-practice-room { border: 1px solid #806333; border-radius: 24px; padding: 16px 12px; background: linear-gradient(#08080699, #080806dd), var(--practice-backdrop) center / cover; }
+    .ucd-practice-hud { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; padding: 12px; border-radius: 12px; background: #080806ed; }
+    .ucd-practice-hud span { font-size: .85em; }
+    .ucd-practice-hud strong { display: block; color: var(--ucd-gold); font-size: 1.3em; }
+    .ucd-practice-seats { list-style: none; margin: 22px 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 4.5em), 1fr)); gap: 10px; }
+    .ucd-practice-seats li { display: flex; flex-direction: column; align-items: center; text-align: center; margin: 0; padding: 8px 4px; background: #080806e8; border-radius: 16px; }
+    .ucd-practice-seats img, .ucd-practice-player img { width: 3em; height: 3em; object-fit: cover; border: 2px solid var(--ucd-gold); border-radius: 50%; }
+    .ucd-practice-seats span { font-size: .75em; color: var(--ucd-muted); }
+    .ucd-practice-table { border: 6px solid #936234; border-radius: 45% / 12%; background: radial-gradient(ellipse, #63302c, #351613); padding: 24px 10px; box-shadow: 0 0 0 2px #e1b469, inset 0 0 0 2px #e1b469, 0 12px 24px #0009; }
+    .ucd-practice-wordmark { display: block; text-align: center; font-weight: 800; letter-spacing: .12em; color: #e9c59b; }
+    .ucd-practice-table .ucd-pot { padding: 12px 0 20px; }
+    .ucd-practice-table .ucd-pot strong { font-size: 1.65em; }
+    .ucd-practice-table .ucd-pot small { font-size: .6em; }
+    .ucd-practice .ucd-hand { padding: 14px; background: #17110df5; }
+    .ucd-practice-player { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-bottom: 18px; }
+    .ucd-practice-player span { display: block; font-size: .8em; color: var(--ucd-gold); }
+    .ucd-practice-guide { border-top: 1px solid #806333; padding-top: 20px; display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-start; }
+    .ucd-practice-guide > img { width: 76px; height: 100px; object-fit: cover; object-position: top; }
+    .ucd-practice-guide > div { flex: 1 1 11em; min-width: 0; }
+    .ucd-practice-guide span { color: var(--ucd-gold); }
     @media (max-width: 359px) { .ucd-main,.ucd-header { padding-left: 14px; padding-right: 14px; } .ucd-easy-toggle { font-size: .72em; } .ucd-nav a { font-size: .75em; } }
     @media (prefers-reduced-motion: reduce) { *,*::before,*::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
 }

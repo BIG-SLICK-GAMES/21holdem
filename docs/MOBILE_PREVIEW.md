@@ -14,6 +14,8 @@ Mobile classes are added and removed on route entry/exit, including the override
 
 ## Release isolation
 
+Latest release (14 September 2026): `/var/www/html/releases/21ucd-mobile-practice-20260914/build`, index SHA256 `61fc09d2f1f7f91b6b8cb0c199b31c5786e3c24457a2b97794d84602fb678780`. Guided-table artwork, pot updates, practice progression, navigation, Easy View, narrow viewports and 200% text checks passed against the Docker production build and public HTTPS site. Desktop index checksum unchanged.
+
 Build in Docker with `PUBLIC_URL=/mobile`, `GENERATE_SOURCEMAP=false`, and `DISABLE_ESLINT_PLUGIN=true`. The public mobile files live in their own release directory, exposed by an Apache `/mobile/` alias. The existing desktop DocumentRoot and build symlink stay unchanged. Deep links fall back to the mobile index. Static files use the `/mobile/static/` prefix.
 
 Public mobile uses the existing live API, accounts, chips and sockets. Local development uses the separate UCD database. The unshipped daily reward backend policy in this branch is NOT deployed merely by publishing this frontend; the chest describes whatever policy the server supplies. Keep this distinction when promoting backend work.
@@ -21,6 +23,8 @@ Public mobile uses the existing live API, accounts, chips and sockets. Local dev
 The deployment stages changed assets in `/dev/shm`, hardlinks existing immutable media into the mobile release, and uses rsync temporary-file replacement for changed files. Never overwrite shared hardlinks in place. The baseline desktop index SHA256 before this release is `7136417d3fe75f8da3e638aec4c56fa99fedf148320c0c7ff3f464f11942f793`.
 
 ## Validation
+
+The mobile guided hand now reuses the original tutorial's casino backdrop, four player portraits and host artwork around a red-and-gold table. Practice blinds, balance and pot are illustrative: calling 10 moves the example balance from 1,000 to 990 and the pot from 15 to 25. Its four manual steps remain untimed, end at the locked total, and never send game actions. Cards and guidance remain HTML that can wrap with enlarged text.
 
 - Browser flows: practice progression, Easy View persistence, rewards sign-in destination, separate signup, single-column shop, and clean runtime logs.
 - Viewports: 320, 390 and 768 pixels; simulated 200% text with reachable final actions.
