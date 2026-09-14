@@ -32,16 +32,12 @@ export default class SocketManager {
         });
 
         this.socket.on(SOCKET_TRANSPORT_EVENTS.CONNECT, () => {
-            if (window.location.pathname.startsWith('/mobile')) window.dispatchEvent(new CustomEvent('bsg:mobile-connection', { detail: { connected: true } }));
             this.sRootSocket = this.socket.id;
             this.reqJoinBoard();
         });
-        this.socket.on(SOCKET_TRANSPORT_EVENTS.DISCONNECT, () => {
-            if (window.location.pathname.startsWith('/mobile')) window.dispatchEvent(new CustomEvent('bsg:mobile-connection', { detail: { connected: false } }));
-        });
+        this.socket.on(SOCKET_TRANSPORT_EVENTS.DISCONNECT, () => {});
         this.socket.on(SOCKET_TRANSPORT_EVENTS.RECONNECT, () => {});
         this.socket.on(SOCKET_TRANSPORT_EVENTS.CONNECT_ERROR, (error) => {
-            if (window.location.pathname.startsWith('/mobile')) window.dispatchEvent(new CustomEvent('bsg:mobile-connection', { detail: { connected: false } }));
             console.error("Socket connect_error:", error?.message || error);
         });
         this.socket.on(this.iBoardId, (data) => {

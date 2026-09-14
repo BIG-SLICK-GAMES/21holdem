@@ -1135,7 +1135,6 @@ updatePotPosition() {
 
 commitPotAmount(nTableChips) {
     const nNextPotAmount = Math.max(0, Math.round(Number(nTableChips) || 0));
-    if (window.location.pathname.startsWith('/mobile')) window.dispatchEvent(new CustomEvent('bsg:mobile-pot', { detail: { amount: nNextPotAmount } }));
     this.oClientGameState = clientGameStateReducer(this.oClientGameState, {
         type: CLIENT_GAME_STATE_ACTIONS.SET_TABLE_CHIPS,
         payload: { nTableChips: nNextPotAmount },

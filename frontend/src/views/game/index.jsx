@@ -24,7 +24,6 @@ import profileLayoutControls from "./profileLayoutControls.json";
 import { getProfile } from "../../query/profile.query";
 import { getTables, joinTable } from "../../query/gameTable.query";
 import { getCookie, ReactToastify } from "../../shared/utils";
-import MobileLiveTable from '../mobile/MobileLiveTable';
 
 installPhaserAudioContextGuard(Phaser);
 
@@ -219,8 +218,8 @@ class Boot extends Phaser.Scene {
         this.load.image('preload_splash', loadingSplash);
     }
 }
-function Game({ isPausedExternally = false, accessibleMode = false }) {
-    const { sAuthToken, iBoardId, sPrivateCode, fallbackPath = accessibleMode ? '/mobile' : '/lobby', isGuestTutorial = false } = useLocation()?.state || {};
+function Game({ isPausedExternally = false }) {
+    const { sAuthToken, iBoardId, sPrivateCode, fallbackPath = '/lobby', isGuestTutorial = false } = useLocation()?.state || {};
     const navigate = useNavigate();
     const cookieAuthToken = getCookie('sAuthToken');
     const resolvedAuthToken = sAuthToken || cookieAuthToken;
@@ -437,11 +436,6 @@ function Game({ isPausedExternally = false, accessibleMode = false }) {
         if (game.scene.isPaused('Boot')) game.scene.resume('Boot');
     }, [isPausedExternally]);
 
-    if (accessibleMode) return <>
-        <MobileLiveTable />
-        <div className="ucd-mobile-engine" aria-hidden="true"><div id="game-stage" ref={gameRef} /></div>
-    </>;
-
     return (
         <div className={`game-table-page game-shell game-shell--${layoutMode}`} style={gameElementStyle}>
             <GameBackgroundAdjuster />
@@ -478,7 +472,6 @@ function Game({ isPausedExternally = false, accessibleMode = false }) {
 }
 
 Game.propTypes = {
-    accessibleMode: PropTypes.bool,
     isPausedExternally: PropTypes.bool,
 };
 
