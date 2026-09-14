@@ -20,7 +20,11 @@ On 15 September 2026 the user requested a fresh start from the original site. Th
 
 All previous mobile work, including pending daily-reward and device-routing changes, is preserved on GitHub branch `backup/21UCD-before-restart-20260915` (snapshot `07d0dec`). The prior generated build was moved to `D:/BIG-SLICK-GAMES/.codex-runtime/21UCD-build-before-restart-20260915`. The former production QA container is stopped to avoid showing that stale build.
 
-Fresh local source runs at `http://192.168.0.109:3106/lobby`. The isolated Docker configuration is retained, but the mobile-specific source and routes have been removed. The public `/mobile` deployment remains unchanged by this source reset.
+Fresh local source runs at `http://192.168.0.109:3106/lobby`. The isolated Docker configuration is retained, but the mobile-specific source and routes have been removed.
+
+After the user's follow-up on 15 September, the public mobile redesign was withdrawn too. Apache `/etc/apache2/21holdem-mobile.conf` redirects `/mobile`, its former page routes, and unknown mobile pages to the original `/lobby`. Static assets remain available for existing cached clients. The previous configuration is backed up as `/etc/apache2/21holdem-mobile.conf.before-reset-20260915`. Apache configuration and reload passed; public browser checks confirmed the original lobby and no UCD layout. The original desktop index SHA256 remains `7136417d3fe75f8da3e638aec4c56fa99fedf148320c0c7ff3f464f11942f793`.
+
+The EC2 root disk was full. The obsolete `/tmp/21holdem-topbar-0235da7.tar.gz` deployment archive was copied to local `.codex-runtime`, SHA256-verified, then removed from EC2, recovering enough space for the configuration fix. Only about 42 MB remained afterward; disk capacity still needs attention.
 
 ## Isolation
 
