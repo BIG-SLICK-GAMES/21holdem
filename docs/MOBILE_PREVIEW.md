@@ -14,6 +14,8 @@ Mobile classes are added and removed on route entry/exit, including the override
 
 ## Release isolation
 
+Practice motion release (14 September 2026): `/var/www/html/releases/21ucd-mobile-motion-20260914/build`, index SHA256 `0608f7d9b47ee013b1f41862ed0042347dff992aae22b9456836cdb80a457d21`. Opponents now have full-size private card backs, staggered deals, animated showdown reveals, action outlines and bet-chip/pot feedback. New deals restart card animations; later community cards animate on arrival. Reduced motion removes the effects without delaying play. Production and public browser checks passed for motion, cards, redeals, complete hands and responsive results; 200% text checks passed locally. Desktop index unchanged.
+
 Playable practice release (14 September 2026): `/var/www/html/releases/21ucd-mobile-playable-20260914/build`, index SHA256 `daa57759a6fb27fb1508a0f20cb7b539cda129687c968fe17ab423df53b65914`. Public and Docker production checks passed for loaded replica artwork, five complete hands, hidden/revealed opponent cards, folding/redealing, no game/wallet writes, 320/390/768-pixel layouts and enlarged result screens. Guided walkthrough, navigation and 200% text checks also passed. Desktop index checksum unchanged.
 
 Latest release (14 September 2026): `/var/www/html/releases/21ucd-mobile-practice-20260914/build`, index SHA256 `61fc09d2f1f7f91b6b8cb0c199b31c5786e3c24457a2b97794d84602fb678780`. Guided-table artwork, pot updates, practice progression, navigation, Easy View, narrow viewports and 200% text checks passed against the Docker production build and public HTTPS site. Desktop index checksum unchanged.

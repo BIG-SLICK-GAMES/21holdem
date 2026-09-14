@@ -147,6 +147,23 @@ body.ucd-mobile-active #fx-overlay-ui-root, body.ucd-mobile-active .brand-splash
     .ucd-replica-board h2 { font-size: 1em; text-align: center; }
     .ucd-replica-board .ucd-pot { padding: 0 0 12px; }
     .ucd-playable .ucd-actions > :only-child { grid-column: 1 / -1; }
+    .ucd-playable .ucd-card { animation: ucd-deal-card 520ms cubic-bezier(.2,.7,.2,1) both; animation-delay: var(--deal-delay, 0ms); }
+    .ucd-playable .ucd-replica-seat { position: relative; perspective: 700px; }
+    .ucd-playable .ucd-replica-seat .ucd-card-back { width: 2.55em; min-height: 3.5em; font-size: 2em; padding: 9px 12px; border: 2px solid #e7c17b; border-radius: 12px; color: #f5d394; background: repeating-linear-gradient(45deg,#e8c47815 0 1px,transparent 1px 5px), #10283d; box-shadow: inset 0 0 0 4px #10283d, inset 0 0 0 5px #c8a567, 0 6px 16px #0005; }
+    .ucd-playable .ucd-card-back b { align-self: center; }
+    .ucd-playable .ucd-card-back > span { font-size: .55em; }
+    .ucd-playable .ucd-card-back > span:first-child { align-self: flex-start; }
+    .ucd-playable .is-revealed .ucd-card { animation-name: ucd-reveal-card; }
+    .ucd-playable .is-folded .ucd-cards { opacity: .55; }
+    .ucd-seat-feedback { position: absolute; inset: 0; border: 2px solid #f5d394; border-radius: inherit; pointer-events: none; animation: ucd-seat-action 750ms ease-out both; }
+    .ucd-chip-move { position: absolute; z-index: 3; left: calc(50% - 18px); bottom: 40%; width: 36px; height: 36px; display: grid; place-items: center; border: 3px dashed #ffe9af; border-radius: 50%; background: #ac7020; color: white !important; font-weight: bold; pointer-events: none; animation: ucd-chip-bet 650ms ease-in both; }
+    .ucd-pot-change { animation: ucd-pot-settle 450ms ease-out; }
+    @keyframes ucd-deal-card { from { opacity: 0; transform: translateY(-28px) rotate(-8deg); } to { opacity: 1; transform: translateY(0) rotate(0); } }
+    @keyframes ucd-reveal-card { from { opacity: .3; transform: rotateY(90deg); } to { opacity: 1; transform: rotateY(0); } }
+    @keyframes ucd-seat-action { from { opacity: .9; } to { opacity: 0; } }
+    @keyframes ucd-chip-bet { 0% { opacity: 0; transform: translateY(0); } 20% { opacity: 1; } 100% { opacity: 0; transform: translateY(70px) scale(.65); } }
+    @keyframes ucd-pot-settle { from { color: #fff8dd; transform: scale(1.08); } to { color: var(--ucd-gold); transform: scale(1); } }
+    @media (prefers-reduced-motion: reduce) { .ucd-seat-feedback, .ucd-chip-move { display: none; } }
     @media (max-width: 359px) { .ucd-replica-seats { grid-template-columns: 1fr; } .ucd-replica-seat-0 { width: 100%; } }
     @media (max-width: 359px) { .ucd-main,.ucd-header { padding-left: 14px; padding-right: 14px; } .ucd-easy-toggle { font-size: .72em; } .ucd-nav a { font-size: .75em; } }
     @media (prefers-reduced-motion: reduce) { *,*::before,*::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
