@@ -1,6 +1,7 @@
 import { loadStripe } from '@stripe/stripe-js';
 import { createPortal } from 'react-dom';
 import LobbyBannerCarousel from './LobbyBannerCarousel';
+import BottomNavIcon from './BottomNavIcon';
 import FirstHandTutorial from './tutorial/FirstHandTutorial';
 import iconLobby from '../../assets/images/icons/lobby-menu/live-tables.png';
 import iconPrivate from '../../assets/images/icons/lobby-menu/private-table.png';
@@ -1550,14 +1551,14 @@ const Dashboard = () => {
                                     aria-label={item.label}
                                     title={item.label}
                                 >
-                                    <img className='dashboard-hub__tab-menu-icon' src={item.iconSrc} alt='' aria-hidden='true' />
+                                    <BottomNavIcon name={item.id} />
                                     <span className='dashboard-hub__tab-menu-label'>{item.label}</span>
                                 </button>
                             );
                         })}
                         </div>
                         <button type='button' className='dashboard-hub__tab-menu-button dashboard-hub__tab-menu-button--hub' onClick={handleReturnToHub}>
-                            <img className='dashboard-hub__tab-menu-icon' src={bigSlickGamesIcon} alt='' aria-hidden='true' />
+                            <BottomNavIcon name='hub' />
                             <span className='dashboard-hub__tab-menu-label'>BSG Hub</span>
                         </button>
                     </nav>
