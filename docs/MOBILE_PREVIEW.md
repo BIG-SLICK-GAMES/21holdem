@@ -14,6 +14,8 @@ Mobile classes are added and removed on route entry/exit, including the override
 
 ## Release isolation
 
+Playable practice release (14 September 2026): `/var/www/html/releases/21ucd-mobile-playable-20260914/build`, index SHA256 `daa57759a6fb27fb1508a0f20cb7b539cda129687c968fe17ab423df53b65914`. Public and Docker production checks passed for loaded replica artwork, five complete hands, hidden/revealed opponent cards, folding/redealing, no game/wallet writes, 320/390/768-pixel layouts and enlarged result screens. Guided walkthrough, navigation and 200% text checks also passed. Desktop index checksum unchanged.
+
 Latest release (14 September 2026): `/var/www/html/releases/21ucd-mobile-practice-20260914/build`, index SHA256 `61fc09d2f1f7f91b6b8cb0c199b31c5786e3c24457a2b97794d84602fb678780`. Guided-table artwork, pot updates, practice progression, navigation, Easy View, narrow viewports and 200% text checks passed against the Docker production build and public HTTPS site. Desktop index checksum unchanged.
 
 Build in Docker with `PUBLIC_URL=/mobile`, `GENERATE_SOURCEMAP=false`, and `DISABLE_ESLINT_PLUGIN=true`. The public mobile files live in their own release directory, exposed by an Apache `/mobile/` alias. The existing desktop DocumentRoot and build symlink stay unchanged. Deep links fall back to the mobile index. Static files use the `/mobile/static/` prefix.
@@ -23,6 +25,8 @@ Public mobile uses the existing live API, accounts, chips and sockets. Local dev
 The deployment stages changed assets in `/dev/shm`, hardlinks existing immutable media into the mobile release, and uses rsync temporary-file replacement for changed files. Never overwrite shared hardlinks in place. The baseline desktop index SHA256 before this release is `7136417d3fe75f8da3e638aec4c56fa99fedf148320c0c7ff3f464f11942f793`.
 
 ## Validation
+
+`/mobile/practice` now opens a playable, local simulation with the original game table image and three practice opponents. The Guided walkthrough button retains the four-step lesson. The simulation uses a shuffled deck, private/visible cards, ace-aware totals, basic call/check/raise/fold and Hit/Stand, four possible shared cards, showdown and split pots. Opponents respond using only their own cards and the visible board. Each deal resets all practice stacks to 1,000; no wallet/API/socket writes occur. Double Down, all-ins, live timing and advanced betting are outside this basic practice simulation. Run `node scripts/test-practice-game.mjs` inside the frontend Docker service to check scoring, locked hands, payouts and 300 complete simulated hands.
 
 The mobile guided hand now reuses the original tutorial's casino backdrop, four player portraits and host artwork around a red-and-gold table. Practice blinds, balance and pot are illustrative: calling 10 moves the example balance from 1,000 to 990 and the pot from 15 to 25. Its four manual steps remain untimed, end at the locked total, and never send game actions. Cards and guidance remain HTML that can wrap with enlarged text.
 

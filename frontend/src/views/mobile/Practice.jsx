@@ -3,6 +3,7 @@ import { Cards } from './Cards';
 import { getBuiltInAvatar } from 'shared/constants/builtInAvatars';
 import backdrop from '../../assets/images/tutorial/backgrounds/casino-salon.png';
 import host from '../../assets/images/onboarding/tutorial-host.webp';
+import PlayablePractice from './PlayablePractice';
 
 const opponents = ['Alex', 'Morgan', 'Sam'];
 
@@ -12,7 +13,7 @@ const lessons = [
     { title: 'You have 21', text: 'The shared 7 brings your total to 21. Stand to lock this total. Later shared cards will no longer count in your hand.', action: 'Stand · lock 21', board: [4, 7], total: 21 },
     { title: 'Your total is locked', text: 'You finish on 21. In a live hand, you may still need to call or fold after standing. This guided example ends here.', action: 'Try again', board: [4, 7], total: 21 },
 ];
-export default function Practice() {
+function GuidedPractice() {
     const [step, setStep] = useState(0);
     const lesson = lessons[step];
     return <section className="ucd-practice" aria-label="Guided practice hand">
@@ -31,4 +32,9 @@ export default function Practice() {
         <div className="ucd-lesson ucd-practice-guide" aria-live="polite" aria-atomic="true"><img src={host} alt="" /><div><span>Step {step + 1} of 4</span><h2>{lesson.title}</h2><p>{lesson.text}</p></div></div>
         <button className="ucd-primary ucd-wide" onClick={() => setStep((step + 1) % lessons.length)}>{lesson.action}</button>
     </section>;
+}
+
+export default function Practice() {
+    const [guided, setGuided] = useState(false);
+    return <><div className="ucd-practice-modes" role="group" aria-label="Practice mode"><button aria-pressed={!guided} onClick={() => setGuided(false)}>Play a hand</button><button aria-pressed={guided} onClick={() => setGuided(true)}>Guided walkthrough</button></div>{guided ? <GuidedPractice /> : <PlayablePractice />}</>;
 }

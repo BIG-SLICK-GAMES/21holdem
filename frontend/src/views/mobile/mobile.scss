@@ -132,6 +132,22 @@ body.ucd-mobile-active #fx-overlay-ui-root, body.ucd-mobile-active .brand-splash
     .ucd-practice-guide > img { width: 76px; height: 100px; object-fit: cover; object-position: top; }
     .ucd-practice-guide > div { flex: 1 1 11em; min-width: 0; }
     .ucd-practice-guide span { color: var(--ucd-gold); }
+    .ucd-practice-modes { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 24px; }
+    .ucd-practice-modes button { flex: 1 1 8em; }
+    .ucd-practice-modes [aria-pressed=true] { border: 2px solid var(--ucd-gold); color: var(--ucd-gold); }
+    .ucd-replica-seats { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 6em), 1fr)); gap: 12px; margin: 18px 0 0; }
+    .ucd-replica-seat { min-width: 0; display: flex; flex-direction: column; align-items: center; text-align: center; padding: 8px; border-radius: 16px; background: #080806ed; }
+    .ucd-replica-seat-0 { grid-column: 1 / -1; justify-self: center; width: max(50%, 8em); max-width: 100%; }
+    .ucd-replica-seat > img { width: 3em; height: 3em; border-radius: 50%; border: 2px solid var(--ucd-gold); }
+    .ucd-replica-seat > span { font-size: .8em; color: var(--ucd-muted); }
+    .ucd-replica-seat .ucd-card-back { padding: 6px 12px; border: 1px solid var(--ucd-gold); border-radius: 5px; color: var(--ucd-gold); background: repeating-linear-gradient(45deg, #e8c47815 0 1px, transparent 1px 5px), #10283d; }
+    .ucd-replica-table { position: relative; margin: 12px 0; min-height: 22em; display: grid; align-items: start; }
+    .ucd-replica-art { position: absolute; top: 0; width: 100%; height: auto; pointer-events: none; }
+    .ucd-replica-board { position: relative; margin: 12% 8% 0; padding: 12px 8px; background: #062b22ed; border: 1px solid #b79b5b; border-radius: 24px; }
+    .ucd-replica-board h2 { font-size: 1em; text-align: center; }
+    .ucd-replica-board .ucd-pot { padding: 0 0 12px; }
+    .ucd-playable .ucd-actions > :only-child { grid-column: 1 / -1; }
+    @media (max-width: 359px) { .ucd-replica-seats { grid-template-columns: 1fr; } .ucd-replica-seat-0 { width: 100%; } }
     @media (max-width: 359px) { .ucd-main,.ucd-header { padding-left: 14px; padding-right: 14px; } .ucd-easy-toggle { font-size: .72em; } .ucd-nav a { font-size: .75em; } }
     @media (prefers-reduced-motion: reduce) { *,*::before,*::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
 }
