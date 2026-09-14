@@ -9,7 +9,8 @@ import { getTables, joinTable } from '../../query/gameTable.query';
 import DailyRewardsPanel from '../../shared/components/DailyRewardsPanel';
 import CosmeticShop from '../../shared/components/CosmeticShop';
 import { HOW_TO_PLAY_SECTIONS } from '../../shared/content/gameGuideContent';
-import { Card } from './Cards';
+import originalLogo from '../../assets/images/bg/lobby_chip_logo.png';
+import originalHost from '../../assets/images/onboarding/tutorial-host.webp';
 import Practice from './Practice';
 import './mobile.scss';
 
@@ -64,7 +65,7 @@ function Lobby({ token, profile }) {
         finally { setJoining(''); }
     }
     return <>
-        <section className="ucd-welcome"><span className="ucd-eyebrow">YOUR TABLE. A CLEARER VIEW.</span><h1>Big cards.<br />Room to play.</h1><p>A little less clutter.<br />More of the game you love.</p><div className="ucd-hero-cards" aria-hidden="true"><Card card={{ nLabel: 11, eSuit: 's' }} /><Card card={{ nLabel: 1, eSuit: 'h' }} /></div><Link className="ucd-primary ucd-wide" to="/mobile/practice">Try a practice hand <span aria-hidden="true">→</span></Link><span className="ucd-muted">No timer · No sign-in · No chips spent</span></section>
+        <section className="ucd-welcome"><span className="ucd-eyebrow">WELCOME TO 21 HOLD’EM</span><h1>Big cards.<br />Room to play.</h1><p>Your favourite table.<br />An easier way to play.</p><div className="ucd-host-portrait" aria-hidden="true"><img src={originalHost} alt="" /></div><Link className="ucd-primary ucd-wide" to="/mobile/practice">Try a practice hand <span aria-hidden="true">→</span></Link><span className="ucd-muted">No timer · No sign-in · No chips spent</span></section>
         <section className="ucd-section"><span className="ucd-eyebrow">READY WHEN YOU ARE</span><h2>Live tables</h2>
         {profile?.aPokerBoard?.[0] && <Link className="ucd-primary ucd-wide" to="/mobile/game" state={{ iBoardId: profile.aPokerBoard[0], fallbackPath: '/mobile' }}>Return to your table</Link>}
         {!token ? <p>Sign in at the top to join a live table. Or try the practice hand first.</p> : tables.isLoading ? <p role="status">Finding your tables…</p> : tables.isError ? <><p>We couldn’t load the tables.</p><button onClick={() => tables.refetch()}>Try again</button></> : <div className="ucd-stack">{(tables.data || []).map(table => <article className="ucd-table-choice" key={table._id}><div><h3>{table.sName}</h3><p>{table.nMaxPlayer} seats · Blinds {number(table.nMinBet)} / {number(table.nMinBet * 2)}</p><strong>{number(table.nMinBuyIn)} chips to join</strong></div><button className="ucd-primary" disabled={Boolean(joining) || Number(profile?.nChips) < Number(table.nMinBuyIn)} onClick={() => join(table)}>{joining === table._id ? 'Joining…' : Number(profile?.nChips) < Number(table.nMinBuyIn) ? 'Not enough chips' : 'Join table'}</button></article>)}{!tables.data?.length && <p>No tables are available right now. Please try again later.</p>}</div>}
@@ -103,7 +104,7 @@ export default function MobileExperience() {
     function toggleEasy() { setEasy(value => { try { localStorage.setItem('21ucd:easy-view', String(!value)); } catch {} return !value; }); }
     return <div className={`ucd-mobile${easy ? ' ucd-easy' : ''}`}>
         <a className="ucd-skip" href="#ucd-main">Skip to content</a>
-        <header className="ucd-header"><div className="ucd-between"><Link className="ucd-brand" to="/mobile" onClick={e => { if (game) { e.preventDefault(); window.dispatchEvent(new CustomEvent('bsg:game-action-overlay-command', { detail: { command: 'exitTable' } })); } }}><b>21</b><span>HOLD’EM<small>MOBILE</small></span></Link><button className="ucd-easy-toggle" onClick={toggleEasy} aria-pressed={easy}><b aria-hidden="true">Aa</b> Easy View {easy ? 'on' : 'off'}</button></div>
+        <header className="ucd-header"><div className="ucd-between"><Link className="ucd-brand" to="/mobile" aria-label="21 Hold’em mobile home" onClick={e => { if (game) { e.preventDefault(); window.dispatchEvent(new CustomEvent('bsg:game-action-overlay-command', { detail: { command: 'exitTable' } })); } }}><img src={originalLogo} alt="" /><span>HOLD’EM<small>MOBILE</small></span></Link><button className="ucd-easy-toggle" onClick={toggleEasy} aria-pressed={easy}><b aria-hidden="true">Aa</b> Easy View {easy ? 'on' : 'off'}</button></div>
         {!game && (token ? <p className="ucd-balance">{profile.data?.sUserName || 'Your account'} <strong>{profile.data ? `${number(profile.data.nChips)} chips` : 'Loading balance…'}</strong></p> : <><div className="ucd-auth-actions"><button aria-expanded={signIn} onClick={() => setSignIn(!signIn)}>Sign in</button><Link to="/mobile/signup">Create account</Link></div>{signIn && <Account onDone={() => setSignIn(false)} />}</>)}</header>
         <main id="ucd-main" className="ucd-main"><Suspense fallback={<p role="status">Loading your table…</p>}><Routes>
             <Route index element={<Lobby token={token} profile={profile.data} />} />

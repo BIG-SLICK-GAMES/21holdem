@@ -4,6 +4,8 @@ Requested public address: https://21-holdem.com/mobile. Local development: http:
 
 Published and verified on 14 September 2026. Frontend commit: `5f17842`. Public release: `/var/www/html/releases/21ucd-mobile-20260914/build`; alias target: `/var/www/html/mobile_build/build`. Mobile index SHA256: `d3c9322a49b56a0bf7ab2379e1ec16079cb385bfcbadb8747d7db7d62a05af7f`.
 
+Branding refreshed later on 14 September 2026 with the original chip logo, host artwork, and black-and-gold palette. Current release: `/var/www/html/releases/21ucd-mobile-branding-20260914/build`; mobile index SHA256: `ac7b190909cdd672949582c246fea29280a27da5ad5799739cbcc0540d00d130`. The larger controls, Easy View, and mobile navigation are retained. Production build and local/public browser checks passed for loaded artwork, practice, authentication routing, shop, 320/390/768-pixel widths, and 200% text reflow. The desktop index checksum remains unchanged.
+
 The `/mobile/*` route owns its own layout and scoped styles. The regular lobby, login and desktop game routes keep their existing presentation. Mobile includes a larger lobby, top sign-in, separate account creation, rewards, a single-column cosmetic shop, rules, a four-step no-timer practice hand, and persistent Easy View settings.
 
 Live play runs the existing Phaser and socket engine, with a separate HTML presentation for cards, totals, pot, turn timer, action buttons, player details and confirmation dialogs. It uses the server's legal actions and existing chip accounting. The off-screen canvas is not the accessible interface. Socket disconnects hide action rows until the game reconnects; sounds start off. The practice hand is a guided illustration, not a live table or a full rules simulator.
