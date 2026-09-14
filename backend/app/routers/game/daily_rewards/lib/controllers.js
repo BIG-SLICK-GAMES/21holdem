@@ -1,6 +1,7 @@
 const { User, Setting, Transaction } = require('../../../../models');
 const { createDailyRewardService } = require('./service');
-const service = createDailyRewardService({ User, Setting, Transaction });
+const Jackpot = require('../../../../models/lib/DailyRewardJackpot');
+const service = createDailyRewardService({ User, Setting, Transaction, Jackpot });
 module.exports = {
   async previewDailyRewards(req, res) {
     try { return res.reply(messages.success(), await service.preview()); }
