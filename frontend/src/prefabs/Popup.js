@@ -107,7 +107,7 @@ export default class Popup extends Phaser.GameObjects.Container {
     }
 
     open({ confirm = true, title = '', message = '', callback, confirmText = 'Yes', cancelText = 'No' }) {
-        if (window.location.pathname.startsWith('/mobile')) {
+        if (document.querySelector('.ucd-mobile-engine')) {
             window.dispatchEvent(new CustomEvent('bsg:mobile-dialog', { detail: {
                 id: Date.now(), confirm, title, message, confirmText, cancelText,
                 respond: accepted => { this.close(); if (accepted) callback?.(); },

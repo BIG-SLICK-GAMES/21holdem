@@ -323,7 +323,7 @@ export default class Preload extends Phaser.Scene {
                 retryTables();
                 return;
             }
-            if (typeof window !== 'undefined' && window.location.pathname.startsWith('/mobile')) {
+            if (typeof document !== 'undefined' && document.querySelector('.ucd-mobile-engine')) {
                 window.dispatchEvent(new CustomEvent('bsg:mobile-dialog', { detail: {
                     id: Date.now(), title: 'Table could not load', message: 'Check your connection, then try loading the table again.',
                     confirm: true, confirmText: 'Try again', cancelText: 'Back to lobby',

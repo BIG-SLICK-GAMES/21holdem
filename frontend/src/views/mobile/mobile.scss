@@ -1,4 +1,5 @@
 body.ucd-mobile-active { margin: 0; background: #080806 !important; overflow-x: hidden; }
+body:has(.ucd-original-game) .game-bg-adjuster, body:has(.ucd-original-game) .game-ui-layout--table-adjuster { display: none; }
 html.ucd-mobile-page, body.ucd-mobile-active { height: auto !important; max-height: none !important; }
 body.ucd-mobile-active #fx-overlay-ui-root, body.ucd-mobile-active .brand-splash { display: none !important; }
 .ucd-mobile {
@@ -41,6 +42,7 @@ body.ucd-mobile-active #fx-overlay-ui-root, body.ucd-mobile-active .brand-splash
     .ucd-welcome p { color: var(--ucd-muted); }
     .ucd-host-portrait { height: 280px; width: 100%; max-width: 360px; margin: 0 auto 16px; overflow: hidden; background: radial-gradient(ellipse at 50% 65%, #77531c55, transparent 72%); mask-image: linear-gradient(#000 85%, transparent); }
     .ucd-host-portrait img { display: block; width: 100%; height: auto; }
+    .ucd-live-welcome .ucd-host-portrait { height: 160px; max-width: 210px; }
     .ucd-wide { width: 100%; }
     .ucd-section { padding: 28px 0; border-bottom: 1px solid #31443e; }
     .ucd-stack { display: grid; gap: 16px; }

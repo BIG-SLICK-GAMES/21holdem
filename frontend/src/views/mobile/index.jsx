@@ -65,11 +65,11 @@ function Lobby({ token, profile }) {
         finally { setJoining(''); }
     }
     return <>
-        <section className="ucd-welcome"><span className="ucd-eyebrow">WELCOME TO 21 HOLD’EM</span><h1>Big cards.<br />Room to play.</h1><p>Your favourite table.<br />An easier way to play.</p><div className="ucd-host-portrait" aria-hidden="true"><img src={originalHost} alt="" /></div><Link className="ucd-primary ucd-wide" to="/mobile/practice">Try a practice hand <span aria-hidden="true">→</span></Link><span className="ucd-muted">No timer · No sign-in · No chips spent</span></section>
-        <section className="ucd-section"><span className="ucd-eyebrow">READY WHEN YOU ARE</span><h2>Live tables</h2>
-        {profile?.aPokerBoard?.[0] && <Link className="ucd-primary ucd-wide" to="/mobile/game" state={{ iBoardId: profile.aPokerBoard[0], fallbackPath: '/mobile' }}>Return to your table</Link>}
-        {!token ? <p>Sign in at the top to join a live table. Or try the practice hand first.</p> : tables.isLoading ? <p role="status">Finding your tables…</p> : tables.isError ? <><p>We couldn’t load the tables.</p><button onClick={() => tables.refetch()}>Try again</button></> : <div className="ucd-stack">{(tables.data || []).map(table => <article className="ucd-table-choice" key={table._id}><div><h3>{table.sName}</h3><p>{table.nMaxPlayer} seats · Blinds {number(table.nMinBet)} / {number(table.nMinBet * 2)}</p><strong>{number(table.nMinBuyIn)} chips to join</strong></div><button className="ucd-primary" disabled={Boolean(joining) || Number(profile?.nChips) < Number(table.nMinBuyIn)} onClick={() => join(table)}>{joining === table._id ? 'Joining…' : Number(profile?.nChips) < Number(table.nMinBuyIn) ? 'Not enough chips' : 'Join table'}</button></article>)}{!tables.data?.length && <p>No tables are available right now. Please try again later.</p>}</div>}
+        <section className="ucd-welcome ucd-live-welcome"><span className="ucd-eyebrow">WELCOME TO 21 HOLD’EM</span><h1>Play 21 Hold’em</h1><p>Your account. Your chips. The live game.</p><div className="ucd-host-portrait" aria-hidden="true"><img src={originalHost} alt="" /></div>{!token && <Link className="ucd-primary ucd-wide" to="/mobile?signin=1">Sign in to play</Link>}</section>
+        <section className="ucd-section" id="ucd-live-tables"><h2>Live tables</h2>        {profile?.aPokerBoard?.[0] && <Link className="ucd-primary ucd-wide" to="/mobile/game" state={{ iBoardId: profile.aPokerBoard[0], fallbackPath: '/mobile' }}>Return to your table</Link>}
+        {!token ? <p>Sign in at the top, then choose a live table to join.</p> : tables.isLoading ? <p role="status">Finding your tables…</p> : tables.isError ? <><p>We couldn’t load the tables.</p><button onClick={() => tables.refetch()}>Try again</button></> : <div className="ucd-stack">{(tables.data || []).map(table => <article className="ucd-table-choice" key={table._id}><div><h3>{table.sName}</h3><p>{table.nMaxPlayer} seats · Blinds {number(table.nMinBet)} / {number(table.nMinBet * 2)}</p><strong>{number(table.nMinBuyIn)} chips to join</strong></div><button className="ucd-primary" disabled={Boolean(joining) || Number(profile?.nChips) < Number(table.nMinBuyIn)} onClick={() => join(table)}>{joining === table._id ? 'Joining…' : Number(profile?.nChips) < Number(table.nMinBuyIn) ? 'Not enough chips' : 'Join table'}</button></article>)}{!tables.data?.length && <p>No tables are available right now. Please try again later.</p>}</div>}
         {error && <p role="alert">{error}</p>}<p className="ucd-muted">Live games have timed turns and use your account chips.</p></section>
+        <Link className="ucd-link-row" to="/mobile/practice">Optional: practise without account chips →</Link>
         <Link className="ucd-link-row" to="/mobile/learn">New to 21 Hold’em? Learn the rules <span aria-hidden="true">→</span></Link>
     </>;
 }
@@ -87,6 +87,11 @@ export default function MobileExperience() {
         if (new URLSearchParams(location.search).get('signin') === '1') setSignIn(true);
     }, [location.search]);
     useEffect(() => {
+        if (game) {
+            const refresh = () => client.invalidateQueries(['profileData', 'ucd']);
+            window.addEventListener('bsg:profile-refresh', refresh);
+            return () => window.removeEventListener('bsg:profile-refresh', refresh);
+        }
         document.body.classList.add('ucd-mobile-active');
         document.documentElement.classList.add('ucd-mobile-page');
         const previousTitle = document.title;
@@ -94,7 +99,7 @@ export default function MobileExperience() {
         const refresh = () => client.invalidateQueries(['profileData', 'ucd']);
         window.addEventListener('bsg:profile-refresh', refresh);
         return () => { document.body.classList.remove('ucd-mobile-active'); document.documentElement.classList.remove('ucd-mobile-page'); document.title = previousTitle; window.removeEventListener('bsg:profile-refresh', refresh); };
-    }, [client]);
+    }, [client, game]);
     useEffect(() => {
         if (!game) window.scrollTo(0, 0);
         const onNavigate = e => { const path = String(e.detail?.path || '/mobile'); navigate(path.startsWith('/mobile') ? path : '/mobile'); };
@@ -102,6 +107,7 @@ export default function MobileExperience() {
         return () => window.removeEventListener('bsg:navigate', onNavigate);
     }, [location.pathname, game, navigate]);
     function toggleEasy() { setEasy(value => { try { localStorage.setItem('21ucd:easy-view', String(!value)); } catch {} return !value; }); }
+    if (game) return <div className="gameplay-layout ucd-original-game"><Suspense fallback={<p role="status">Loading your table…</p>}><Game /></Suspense></div>;
     return <div className={`ucd-mobile${easy ? ' ucd-easy' : ''}`}>
         <a className="ucd-skip" href="#ucd-main">Skip to content</a>
         <header className="ucd-header"><div className="ucd-between"><Link className="ucd-brand" to="/mobile" aria-label="21 Hold’em mobile home" onClick={e => { if (game) { e.preventDefault(); window.dispatchEvent(new CustomEvent('bsg:game-action-overlay-command', { detail: { command: 'exitTable' } })); } }}><img src={originalLogo} alt="" /><span>HOLD’EM<small>MOBILE</small></span></Link><button className="ucd-easy-toggle" onClick={toggleEasy} aria-pressed={easy}><b aria-hidden="true">Aa</b> Easy View {easy ? 'on' : 'off'}</button></div>
@@ -109,7 +115,7 @@ export default function MobileExperience() {
         <main id="ucd-main" className="ucd-main"><Suspense fallback={<p role="status">Loading your table…</p>}><Routes>
             <Route index element={<Lobby token={token} profile={profile.data} />} />
             <Route path="practice" element={<Practice />} />
-            <Route path="game" element={token ? <Game accessibleMode /> : <p>Please sign in at the top before joining a live table.</p>} />
+            <Route path="game" element={<p>Please sign in at the top before joining a live table.</p>} />
             <Route path="rewards" element={<><span className="ucd-eyebrow">A LITTLE SOMETHING EVERY DAY</span><DailyRewardsPanel loginPath="/mobile?signin=1" /></>} />
             <Route path="shop" element={<><span className="ucd-eyebrow">MAKE YOURSELF AT HOME</span><h1>Your table. Your style.</h1><p>Table and room sets cost 500 chips each. Equip a set after buying it.</p><CosmeticShop /></>} />
             <Route path="signup" element={<><h1>Create your account</h1><p>One account for your chips and table styles.</p><Account creating /></>} />
