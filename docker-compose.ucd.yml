@@ -1,0 +1,79 @@
+name: holdem-21ucd
+services:
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: [redis-server, --appendonly, 'yes']
+    volumes:
+      - redis_data:/data
+    networks:
+      default:
+        aliases: [ucd-redis]
+  backend:
+    container_name: holdem-21ucd-api
+    image: 21holdem-game-backend
+    restart: unless-stopped
+    working_dir: /ucd
+    command: [node, index.js]
+    volumes:
+      - ./backend:/ucd
+    environment:
+      NODE_PATH: /app/node_modules
+      NODE_ENV: development
+      APP_ENV: docker
+      GAME_ID: 21holdem
+      PORT: 4000
+      MONGO_URI: mongodb://holdem-mongodb:27017/holdem_21ucd
+      DB_URL: mongodb://holdem-mongodb:27017/holdem_21ucd
+      REDIS_HOST: ucd-redis
+      REDIS_PORT: 6379
+      JWT_SECRET: 21ucd-local-preview-only
+      HASH_KEY: 21ucd-local-preview-only
+      BASE_API_PATH: /api/v1
+      FRONTEND_URL: /
+      STRIPE_SUCCESS_URL: /shop?checkout=success
+      STRIPE_CANCEL_URL: /shop?checkout=cancel
+      SYSTEM_BOT_EMAIL_DOMAIN: playholdem.docker
+      SYSTEM_BOT_PASSWORD: 21ucd-local-bot-only
+    depends_on:
+      - redis
+    networks:
+      default:
+      baseline:
+        aliases: [ucd-backend]
+  frontend:
+    image: node:18-alpine
+    restart: unless-stopped
+    working_dir: /app
+    command: [npm, start]
+    environment:
+      NODE_ENV: development
+      HOST: 0.0.0.0
+      PORT: 3000
+      BROWSER: none
+      CI: 'false'
+      WDS_SOCKET_PORT: 3106
+      WDS_SOCKET_PATH: /ws
+      CHOKIDAR_USEPOLLING: 'true'
+      WATCHPACK_POLLING: 'true'
+      REACT_APP_PROXY_TARGET: http://backend:4000
+      REACT_APP_API_ENDPOINT: ''
+      REACT_APP_SOCKET_URL: ''
+    volumes:
+      - ./frontend:/app
+      - frontend_modules:/app/node_modules:ro
+      - frontend_cache:/app/node_modules/.cache
+    ports:
+      - '3106:3000'
+    depends_on:
+      - backend
+volumes:
+  frontend_modules:
+    external: true
+    name: 21holdem_holdem_frontend_node_modules
+  frontend_cache:
+  redis_data:
+networks:
+  baseline:
+    external: true
+    name: 21holdem_default
