@@ -40,6 +40,8 @@ Before deploying, system journals were archived locally as `.codex-runtime/21ucd
 
 The user's latest direction is to edit **21UCD only** until they explicitly resume another branch. Within 21UCD, the app menu is locked to the bottom at all viewport widths, replacing the earlier phone-only behavior and removing the scroll-driven top-menu positioning. The separate main PC site remains unchanged.
 
+This update (`ba21f02`) is deployed at `/var/www/html/releases/21ucd-locked-menu-20260915/build`. Local and public browser checks passed at 320px, 390px and 1280px, including pinned placement after scrolling, button bounds, menu selection and deep links. The desktop index hash was unchanged. Rollback config: `/etc/apache2/21holdem-mobile.conf.before-locked-20260915`; previous mobile release: `21ucd-bottom-menu-20260915`.
+
 - Leave the original checkout and its uncommitted files on `21WEBDEVNEXT` unchanged.
 - Leave `https://21-holdem.com` and the desktop Docker preview at `http://192.168.0.109:3100/lobby` unchanged.
 - Use the separate `docker-compose.ucd.yml` services for UCD previews; do not start host services.
