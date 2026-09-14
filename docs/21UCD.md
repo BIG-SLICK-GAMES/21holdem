@@ -32,6 +32,10 @@ The user requested an app-style bottom menu on the restored original site and ex
 
 Build with `PUBLIC_URL=/mobile`; React Router uses this base path. Authentication redirects and the game exit fallback also retain the base path. The Apache mobile alias must serve the new build and fall back to `/mobile/index.html` for application routes, replacing the temporary withdrawal redirect. The main desktop DocumentRoot remains unchanged.
 
+Deployed source commit `8a9a5cb` to `/var/www/html/releases/21ucd-bottom-menu-20260915/build`, linked from `/var/www/html/mobile_build/build`. Public browser checks passed at 320px, 390px and 1280px, including menu selection, touch target and label bounds, mobile entry and the settings deep link. Desktop index SHA256 stayed unchanged. The Docker production preview is available at `http://192.168.0.109:3107/mobile`; the source preview was restarted after building.
+
+Before deploying, system journals were archived locally as `.codex-runtime/21ucd-journal-backup-20260915.tgz` and SHA256-verified (`660efcae5e5a0387c6e992dfd3ec172d9a53fe8b3478f9599fb4a6f17bacfac1`), then older journals were vacuumed to recover space. About 159 MB remained after publishing. Apache rollback configuration: `/etc/apache2/21holdem-mobile.conf.before-bottom-20260915`; previous release: `21ucd-mobile-live-entry-20260914` with the withdrawal redirect.
+
 ## Isolation
 
 - Leave the original checkout and its uncommitted files on `21WEBDEVNEXT` unchanged.
