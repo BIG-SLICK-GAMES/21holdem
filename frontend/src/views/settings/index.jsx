@@ -1,3 +1,4 @@
+import PageHeading from 'shared/components/PageHeading';
 import React, { useEffect } from 'react';
 import { Link, Navigate, useParams } from 'react-router-dom';
 import ThemeAdjuster from './SiteTheme';
@@ -30,9 +31,9 @@ export default function SettingsPage() {
             <Link className='dashboard-hub__signin-button settings-detail__back' to='/lobby?tab=lobby-settings'>
                 <span aria-hidden='true'>&larr;</span> Back to Settings
             </Link>
-            <h1 id='settings-detail-title'>{title}</h1>
+            <PageHeading title={title} eyebrow='Settings' icon={settingId === 'transactions' ? 'receipt' : settingId === 'rules' || settingId === 'how-to-play' ? 'book' : settingId === 'report-issue' ? 'contact' : 'settings'} as='h1' id='settings-detail-title' />
             <div className='settings-detail__content'>
-                <Content key={settingId} />
+                <Content key={settingId} embedded />
             </div>
         </main>
     );

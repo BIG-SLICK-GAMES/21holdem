@@ -1,9 +1,10 @@
+import PageHeading from 'shared/components/PageHeading';
 import React from 'react'
 
-const Contact = () => {
+const Contact = ({ embedded = false }) => {
     return (
         <div className='cms-page contact-page'>
-            <div className="cms-header">Contact Us</div>
+            {!embedded && <PageHeading title='Contact Us' eyebrow='21 Holdem' icon='contact' as='h1' />}
             <div className="cms-content">
                 <p className="content-title">Last updated: 5 March 2026</p>
                 <p>

@@ -1,9 +1,10 @@
+import PageHeading from 'shared/components/PageHeading';
 import React from 'react'
 
 const TermsConditions = () => {
     return (
         <div className='cms-page'>
-            <div className="cms-header">Terms &amp; Conditions</div>
+            <PageHeading title='Terms and Conditions' eyebrow='21 Holdem' icon='book' as='h1' />
             <div className="cms-content">
                 <p className="content-title">Last updated: 5 March 2026</p>
                 <p>

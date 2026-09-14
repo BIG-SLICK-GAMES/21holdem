@@ -1,3 +1,4 @@
+import PageHeading from 'shared/components/PageHeading';
 import React, { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom';
 import aboutVoiceover from '../../assets/sounds/21_Holdem_about.mp3';
@@ -58,7 +59,7 @@ const About = () => {
 
     return (
         <div className='cms-page about-page'>
-            <div className="cms-header">About 21 Hold&apos;em</div>
+            <PageHeading title='About 21 Holdem' eyebrow='21 Holdem' icon='cards' as='h1' />
             <div className="cms-content">
                 <div className="about-hero">
                     <div className="about-hero-copy">

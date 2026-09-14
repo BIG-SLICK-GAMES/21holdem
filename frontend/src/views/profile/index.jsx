@@ -1,3 +1,4 @@
+import PageHeading from 'shared/components/PageHeading';
 import { getDirtyFormValues } from "helper/helper";
 import { getProfile, updateProfile } from "query/profile.query";
 import React, { useEffect, useState } from "react";
@@ -202,6 +203,7 @@ const Profile = () => {
                 <button type="button" className="profile-back-pill" onClick={() => navigate(fromSettings ? '/lobby?tab=lobby-settings' : '/lobby')}>
                     {fromSettings ? 'Back to Settings' : 'Back to Lobby'}
                 </button>
+                <PageHeading title='Profile' eyebrow='Your account' icon='profile' as='h1' />
                 <Form className="profile-content" onSubmit={handleSubmit(onSubmit)}>
                     {
                         isProfileDataLoading ? (

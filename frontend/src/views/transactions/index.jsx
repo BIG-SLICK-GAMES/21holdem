@@ -1,3 +1,4 @@
+import PageHeading from 'shared/components/PageHeading';
 import { formatDate } from "helper/helper";
 import { getTransactions } from "query/transactions.query";
 import React, { useCallback, useRef, useState } from "react";
@@ -8,7 +9,7 @@ import TransactionFilter from "shared/components/TransactionFilter";
 import { TransactionListColumn } from "shared/constants/tableHeaders";
 import { appendParams, formatIndianNumber, getCookie, parseParams } from "shared/utils";
 
-const Transactions = () => {
+const Transactions = ({ embedded = false }) => {
     const bIsSignedIn = Boolean(getCookie('sAuthToken'))
     const location = useLocation()
     const parsedData = parseParams(location.search)
@@ -97,7 +98,7 @@ const Transactions = () => {
     return (
         <div className="transactions">
             <div className="transactions-container">
-                <h2 className="transactions-title">MY TRANSACTIONS</h2>
+                {!embedded && <PageHeading title='Transactions' eyebrow='Your account' icon='receipt' as='h1' />}
                 {!bIsSignedIn && <p><Link to='/login'>Sign in</Link> to view your transactions.</p>}
                 <DataTable
                     columns={columns}

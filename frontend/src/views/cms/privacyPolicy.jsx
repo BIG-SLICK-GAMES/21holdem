@@ -1,9 +1,10 @@
+import PageHeading from 'shared/components/PageHeading';
 import React from 'react'
 
 const PrivacyPolicy = () => {
     return (
         <div className='cms-page'>
-            <div className="cms-header">Privacy Policy</div>
+            <PageHeading title='Privacy Policy' eyebrow='21 Holdem' icon='lock' as='h1' />
             <div className="cms-content">
                 <p className="content-title">Last updated: 5 March 2026</p>
                 <p>

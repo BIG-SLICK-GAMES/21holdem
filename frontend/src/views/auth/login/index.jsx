@@ -1,3 +1,4 @@
+import PageHeading from 'shared/components/PageHeading';
 import { exchangeHandoff, login, register as registerAccount } from 'query/login.query';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useMutation } from 'react-query';
@@ -218,7 +219,7 @@ const AuthScreen = () => {
                 </div>
 
                 <div className='bsg-auth__heading'>
-                    <h2>{formTitle}</h2>
+                    <PageHeading title={isCreateMode ? 'Create account' : 'Sign in'} eyebrow='Your account' icon='profile' />
                 </div>
 
                 <form className='bsg-auth__form' onSubmit={handleSubmit(onSubmit)} noValidate>

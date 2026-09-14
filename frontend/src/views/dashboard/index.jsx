@@ -1,3 +1,4 @@
+import PageHeading from 'shared/components/PageHeading';
 import { loadStripe } from '@stripe/stripe-js';
 import { createPortal } from 'react-dom';
 import LobbyBannerCarousel from './LobbyBannerCarousel';
@@ -181,6 +182,9 @@ const Dashboard = () => {
     const location = useLocation();
     const queryClient = useQueryClient();
     const [sActiveTab, setActiveTab] = useState(DEFAULT_LOBBY_TAB_ID);
+    useEffect(() => {
+        window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    }, [sActiveTab]);
     const [nBsgFeatureIndex, setBsgFeatureIndex] = useState(0);
     const [aFallbackTablesData, setFallbackTablesData] = useState([]);
     const [bIsJoiningTable, setIsJoiningTable] = useState(false);
@@ -686,7 +690,7 @@ const Dashboard = () => {
         }, null)
     ), [aSafeShopItems]);
 
-    const handleQuickNavSelect = (item, { bScrollDesktop = false } = {}) => {
+    const handleQuickNavSelect = (item) => {
         if (item?.path) {
             navigate(item.path);
             return;
@@ -696,12 +700,7 @@ const Dashboard = () => {
         const oParams = new URLSearchParams(location.search);
         oParams.set('tab', item.id);
         navigate(`/lobby?${oParams.toString()}`, { replace: true });
-        if (!bScrollDesktop || typeof document === 'undefined') return;
-
-        const oPanel = document.getElementById(`${item.id}-desktop-card`);
-        if (oPanel) {
-            oPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
-        }
+        window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
     };
 
     const completeOnboarding = (sNextTab, { bNeverShowAgain = false } = {}) => {
@@ -739,16 +738,7 @@ const Dashboard = () => {
         <>
             <div className='dashboard-hub__tab-body dashboard-hub__tab-body--live'>
 
-                <header className='play-heading'>
-                    <svg className='play-heading__icon' viewBox='0 0 48 48' fill='none' stroke='currentColor' strokeWidth='1.8' strokeLinejoin='round' aria-hidden='true' focusable='false'>
-                        <rect x='17' y='7' width='24' height='34' rx='4' />
-                        <path d='M13 36H9a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4h18M29 17l6 7-6 7-6-7Z' />
-                    </svg>
-                    <div><span className='play-heading__eyebrow'>Live tables</span><h2>Play</h2></div>
-                    <span className='play-heading__count' role='status'>
-                        {isDataTableLoading && !aVisibleTables.length ? 'Loading tables' : `${aVisibleTables.length} ${aVisibleTables.length === 1 ? 'table' : 'tables'}`}
-                    </span>
-                </header>
+                <PageHeading title="Play 21 Hold'em" eyebrow='Live tables' icon='cards' meta={isDataTableLoading && !aVisibleTables.length ? 'Loading tables' : `${aVisibleTables.length} ${aVisibleTables.length === 1 ? 'table' : 'tables'}`} />
 
                 {aVisibleTables.length ? (
                     <ul className='dashboard-hub__table-grid' aria-label='Available tables'>
@@ -827,6 +817,7 @@ const Dashboard = () => {
     const renderRewardsPanel = () => (
         <>
             <div className='dashboard-hub__tab-body dashboard-hub__tab-body--rewards'>
+                <PageHeading title='Rewards' eyebrow='Daily prizes' icon='gift' />
                 <DailyRewardsPanel embedded />
             </div>
         </>
@@ -939,6 +930,7 @@ const Dashboard = () => {
 
     const renderBsgGamesPanel = () => (
         <div className='dashboard-hub__tab-body dashboard-hub__tab-body--bsg-games'>
+                <PageHeading title='BSG Games' eyebrow='Discover more' icon='grid' />
             {renderBsgGamesCarousel()}
             {renderBsgGamesGrid()}
         </div>
@@ -994,6 +986,7 @@ const Dashboard = () => {
 
     const renderShopPanel = () => (
         <>
+            <PageHeading title='Shop' eyebrow='Tables and chips' icon='shop' />
             <CosmeticShop />
             <div className='dashboard-hub__tab-body dashboard-hub__tab-body--store'>
                 {renderStoreItems()}
@@ -1004,6 +997,7 @@ const Dashboard = () => {
     const renderPrivateTablePanel = () => (
         <>
             <div className='dashboard-hub__tab-body dashboard-hub__tab-body--private'>
+                <PageHeading title='Private' eyebrow='Your own table' icon='lock' />
 
                 <div className='dashboard-hub__tab-stack'>
                     <div className={`dashboard-hub__card-media dashboard-hub__card-media--private${bPrivateTablesUnlocked ? '' : ' is-locked'}`}>
@@ -1033,6 +1027,7 @@ const Dashboard = () => {
     const renderProfilePanel = () => (
         <>
             <div className='dashboard-hub__tab-body dashboard-hub__tab-body--profile'>
+                <PageHeading title='Stats' eyebrow='Your progress' icon='stats' />
 
                 <div className='dashboard-hub__tab-grid dashboard-hub__tab-grid--profile'>
                     <div className='dashboard-hub__profile-stage' style={oProfileStageStyle}>
@@ -1076,9 +1071,10 @@ const Dashboard = () => {
 
     const renderHowToPlayPanel = () => (
         <div className='dashboard-hub__tab-body dashboard-hub__tab-body--how-to-play'>
+                <PageHeading title='Learn' eyebrow='How to play' icon='book' />
             <FirstHandTutorial
                 active={sActiveTab === 'lobby-how-to-play'}
-                onPlay={() => handleQuickNavSelect({ id: 'lobby-live-tables' }, { bScrollDesktop: true })}
+                onPlay={() => handleQuickNavSelect({ id: 'lobby-live-tables' })}
             />
 
             <div className='dashboard-hub__guide-shell'>
@@ -1398,8 +1394,8 @@ const Dashboard = () => {
 
         return (
             <div className='dashboard-hub__tab-body dashboard-hub__tab-body--settings'>
+                <PageHeading title='Settings' eyebrow='Make it yours' icon='settings' />
                 <div className='dashboard-hub__settings-card'>
-                    <strong>Player Settings</strong>
                     <p>Choose a setting to open its page.</p>
 
                     <section className='dashboard-hub__settings-section' aria-label='Settings pages'>
@@ -1538,7 +1534,7 @@ const Dashboard = () => {
                                             key={`${item.id}-desktop-nav`}
                                             type='button'
                                             className={`dashboard-hub__desktop-nav-button${bIsActive ? ' is-active' : ''}`}
-                                            onClick={() => handleQuickNavSelect(item, { bScrollDesktop: true })}
+                                            onClick={() => handleQuickNavSelect(item)}
                                             aria-label={item.label}
                                             aria-pressed={item.kind === 'tab' ? bIsActive : undefined}
                                             title={item.label}

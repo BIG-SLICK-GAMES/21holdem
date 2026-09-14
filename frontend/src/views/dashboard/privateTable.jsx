@@ -1,3 +1,4 @@
+import PageHeading from 'shared/components/PageHeading';
 import React, { useEffect, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useNavigate } from 'react-router-dom';
@@ -129,7 +130,7 @@ const PrivateTable = () => {
                         <div className='dashboard-container__content-table-selection-content'>
                             <div className='sub-dashboard-container__content'>
                                 <div className='dashboard-container__content-table-selection-content-options private-table'>
-                                    <div className='title'>Private Table</div>
+                                    <PageHeading title='Private Tables' eyebrow='Your own table' icon='lock' as='h1' />
                                     <div className={`private-table-access ${bPrivateTablesUnlocked ? 'is-unlocked' : 'is-locked'}`}>
                                         {bPrivateTablesUnlocked ? 'Member Access' : 'Members Only'}
                                     </div>
