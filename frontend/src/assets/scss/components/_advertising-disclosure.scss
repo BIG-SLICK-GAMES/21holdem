@@ -1,0 +1,22 @@
+body .lobby-advertising { min-width: 0; }
+body .lobby-advertising .lobby-advertising__toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    min-height: 44px;
+    padding: 8px 0;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    color: #f4dfae;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.4;
+    white-space: nowrap;
+    &:focus-visible { outline: 2px solid #e5ba61; outline-offset: -2px; }
+    svg { flex-shrink: 0; }
+}
+.lobby-advertising__line { flex: 1; height: 1px; background: #a37b38; }
