@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import PropTypes from 'prop-types'
-import { Navigate, Outlet, useNavigate } from 'react-router-dom'
+import { Navigate, Outlet, useNavigate, useLocation } from 'react-router-dom'
 import MainLayout from 'layouts/main-layout/index'
 import { setNav } from 'helper/helper'
 import { getCookie, ReactToastify } from 'shared/utils'
@@ -14,7 +14,7 @@ function PrivateRoute() {
     const navigate = useNavigate()
     setNav(navigate)
 
-    const currentPath = window.location.pathname;
+    const currentPath = useLocation().pathname;
 
     
     useEffect(() => {

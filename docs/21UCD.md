@@ -26,6 +26,12 @@ After the user's follow-up on 15 September, the public mobile redesign was withd
 
 The EC2 root disk was full. The obsolete `/tmp/21holdem-topbar-0235da7.tar.gz` deployment archive was copied to local `.codex-runtime`, SHA256-verified, then removed from EC2, recovering enough space for the configuration fix. Only about 42 MB remained afterward; disk capacity still needs attention.
 
+## Bottom navigation and public branch preview — 15 September
+
+The user requested an app-style bottom menu on the restored original site and explicitly reconfirmed that `/mobile` should serve `21UCD`. At widths below 768px, the existing Play, Learn, Rewards, Private and BSG Hub menu becomes a fixed black-and-gold bottom bar with labelled icons, larger touch targets and safe-area spacing. Desktop menu rules are preserved.
+
+Build with `PUBLIC_URL=/mobile`; React Router uses this base path. Authentication redirects and the game exit fallback also retain the base path. The Apache mobile alias must serve the new build and fall back to `/mobile/index.html` for application routes, replacing the temporary withdrawal redirect. The main desktop DocumentRoot remains unchanged.
+
 ## Isolation
 
 - Leave the original checkout and its uncommitted files on `21WEBDEVNEXT` unchanged.

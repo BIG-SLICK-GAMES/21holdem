@@ -45,7 +45,7 @@ function AllRoutes() {
     return (
         <>
             {/* <Toaster limit={5} /> */}
-            <BrowserRouter>
+            <BrowserRouter basename={process.env.PUBLIC_URL || '/'}>
                 <SiteThemeRuntime />
                 <Routes>
                     {Router?.map(({ isPrivateRoute, children, Component }, index) => {

@@ -4089,9 +4089,10 @@ setDeclareResult({ nRoundStartsIn, aParticipant, bAllPlayerBust, bAllPlayersBust
         this.refreshGlobalProfileState();
         window.dispatchEvent(new CustomEvent(GAME_BROWSER_EVENTS.NAVIGATE, { detail: { path: fallbackPath } }));
         window.setTimeout(() => {
-            const fallbackRoute = fallbackPath.split('?')[0];
+            const publicFallbackPath = `${(process.env.PUBLIC_URL || '').replace(/\/$/, '')}${fallbackPath}`;
+            const fallbackRoute = publicFallbackPath.split('?')[0];
             if (window.location.pathname !== fallbackRoute) {
-                window.location.href = fallbackPath;
+                window.location.href = publicFallbackPath;
             }
         }, 250);
     }

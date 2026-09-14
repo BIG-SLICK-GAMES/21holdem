@@ -214,6 +214,7 @@ const Dashboard = () => {
     const menuAnchorRef = useRef(null);
     const tabMenuRef = useRef(null);
     const [oPinnedMenu, setPinnedMenu] = useState(null);
+    const [bMobileMenu, setMobileMenu] = useState(() => window.matchMedia('(max-width: 767px)').matches);
 
     useEffect(() => {
         const anchor = menuAnchorRef.current;
@@ -222,6 +223,13 @@ const Dashboard = () => {
         let frame = 0;
         const updateMenuPosition = () => {
             frame = 0;
+            const mobile = window.matchMedia('(max-width: 767px)').matches;
+            setMobileMenu(mobile);
+            if (mobile) {
+                anchor.style.minHeight = '0px';
+                setPinnedMenu(null);
+                return;
+            }
             const rect = anchor.getBoundingClientRect();
             const top = Math.max(0, topbar?.getBoundingClientRect().bottom || 0);
             const height = tabMenuRef.current?.getBoundingClientRect().height || 50;
@@ -1588,13 +1596,15 @@ const Dashboard = () => {
                                     aria-label={item.label}
                                     title={item.label}
                                 >
+                                    <img className='dashboard-hub__tab-menu-icon' src={item.iconSrc} alt='' aria-hidden='true' />
                                     <span className='dashboard-hub__tab-menu-label'>{item.label}</span>
                                 </button>
                             );
                         })}
                         </div>
                         <button type='button' className='dashboard-hub__tab-menu-button dashboard-hub__tab-menu-button--hub' onClick={handleReturnToHub}>
-                            BSG Hub
+                            <img className='dashboard-hub__tab-menu-icon' src={bigSlickGamesIcon} alt='' aria-hidden='true' />
+                            <span className='dashboard-hub__tab-menu-label'>BSG Hub</span>
                         </button>
                     </nav>
     );
@@ -1630,7 +1640,7 @@ const Dashboard = () => {
                     <LobbyBannerCarousel />
 
                     <div className='dashboard-hub__tab-menu-anchor' ref={menuAnchorRef}>
-                        {oPinnedMenu ? createPortal(oLobbyTabs, document.body) : oLobbyTabs}
+                        {(bMobileMenu || oPinnedMenu) ? createPortal(oLobbyTabs, document.body) : oLobbyTabs}
                     </div>
 
                     <div className='dashboard-hub__desktop-stage'>

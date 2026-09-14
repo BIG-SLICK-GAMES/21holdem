@@ -102,7 +102,9 @@ Axios.interceptors.response.use(
         return res;
     },
     (err) => {
-        const currentPath = typeof window !== 'undefined' ? window.location?.pathname || '' : '';
+        const basePath = (process.env.PUBLIC_URL || '').replace(/\/$/, '');
+        const browserPath = typeof window !== 'undefined' ? window.location?.pathname || '' : '';
+        const currentPath = basePath && browserPath.startsWith(`${basePath}/`) ? browserPath.slice(basePath.length) : browserPath;
         const isAuthRoute = currentPath === '/login' || currentPath === '/register';
         const isGuestSafeRoute = currentPath === '/' || currentPath === '/lobby';
         if (err?.code?.includes?.("ERR_NETWORK")) {
@@ -110,7 +112,7 @@ Axios.interceptors.response.use(
             if (!isAuthRoute && !isGuestSafeRoute) {
                 removeToken();
                 setTimeout(() => {
-                    window.location.href = "/login";
+                    window.location.href = `${basePath}/login`;
                 }, 2200);
             }
             return Promise.reject(err);
@@ -121,7 +123,7 @@ Axios.interceptors.response.use(
             // A late response from an old session must not sign out a new session.
             if (!isAuthRoute && currentToken && rejectedToken === currentToken) {
                 removeToken();
-                if (!isGuestSafeRoute) window.location.href = "/lobby";
+                if (!isGuestSafeRoute) window.location.href = `${basePath}/lobby`;
             }
             return Promise.reject(err);
         }

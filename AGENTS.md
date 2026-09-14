@@ -9,7 +9,7 @@
 - Existing desktop Docker source preview: `http://192.168.0.109:3100/lobby`. Do not repoint it to this checkout. Future UCD previews must use a separate Docker service/port.
 - Public site: `https://21-holdem.com`.
 - On 15 September 2026 the user rejected the mobile redesign and requested a fresh start. Source was restored to original-site snapshot `f1b4f95`; the former mobile work and pending daily-reward/device-routing changes are backed up on `backup/21UCD-before-restart-20260915`.
-- Local fresh-source preview: `http://192.168.0.109:3106/lobby`, using `docker-compose.ucd.yml`. Public `/mobile` now redirects to the original `/lobby`; the rejected redesign is withdrawn. Do not redeploy it.
+- Local source preview: `http://192.168.0.109:3106/lobby`, using `docker-compose.ucd.yml`. The user subsequently reconfirmed that `https://21-holdem.com/mobile` must serve `21UCD`. Deploy this restored original-site branch with its new mobile bottom menu there, using `PUBLIC_URL=/mobile`. Do not restore the rejected redesign or change the main desktop deployment.
 - Do not switch to `WEBDEV`, `21WEBDEV`, or either `website/` prototype without an explicit user request.
 - See `docs/ACTIVE_FRONTEND.md` for the current deployment mapping.
 - Creating this branch does not authorize deploying UCD changes over the current desktop/live build. See `docs/21UCD.md` for branch scope.
