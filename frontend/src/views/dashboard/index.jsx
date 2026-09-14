@@ -85,8 +85,6 @@ function sortTablesByPriority(a, b) {
     return String(a?.sName || '').localeCompare(String(b?.sName || ''));
 }
 
-const PLAYER_OPTIONS = [4, 6, 9];
-const BUY_IN_OPTIONS = [1000, 5000, 15000, 20000];
 const DEFAULT_LOBBY_TAB_ID = 'lobby-live-tables';
 const LOBBY_TAB_IDS = ['lobby-live-tables', 'lobby-how-to-play', 'lobby-bsg-games', 'lobby-missions', 'lobby-private-table', 'lobby-player-profile', 'lobby-shop', 'lobby-settings'];
 const ONBOARDING_STORAGE_KEY = '21holdem:onboarding:v1';
@@ -177,37 +175,12 @@ function formatStorePrice(nPrice, sCurrency = 'USD') {
     }
 }
 
-function getDefaultSeatCount(tables) {
-    return PLAYER_OPTIONS.find(nSeatCount =>
-        (tables || []).some(table => Number(table.nMaxPlayer) === nSeatCount)
-    ) || PLAYER_OPTIONS[0];
-}
-
-function getDefaultBuyIn(tables, nSeatCount) {
-    const aBuyInOptions = getBuyInOptions(tables);
-    return aBuyInOptions.find(nBuyIn =>
-        (tables || []).some(
-            table => Number(table.nMaxPlayer) === nSeatCount && Number(table.nMinBuyIn) === nBuyIn
-        )
-    ) || aBuyInOptions[0] || BUY_IN_OPTIONS[0];
-}
-
-function getBuyInOptions(tables) {
-    return Array.from(new Set([
-        ...BUY_IN_OPTIONS,
-        ...(tables || []).map(table => Number(table?.nMinBuyIn) || 0),
-    ].filter(Boolean))).sort((firstBuyIn, secondBuyIn) => firstBuyIn - secondBuyIn);
-}
-
 const Dashboard = () => {
     const dashboardRef = useRef(null);
     const navigate = useNavigate();
     const location = useLocation();
     const queryClient = useQueryClient();
     const [sActiveTab, setActiveTab] = useState(DEFAULT_LOBBY_TAB_ID);
-    const [, setActiveSeatCount] = useState(PLAYER_OPTIONS[0]);
-    const [nActiveBuyIn, setActiveBuyIn] = useState(BUY_IN_OPTIONS[0]);
-    const [bHasAdjustedFilters, setHasAdjustedFilters] = useState(false);
     const [nBsgFeatureIndex, setBsgFeatureIndex] = useState(0);
     const [aFallbackTablesData, setFallbackTablesData] = useState([]);
     const [bIsJoiningTable, setIsJoiningTable] = useState(false);
@@ -302,10 +275,7 @@ const Dashboard = () => {
             await refetchTables();
             const response = await getTables();
             const aRefetchedTables = getArrayPayload(response?.data?.data).filter(Boolean).sort(sortTablesByPriority);
-            const oFallbackTable = (
-                aRefetchedTables.find(oTable => Number(oTable.nMinBuyIn) === nActiveBuyIn) ||
-                aRefetchedTables[0]
-            );
+            const oFallbackTable = aRefetchedTables[0];
             const sFallbackTableId = oFallbackTable?._id || oFallbackTable?.id;
 
             if (sFallbackTableId) {
@@ -381,7 +351,6 @@ const Dashboard = () => {
             .filter(Boolean)
             .sort(sortTablesByPriority)
     , [aFallbackTablesData, tablesData]);
-    const aBuyInOptions = useMemo(() => getBuyInOptions(aSortedTables), [aSortedTables]);
     const nActiveBsgFeatureIndex = ((nBsgFeatureIndex % BSG_FEATURED_GAMES.length) + BSG_FEATURED_GAMES.length) % BSG_FEATURED_GAMES.length;
     const oActiveBsgFeature = BSG_FEATURED_GAMES[nActiveBsgFeatureIndex] || BSG_FEATURED_GAMES[0];
 
@@ -412,16 +381,6 @@ const Dashboard = () => {
             window.clearTimeout(nFallbackTimer);
         };
     }, [tablesData]);
-
-    useEffect(() => {
-        if (bHasAdjustedFilters || !aSortedTables.length) return;
-
-        const nDefaultSeatCount = getDefaultSeatCount(aSortedTables);
-        const nDefaultBuyIn = getDefaultBuyIn(aSortedTables, nDefaultSeatCount);
-
-        setActiveSeatCount(nDefaultSeatCount);
-        setActiveBuyIn(nDefaultBuyIn);
-    }, [aSortedTables, bHasAdjustedFilters]);
 
     useEffect(() => {
         if (typeof window === 'undefined') return undefined;
@@ -550,20 +509,7 @@ const Dashboard = () => {
         };
     }, []);
 
-    const aFilteredTables = useMemo(() => (
-        aSortedTables.filter(table => (
-            Number(table.nMinBuyIn) === nActiveBuyIn
-        ))
-    ), [aSortedTables, nActiveBuyIn]);
-    const aVisibleTables = aFilteredTables;
-
-    const oBuyInPlayerCounts = useMemo(() => (
-        aSortedTables.reduce((accumulator, table) => {
-            const nKey = Number(table.nMinBuyIn) || 0;
-            accumulator[nKey] = (accumulator[nKey] || 0) + getActivePlayers(table);
-            return accumulator;
-        }, {})
-    ), [aSortedTables]);
+    const aVisibleTables = aSortedTables;
 
     const nGamesPlayed = Number(profileData?.nGamePlayed) || 0;
     const nGamesWon = Number(profileData?.nGameWon) || 0;
@@ -601,10 +547,6 @@ const Dashboard = () => {
     const nEligibleDay = Number(dataDailyRewards?.eligibleDay) || 1;
     const bTodayRewardClaimed = Boolean(dataDailyRewards?.bTodayRewardClaimed);
     const oProfileStageStyle = useMemo(() => ({ '--profile-stage-image': `url("${sAvatarSrc || DEFAULT_PROFILE_BANNER}")` }), [sAvatarSrc]);
-
-    const getBuyInPlayerCount = (nBuyIn) => (
-        oBuyInPlayerCounts[Number(nBuyIn) || 0] || 0
-    );
 
     const aQuickNavItems = useMemo(() => ([
         {
@@ -778,11 +720,6 @@ const Dashboard = () => {
         window.location.assign(getBigSlickGamesUrl());
     };
 
-    const handleBuyInChange = (nBuyIn) => {
-        setHasAdjustedFilters(true);
-        setActiveBuyIn(Number(nBuyIn) || aBuyInOptions[0] || BUY_IN_OPTIONS[0]);
-    };
-
     const handlePrivateTablesClick = () => {
         if (!bIsSignedIn) { navigate('/login'); return; }
         if (!bPrivateTablesUnlocked) {
@@ -798,27 +735,20 @@ const Dashboard = () => {
         mutateBuyChips({ nPrice: item.nPrice });
     };
 
-    const renderBuyInSelect = (id) => (
-        <div className='dashboard-hub__buyin-field'>
-            <label htmlFor={id}>Select your Buy-in amount</label>
-            <select id={id} value={nActiveBuyIn} onChange={(event) => handleBuyInChange(event.target.value)}>
-                {aBuyInOptions.map((amount) => (
-                    <option key={amount} value={amount}>
-                        {formatAmount(amount)} chips ({getBuyInPlayerCount(amount)} players)
-                    </option>
-                ))}
-            </select>
-            <span className='dashboard-hub__buyin-result' role='status'>
-                {aVisibleTables.length} {aVisibleTables.length === 1 ? 'table' : 'tables'} available
-            </span>
-        </div>
-    );
-
     const renderLiveTablesPanel = () => (
         <>
             <div className='dashboard-hub__tab-body dashboard-hub__tab-body--live'>
 
-                {renderBuyInSelect('lobby-buyin')}
+                <header className='play-heading'>
+                    <svg className='play-heading__icon' viewBox='0 0 48 48' fill='none' stroke='currentColor' strokeWidth='1.8' strokeLinejoin='round' aria-hidden='true' focusable='false'>
+                        <rect x='17' y='7' width='24' height='34' rx='4' />
+                        <path d='M13 36H9a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4h18M29 17l6 7-6 7-6-7Z' />
+                    </svg>
+                    <div><span className='play-heading__eyebrow'>Live tables</span><h2>Play</h2></div>
+                    <span className='play-heading__count' role='status'>
+                        {isDataTableLoading && !aVisibleTables.length ? 'Loading tables' : `${aVisibleTables.length} ${aVisibleTables.length === 1 ? 'table' : 'tables'}`}
+                    </span>
+                </header>
 
                 {aVisibleTables.length ? (
                     <ul className='dashboard-hub__table-grid' aria-label='Available tables'>
@@ -842,7 +772,7 @@ const Dashboard = () => {
                                         className='dashboard-hub__table-card'
                                         onClick={() => handleJoinTable(table)}
                                         disabled={bIsSignedIn && (joinTableLoading || !(table?._id || table?.id))}
-                                        aria-label={`${sTableName}: ${nOccupied} playing, ${nOpenSeats} seat${nOpenSeats === 1 ? '' : 's'} open.`}
+                                        aria-label={`${sTableName}: buy-in ${formatAmount(table.nMinBuyIn)} chips, ${nOccupied} playing, ${nOpenSeats} seat${nOpenSeats === 1 ? '' : 's'} open.`}
                                     >
                                         <span className='dashboard-hub__table-card-art' aria-hidden='true'>
                                             <img src={liveTablesImage} alt='' />
@@ -851,6 +781,7 @@ const Dashboard = () => {
                                             <span className='dashboard-hub__table-card-header'>
                                                 <strong>{sTableName}</strong>
                                             </span>
+                                            <span className='play-table-details'>Buy-in {formatAmount(table.nMinBuyIn)} chips &middot; {getBlindLabel(table.nMinBet)}</span>
                                             <span className='dashboard-hub__table-card-avatars' aria-hidden='true'>
                                                 {Array.from({ length: nTotalSeats }, (_, index) => {
                                                     const bFilled = index < nOccupied;
@@ -884,8 +815,8 @@ const Dashboard = () => {
 
                 {!aVisibleTables.length ? (
                     <div className='dashboard-hub__empty'>
-                        <strong>{isDataTableLoading ? 'Loading tables...' : 'No tables at this buy-in yet'}</strong>
-                        <span>Try another buy-in to find an open table.</span>
+                        <strong>{isDataTableLoading ? 'Loading tables...' : 'No tables available right now'}</strong>
+                        <span>Tables will appear here when available.</span>
 
                     </div>
                 ) : null}
@@ -1192,7 +1123,7 @@ const Dashboard = () => {
 
                 <div className='dashboard-hub__desktop-card-body dashboard-hub__desktop-card-body--live'>
 
-                    {renderBuyInSelect('desktop-buyin')}
+                    <p>{aVisibleTables.length} tables available</p>
 
                     <div className='dashboard-hub__desktop-live-summary'>
                         <div className='dashboard-hub__desktop-live-summary-top'>
@@ -1200,7 +1131,7 @@ const Dashboard = () => {
                             <span>{nAvailableTables} {nAvailableTables === 1 ? 'table' : 'tables'} available</span>
                         </div>
                         <div className='dashboard-hub__desktop-live-summary-bottom'>
-                            <span>{oFeaturedTable ? `${oFeaturedTable.nMaxPlayer}-player setup` : 'Select a buy-in'}</span>
+                            <span>{oFeaturedTable ? `${oFeaturedTable.nMaxPlayer}-player setup` : 'Waiting for tables'}</span>
                             <span>{oFeaturedTable ? getBlindLabel(oFeaturedTable.nMinBet) : 'Blind amount waiting'}</span>
                         </div>
                         {oFeaturedTable ? (

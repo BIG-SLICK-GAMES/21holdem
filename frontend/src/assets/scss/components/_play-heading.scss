@@ -1,0 +1,15 @@
+body .dashboard-hub .play-heading {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 4px 0 12px;
+    padding: 20px 12px;
+    border-bottom: 1px solid #9b773c;
+    background: linear-gradient(110deg, #d4ad5712, transparent 75%);
+    color: #ebc56f;
+    h2 { margin: 0; font-size: 36px; line-height: 1; font-weight: 700; letter-spacing: 1px; color: #f3d68d; }
+}
+.play-heading__icon { width: 44px; height: 44px; flex-shrink: 0; }
+.play-heading__eyebrow { display: block; margin-bottom: 5px; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; }
+.play-heading__count { margin-left: auto; color: #decda9; font-size: 14px; text-align: right; }
+body .dashboard-hub .play-table-details { display: block; color: #decda9; font-size: 14px; line-height: 1.4; margin: 4px 0 8px; }
