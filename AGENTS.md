@@ -3,7 +3,7 @@
 ## User-confirmed active frontend
 
 - This checkout is branch `21UCD`: User Centered Design, explicitly requested on 13 September 2026.
-- Work on mobile accessibility here. Preserve the approved PC layout and behavior.
+- Work exclusively on `21UCD` until the user explicitly resumes another branch. Its menu is now an app-style bar locked to the bottom at every viewport width. Preserve the approved PC site on its separate branch and deployment.
 - Keep desktop baseline checkout `D:/BIG-SLICK-GAMES/GAMES/21holdem` on `21WEBDEVNEXT` untouched.
 - Edit `frontend/`, the black-and-gold site confirmed by the user.
 - Existing desktop Docker source preview: `http://192.168.0.109:3100/lobby`. Do not repoint it to this checkout. Future UCD previews must use a separate Docker service/port.

@@ -211,52 +211,6 @@ const Dashboard = () => {
     const [aFallbackTablesData, setFallbackTablesData] = useState([]);
     const [bIsJoiningTable, setIsJoiningTable] = useState(false);
     const [sOnboardingStep, setOnboardingStep] = useState('hidden');
-    const menuAnchorRef = useRef(null);
-    const tabMenuRef = useRef(null);
-    const [oPinnedMenu, setPinnedMenu] = useState(null);
-    const [bMobileMenu, setMobileMenu] = useState(() => window.matchMedia('(max-width: 767px)').matches);
-
-    useEffect(() => {
-        const anchor = menuAnchorRef.current;
-        const topbar = document.querySelector('.lobby-topbar');
-        if (!anchor) return undefined;
-        let frame = 0;
-        const updateMenuPosition = () => {
-            frame = 0;
-            const mobile = window.matchMedia('(max-width: 767px)').matches;
-            setMobileMenu(mobile);
-            if (mobile) {
-                anchor.style.minHeight = '0px';
-                setPinnedMenu(null);
-                return;
-            }
-            const rect = anchor.getBoundingClientRect();
-            const top = Math.max(0, topbar?.getBoundingClientRect().bottom || 0);
-            const height = tabMenuRef.current?.getBoundingClientRect().height || 50;
-            anchor.style.minHeight = `${height}px`;
-            const next = rect.top < top ? { top, left: rect.left, width: rect.width } : null;
-            setPinnedMenu((previous) => {
-                if (previous?.top === next?.top && previous?.left === next?.left && previous?.width === next?.width) return previous;
-                return next;
-            });
-        };
-        const scheduleUpdate = () => {
-            if (!frame) frame = window.requestAnimationFrame(updateMenuPosition);
-        };
-        const observer = new ResizeObserver(scheduleUpdate);
-        observer.observe(anchor);
-        if (topbar) observer.observe(topbar);
-        window.addEventListener('scroll', scheduleUpdate, { passive: true, capture: true });
-        window.addEventListener('resize', scheduleUpdate);
-        updateMenuPosition();
-        return () => {
-            window.cancelAnimationFrame(frame);
-            observer.disconnect();
-            window.removeEventListener('scroll', scheduleUpdate, true);
-            window.removeEventListener('resize', scheduleUpdate);
-        };
-    }, []);
-
     const bIsSignedIn = Boolean(useAuthToken());
 
     const { data: tablesData = [], isLoading: isDataTableLoading, refetch: refetchTables } = useQuery('getTables', () => getTables('public'), {
@@ -1568,7 +1522,7 @@ const Dashboard = () => {
     };
 
     const oLobbyTabs = (
-                    <nav ref={tabMenuRef} className={`dashboard-hub__tab-menu ui-button-row${oPinnedMenu ? ' dashboard-hub__tab-menu--pinned' : ''}`} style={oPinnedMenu || undefined} aria-label='Lobby navigation' onKeyDown={(event) => {
+                    <nav className='dashboard-hub__tab-menu ui-button-row' aria-label='Lobby navigation' onKeyDown={(event) => {
                         const keys = ['ArrowLeft', 'ArrowRight', 'Home', 'End'];
                         if (!keys.includes(event.key) || !event.target.closest('[role=tab]')) return;
                         event.preventDefault();
@@ -1639,9 +1593,7 @@ const Dashboard = () => {
 
                     <LobbyBannerCarousel />
 
-                    <div className='dashboard-hub__tab-menu-anchor' ref={menuAnchorRef}>
-                        {(bMobileMenu || oPinnedMenu) ? createPortal(oLobbyTabs, document.body) : oLobbyTabs}
-                    </div>
+                    {createPortal(oLobbyTabs, document.body)}
 
                     <div className='dashboard-hub__desktop-stage'>
                         <div className='dashboard-hub__desktop-topbar'>
