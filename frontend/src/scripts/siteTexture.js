@@ -1,6 +1,6 @@
 export const TEXTURE_KEY = '21holdem:site-texture:v1';
 export const TEXTURE_EVENT = '21holdem:site-texture-change';
-export const TEXTURES = [ ['stripes', 'Stripes'], ['diamonds', 'Diamonds'], ['dimples', 'Dimples'] ];
+export const TEXTURES = [ ['mesh', 'Industrial mesh'], ['stripes', 'Stripes'], ['diamonds', 'Diamonds'], ['dimples', 'Dimples'] ];
 const clamp = (value, fallback, min, max) => Number.isFinite(Number(value)) ? Math.max(min, Math.min(max, Number(value))) : fallback;
 export const sanitizeTexture = input => ({ layers: Object.fromEntries(TEXTURES.map(([key]) => {
     const layer = input?.layers?.[key];
@@ -10,10 +10,10 @@ export const sanitizeTexture = input => ({ layers: Object.fromEntries(TEXTURES.m
         scale: layer ? clamp(layer.scale, 100, 25, 400) : 100,
     }];
 })) });
-export const DEFAULT_TEXTURE = sanitizeTexture(null);
+export const DEFAULT_TEXTURE = sanitizeTexture({ layers: { mesh: { enabled: true, opacity: 12, scale: 100 } } });
 export const hasTexture = value => Object.values(sanitizeTexture(value).layers).some(layer => layer.enabled);
 export function readTexture() {
-    try { return sanitizeTexture(JSON.parse(localStorage.getItem(TEXTURE_KEY))); } catch { return DEFAULT_TEXTURE; }
+    try { const saved = JSON.parse(localStorage.getItem(TEXTURE_KEY)); return saved ? sanitizeTexture(saved) : DEFAULT_TEXTURE; } catch { return DEFAULT_TEXTURE; }
 }
 export function saveTexture(value) {
     const next = sanitizeTexture(value);
@@ -31,6 +31,14 @@ export function texturePaint(value) {
         const px = n => `${Number((n * layer.scale / 100).toFixed(2))}px`;
         const light = `rgba(var(--ui-silver-rgb),${layer.opacity / 100})`;
         const shade = `rgba(0,0,0,${Math.min(1, layer.opacity / 50)})`;
+        if (pattern === 'mesh') {
+            images.push(`radial-gradient(ellipse at 50% 45%,rgba(0,0,0,.65) 0 30%,${light} 39%,transparent 52%)`);
+            sizes.push(`${px(7)} ${px(5)}`);
+            for (const angle of [45, -45]) {
+                images.push(`repeating-linear-gradient(${angle}deg,transparent 0 ${px(4)},${light} ${px(4)} ${px(4.5)},transparent ${px(4.5)} ${px(8)})`);
+                sizes.push('auto');
+            }
+        }
         if (pattern === 'stripes') {
             images.push(`repeating-linear-gradient(135deg,transparent 0 ${px(12)},${light} ${px(12)} ${px(14)},transparent ${px(14)} ${px(26)})`);
             sizes.push('auto');

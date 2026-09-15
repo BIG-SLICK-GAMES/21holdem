@@ -1,6 +1,7 @@
 // App-only theme. The route runtime removes this marker before gameplay renders.
 body[data-site-theme] {
     background-color: var(--ui-blue-deep); color: var(--ui-text);
+    --ui-border-gradient: linear-gradient(transparent, transparent) !important;
     // One owner for the page background, including after routes/styles load.
     :is(.main-layout:not(.gameplay-layout), .auth-layout, .common-layout) {
         background: var(--site-texture-image, none) var(--ui-blue-deep) !important;
@@ -41,17 +42,22 @@ body[data-site-theme] {
     }
     .dashboard-hub__bokeh { opacity: .45; }
     :is(.lobby-topbar, .dashboard-hub__tab-menu) {
-        background: var(--site-navigation) !important;
-        box-shadow: 0 0 24px #0005, inset 0 -1px rgba(var(--ui-gold-rgb), .35);
+        background: linear-gradient(120deg, rgba(150, 180, 210, .12), transparent 55%), rgba(var(--ui-blue-deep-rgb), .78) !important;
+        -webkit-backdrop-filter: blur(20px) saturate(135%) !important;
+        backdrop-filter: blur(20px) saturate(135%) !important;
+        border: 0 !important;
+        box-shadow: 0 8px 28px #0004 !important;
+        &::before, &::after { display: none !important; }
     }
-    .dashboard-hub__tab-menu { box-shadow: 0 -1px 0 var(--ui-gold-dark), 0 -8px 24px #0005; }
+    .dashboard-hub__tab-menu.ui-button-row { background: linear-gradient(120deg, rgba(150, 180, 210, .12), transparent 55%), rgba(var(--ui-blue-deep-rgb), .78) !important; box-shadow: 0 -8px 28px #0004 !important; }
     .dashboard-hub__tab-menu.ui-button-row .dashboard-hub__tab-menu-button[class] {
         color: var(--ui-text-muted);
         &.is-active { background: var(--ui-gold); color: var(--ui-gold-ink); }
     }
     .play-heading {
-        background: linear-gradient(110deg, rgba(var(--ui-blue-rgb), .85), transparent);
-        border-bottom-color: var(--ui-gold-dark);
+        background: transparent;
+        border: 0 !important;
+        box-shadow: none !important;
         color: var(--ui-gold);
         h1, h2 { color: var(--ui-gold-light); }
     }
@@ -84,9 +90,30 @@ body[data-site-theme] {
     .learn-guided__toggle { background: var(--ui-surface); color: var(--ui-gold); border-color: var(--ui-border); small { color: var(--ui-text-muted); } }
     .learn-deck__transport > span { color: var(--ui-text-muted); }
     .learn-scoreboard .is-winner, .learn-equation__result { background: var(--ui-gold); color: var(--ui-gold-ink); }
-    .learn-takeaway, .learn-feedback { border-color: var(--ui-gold-dark); }
+    .learn-takeaway, .learn-feedback { border: 0; }
     .learn-rounds span { color: var(--ui-text-muted); border-color: var(--ui-border); }
     .learn-deck__progress i { background: var(--ui-blue); &.is-read { background: var(--ui-border); } &.is-current { background: var(--ui-gold); } }
+}
+
+body[data-site-theme] {
+    .community-page section { border: 0; }
+    .dashboard-hub .ui-button-row { border: 0 !important; }
+    .dashboard-hub .ui-button-row > :is(button, a)[class] { border: 0 !important; }
+    .lobby-advertising__line { background: rgba(var(--ui-silver-rgb), .15); }
+    :is(h1, h2, h3, .play-heading, .settings-detail__header) {
+        border: 0 !important;
+        box-shadow: none !important;
+        &::after, &::before { border: 0; background: none; box-shadow: none; }
+    }
+    @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+        :is(.lobby-topbar, .dashboard-hub__tab-menu.ui-button-row) { background: var(--site-navigation) !important; }
+    }
+    @media (prefers-reduced-transparency: reduce) {
+        :is(.lobby-topbar, .dashboard-hub__tab-menu.ui-button-row) {
+            background: var(--site-navigation) !important;
+            -webkit-backdrop-filter: none !important; backdrop-filter: none !important;
+        }
+    }
 }
 .site-theme-editor {
     &__colours { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 0 24px; }

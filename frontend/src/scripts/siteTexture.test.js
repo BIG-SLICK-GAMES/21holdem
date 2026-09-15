@@ -30,11 +30,20 @@ test('multiple patterns keep independent opacity and tile size after saving', ()
         dimples: { enabled: true, opacity: 40, scale: 150 },
     } };
     saveTexture(value);
-    expect(readTexture()).toEqual(value);
+    expect(readTexture()).toEqual(sanitizeTexture(value));
     const paint = texturePaint(readTexture());
     expect(paint.size).toBe('auto,27px 27px,27px 27px');
     expect(paint.image).toContain('0.12');
     expect(paint.image).toContain('0.4');
     expect(paint.image).not.toContain('45deg');
+    localStorage.removeItem(TEXTURE_KEY);
+});
+
+test('fresh installs use mesh while explicitly saved plain backgrounds are preserved', () => {
+    localStorage.removeItem(TEXTURE_KEY);
+    expect(readTexture().layers.mesh.enabled).toBe(true);
+    expect(texturePaint(readTexture()).image).toContain('radial-gradient');
+    saveTexture({ layers: {} });
+    expect(textureImage(readTexture())).toBe('none');
     localStorage.removeItem(TEXTURE_KEY);
 });
