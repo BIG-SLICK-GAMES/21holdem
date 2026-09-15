@@ -38,6 +38,12 @@ Before deploying, system journals were archived locally as `.codex-runtime/21ucd
 
 ## Isolation
 
+### Learn cards - 15 September
+
+The Learn tab now uses nine swipeable, illustrated information cards with Back/Next and keyboard navigation. Interactive examples explain ace values and Hit/Stand, followed by a short quiz. The existing guided hand opens on demand and unmounts when closed or when leaving Learn. Card illustrations are native HTML/SVG, with no additional image downloads. Double Down help text now matches the backend's round-2 availability after the first community card; game mechanics are unchanged.
+
+Release: `/var/www/html/releases/21ucd-learn-cards-20260915/build`, served only through `/mobile`. Previous mobile release: `21ucd-page-headings-20260915`. Docker production build and browser checks covered touch swipes, keyboard navigation, interactive examples, guided-hand mounting, the Play link and 320px layout. The desktop index hash remained unchanged during deployment.
+
 The user's latest direction is to edit **21UCD only** until they explicitly resume another branch. Within 21UCD, the app menu is locked to the bottom at all viewport widths, replacing the earlier phone-only behavior and removing the scroll-driven top-menu positioning. The separate main PC site remains unchanged.
 
 This update (`ba21f02`) is deployed at `/var/www/html/releases/21ucd-locked-menu-20260915/build`. Local and public browser checks passed at 320px, 390px and 1280px, including pinned placement after scrolling, button bounds, menu selection and deep links. The desktop index hash was unchanged. Rollback config: `/etc/apache2/21holdem-mobile.conf.before-locked-20260915`; previous mobile release: `21ucd-bottom-menu-20260915`.

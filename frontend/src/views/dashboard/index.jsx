@@ -3,7 +3,7 @@ import { loadStripe } from '@stripe/stripe-js';
 import { createPortal } from 'react-dom';
 import LobbyBannerCarousel from './LobbyBannerCarousel';
 import BottomNavIcon from './BottomNavIcon';
-import FirstHandTutorial from './tutorial/FirstHandTutorial';
+import LearnCards from './tutorial/LearnCards';
 import iconLobby from '../../assets/images/icons/lobby-menu/live-tables.png';
 import iconPrivate from '../../assets/images/icons/lobby-menu/private-table.png';
 import iconProfile from '../../assets/images/icons/working/profile (2).png';
@@ -25,7 +25,6 @@ import _ from 'scripts/helper';
 import DailyRewardsPanel from 'shared/components/DailyRewardsPanel';
 import CosmeticShop from 'shared/components/CosmeticShop';
 import useAuthToken from 'shared/hooks/useAuthToken';
-import { HOW_TO_PLAY_SECTIONS } from 'shared/content/gameGuideContent';
 import { DEFAULT_PROFILE_BANNER, getAvatarImageSrc } from 'shared/constants/builtInAvatars';
 import { getCookie, ReactToastify } from 'shared/utils';
 import { getBigSlickGamesUrl } from 'views/auth/authDestination';
@@ -1072,28 +1071,10 @@ const Dashboard = () => {
     const renderHowToPlayPanel = () => (
         <div className='dashboard-hub__tab-body dashboard-hub__tab-body--how-to-play'>
                 <PageHeading title='Learn' eyebrow='How to play' icon='book' />
-            <FirstHandTutorial
+            <LearnCards
                 active={sActiveTab === 'lobby-how-to-play'}
                 onPlay={() => handleQuickNavSelect({ id: 'lobby-live-tables' })}
             />
-
-            <div className='dashboard-hub__guide-shell'>
-                {HOW_TO_PLAY_SECTIONS.map((section) => (
-                    <article className='dashboard-hub__guide-step' key={section.title}>
-                        <h3>{section.title}</h3>
-                        {section.paragraphs?.map((paragraph) => (
-                            <p key={paragraph}>{paragraph}</p>
-                        ))}
-                        {section.bullets?.length ? (
-                            <ul>
-                                {section.bullets.map((item) => (
-                                    <li key={item}>{item}</li>
-                                ))}
-                            </ul>
-                        ) : null}
-                    </article>
-                ))}
-            </div>
         </div>
     );
 

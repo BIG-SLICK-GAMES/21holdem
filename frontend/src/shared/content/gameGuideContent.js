@@ -60,7 +60,7 @@ export const RULES_SECTIONS = [
     {
         title: 'Double Down',
         bullets: [
-            'Double Down is only available in the first betting round.',
+            'Double Down is only available in round 2, after the first community card.',
             'A Double Down posts the required double-down amount and gives the player a second private card instead of waiting for community-card improvement.',
             'After doubling down, the player total is locked.',
             'A doubled-down player cannot raise later, but may still be required to call or fold if betting reopens.',
@@ -133,7 +133,7 @@ export const HOW_TO_PLAY_SECTIONS = [
     {
         title: '5. Use Double Down carefully',
         bullets: [
-            'Double Down is only offered in the first betting round.',
+            'Double Down is only offered in round 2, after the first community card.',
             'It gives you a second private card and locks your total.',
             'After doubling down you cannot raise, but you may still need to call or fold if someone else reopens betting.',
         ],
@@ -178,7 +178,7 @@ export const GUEST_HELP_HOW_TO_PLAY_SECTIONS = [
         title: 'Locked hands',
         bullets: [
             'Standing stops future community cards from counting for you.',
-            'Double Down is first-round only and locks your total after a second private card.',
+            'Double Down is offered in round 2, after the first community card, and locks your total after a second private card.',
             'Standing or doubled-down players can still face call-or-fold decisions.',
         ],
     },
@@ -222,7 +222,7 @@ export const GUEST_HELP_RULES_SECTIONS = [
     {
         title: 'Special rules',
         bullets: [
-            'Double Down is first-round only and gives a second private card.',
+            'Double Down is offered in round 2, after the first community card, and gives a second private card.',
             'Standing and Double Down both lock your total.',
             'Locked players can still call or fold if later betting pressure reaches them.',
             'Raises may be blocked when an active opponent is all-in.',
