@@ -1,6 +1,7 @@
 import React from 'react';
 
 const outlines = {
+    'lobby-community': <><circle cx='9' cy='7' r='3' /><path d='M3 21v-3a6 6 0 0 1 12 0v3M16 4a3 3 0 0 1 0 6M18 13a5 5 0 0 1 3 5v3' /></>,
     'lobby-live-tables': <path d='m8 4 12 8-12 8Z' />,
     'lobby-how-to-play': <><path d='M12 5v16M12 5C9 3 5 3 2 4v15c3-1 7-1 10 2 3-3 7-3 10-2V4c-3-1-7-1-10 1Z' /></>,
     'lobby-missions': <><rect x='3' y='8' width='18' height='4' rx='1' /><path d='M5 12v9h14v-9M12 8v13M12 8H7.5A2.5 2.5 0 1 1 10 5.5L12 8Zm0 0h4.5A2.5 2.5 0 1 0 14 5.5L12 8Z' /></>,

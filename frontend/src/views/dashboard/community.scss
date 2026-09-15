@@ -1,0 +1,12 @@
+body .community-page {
+    &__intro { font-size: 18px; line-height: 1.5; color: var(--ui-text-muted); margin: 0 12px 18px; }
+    &__shortcuts { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 12px 20px; a { display: flex; align-items: center; min-height: 44px; padding: 8px 12px; border: 1px solid var(--ui-border); color: var(--ui-gold-light); background: var(--ui-surface); font-size: 16px; } }
+    &__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; padding: 0 12px 18px; }
+    section { min-width: 0; padding: 20px; background: var(--ui-surface); border-top: 2px solid var(--ui-gold-dark); scroll-margin-top: 100px; }
+    h3 { font-size: 25px; color: var(--ui-gold-light); margin: 0 0 10px; }
+    section p { font-size: 18px; line-height: 1.45; color: var(--ui-text); margin: 0 0 14px; }
+    section a { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 44px; padding: 9px 0; color: var(--ui-gold-light); font-size: 17px; text-decoration: underline; }
+    &__status { display: block; color: var(--ui-text-muted); font-size: 16px; padding: 10px 0; }
+    a:focus-visible { outline: 2px solid var(--ui-focus); outline-offset: 3px; }
+    @media (max-width: 650px) { &__grid { grid-template-columns: 1fr; } }
+}

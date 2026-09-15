@@ -17,6 +17,7 @@
 ## Mandatory Runtime Rule
 
 - The user explicitly instructed: **never touch the game**. App design/theme changes must exclude gameplay, its table, backgrounds, controls and mechanics. Keep app theme styles behind the non-game route marker; do not alter shared game tokens or assets.
+- Specific exception subsequently authorised on 15 September: correct mobile table/player seating and remove the table/background adjuster controls on 21UCD. This does not authorise game-theme or mechanics changes.
 
 - Never use `localhost` or locally started host services for this project.
 - Always use the Docker-based services and the configured local Mongo server.

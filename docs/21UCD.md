@@ -38,6 +38,14 @@ Before deploying, system journals were archived locally as `.codex-runtime/21ucd
 
 ## Isolation
 
+### Community and portrait-phone seating - 15 September
+
+The bottom navigation's external BSG Hub button is replaced by a Community tab. `/mobile/community` opens it directly. Sections cover socials, BSG contact, issue reporting, jobs, notices and leaderboards. Contact/report/careers links use the existing `bigslickgames@gmail.com` support address. Facebook profile `61576097674557` was verified against the official `https://bigslickgames.com/socials.html` directory, which is also linked. No job listings, notices or 21 Hold'em ranking API are configured; those sections explicitly show their empty/pending state. BSG Games and player stats remain reachable from Community.
+
+The user specifically authorised correcting mobile seating and removing both in-game adjusters after the earlier instruction to leave gameplay untouched. The original table/background artwork and mechanics are preserved. Portrait-phone table geometry now accounts for the actual canvas bounds and parent transform; all eight HTML player seats share its anchors. Short screens reserve room above the table for the pot. Old desktop/landscape positioning is restored when leaving the phone portrait breakpoint. Both adjuster components are no longer mounted. The source layout test covers 320px, 390px and 430px phones; a mocked browser inspection fills all eight seats without connecting to live tables or changing accounts.
+
+Release: `/var/www/html/releases/21ucd-community-seating-20260915/build`; previous mobile release: `21ucd-blue-gold-20260915`. Docker build passed. Production-preview checks passed for Community routing/navigation/links and eight occupied seats, revealed cards, blind badges and action-label bounds on default and Riverboat artwork. Deployment verified the desktop index checksum unchanged.
+
 ### Deep blue and gold app theme - 15 September
 
 Default app pages now use midnight-blue backgrounds, blue panels and gold highlights. Saved custom palettes are retained, and Black & Gold remains a preset. Theme styling is scoped to `body[data-site-theme]`, which is removed before gameplay renders. Global game tokens, game source and artwork were not edited. Eight tests passed, including app-to-game navigation, return to the lobby and direct game links with saved theme settings. Fourteen production-preview app routes passed visual/heading/navigation colour checks.

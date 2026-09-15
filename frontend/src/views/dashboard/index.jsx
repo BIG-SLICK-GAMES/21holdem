@@ -3,6 +3,7 @@ import { loadStripe } from '@stripe/stripe-js';
 import { createPortal } from 'react-dom';
 import LobbyBannerCarousel from './LobbyBannerCarousel';
 import BottomNavIcon from './BottomNavIcon';
+import Community from './Community';
 import LearnCards from './tutorial/LearnCards';
 import iconLobby from '../../assets/images/icons/lobby-menu/live-tables.png';
 import iconPrivate from '../../assets/images/icons/lobby-menu/private-table.png';
@@ -27,7 +28,6 @@ import CosmeticShop from 'shared/components/CosmeticShop';
 import useAuthToken from 'shared/hooks/useAuthToken';
 import { DEFAULT_PROFILE_BANNER, getAvatarImageSrc } from 'shared/constants/builtInAvatars';
 import { getCookie, ReactToastify } from 'shared/utils';
-import { getBigSlickGamesUrl } from 'views/auth/authDestination';
 import dailyRewardsLobbyBackground from '../../assets/images/bg/daily_rewards_bg.webp';
 import dailyRewardsLightsVideo from '../../assets/videos/daily_rewards_lights.mp4';
 import liveTablesImage from '../../assets/images/bg/live_tables_lobby.webp';
@@ -86,7 +86,7 @@ function sortTablesByPriority(a, b) {
 }
 
 const DEFAULT_LOBBY_TAB_ID = 'lobby-live-tables';
-const LOBBY_TAB_IDS = ['lobby-live-tables', 'lobby-how-to-play', 'lobby-bsg-games', 'lobby-missions', 'lobby-private-table', 'lobby-player-profile', 'lobby-shop', 'lobby-settings'];
+const LOBBY_TAB_IDS = ['lobby-live-tables', 'lobby-how-to-play', 'lobby-bsg-games', 'lobby-missions', 'lobby-private-table', 'lobby-community', 'lobby-player-profile', 'lobby-shop', 'lobby-settings'];
 const ONBOARDING_STORAGE_KEY = '21holdem:onboarding:v1';
 const TABLE_SEAT_COLORS = ['#d4af6a', '#58c7ff', '#ff6b8a', '#7ee081', '#c38cff', '#ffb15c', '#5eead4', '#f7e36b', '#9bb6ff'];
 const LAUNCH_3001_URL = 'https://launch3001.netlify.app';
@@ -640,6 +640,7 @@ const Dashboard = () => {
                 '--dashboard-theme-accent-rgb': '174, 210, 255',
             },
         },
+        { id: 'lobby-community', label: 'Community', iconSrc: bigSlickGamesIcon, kind: 'tab' },
     ]), []);
     const aMenuNavItems = useMemo(() => (
         aQuickNavItems.filter((item) => !['lobby-bsg-games', 'lobby-player-profile', 'lobby-shop', 'lobby-settings'].includes(item.id))
@@ -712,10 +713,6 @@ const Dashboard = () => {
         if (oNextItem) {
             handleQuickNavSelect(oNextItem);
         }
-    };
-
-    const handleReturnToHub = () => {
-        window.location.assign(getBigSlickGamesUrl());
     };
 
     const handlePrivateTablesClick = () => {
@@ -1465,10 +1462,6 @@ const Dashboard = () => {
                             );
                         })}
                         </div>
-                        <button type='button' className='dashboard-hub__tab-menu-button dashboard-hub__tab-menu-button--hub' onClick={handleReturnToHub}>
-                            <BottomNavIcon name='hub' />
-                            <span className='dashboard-hub__tab-menu-label'>BSG Hub</span>
-                        </button>
                     </nav>
     );
 
@@ -1560,6 +1553,16 @@ const Dashboard = () => {
                                 hidden={sActiveTab !== 'lobby-how-to-play'}
                             >
                                 {renderHowToPlayPanel()}
+                            </section>
+
+                            <section
+                                id='lobby-community-panel'
+                                role='tabpanel'
+                                aria-labelledby='lobby-community-tab'
+                                className={`dashboard-hub__tab-panel${sActiveTab === 'lobby-community' ? ' is-active' : ''}`}
+                                hidden={sActiveTab !== 'lobby-community'}
+                            >
+                                <Community />
                             </section>
 
                             <section

@@ -15,8 +15,6 @@ import diamondImage from '../../assets/images/card/diamond.png';
 import heartImage from '../../assets/images/card/heart.png';
 import spadeImage from '../../assets/images/card/spades.png';
 import GameActionOverlay from "./GameActionOverlay";
-import GameLayoutOverlay from "./GameLayoutOverlay";
-import GameBackgroundAdjuster from "./GameBackgroundAdjuster";
 import { hideGameActionOverlay } from "../../scripts/gameActionOverlayBridge";
 import { getGameAvatar } from "../../shared/constants/builtInAvatars";
 import gameElementControls from "./gameElementControls.json";
@@ -24,6 +22,7 @@ import profileLayoutControls from "./profileLayoutControls.json";
 import { getProfile } from "../../query/profile.query";
 import { getTables, joinTable } from "../../query/gameTable.query";
 import { getCookie, ReactToastify } from "../../shared/utils";
+import { mobileTableLayout } from '../../scripts/mobileTableLayout';
 
 installPhaserAudioContextGuard(Phaser);
 
@@ -407,7 +406,59 @@ function Game({ isPausedExternally = false }) {
         game.scene.add('Boot', Boot, true, data);
         phaserGameRef.current = game;
 
+        let lastLayoutKey = '';
+        let nextLayoutCheck = 0;
+        const mobilePortrait = window.matchMedia('(max-width: 767px) and (orientation: portrait)');
+        const alignMobileSeats = () => {
+            if (performance.now() < nextLayoutCheck) return;
+            nextLayoutCheck = performance.now() + 250;
+            // The requested correction is limited to phone portrait play.
+            if (!mobilePortrait.matches) {
+                if (lastLayoutKey) {
+                    game.scene.getScene('Level')?.applyGameUILayout();
+                    gameRef.current?.closest('.game-table-page__row--middle')?.querySelector('.game-table-page__seat-overlay')?.classList.remove('is-auto-positioned');
+                    lastLayoutKey = '';
+                }
+                return;
+            }
+            const table = game.scene.getScene('Level')?.table;
+            const stage = gameRef.current?.closest('.game-table-page__row--middle');
+            if (!table || !stage || !game.canvas) return;
+            const canvas = game.canvas.getBoundingClientRect();
+            const area = stage.getBoundingClientRect();
+            if (!canvas.width || !canvas.height || !area.height) return;
+            const key = [canvas.x, canvas.y, canvas.width, canvas.height, area.width, area.height, table.x, table.y, table.scaleX, table.scaleY].join(',');
+            if (key === lastLayoutKey) return;
+            const layout = mobileTableLayout({ width: area.width, height: area.height, canvasWidth: canvas.width, imageRatio: table.height / table.width });
+            const sx = canvas.width / game.scale.gameSize.width;
+            const sy = canvas.height / game.scale.gameSize.height;
+            const worldX = (area.x + layout.left + layout.width / 2 - canvas.x) / sx;
+            const worldY = (area.y + layout.top + layout.height / 2 - canvas.y) / sy;
+            const point = table.parentContainer?.getWorldTransformMatrix().applyInverse(worldX, worldY) || { x: worldX, y: worldY };
+            table.setPosition(point.x, point.y);
+            table.setScale(layout.width / sx / table.width, layout.height / sy / table.height);
+            const level = game.scene.getScene('Level');
+            if (level.container_pot_amount && level.oGameUILayoutBase) {
+                level.container_pot_amount.y = level.oGameUILayoutBase.potY + (level.oGameUILayout?.potOffsetY || 0);
+            }
+            if (level.container_pot_amount && level.oPotAmount && area.height < 500) {
+                const pot = level.oPotAmount.getBounds();
+                const targetY = area.y + layout.top - 45;
+                level.container_pot_amount.y += (targetY - canvas.y - (pot.y + pot.height / 2) * sy) / sy;
+                level.registerFXOverlayPotAnchor();
+            }
+            const rail = stage.querySelector('.game-table-page__seat-overlay');
+            rail?.classList.add('is-auto-positioned');
+            Object.entries(layout.seats).forEach(([seat, point]) => {
+                rail?.style.setProperty(`--seat-${seat}-x`, `${point.x}px`);
+                rail?.style.setProperty(`--seat-${seat}-y`, `${point.y}px`);
+            });
+            lastLayoutKey = [canvas.x, canvas.y, canvas.width, canvas.height, area.width, area.height, table.x, table.y, table.scaleX, table.scaleY].join(',');
+        };
+        game.events.on(Phaser.Core.Events.POST_RENDER, alignMobileSeats);
+
         return () => {
+            game.events.off(Phaser.Core.Events.POST_RENDER, alignMobileSeats);
             hideGameActionOverlay();
             window.dispatchEvent(new CustomEvent('bsg:profile-refresh'));
             phaserGameRef.current = null;
@@ -438,8 +489,6 @@ function Game({ isPausedExternally = false }) {
 
     return (
         <div className={`game-table-page game-shell game-shell--${layoutMode}`} style={gameElementStyle}>
-            <GameBackgroundAdjuster />
-            <GameLayoutOverlay />
             <div className='game-table-page__overlay-layer'>
                 <GameActionOverlay isPaused={isPausedExternally} />
             </div>

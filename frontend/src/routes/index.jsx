@@ -56,6 +56,7 @@ function AllRoutes() {
                         )
                     })}
                     <Route path='/' element={<RootRedirect />} />
+                    <Route path='/community' element={<Navigate to='/lobby?tab=lobby-community' replace />} />
                     <Route path='*' element={<NotFound />} />
                 </Routes>
             </BrowserRouter>
