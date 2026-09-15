@@ -1,4 +1,4 @@
-// Custom site colours are opt-in and the marker is removed before gameplay renders.
+// App-only theme. The route runtime removes this marker before gameplay renders.
 body[data-site-theme] {
     background-color: var(--ui-blue-deep); color: var(--ui-text);
     // One owner for the page background, including after routes/styles load.
@@ -28,6 +28,65 @@ body[data-site-theme] {
         background-color: var(--ui-surface) !important;
     }
     .dashboard-hub { --ui-divider: var(--ui-border); }
+}
+
+// Scope every finish to the app marker; shared game tokens stay unchanged.
+body[data-site-theme] {
+    #root { background: var(--ui-blue-deep); }
+    .dashboard-hub {
+        --dashboard-theme-rgb: var(--ui-blue-rgb);
+        --dashboard-theme-soft-rgb: var(--ui-blue-deep-rgb);
+        --dashboard-theme-accent-rgb: var(--ui-gold-rgb);
+        color: var(--ui-text);
+    }
+    .dashboard-hub__bokeh { opacity: .45; }
+    :is(.lobby-topbar, .dashboard-hub__tab-menu) {
+        background: var(--site-navigation) !important;
+        box-shadow: 0 0 24px #0005, inset 0 -1px rgba(var(--ui-gold-rgb), .35);
+    }
+    .dashboard-hub__tab-menu { box-shadow: 0 -1px 0 var(--ui-gold-dark), 0 -8px 24px #0005; }
+    .dashboard-hub__tab-menu.ui-button-row .dashboard-hub__tab-menu-button[class] {
+        color: var(--ui-text-muted);
+        &.is-active { background: var(--ui-gold); color: var(--ui-gold-ink); }
+    }
+    .play-heading {
+        background: linear-gradient(110deg, rgba(var(--ui-blue-rgb), .85), transparent);
+        border-bottom-color: var(--ui-gold-dark);
+        color: var(--ui-gold);
+        h1, h2 { color: var(--ui-gold-light); }
+    }
+    :is(.play-heading__count, .dashboard-hub .play-table-details) { color: var(--ui-text-muted); }
+    :is(.dashboard-hub__table-card, .dashboard-hub__store-item, .dashboard-hub__profile-stat):hover {
+        background: rgba(var(--ui-blue-rgb), .5) !important;
+    }
+    :is(.profile, .transactions, .shop-chip-page, .daily-rewards-page, .settings-detail, .cms-page) {
+        color: var(--ui-text);
+    }
+    :is(.daily-rewards-calendar__day, .daily-rewards-page__calendar-shell, .bsg-auth__panel, .modal-content) {
+        background: var(--ui-surface-gradient) !important;
+    }
+    :is(.lobby-topbar__auth-input, input, textarea)::placeholder { color: var(--ui-text-muted); opacity: 1; }
+    :is(.learn-deck, .learn-card) {
+        --learn-gold: var(--ui-gold);
+        --learn-ink: var(--ui-text);
+        --learn-muted: var(--ui-text-muted);
+        --learn-surface: var(--ui-surface);
+    }
+    .learn-card {
+        background: linear-gradient(145deg, var(--ui-blue), var(--ui-surface) 45%, var(--ui-blue-deep));
+        border-color: var(--ui-border);
+    }
+    .learn-card__header > b { color: var(--ui-gold); }
+    .learn-deck :is(.learn-action, .learn-choice button, .learn-quiz button, .learn-deck__transport button) {
+        background: var(--ui-blue); color: var(--ui-gold-light); border-color: var(--ui-border);
+        &[aria-pressed='true'], &.is-primary { background: var(--ui-gold); color: var(--ui-gold-ink); }
+    }
+    .learn-guided__toggle { background: var(--ui-surface); color: var(--ui-gold); border-color: var(--ui-border); small { color: var(--ui-text-muted); } }
+    .learn-deck__transport > span { color: var(--ui-text-muted); }
+    .learn-scoreboard .is-winner, .learn-equation__result { background: var(--ui-gold); color: var(--ui-gold-ink); }
+    .learn-takeaway, .learn-feedback { border-color: var(--ui-gold-dark); }
+    .learn-rounds span { color: var(--ui-text-muted); border-color: var(--ui-border); }
+    .learn-deck__progress i { background: var(--ui-blue); &.is-read { background: var(--ui-border); } &.is-current { background: var(--ui-gold); } }
 }
 .site-theme-editor {
     &__colours { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 0 24px; }

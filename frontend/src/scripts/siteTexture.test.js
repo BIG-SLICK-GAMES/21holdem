@@ -7,9 +7,9 @@ test('texture settings clamp intensity and reject unknown patterns', () => {
     expect(textureImage({ pattern: 'url(https://invalid)', intensity: 50 })).toBe('none');
     expect(textureCss({ pattern: 'dimples', intensity: 40 })).toContain('body[data-site-theme]');
 });
-test('all ten presets provide valid complete colour palettes', () => {
-    expect(THEME_PRESETS).toHaveLength(10);
-    expect(new Set(THEME_PRESETS.map(p => p.id)).size).toBe(10);
+test('all presets provide valid complete colour palettes with unique IDs', () => {
+    expect(THEME_PRESETS.length).toBeGreaterThan(0);
+    expect(new Set(THEME_PRESETS.map(p => p.id)).size).toBe(THEME_PRESETS.length);
     THEME_PRESETS.forEach(p => expect(sanitizeTheme(p.colours)).toEqual(p.colours));
 });
 

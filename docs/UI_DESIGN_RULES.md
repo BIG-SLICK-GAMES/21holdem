@@ -1,5 +1,11 @@
 # Shared UI design rules
 
+## 21UCD app theme - 15 September 2026
+
+The app now defaults to deep blue with gold highlights. App palette values live in `src/scripts/siteTheme.js`, with finishes in `src/assets/scss/components/_site-theme.scss`. Every app theme rule is scoped to `body[data-site-theme]`. `SiteThemeRuntime` removes that marker and its dynamic variables on all `/game` routes before paint. The user explicitly instructed never to touch gameplay: preserve its existing tokens, artwork, backgrounds, controls and mechanics. The legacy global tokens described below remain unchanged for that reason. Existing custom app palettes remain available through Theme Adjuster.
+
+Default colours: midnight background `#07152d`, blue panels `#10294b`, navigation `#091c38`, secondary controls `#173a63`, gold `#edc66f`, light text `#f3f6fc` and muted text `#bbcce2`. Keep existing geometry, artwork and navigation behavior.
+
 The application UI uses one visual system. Change tokens in
 `frontend/src/assets/scss/helper/_ui-tokens.scss`, rather than inventing page-specific colours or shapes.
 The shared component skin is `frontend/src/assets/scss/components/_ui-system.scss`.

@@ -6,7 +6,8 @@ const palette = (background, surface, accent, accentLight, accentDark, text, mut
     field: background, bokeh: accent, focus: accentLight,
 });
 export const THEME_PRESETS = [
-    { id: 'black-gold', name: 'Black & Gold', colours: { ...DEFAULT_THEME } },
+    { id: 'blue-gold', name: 'Deep Blue & Gold', colours: { ...DEFAULT_THEME } },
+    { id: 'black-gold', name: 'Black & Gold', colours: palette('#030303', '#17120d', '#edbd61', '#ffe6a1', '#c88b2c', '#fff3d8', '#c9bca4', '#826338') },
     { id: 'midnight', name: 'Midnight Blue', colours: palette('#060c1a', '#12233e', '#86baff', '#c4ddff', '#4776b8', '#edf4ff', '#b0bed4', '#3e608a') },
     { id: 'emerald', name: 'Emerald', colours: palette('#04120e', '#102b21', '#64dca9', '#b6f3d8', '#329269', '#edfff6', '#afcdbf', '#3e7861') },
     { id: 'ruby', name: 'Ruby', colours: palette('#17070b', '#32141d', '#ff8299', '#ffc4cf', '#b34b63', '#fff0f3', '#d1b0b8', '#844554') },

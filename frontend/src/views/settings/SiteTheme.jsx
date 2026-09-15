@@ -21,7 +21,8 @@ export function SiteThemeRuntime() {
         window.addEventListener('storage', storage);
         return () => { window.removeEventListener(THEME_EVENT, change); window.removeEventListener('storage', storage); };
     }, []);
-    const enabled = (Boolean(theme) || hasTexture(texture)) && isSiteThemeRoute(pathname);
+    // App colours are removed before gameplay paints, including direct game links.
+    const enabled = isSiteThemeRoute(pathname);
     useLayoutEffect(() => {
         if (enabled) document.body.setAttribute('data-site-theme', 'custom');
         else document.body.removeAttribute('data-site-theme');

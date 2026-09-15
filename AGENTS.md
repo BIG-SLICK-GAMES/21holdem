@@ -16,6 +16,8 @@
 
 ## Mandatory Runtime Rule
 
+- The user explicitly instructed: **never touch the game**. App design/theme changes must exclude gameplay, its table, backgrounds, controls and mechanics. Keep app theme styles behind the non-game route marker; do not alter shared game tokens or assets.
+
 - Never use `localhost` or locally started host services for this project.
 - Always use the Docker-based services and the configured local Mongo server.
 - No exceptions. Do not start, test against, or recommend `localhost` URLs, local host ports, or non-Docker runtime paths.

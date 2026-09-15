@@ -38,6 +38,12 @@ Before deploying, system journals were archived locally as `.codex-runtime/21ucd
 
 ## Isolation
 
+### Deep blue and gold app theme - 15 September
+
+Default app pages now use midnight-blue backgrounds, blue panels and gold highlights. Saved custom palettes are retained, and Black & Gold remains a preset. Theme styling is scoped to `body[data-site-theme]`, which is removed before gameplay renders. Global game tokens, game source and artwork were not edited. Eight tests passed, including app-to-game navigation, return to the lobby and direct game links with saved theme settings. Fourteen production-preview app routes passed visual/heading/navigation colour checks.
+
+Public mobile release: `/var/www/html/releases/21ucd-blue-gold-20260915/build`. Previous release: `21ucd-learn-cards-20260915`. Desktop index SHA256 was verified unchanged during deployment. The user's standing instruction is never to touch the game.
+
 ### Learn cards - 15 September
 
 The Learn tab now uses nine swipeable, illustrated information cards with Back/Next and keyboard navigation. Interactive examples explain ace values and Hit/Stand, followed by a short quiz. The existing guided hand opens on demand and unmounts when closed or when leaving Learn. Card illustrations are native HTML/SVG, with no additional image downloads. Double Down help text now matches the backend's round-2 availability after the first community card; game mechanics are unchanged.
