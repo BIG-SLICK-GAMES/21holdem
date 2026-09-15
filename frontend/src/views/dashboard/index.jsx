@@ -1,4 +1,5 @@
 import PageHeading from 'shared/components/PageHeading';
+import { playInformation } from '../../scripts/playInformation';
 import { loadStripe } from '@stripe/stripe-js';
 import { createPortal } from 'react-dom';
 import LobbyBannerCarousel from './LobbyBannerCarousel';
@@ -734,7 +735,8 @@ const Dashboard = () => {
         <>
             <div className='dashboard-hub__tab-body dashboard-hub__tab-body--live'>
 
-                <PageHeading title="Play 21 Hold'em" eyebrow='Live tables' icon='cards' meta={isDataTableLoading && !aVisibleTables.length ? 'Loading tables' : `${aVisibleTables.length} ${aVisibleTables.length === 1 ? 'table' : 'tables'}`} />
+                <PageHeading title="Play 21 Hold'em" eyebrow='Live tables' icon='cards' meta={isDataTableLoading && !aVisibleTables.length ? 'Loading tables' : `${aVisibleTables.length} ${aVisibleTables.length === 1 ? 'table' : 'tables'}`}
+                    information={playInformation({ signedIn: bIsSignedIn, chips: profileData?.nChips, tables: aVisibleTables, loading: isDataTableLoading })} />
 
                 {aVisibleTables.length ? (
                     <ul className='dashboard-hub__table-grid' aria-label='Available tables'>

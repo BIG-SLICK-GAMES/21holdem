@@ -132,7 +132,6 @@ export default function LearnCards({ active, onPlay }) {
     };
 
     return <section className='learn-deck' aria-label="Learn 21 Hold'em">
-        <p className='learn-deck__intro'>One idea at a time. Swipe to explore, or use Back and Next.</p>
         <div className='learn-deck__track' ref={track} tabIndex={0} role='region' aria-roledescription='carousel' aria-label='How to play cards' onScroll={onScroll} onKeyDown={event => {
             if (event.target !== event.currentTarget || !['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
             event.preventDefault();

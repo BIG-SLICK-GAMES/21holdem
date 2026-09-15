@@ -97,6 +97,17 @@ body[data-site-theme] {
 
 body[data-site-theme] {
     .community-page section { border: 0; }
+    .page-information {
+        margin: 0 12px 20px;
+        padding: 14px 16px;
+        background: rgba(var(--ui-blue-deep-rgb), .88);
+        color: var(--ui-text-muted);
+        border: 0;
+        border-radius: 12px;
+        font-size: 18px;
+        line-height: 1.5;
+        overflow-wrap: anywhere;
+    }
     .dashboard-hub .ui-button-row { border: 0 !important; }
     .dashboard-hub .ui-button-row > :is(button, a)[class] { border: 0 !important; }
     .lobby-advertising__line { background: rgba(var(--ui-silver-rgb), .15); }

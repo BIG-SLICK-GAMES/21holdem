@@ -6,7 +6,6 @@ import './community.scss';
 export default function Community() {
     return <div className='dashboard-hub__tab-body community-page'>
         <PageHeading title='Community' eyebrow='Big Slick Games' icon='contact' />
-        <p className='community-page__intro'>Your place to connect, get help and see what is happening at BSG.</p>
         <nav className='community-page__shortcuts' aria-label='Community sections'>
             {['Socials', 'Contact', 'Issues', 'Jobs', 'Noticeboard', 'Leaderboards'].map(label => <a key={label} href={`#community-${label.toLowerCase()}`}>{label}</a>)}
         </nav>
