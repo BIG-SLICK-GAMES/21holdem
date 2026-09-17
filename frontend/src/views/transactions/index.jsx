@@ -99,7 +99,7 @@ const Transactions = ({ embedded = false }) => {
         <div className="transactions">
             <div className="transactions-container">
                 {!embedded && <PageHeading title='Transactions' eyebrow='Your account' icon='receipt' as='h1' />}
-                {!bIsSignedIn && <p><Link to='/login'>Sign in</Link> to view your transactions.</p>}
+                {!bIsSignedIn && <p><Link to='/lobby?signin=1'>Sign in</Link> to view your transactions.</p>}
                 <DataTable
                     columns={columns}
                     showEntriesCount={true}

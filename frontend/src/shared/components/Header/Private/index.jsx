@@ -33,7 +33,7 @@ const HeaderPrivate = () => {
                 ReactToastify(error?.response?.data?.message, 'error', 'profileData');
             }
             removeCookie('sAuthToken');
-            navigate('/login');
+            navigate('/lobby?signin=1');
         },
     });
 

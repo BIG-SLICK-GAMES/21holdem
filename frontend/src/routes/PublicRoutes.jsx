@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { Navigate, Outlet, useLocation } from 'react-router-dom'
-import AuthLayout from 'layouts/auth-layout'
+import MainLayout from 'layouts/main-layout'
 import { getCookie } from 'shared/utils'
 
 function PublicRoute() {
@@ -13,10 +13,11 @@ function PublicRoute() {
   }
 
   if (token) return <Navigate to='/lobby' replace />
+  if (location.pathname === '/login') return <Outlet />
   return (
-    <AuthLayout>
+    <MainLayout>
       <Outlet />
-    </AuthLayout>
+    </MainLayout>
   )
 }
 

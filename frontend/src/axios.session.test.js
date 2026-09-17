@@ -45,3 +45,9 @@ test('a temporary rewards server failure preserves the session', async () => {
     await expect(onError(error)).rejects.toBe(error);
     expect(mockRemoveToken).not.toHaveBeenCalled();
 });
+
+test('failed header sign-in credentials do not clear an existing session', async () => {
+    const error = { response: { status: 401 }, config: { url: '/api/v1/auth/login', headers: { Authorization: 'current-session' } } };
+    await expect(onError(error)).rejects.toBe(error);
+    expect(mockRemoveToken).not.toHaveBeenCalled();
+});

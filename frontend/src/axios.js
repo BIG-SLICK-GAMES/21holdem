@@ -105,14 +105,14 @@ Axios.interceptors.response.use(
         const basePath = (process.env.PUBLIC_URL || '').replace(/\/$/, '');
         const browserPath = typeof window !== 'undefined' ? window.location?.pathname || '' : '';
         const currentPath = basePath && browserPath.startsWith(`${basePath}/`) ? browserPath.slice(basePath.length) : browserPath;
-        const isAuthRoute = currentPath === '/login' || currentPath === '/register';
+        const isAuthRoute = currentPath === '/login' || currentPath === '/register' || /\/auth\/(login|register)(?:\?|$)/.test(err.config?.url || '');
         const isGuestSafeRoute = currentPath === '/' || currentPath === '/lobby';
         if (err?.code?.includes?.("ERR_NETWORK")) {
             ReactToastify("Network Error", "error");
             if (!isAuthRoute && !isGuestSafeRoute) {
                 removeToken();
                 setTimeout(() => {
-                    window.location.href = `${basePath}/login`;
+                    window.location.href = `${basePath}/lobby?signin=1`;
                 }, 2200);
             }
             return Promise.reject(err);

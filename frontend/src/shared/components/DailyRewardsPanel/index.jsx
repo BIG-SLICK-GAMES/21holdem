@@ -72,7 +72,7 @@ export default function DailyRewardsPanel({ embedded = false }) {
     const prizes = data?.prizes || [];
     const unavailable = !isLoading && !isError && !prizes.length;
     const claim = () => {
-        if (!signedIn && !testMode) { navigate('/login'); return; }
+        if (!signedIn && !testMode) { navigate('/lobby?signin=1'); return; }
         if (claimed || claimedRef.current || opening || mutation.isLoading || isLoading || isError || unavailable) return;
         claimedRef.current = true;
         setOpening(true);

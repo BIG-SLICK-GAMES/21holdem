@@ -225,7 +225,7 @@ const Dashboard = () => {
 
     const joinTableMutate = async (sTableId) => {
         if (!bIsSignedIn) {
-            navigate('/login');
+            navigate('/lobby?signin=1');
             return;
         }
         if (!sTableId || bIsJoiningTable) return;
@@ -259,7 +259,7 @@ const Dashboard = () => {
     const handleJoinTable = async (table) => {
         if (joinTableLoading) return;
         if (!bIsSignedIn) {
-            navigate('/login');
+            navigate('/lobby?signin=1');
             return;
         }
 
@@ -717,7 +717,7 @@ const Dashboard = () => {
     };
 
     const handlePrivateTablesClick = () => {
-        if (!bIsSignedIn) { navigate('/login'); return; }
+        if (!bIsSignedIn) { navigate('/lobby?signin=1'); return; }
         if (!bPrivateTablesUnlocked) {
             ReactToastify(MEMBERS_AREA_APPROVAL_MESSAGE, 'error');
             return;
@@ -726,7 +726,7 @@ const Dashboard = () => {
     };
 
     const handleBuyShopItem = (item) => {
-        if (!bIsSignedIn) { navigate('/login'); return; }
+        if (!bIsSignedIn) { navigate('/lobby?signin=1'); return; }
         if (!item?.nPrice) return;
         mutateBuyChips({ nPrice: item.nPrice });
     };
@@ -1211,7 +1211,7 @@ const Dashboard = () => {
                     type='button'
                     className='dashboard-hub__desktop-cta dashboard-hub__desktop-cta--primary'
                     onClick={() => {
-                        if (!bIsSignedIn) { navigate('/login'); return; }
+                        if (!bIsSignedIn) { navigate('/lobby?signin=1'); return; }
                         if (!bTodayRewardClaimed) mutateDailyRewardsClaimed();
                     }}
                     disabled={bIsSignedIn && (bTodayRewardClaimed || isClaimingReward)}

@@ -39,7 +39,7 @@ function PrivateRoute() {
         )
     }
 
-    if (!token) return <Navigate to='/lobby' replace />
+    if (!token) return <Navigate to='/lobby?signin=1' replace />
 
     return (
         <MainLayout>

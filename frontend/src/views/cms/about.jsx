@@ -92,7 +92,7 @@ const About = () => {
                             Create an account or sign in with the unified BSG login before joining the table.
                         </p>
                         <div className="about-actions">
-                            <Link to="/login" className="about-action primary">Sign In</Link>
+                            <Link to="/lobby?signin=1" className="about-action primary">Sign In</Link>
                             <Link to="/register" className="about-action secondary">Create Account</Link>
                         </div>
                     </div>

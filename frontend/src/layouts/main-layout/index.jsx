@@ -1,4 +1,4 @@
-import React, { Suspense, useEffect, useState } from 'react'
+import React, { Suspense, useEffect, useRef, useState } from 'react'
 import PropTypes from 'prop-types'
 // import Breadcrumbs from '../../shared/components/'
 import useMediaQuery from '../../shared/hooks/useMediaQuery'
@@ -27,6 +27,11 @@ function MainLayout({ children }) {
     const isGamePlay = getPath === '/game'
     const bIsSignedIn = Boolean(useAuthToken())
     const [sLoginError, setLoginError] = useState('')
+    const signInField = useRef(null)
+    const signInRequested = new URLSearchParams(location.search).get('signin') === '1'
+    useEffect(() => {
+        if (signInRequested && !bIsSignedIn) signInField.current?.focus()
+    }, [signInRequested, bIsSignedIn, location.key])
     const { mutate: signIn, isLoading: bSigningIn } = useMutation(login, {
         onSuccess: (response) => {
             const token = response?.data?.data?.authorization || response?.headers?.authorization || response?.headers?.Authorization
@@ -130,7 +135,7 @@ function MainLayout({ children }) {
                     <div className='game-room-art' />
                 </div>
             ) : <div className='main-layout-background' />}
-            {!isGamePlay && !isLobby && !isSettingsPage && <HeaderPrivate />}
+            {!isGamePlay && !isLobby && !isSettingsPage && getPath !== '/register' && <HeaderPrivate />}
             {!isGamePlay && <div className='lobby-topbar'>
                     <Link to='/lobby' className='lobby-topbar__logo' aria-label="21 Hold'em home">
                         <img src={lobbyChipLogo} alt="21 Hold'em" className='lobby-topbar__logo-img' />
@@ -139,12 +144,13 @@ function MainLayout({ children }) {
                         {!bIsSignedIn && (
                             <>
                             <form className='lobby-topbar__login lobby-topbar__login--connected' onSubmit={handleTopbarSignIn} aria-label='Sign in to your account'>
-                                <input name='identifier' type='text' autoComplete='username' placeholder='Email or username' aria-label='Email or username' required disabled={bSigningIn} />
+                                <input ref={signInField} name='identifier' type='text' autoComplete='username' placeholder='Email or username' aria-label='Email or username' required disabled={bSigningIn} />
                                 <input name='password' type='password' autoComplete='current-password' placeholder='Password' aria-label='Password' required disabled={bSigningIn} />
                                 <button type='submit' className='lobby-topbar__auth-button lobby-topbar__auth-button--gold' disabled={bSigningIn}>{bSigningIn ? 'Signing in…' : 'Sign in'}</button>
                                 <Link to='/register' className='lobby-topbar__auth-button'>Register</Link>
                             </form>
                                 {sLoginError && <span className='lobby-topbar__login-error' role='alert'>{sLoginError}</span>}
+                                {signInRequested && !sLoginError && <span className='lobby-topbar__signin-hint' role='status'>Sign in using the fields above.</span>}
                             </>
                         )}
                         {bIsSignedIn && <>

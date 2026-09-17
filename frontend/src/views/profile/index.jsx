@@ -125,7 +125,7 @@ const Profile = () => {
 
     const handleLogout = () => {
         removeCookie('sAuthToken');
-        navigate('/login');
+        navigate('/lobby?signin=1');
     };
 
     const aSettingsItems = [
