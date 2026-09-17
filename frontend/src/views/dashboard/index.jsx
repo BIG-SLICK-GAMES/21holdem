@@ -1357,12 +1357,12 @@ const Dashboard = () => {
 
     const renderSettingsPanel = () => {
         const aSettings = [
-            { label: 'Full Profile', description: 'Change your profile picture and view your account details.', path: '/profile?from=settings' },
-            { label: 'Theme Adjuster', description: 'Customise site colours.', path: '/settings/theme' },
-            { label: 'Transactions', description: 'Review chip purchases and account activity.', path: '/settings/transactions' },
-            { label: 'How To Play', description: 'Gameplay guide and table flow.', path: '/lobby?tab=lobby-how-to-play' },
-            { label: 'Rules', description: '21 Holdem rules and table flow.', path: '/settings/rules' },
-            { label: 'Report Issue', description: 'Send feedback or flag a game problem.', path: '/settings/report-issue' },
+            { label: 'Full Profile', path: '/profile?from=settings' },
+            { label: 'Theme Adjuster', path: '/settings/theme' },
+            { label: 'Transactions', path: '/settings/transactions' },
+            { label: 'How To Play', path: '/lobby?tab=lobby-how-to-play' },
+            { label: 'Rules', path: '/settings/rules' },
+            { label: 'Report Issue', path: '/settings/report-issue' },
         ];
         const handleSettingsItemClick = (item) => {
             if (item.tabId) {
@@ -1374,16 +1374,13 @@ const Dashboard = () => {
 
         return (
             <div className='dashboard-hub__tab-body dashboard-hub__tab-body--settings'>
-                <PageHeading title='Settings' eyebrow='Make it yours' icon='settings' />
+                <PageHeading title='Settings' icon='settings' />
                 <div className='dashboard-hub__settings-card'>
-                    <p>Choose a setting to open its page.</p>
-
                     <section className='dashboard-hub__settings-section' aria-label='Settings pages'>
                         <div className='dashboard-hub__settings-option-grid dashboard-hub__settings-option-grid--advanced'>
                             {aSettings.map((item) => (
                                 <button type='button' className='dashboard-hub__settings-option' key={item.label} onClick={() => handleSettingsItemClick(item)}>
                                     <strong>{item.label}</strong>
-                                    <span>{item.description}</span>
                                 </button>
                             ))}
                         </div>

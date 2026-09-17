@@ -35,7 +35,7 @@ export default function ThemeAdjuster() {
     const [theme, setTheme] = useState(() => readTheme() || DEFAULT_THEME);
     const [texture, setTexture] = useState(readTexture);
     const updateTexture = next => { setTexture(next); setStatus(saveTexture(next) ? 'Texture saved on this device' : 'Preview only: browser storage is unavailable'); };
-    const [status, setStatus] = useState('Changes preview live and save on this device.');
+    const [status, setStatus] = useState('Changes save on this device.');
     const update = (key, value) => {
         const next = { ...theme, [key]: value };
         setTheme(next);
@@ -53,7 +53,6 @@ export default function ThemeAdjuster() {
         catch { setStatus('Copy unavailable. Your colour values are shown below.'); }
     };
     return <section className='site-theme-editor'>
-        <p>Customise the site colours. In-game colours and artwork stay unchanged.</p>
         <h2>Presets</h2>
         <div className='site-theme-editor__presets' role='group' aria-label='Theme presets'>
             {THEME_PRESETS.map(preset => <button type='button' className='site-theme-editor__preset' key={preset.id}
@@ -64,9 +63,8 @@ export default function ThemeAdjuster() {
                 <span>{preset.name}</span>
             </button>)}
         </div>
-        <p>Current theme: {activePreset?.name || 'Custom'}. You can fine-tune any colour below.</p>
+        <p>Current theme: {activePreset?.name || 'Custom'}</p>
         <h2>Background effects & textures</h2>
-        <p>Select Bokeh for softly blurred lights that slowly drift behind the page. Combine it with other textures and adjust each effect independently. Animation pauses when your device prefers reduced motion.</p>
         <button type='button' className='dashboard-hub__signin-button' onClick={() => updateTexture({ layers: Object.fromEntries(Object.entries(texture.layers).map(([key, layer]) => [key, { ...layer, enabled: false }])) })}>Plain background</button>
         <div className='site-theme-editor__presets' role='group' aria-label='Background textures'>
             {TEXTURES.map(([pattern, label]) => {
@@ -87,7 +85,7 @@ export default function ThemeAdjuster() {
                 </div>;
             })}
         </div>
-        <h2>Fine-tune colours</h2>
+        <h2>Colours</h2>
         <div className='site-theme-editor__colours'>
             {COLOURS.map(([key, label]) => <label className='site-theme-editor__colour' key={key}>
                 <span>{label}</span>
