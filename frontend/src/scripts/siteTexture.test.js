@@ -39,11 +39,28 @@ test('multiple patterns keep independent opacity and tile size after saving', ()
     localStorage.removeItem(TEXTURE_KEY);
 });
 
-test('fresh installs use mesh while explicitly saved plain backgrounds are preserved', () => {
+test('fresh installs use plain backgrounds and preserve saved choices', () => {
     localStorage.removeItem(TEXTURE_KEY);
+    expect(textureImage(readTexture())).toBe('none');
+    saveTexture({ layers: { mesh: { enabled: true, opacity: 12, scale: 100 } } });
     expect(readTexture().layers.mesh.enabled).toBe(true);
-    expect(texturePaint(readTexture()).image).toContain('radial-gradient');
     saveTexture({ layers: {} });
     expect(textureImage(readTexture())).toBe('none');
+    localStorage.removeItem(TEXTURE_KEY);
+});
+
+test('Bokeh is a persistent background effect with adjustable size and opacity', () => {
+    saveTexture({ layers: { bokeh: { enabled: true, opacity: 45, scale: 150 } } });
+    const paint = texturePaint(readTexture());
+    expect(paint.image.match(/radial-gradient/g)).toHaveLength(4);
+    expect(paint.image).toContain('--site-bokeh-rgb');
+    expect(paint.image).toContain('0.45');
+    expect(paint.size).toContain('930px 765px');
+    expect(textureCss(readTexture())).toContain('--site-texture-image:none;');
+    expect(textureCss(readTexture())).toContain('--site-bokeh-image:radial-gradient');
+    expect(textureCss(readTexture())).toContain('--site-bokeh-display:block;');
+    saveTexture({ layers: {} });
+    expect(textureImage(readTexture())).toBe('none');
+    expect(textureCss(readTexture())).toContain('--site-bokeh-display:none;');
     localStorage.removeItem(TEXTURE_KEY);
 });

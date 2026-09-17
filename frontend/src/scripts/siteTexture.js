@@ -1,16 +1,16 @@
 export const TEXTURE_KEY = '21holdem:site-texture:v1';
 export const TEXTURE_EVENT = '21holdem:site-texture-change';
-export const TEXTURES = [ ['mesh', 'Industrial mesh'], ['stripes', 'Stripes'], ['diamonds', 'Diamonds'], ['dimples', 'Dimples'] ];
+export const TEXTURES = [ ['bokeh', 'Bokeh'], ['mesh', 'Industrial mesh'], ['stripes', 'Stripes'], ['diamonds', 'Diamonds'], ['dimples', 'Dimples'] ];
 const clamp = (value, fallback, min, max) => Number.isFinite(Number(value)) ? Math.max(min, Math.min(max, Number(value))) : fallback;
 export const sanitizeTexture = input => ({ layers: Object.fromEntries(TEXTURES.map(([key]) => {
     const layer = input?.layers?.[key];
     return [key, {
         enabled: layer ? layer.enabled === true : input?.pattern === key,
-        opacity: layer ? clamp(layer.opacity, 20, 0, 100) : (input?.pattern === key ? clamp(input.intensity, 35, 0, 100) / 4 : 20),
+        opacity: layer ? clamp(layer.opacity, key === 'bokeh' ? 45 : 20, 0, 100) : (input?.pattern === key ? clamp(input.intensity, 35, 0, 100) / 4 : key === 'bokeh' ? 45 : 20),
         scale: layer ? clamp(layer.scale, 100, 25, 400) : 100,
     }];
 })) });
-export const DEFAULT_TEXTURE = sanitizeTexture({ layers: { mesh: { enabled: true, opacity: 12, scale: 100 } } });
+export const DEFAULT_TEXTURE = sanitizeTexture(null);
 export const hasTexture = value => Object.values(sanitizeTexture(value).layers).some(layer => layer.enabled);
 export function readTexture() {
     try { const saved = JSON.parse(localStorage.getItem(TEXTURE_KEY)); return saved ? sanitizeTexture(saved) : DEFAULT_TEXTURE; } catch { return DEFAULT_TEXTURE; }
@@ -31,6 +31,14 @@ export function texturePaint(value) {
         const px = n => `${Number((n * layer.scale / 100).toFixed(2))}px`;
         const light = `rgba(var(--ui-silver-rgb),${layer.opacity / 100})`;
         const shade = `rgba(0,0,0,${Math.min(1, layer.opacity / 50)})`;
+        if (pattern === 'bokeh') {
+            const glow = `rgba(var(--site-bokeh-rgb, var(--ui-gold-rgb)),${layer.opacity / 100})`;
+            const haze = `rgba(var(--site-bokeh-rgb, var(--ui-gold-rgb)),${layer.opacity / 250})`;
+            for (const [x, y, radius, width, height] of [[18, 26, 54, 620, 510], [73, 68, 82, 830, 690], [42, 85, 35, 470, 730], [88, 14, 62, 970, 570]]) {
+                images.push(`radial-gradient(circle at ${x}% ${y}%,${glow} 0 ${px(radius * .35)},${haze} ${px(radius * .75)},transparent ${px(radius * 1.2)})`);
+                sizes.push(`${px(width)} ${px(height)}`);
+            }
+        }
         if (pattern === 'mesh') {
             images.push(`radial-gradient(ellipse at 50% 45%,rgba(0,0,0,.65) 0 30%,${light} 39%,transparent 52%)`);
             sizes.push(`${px(7)} ${px(5)}`);
@@ -59,6 +67,8 @@ export function texturePaint(value) {
 }
 export const textureImage = value => texturePaint(value).image;
 export function textureCss(value) {
-    const paint = texturePaint(value);
-    return `body[data-site-theme] {--site-texture-image:${paint.image};--site-texture-size:${paint.size};}`;
+    const { layers } = sanitizeTexture(value);
+    const paint = texturePaint({ layers: { ...layers, bokeh: { ...layers.bokeh, enabled: false } } });
+    const bokeh = texturePaint({ layers: { bokeh: layers.bokeh } });
+    return `body[data-site-theme] {--site-texture-image:${paint.image};--site-texture-size:${paint.size};--site-bokeh-image:${bokeh.image};--site-bokeh-size:${bokeh.size};--site-bokeh-display:${layers.bokeh.enabled ? 'block' : 'none'};}`;
 }

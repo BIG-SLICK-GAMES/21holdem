@@ -1,4 +1,45 @@
 // App-only theme. The route runtime removes this marker before gameplay renders.
+// Separate focal planes drift independently behind app content. Negative stacking
+// stays inside the isolated layout, above its background and below all controls.
+body[data-site-theme] :is(.main-layout:not(.gameplay-layout), .auth-layout, .common-layout) {
+    isolation: isolate;
+    &::before, &::after {
+        content: '';
+        display: var(--site-bokeh-display, none);
+        position: fixed;
+        inset: -70px;
+        z-index: -1;
+        pointer-events: none;
+        background-image: var(--site-bokeh-image, none);
+        background-size: var(--site-bokeh-size, auto);
+        background-repeat: repeat;
+        border: 0;
+        opacity: .85;
+        filter: blur(5px);
+        animation: siteBokehNear 24s ease-in-out infinite alternate;
+    }
+    &::after {
+        background-position: 130px 210px;
+        opacity: .5;
+        filter: blur(14px);
+        animation: siteBokehFar 37s ease-in-out -17s infinite alternate;
+    }
+}
+@keyframes siteBokehNear {
+    0% { transform: translate3d(-25px, 20px, 0) scale(1); }
+    50% { transform: translate3d(15px, -30px, 0) scale(1.04); }
+    100% { transform: translate3d(35px, 15px, 0) scale(1.08); }
+}
+@keyframes siteBokehFar {
+    0% { transform: translate3d(30px, -25px, 0) scale(1.12); }
+    50% { transform: translate3d(-20px, 25px, 0) scale(1.04); }
+    100% { transform: translate3d(-35px, -15px, 0) scale(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+    body[data-site-theme] :is(.main-layout:not(.gameplay-layout), .auth-layout, .common-layout) {
+        &::before, &::after { animation: none; transform: none; }
+    }
+}
 body[data-site-theme] {
     background-color: var(--ui-blue-deep); color: var(--ui-text);
     --ui-border-gradient: linear-gradient(transparent, transparent) !important;
@@ -40,7 +81,8 @@ body[data-site-theme] {
         --dashboard-theme-accent-rgb: var(--ui-gold-rgb);
         color: var(--ui-text);
     }
-    .dashboard-hub__bokeh { opacity: .45; }
+    // Background effects are rendered by the selected texture layers only.
+    .dashboard-hub__bokeh { display: none; }
     :is(.lobby-topbar, .dashboard-hub__tab-menu) {
         background: linear-gradient(120deg, rgba(150, 180, 210, .12), transparent 55%), rgba(var(--ui-blue-deep-rgb), .78) !important;
         -webkit-backdrop-filter: blur(20px) saturate(135%) !important;

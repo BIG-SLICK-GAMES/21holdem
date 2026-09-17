@@ -65,14 +65,14 @@ export default function ThemeAdjuster() {
             </button>)}
         </div>
         <p>Current theme: {activePreset?.name || 'Custom'}. You can fine-tune any colour below.</p>
-        <h2>Background textures</h2>
-        <p>Select any combination. Adjust each pattern independently.</p>
+        <h2>Background effects & textures</h2>
+        <p>Select Bokeh for softly blurred lights that slowly drift behind the page. Combine it with other textures and adjust each effect independently. Animation pauses when your device prefers reduced motion.</p>
         <button type='button' className='dashboard-hub__signin-button' onClick={() => updateTexture({ layers: Object.fromEntries(Object.entries(texture.layers).map(([key, layer]) => [key, { ...layer, enabled: false }])) })}>Plain background</button>
         <div className='site-theme-editor__presets' role='group' aria-label='Background textures'>
             {TEXTURES.map(([pattern, label]) => {
                 const layer = texture.layers[pattern];
                 const changeLayer = patch => updateTexture({ layers: { ...texture.layers, [pattern]: { ...layer, ...patch } } });
-                const sample = texturePaint({ layers: { [pattern]: { ...layer, enabled: true } } });
+                const sample = texturePaint({ layers: { [pattern]: { ...layer, enabled: true, scale: pattern === 'bokeh' ? 25 : layer.scale } } });
                 return <div className='site-theme-editor__texture-layer' key={pattern}>
                     <button type='button' className='site-theme-editor__preset' aria-pressed={layer.enabled} onClick={() => changeLayer({ enabled: !layer.enabled })}>
                         <span className='site-theme-editor__texture-sample' aria-hidden='true' style={{ backgroundImage: sample.image, backgroundSize: sample.size }} />
