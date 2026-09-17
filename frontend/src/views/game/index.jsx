@@ -23,6 +23,7 @@ import { getProfile } from "../../query/profile.query";
 import { getTables, joinTable } from "../../query/gameTable.query";
 import { getCookie, ReactToastify } from "../../shared/utils";
 import { mobileTableLayout } from '../../scripts/mobileTableLayout';
+import { tableRailSeats } from '../../scripts/tableRailSeats';
 
 installPhaserAudioContextGuard(Phaser);
 
@@ -409,16 +410,41 @@ function Game({ isPausedExternally = false }) {
         let lastLayoutKey = '';
         let nextLayoutCheck = 0;
         const mobilePortrait = window.matchMedia('(max-width: 767px) and (orientation: portrait)');
-        const alignMobileSeats = () => {
+        const alignTableSeats = () => {
             if (performance.now() < nextLayoutCheck) return;
             nextLayoutCheck = performance.now() + 250;
-            // The requested correction is limited to phone portrait play.
+            // Desktop/landscape seats follow the rendered table, including its
+            // container transform, camera, canvas fit and saved table placement.
             if (!mobilePortrait.matches) {
-                if (lastLayoutKey) {
+                if (lastLayoutKey.startsWith('mobile,')) {
                     game.scene.getScene('Level')?.applyGameUILayout();
-                    gameRef.current?.closest('.game-table-page__row--middle')?.querySelector('.game-table-page__seat-overlay')?.classList.remove('is-auto-positioned');
                     lastLayoutKey = '';
                 }
+                const level = game.scene.getScene('Level');
+                const stage = gameRef.current?.closest('.game-table-page__row--middle');
+                if (!level?.table || !stage || !game.canvas) return;
+                const canvas = game.canvas.getBoundingClientRect();
+                const area = stage.getBoundingClientRect();
+                if (!canvas.width || !canvas.height || !area.height) return;
+                const world = level.table.getBounds();
+                const camera = level.cameras.main;
+                const topLeft = camera.matrix.transformPoint(world.x - camera.scrollX, world.y - camera.scrollY);
+                const bottomRight = camera.matrix.transformPoint(world.right - camera.scrollX, world.bottom - camera.scrollY);
+                const bounds = { x: topLeft.x, y: topLeft.y, width: bottomRight.x - topLeft.x, height: bottomRight.y - topLeft.y };
+                const key = ['desktop', canvas.x, canvas.y, canvas.width, canvas.height, area.x, area.y, bounds.x, bounds.y, bounds.width, bounds.height].join(',');
+                if (key === lastLayoutKey) return;
+                const seats = tableRailSeats({ bounds, canvas, area, gameSize: game.scale.gameSize });
+                const rail = stage.querySelector('.game-table-page__seat-overlay');
+                rail?.classList.remove('is-auto-positioned');
+                rail?.classList.add('is-table-anchored');
+                const tableHeight = bounds.height * canvas.height / game.scale.gameSize.height;
+                const avatarSize = Math.min(clampNumber(gameElementControls.playerProfile?.avatarSizePx, 60, 24, 120), Math.max(32, tableHeight * .21 - 30));
+                rail?.style.setProperty('--rail-avatar-size', `${avatarSize}px`);
+                Object.entries(seats).forEach(([seat, point]) => {
+                    rail?.style.setProperty(`--seat-${seat}-x`, `${point.x}px`);
+                    rail?.style.setProperty(`--seat-${seat}-y`, `${point.y}px`);
+                });
+                lastLayoutKey = key;
                 return;
             }
             const table = game.scene.getScene('Level')?.table;
@@ -427,7 +453,7 @@ function Game({ isPausedExternally = false }) {
             const canvas = game.canvas.getBoundingClientRect();
             const area = stage.getBoundingClientRect();
             if (!canvas.width || !canvas.height || !area.height) return;
-            const key = [canvas.x, canvas.y, canvas.width, canvas.height, area.width, area.height, table.x, table.y, table.scaleX, table.scaleY].join(',');
+            const key = ['mobile', canvas.x, canvas.y, canvas.width, canvas.height, area.x, area.y, area.width, area.height, table.x, table.y, table.scaleX, table.scaleY].join(',');
             if (key === lastLayoutKey) return;
             const layout = mobileTableLayout({ width: area.width, height: area.height, canvasWidth: canvas.width, imageRatio: table.height / table.width });
             const sx = canvas.width / game.scale.gameSize.width;
@@ -448,17 +474,18 @@ function Game({ isPausedExternally = false }) {
                 level.registerFXOverlayPotAnchor();
             }
             const rail = stage.querySelector('.game-table-page__seat-overlay');
+            rail?.classList.remove('is-table-anchored');
             rail?.classList.add('is-auto-positioned');
             Object.entries(layout.seats).forEach(([seat, point]) => {
                 rail?.style.setProperty(`--seat-${seat}-x`, `${point.x}px`);
                 rail?.style.setProperty(`--seat-${seat}-y`, `${point.y}px`);
             });
-            lastLayoutKey = [canvas.x, canvas.y, canvas.width, canvas.height, area.width, area.height, table.x, table.y, table.scaleX, table.scaleY].join(',');
+            lastLayoutKey = ['mobile', canvas.x, canvas.y, canvas.width, canvas.height, area.x, area.y, area.width, area.height, table.x, table.y, table.scaleX, table.scaleY].join(',');
         };
-        game.events.on(Phaser.Core.Events.POST_RENDER, alignMobileSeats);
+        game.events.on(Phaser.Core.Events.POST_RENDER, alignTableSeats);
 
         return () => {
-            game.events.off(Phaser.Core.Events.POST_RENDER, alignMobileSeats);
+            game.events.off(Phaser.Core.Events.POST_RENDER, alignTableSeats);
             hideGameActionOverlay();
             window.dispatchEvent(new CustomEvent('bsg:profile-refresh'));
             phaserGameRef.current = null;

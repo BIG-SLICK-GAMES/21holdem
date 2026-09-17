@@ -3446,6 +3446,18 @@ body,
 // Keep the HTML player rail aligned with the table's requested screen-pixel offset.
 .game-table-page__seat-overlay { transform: translateY(100px); }
 
+.game-table-page__seat-overlay.is-table-anchored {
+    transform: none;
+    --seat-avatar-size: var(--rail-avatar-size, 60px);
+    --seat-slot-width: calc(var(--rail-avatar-size, 60px) + 24px);
+    --seat-blind-left: calc(50% - var(--rail-avatar-size, 60px) * .7);
+    // Anchor the avatar itself; name/chip labels must not move its centre.
+    .game-table-page__seat-slot { min-height: 0; transform: translate(-50%, calc(var(--seat-avatar-size, 60px) * -.5)); }
+    @for $seat from 1 through 8 {
+        .game-table-page__seat-slot--seat-#{$seat} { left: var(--seat-#{$seat}-x); top: var(--seat-#{$seat}-y); }
+    }
+}
+
 @media (max-width: 767px) and (orientation: portrait) {
     .game-table-page__seat-overlay.is-auto-positioned {
         transform: none;
