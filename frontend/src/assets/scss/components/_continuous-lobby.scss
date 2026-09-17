@@ -2,9 +2,9 @@
 body .dashboard-hub { --ui-divider: rgba(var(--ui-gold-rgb), 0.18); }
 // Match the root-level layout reset's specificity so ultrawide screens retain a
 // centred content column. The atmosphere remains full-bleed behind the lobby.
-#root .dashboard-hub__shell { width: 100%; max-width: 1200px; min-width: 0; margin-inline: auto; gap: 0; }
+#root .dashboard-hub__shell { width: 100%; max-width: var(--site-content-width, 1200px); min-width: 0; margin-inline: auto; gap: 0; }
 @media (min-width: 1024px) {
-    body .lobby-topbar { padding-inline: max(24px, calc((100% - 1200px) / 2)); }
+    body .lobby-topbar { padding-inline: 24px; }
 }
 body .dashboard-hub :is(.dashboard-hub__lobby-banner, .dashboard-hub__tab-menu-anchor,
     .dashboard-hub__viewport, .dashboard-hub__tab-body, .dashboard-hub__tab-panel) { margin: 0; }

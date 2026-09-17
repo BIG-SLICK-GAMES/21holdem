@@ -1,4 +1,14 @@
 // 21UCD uses the app navigation at every viewport size.
+body[data-site-theme] {
+    --site-content-width: 1200px;
+    :is(.lobby-topbar, .dashboard-hub__tab-menu) {
+        left: 0;
+        right: 0;
+        width: 100%;
+        max-width: var(--site-content-width);
+        margin-inline: auto;
+    }
+}
 body .dashboard-container {
     padding-bottom: calc(88px + env(safe-area-inset-bottom, 0px));
 }
