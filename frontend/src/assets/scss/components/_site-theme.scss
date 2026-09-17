@@ -1,5 +1,4 @@
 // App-only theme. The route runtime removes this marker before gameplay renders.
-body[data-site-theme] .lobby-topbar__signin-hint { position: absolute; top: 100%; right: 0; padding: 6px 12px; color: var(--ui-text); background: var(--ui-surface); font-size: 13px; }
 // Separate focal planes drift independently behind app content. Negative stacking
 // stays inside the isolated layout, above its background and below all controls.
 body[data-site-theme] :is(.main-layout:not(.gameplay-layout), .auth-layout, .common-layout) {

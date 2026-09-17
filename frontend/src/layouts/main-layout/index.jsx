@@ -150,7 +150,6 @@ function MainLayout({ children }) {
                                 <Link to='/register' className='lobby-topbar__auth-button'>Register</Link>
                             </form>
                                 {sLoginError && <span className='lobby-topbar__login-error' role='alert'>{sLoginError}</span>}
-                                {signInRequested && !sLoginError && <span className='lobby-topbar__signin-hint' role='status'>Sign in using the fields above.</span>}
                             </>
                         )}
                         {bIsSignedIn && <>
