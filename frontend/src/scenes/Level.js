@@ -3503,6 +3503,8 @@ setButtons() {
                     sBlindRole: player.iUserId === this.iDealerId ? 'D' : (player.iUserId === this.iSmallBlindId ? 'SB' : (player.iUserId === this.iBigBlindId ? 'BB' : '')),
                     bActiveTurn: !this.bShowingHandResult && player.iUserId === this.iActiveTurnId,
                     nTurnTimerMs: !this.bShowingHandResult && player.iUserId === this.iActiveTurnId ? this.nActiveTurnTimerMs : 0,
+                    nTurnEndsAt: this.nActiveTurnEndsAt || 0,
+                    nTotalTurnTimeMs: this.nActiveTurnTotalMs || 0,
                 };
             });
 
@@ -3664,6 +3666,8 @@ setCollectBootAmount({ nTableChips, aParticipant }) {
         this.clearFXOverlayFocus();
         this.iActiveTurnId = '';
         this.nActiveTurnTimerMs = 0;
+        this.nActiveTurnEndsAt = 0;
+        this.nActiveTurnTotalMs = 0;
         this.emitPlayerSlotState();
         if (!this.iLastTurnId) return undefined;
         const lastPlayer = await this.players.get(this.iLastTurnId);
@@ -3716,6 +3720,8 @@ setCollectBootAmount({ nTableChips, aParticipant }) {
         await this.waitForPotAnimationSettle();
         this.iActiveTurnId = iUserId;
         this.nActiveTurnTimerMs = Math.max(0, Number(ttl) || 0);
+        this.nActiveTurnEndsAt = Date.now() + this.nActiveTurnTimerMs;
+        this.nActiveTurnTotalMs = Math.max(this.nActiveTurnTimerMs, Number(nTotalTurnTime) || 0);
         this.oGameManager.nMinRaiseAmount = nMinBet;
         this.emitPlayerSlotState();
 

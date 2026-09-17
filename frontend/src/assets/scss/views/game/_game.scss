@@ -231,10 +231,18 @@ body,
     opacity: 0;
 }
 
-.game-table-page__seat-slot.is-active-turn .game-table-page__seat-avatar::before {
-    opacity: 1;
-    background: conic-gradient(#cececc 0deg, var(--ui-gold) calc(var(--seat-turn-angle) * 0.68), #ff5f5f var(--seat-turn-angle), rgba(11, 11, 9, 0.72) 0deg);
-    animation: seatTimerSweep var(--seat-turn-ms, 12000ms) linear forwards;
+.game-table-page__turn-timer {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    pointer-events: none;
+    color: #f5c842;
+    &.is-low { color: #ff675c; }
+    svg { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); }
+    circle { fill: none; stroke-width: 7; }
+    &-track { stroke: rgba(0, 0, 0, .65); }
+    &-progress { stroke: currentColor; }
+    &-seconds { position: absolute; right: 8%; bottom: 8%; display: grid; place-items: center; min-width: 16px; height: 16px; padding: 0 2px; border-radius: 8px; background: #101010; color: #fff; font-size: 10px; font-weight: 800; line-height: 1; }
 }
 
 @keyframes seatTimerSweep {
@@ -3490,3 +3498,19 @@ body,
 @media (max-width: 359px) and (orientation: portrait) {
     .game-table-page__seat-overlay.is-auto-positioned { --seat-avatar-size: 44px; }
 }
+
+// In-game controls change state immediately, without entrance, exit or hover motion.
+.game-action-overlay, .game-stage-utility {
+    button, button::before, button::after, button * {
+        animation: none !important;
+        transition: none !important;
+    }
+    button:hover, button:active { transform: none !important; }
+}
+.game-action-overlay__rows--interactive,
+.game-action-overlay__rows--interactive .game-action-overlay__row {
+    animation: none !important;
+    transition: none !important;
+    will-change: auto;
+}
+.game-action-overlay__row button::before { display: none; }

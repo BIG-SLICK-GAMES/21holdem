@@ -24,6 +24,7 @@ import { getTables, joinTable } from "../../query/gameTable.query";
 import { getCookie, ReactToastify } from "../../shared/utils";
 import { mobileTableLayout } from '../../scripts/mobileTableLayout';
 import { tableRailSeats } from '../../scripts/tableRailSeats';
+import PlayerTurnTimer from './PlayerTurnTimer';
 
 installPhaserAudioContextGuard(Phaser);
 
@@ -106,6 +107,7 @@ function getShowdownCardSuit(card) {
 }
 
 function PlayerRailSlot({ nSeat, player, style }) {
+    const fallbackTurnEnd = useMemo(() => Date.now() + (Number(player?.nTurnTimerMs) || 0), [player?.bActiveTurn, player?.nTurnTimerMs]);
     if (!player) return null;
 
     const avatarSrc = player ? getGameAvatar(player.sAvatar, player.sUserName || 'Player').sPath : '';
@@ -137,6 +139,7 @@ function PlayerRailSlot({ nSeat, player, style }) {
         >
             <span className={`game-table-page__seat-avatar${aShowdownCards.length ? ' has-showdown-cards' : ''}`}>
                 {avatarSrc ? <img className='game-table-page__seat-avatar-image' src={avatarSrc} alt='' draggable='false' /> : <span className='game-table-page__seat-initials'>{initials}</span>}
+                {player.bActiveTurn && <PlayerTurnTimer endsAt={Number(player.nTurnEndsAt) || fallbackTurnEnd} totalMs={Number(player.nTotalTurnTimeMs) || nTurnMs} />}
                 {bShowScore && Number.isFinite(nScore) && nScore > 0 ? (
                     <span className='game-table-page__seat-score'>{nScore}</span>
                 ) : null}

@@ -26,7 +26,7 @@ import { getGameAvatar } from '../../shared/constants/builtInAvatars';
 import { ReactToastify } from '../../shared/utils';
 
 const DEBUG_CONSOLE_LAYOUT = false;
-const ACTION_BUTTON_CLOSE_MS = 280;
+
 const LOCAL_ACTION_PILL_MS = 1550;
 const CONSOLE_LAYOUT_STYLE = {
     '--console-left-width': '36%',
@@ -619,28 +619,7 @@ function GameActionOverlay({ isPaused = false }) {
         const rowButtons = Array.isArray(row?.buttons) ? row.buttons.filter(Boolean) : [];
         return rowButtons.length > 0;
     }), [rows]);
-    const actionRowsSignature = useMemo(() => rows.map((row) => {
-        const rowButtons = Array.isArray(row?.buttons) ? row.buttons.filter(Boolean) : [];
-        return [
-            row?.id || '',
-            row?.className || '',
-            rowButtons.map((button) => [
-                button?.key || '',
-                button?.label || '',
-                button?.variant || '',
-                button?.widthClass || '',
-                button?.amount ?? '',
-                button?.disabled ? 'disabled' : 'enabled',
-            ].join('|')).join(','),
-        ].join(':');
-    }).join(';'), [rows]);
-    const latestRowsRef = useRef(rows);
-    const displayedRowsRef = useRef([]);
-    const openTimerRef = useRef(null);
-    const closeTimerRef = useRef(null);
     const localActionTimerRef = useRef(null);
-    const [displayedRows, setDisplayedRows] = useState([]);
-    const [buttonTrayMotion, setButtonTrayMotion] = useState('hidden');
     const hasMessage = Boolean(overlayState.message);
     const tableBankrollAmount = Number.isFinite(Number(overlayState.tableBankroll))
         ? formatWholeCurrency(overlayState.tableBankroll)
@@ -660,13 +639,7 @@ function GameActionOverlay({ isPaused = false }) {
     const bHasHoleCards = consoleCards.hand.length > 0;
     const bKeepConsoleVisible = isVisible || bHasHoleCards;
 
-    useEffect(() => {
-        latestRowsRef.current = rows;
-    }, [rows]);
-
     useEffect(() => () => {
-        if (openTimerRef.current) window.clearTimeout(openTimerRef.current);
-        if (closeTimerRef.current) window.clearTimeout(closeTimerRef.current);
         if (localActionTimerRef.current) window.clearTimeout(localActionTimerRef.current);
     }, []);
 
@@ -682,44 +655,6 @@ function GameActionOverlay({ isPaused = false }) {
             setLocalActionPill((current) => (current.token === nToken ? { visible: false, label: '', token: 0 } : current));
         }, LOCAL_ACTION_PILL_MS);
     };
-
-    useEffect(() => {
-        if (openTimerRef.current) window.clearTimeout(openTimerRef.current);
-        if (closeTimerRef.current) window.clearTimeout(closeTimerRef.current);
-
-        if (hasButtons) {
-            const nextRows = latestRowsRef.current;
-            displayedRowsRef.current = nextRows;
-            setDisplayedRows(nextRows);
-            setButtonTrayMotion('opening');
-            openTimerRef.current = window.setTimeout(() => {
-                setButtonTrayMotion('visible');
-            }, 220);
-            return () => {
-                if (openTimerRef.current) window.clearTimeout(openTimerRef.current);
-            };
-        }
-
-        if (displayedRowsRef.current.length) {
-            setButtonTrayMotion('closing');
-            closeTimerRef.current = window.setTimeout(() => {
-                displayedRowsRef.current = [];
-                setDisplayedRows([]);
-                setButtonTrayMotion('hidden');
-            }, ACTION_BUTTON_CLOSE_MS);
-            return () => {
-                if (closeTimerRef.current) window.clearTimeout(closeTimerRef.current);
-            };
-        }
-
-        setButtonTrayMotion('hidden');
-        return undefined;
-    }, [actionRowsSignature, hasButtons]);
-
-    const hasDisplayedButtons = displayedRows.some((row) => {
-        const rowButtons = Array.isArray(row?.buttons) ? row.buttons.filter(Boolean) : [];
-        return rowButtons.length > 0;
-    });
 
     return (
         <>
@@ -779,9 +714,9 @@ function GameActionOverlay({ isPaused = false }) {
                     </div>
                 ) : null}
                 <div className='game-action-overlay__tray'>
-                    {hasDisplayedButtons ? (
-                        <div className={`game-action-overlay__rows game-action-overlay__rows--interactive is-${buttonTrayMotion}${DEBUG_CONSOLE_LAYOUT ? ' is-debug-layout' : ''}`}>
-                            {displayedRows.map((row, rowIndex) => {
+                    {hasButtons ? (
+                        <div className={`game-action-overlay__rows game-action-overlay__rows--interactive is-visible${DEBUG_CONSOLE_LAYOUT ? ' is-debug-layout' : ''}`}>
+                            {rows.map((row, rowIndex) => {
                                 const rowButtons = Array.isArray(row?.buttons) ? row.buttons.filter(Boolean) : [];
                                 if (!rowButtons.length) return null;
 
@@ -790,10 +725,9 @@ function GameActionOverlay({ isPaused = false }) {
                                         key={row.id || `row-${rowIndex}`}
                                         className={`game-action-overlay__row auth-intro-actions ${row.className || ''}`.trim()}
                                     >
-                                        {rowButtons.map((button, buttonIndex) => {
+                                        {rowButtons.map((button) => {
                                             const variantClass = BUTTON_CLASS_BY_VARIANT[button.variant] || BUTTON_CLASS_BY_VARIANT.secondary;
                                             const widthClass = button.widthClass || '';
-                                            const nButtonIndex = (rowIndex * 4) + buttonIndex;
 
                                             return (
                                                 <Button
@@ -802,10 +736,8 @@ function GameActionOverlay({ isPaused = false }) {
                                                     className={`${variantClass} ${widthClass}`.trim()}
                                                     data-game-action-key={button.key}
                                                     disabled={isPaused || button.disabled}
-                                                    style={{ '--action-button-delay': `${nButtonIndex * 28}ms` }}
                                                     onClick={() => {
                                                         if (button.submitsAction) showLocalActionPill(button.actionLabel || button.label);
-                                                        setButtonTrayMotion('closing');
                                                         emitGameActionOverlayCommand(button.key, {
                                                             amount: button.amount,
                                                         });
