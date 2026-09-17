@@ -1,5 +1,7 @@
 # Active 21 Hold'em frontend
 
+**18 September 2026 update:** The user approved 21UCD as the main public site and explicitly authorised replacing WEBDEV with its complete snapshot. WEBDEV now serves as the production promotion branch for `https://21-holdem.com`; `main` remains unchanged. See [WEBDEV-PROMOTION.md](WEBDEV-PROMOTION.md). The desktop-only and mobile-only restrictions in the historical notes below are superseded by this approval.
+
 This is the `21UCD` (User Centered Design) branch at `D:/BIG-SLICK-GAMES/GAMES/21holdem-21UCD`. It snapshots the current working source for isolated mobile accessibility work. The desktop and deployment history below describes the preserved `21WEBDEVNEXT` baseline, not a UCD deployment. See `docs/21UCD.md` before changing layouts or preview services.
 
 The user confirmed the black-and-gold site with the orange-jacket host, top-bar login, tutorial and animated daily reward chest is the intended frontend.

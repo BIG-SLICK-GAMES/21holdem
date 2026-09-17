@@ -2,6 +2,9 @@
 
 ## User-confirmed active frontend
 
+- **18 September 2026: the user approved the current 21UCD site as the main site and explicitly requested replacing all of `WEBDEV` with this snapshot, then publishing it at `https://21-holdem.com`. This supersedes the earlier mobile-only deployment restriction below.**
+- `21UCD` is the approved source; `WEBDEV` is its production promotion branch. Build `frontend/` with `PUBLIC_URL=/` for the main domain, and `/mobile` for the existing mobile preview. Preserve `main`, the backend deployment, and other local checkouts. See `docs/WEBDEV-PROMOTION.md`.
+
 - This checkout is branch `21UCD`: User Centered Design, explicitly requested on 13 September 2026.
 - Work exclusively on `21UCD` until the user explicitly resumes another branch. Its menu is now an app-style bar locked to the bottom at every viewport width. Preserve the approved PC site on its separate branch and deployment.
 - Keep desktop baseline checkout `D:/BIG-SLICK-GAMES/GAMES/21holdem` on `21WEBDEVNEXT` untouched.
