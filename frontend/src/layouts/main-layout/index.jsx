@@ -74,7 +74,7 @@ function MainLayout({ children }) {
     }, [getPath])
 
     const isLobby = getPath === '/lobby'
-    const isSettingsPage = getPath.startsWith('/settings/')
+    const isSettingsPage = getPath.startsWith('/settings/') || getPath.startsWith('/community/')
     const sActiveLobbyTab = isLobby ? new URLSearchParams(location.search).get('tab') || 'lobby-live-tables' : ''
     const sBackgroundScene = isLobby
         ? sActiveLobbyTab.replace(/^lobby-/, '').replace(/[^a-z0-9]+/g, '-')

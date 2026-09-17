@@ -15,13 +15,14 @@ function PrivateRoute() {
     setNav(navigate)
 
     const currentPath = useLocation().pathname;
+    const isPublicMain = PUBLIC_MAIN_ROUTES.includes(currentPath) || currentPath.startsWith('/community/');
 
     
     useEffect(() => {
-        if (!token && !PUBLIC_ROUTES.includes(currentPath) && !PUBLIC_MAIN_ROUTES.includes(currentPath)) {
+        if (!token && !PUBLIC_ROUTES.includes(currentPath) && !isPublicMain) {
             ReactToastify('Please sign in to continue', 'error', 'signin-required')
         }
-    }, [currentPath, token]);
+    }, [currentPath, token, isPublicMain]);
 
     if (!token && PUBLIC_ROUTES.includes(currentPath)) {
         return (
@@ -31,7 +32,7 @@ function PrivateRoute() {
         )
     }
 
-    if (!token && PUBLIC_MAIN_ROUTES.includes(currentPath)) {
+    if (!token && isPublicMain) {
         return (
             <MainLayout>
                 <Outlet />
